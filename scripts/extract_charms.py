@@ -62,7 +62,7 @@ def clean_description(text):
     if current_para:
         cleaned_lines.append(current_para)
         
-    return "\n".join(cleaned_lines)
+    return "\n\n".join(cleaned_lines)
 
 def extract_charms(pdf_path):
     print(f"Dumping PDF to text from {pdf_path}...")
