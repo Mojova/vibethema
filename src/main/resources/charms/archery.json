@@ -1,0 +1,122 @@
+[
+  {
+    "name": "Wise Arrow",
+    "ability": "Archery",
+    "minAbility": 2,
+    "minEssence": 1,
+    "prerequisites": [],
+    "cost": "1m",
+    "type": "Supplemental",
+    "keywords": "Uniform",
+    "duration": "Instant",
+    "fullText": "With skill and effort, the Exalt guides her arrow to its mark. The Exalt may use this Charm to supplement a withering or decisive attack, reducing the benefits of cover. The defense bonus of heavy and light cover is reduced by one, while characters under no cover suffer a -1 penalty to their normal Defense.\n\nIn addition, after taking an aim action, the Solar may activate this Charm to strike an opponent in full cover. The Exalt shoots along an arc or angle that perfectly matches her opponent’s position. So long as there is some opening where an arrow can get through, Wise Arrow treats a character in full cover as if he merely has +3 Defense."
+  },
+  {
+    "name": "Sight Without Eyes",
+    "ability": "Archery",
+    "minAbility": 3,
+    "minEssence": 1,
+    "prerequisites": ["Wise Arrow"],
+    "cost": "1m",
+    "type": "Reflexive",
+    "keywords": "None",
+    "duration": "One tick",
+    "fullText": "The Exalt opens her eyes not to the visual world, but to the world of Essence, sensing her target in that fashion. She may make an Archery attack without penalties for visual conditions. Smoke, fog, and pitch darkness are no longer a problem for her, though other factors such as high winds and cover still apply against the attack.\n\nAt Archery 5+, Essence 3+, the Solar can momentarily see through cover, perceiving her targets as silhouettes the colors of bright anima."
+  },
+  {
+    "name": "Blood Without Balance",
+    "ability": "Archery",
+    "minAbility": 4,
+    "minEssence": 1,
+    "prerequisites": ["Sight Without Eyes"],
+    "cost": "3m",
+    "type": "Reflexive",
+    "keywords": "Decisive-only",
+    "duration": "Instant",
+    "fullText": "Drawing upon the perfect moment to shoot, the Solar sees nothing but her target. Upon becoming the beneficiary of a distract gambit, if the Solar’s new Initiative would allow her to act immediately, she may use this Charm to fire a ranged decisive attack from up to long range without an aim action. In addition, if the Lawgiver has under seven Initiative, the base damage of this attack gains (Essence) bonus dice."
+  },
+  {
+    "name": "Force Without Fire",
+    "ability": "Archery",
+    "minAbility": 4,
+    "minEssence": 1,
+    "prerequisites": ["Sight Without Eyes"],
+    "cost": "3m",
+    "type": "Supplemental",
+    "keywords": "Withering-only",
+    "duration": "Instant",
+    "fullText": "The Solar nocks an arrow with purpose, sending a tremulous pulse through her surroundings as she gathers hurricane force into her bowstring. The Solar makes a withering attack from short or close range, and a pulverizing bolt of force surrounds her arrow as it leaps from her bow. If the attack does at least as much damage as her target’s Stamina, that Initiative is lost rather than transferred to the Solar, and the target is knocked down and back an entire range band. This force is sufficient to end a rush against any target."
+  },
+  {
+    "name": "Trance of Unhesitating Speed",
+    "ability": "Archery",
+    "minAbility": 3,
+    "minEssence": 1,
+    "prerequisites": ["Wise Arrow"],
+    "cost": "4m, 1wp",
+    "type": "Simple",
+    "keywords": "Decisive-only",
+    "duration": "Instant",
+    "fullText": "The Solar strums her bow and fills the air with sharp notes. This Charm allows the Exalt to attack multiple targets, or a single target multiple times, by spreading her total current Initiative between decisive attacks. Each attack must contain at least three Initiative, and extra Initiative must be spread as evenly as possible between shots. For example, an Exalt with 11 Initiative attacking three targets could make two decisive attacks with four raw damage, and a third with only three.\n\nIn addition, each 10 she rolls on an attack increases the base damage of that attack by one. The Exalt’s Initiative does not reset until she has completed every attack, and she may not make more attacks than she has ammunition or Dexterity. This attack can be made without an aim action."
+  },
+  {
+    "name": "Phantom Arrow Technique",
+    "ability": "Archery",
+    "minAbility": 3,
+    "minEssence": 1,
+    "prerequisites": [],
+    "cost": "1m",
+    "type": "Reflexive",
+    "keywords": "None",
+    "duration": "Instant",
+    "fullText": "Palming a mote of Essence, the Lawgiver pulls a thorn from her heart and fires it at the breast of her enemy. With this Charm, the Solar may continue firing her bow even when she has run out of arrows.\n\nIn addition, once per scene, the Exalt may suffuse a phantom or physical arrow with the import of one of her Intimacies. Doing so gives her attack a number of non-Charm bonus dice equal to the Intimacy’s strength, but also temporarily numbs her to that Intimacy. She may not use this attack again until she has spent significant effort in restoring or remembering the Intimacy, or in the case of a negative Intimacy, has been reminded of her motivation for her ire."
+  },
+  {
+    "name": "Fiery Arrow Attack",
+    "ability": "Archery",
+    "minAbility": 4,
+    "minEssence": 1,
+    "prerequisites": ["Phantom Arrow Technique"],
+    "cost": "2m",
+    "type": "Supplemental",
+    "keywords": "Decisive-only",
+    "duration": "Instant",
+    "fullText": "Charging her arrow with Essence, the Exalt fires a heavy shot that rends the air as it passes onto her target, lighting the arrow on fire. If the arrow strikes flammable materials, a violent blaze instantly seeks to consume the struck object. This fire is natural, and may spread to surrounding objects or cause combustible materials to explode. When used in a decisive attack against a target, it adds one automatic success to the damage roll. If the attack does at least three health levels of damage, the target catches on fire, and must contend with (Solar’s Essence) lethal dice of damage every turn until he’s able to extinguish himself."
+  },
+  {
+    "name": "There Is No Wind",
+    "ability": "Archery",
+    "minAbility": 5,
+    "minEssence": 2,
+    "prerequisites": ["Sight Without Eyes"],
+    "cost": "3m",
+    "type": "Reflexive",
+    "keywords": "Dual",
+    "duration": "Instant",
+    "fullText": "The Solar graces her shot with unerring precision and fires it along a flow of Essence, causing it to slice through the air between the arrow and its mark. Her attack ignores penalties from non-visual conditions such as high winds, bad weather, flawed ammunition, and so on. In addition, her withering attack accuracy is calculated as if it were made from short range regardless of the distance she’s firing from. With appropriate Awareness Charms, the Solar may use this Charm to make attacks from extreme long range."
+  },
+  {
+    "name": "Accuracy Without Distance",
+    "ability": "Archery",
+    "minAbility": 5,
+    "minEssence": 2,
+    "prerequisites": ["Force Without Fire"],
+    "cost": "1m, 1wp",
+    "type": "Reflexive",
+    "keywords": "Decisive-only",
+    "duration": "Instant",
+    "fullText": "The Solar extends her anima through her hands and into her weapons, joining archer, target and arrow into a single being. As long as she is making an Archery-based attack, this Charm allows the Solar to complete an aim action instantly, and converts the subsequent three bonus dice into automatic non-Charm successes. An Essence 5+ repurchase allows the Solar to fire a withering version of this attack against a crashed opponent. This attack rolls damage even if the attack roll generated no successes. This effect may only be used on a target once per crash period."
+  },
+  {
+    "name": "Arrow Storm Technique",
+    "ability": "Archery",
+    "minAbility": 5,
+    "minEssence": 2,
+    "prerequisites": ["Trance of Unhesitating Speed"],
+    "cost": "5m, 1wp",
+    "type": "Simple",
+    "keywords": "Decisive-only",
+    "duration": "Instant",
+    "fullText": "Seething with remonstrative ire, the Solar palms a storm of Essence and fills the sky with demonstrative fire. With this attack, the Solar unleashes a barrage of arrows around a focus, striking up to (Essence * 3) targets up to medium range from her initial target. Roll a single attack against the defenses of every target, and then apply damage. These extra decisive attacks carry a base damage of her Perception—divvy up her current Initiative evenly among the remaining shots to determine the total raw damage of each attack. Arrows reaching out to medium range from her initial target are expressly allowed to ignore the range limitations of her weapon without penalty. The Exalt’s Initiative does not reset until every damage roll has been completed."
+  }
+]

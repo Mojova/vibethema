@@ -1,0 +1,210 @@
+.root {
+    -fx-font-family: "Inter", "Segoe UI", sans-serif;
+    -fx-background-color: #121212;
+    -fx-base: #1e1e1e;
+}
+
+.main-pane {
+    -fx-background-color: #1e1e1e;
+}
+
+.header {
+    -fx-background-color: linear-gradient(to right, #2a2a2a, #3a2e1d);
+    -fx-padding: 20px;
+    -fx-border-width: 0 0 2px 0;
+    -fx-border-color: #d4af37; /* Gold accent */
+}
+
+.title-text {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-fill: #f9f6e6; /* Bright off-white */
+}
+
+.info-bar {
+    -fx-alignment: center-left;
+}
+
+.label {
+    -fx-text-fill: #cccccc;
+    -fx-font-size: 14px;
+}
+
+.section-title {
+    -fx-font-size: 22px;
+    -fx-text-fill: #d4af37;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 10px 0;
+    -fx-border-width: 0 0 1px 0;
+    -fx-border-color: #444;
+}
+
+.subsection-title {
+    -fx-font-size: 16px;
+    -fx-text-fill: #e0e0e0;
+    -fx-font-style: italic;
+    -fx-padding: 0 0 5px 0;
+}
+
+.text-field, .combo-box {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: white;
+    -fx-border-color: #444;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.text-field:focused, .combo-box:focused {
+    -fx-border-color: #d4af37;
+}
+
+.dot {
+    -fx-fill: transparent;
+    -fx-stroke: #888888;
+    -fx-stroke-width: 1.5;
+    -fx-cursor: hand;
+    -fx-transition: -fx-fill 0.2s, -fx-stroke 0.2s;
+}
+
+.dot:hover {
+    -fx-stroke: #d4af37;
+}
+
+.dot.filled {
+    -fx-fill: #d4af37;
+    -fx-stroke: #d4af37;
+}
+
+.footer {
+    -fx-padding: 15px 20px;
+    -fx-background-color: #1a1a1a;
+    -fx-border-width: 1px 0 0 0;
+    -fx-border-color: #d4af37;
+}
+
+.footer .label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #d4af37;
+}
+
+.scroll-pane-custom {
+    -fx-background: #1e1e1e;
+    -fx-border-color: transparent;
+}
+.scroll-pane-custom > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* Custom Checkbox Styles */
+.caste-checkbox, .favored-checkbox {
+    -fx-font-size: 10px;
+    -fx-text-fill: #999;
+}
+
+.caste-checkbox .box, .favored-checkbox .box {
+    -fx-background-color: #2d2d2d;
+    -fx-border-color: #444;
+    -fx-border-radius: 2px;
+}
+
+.caste-checkbox:selected .box, .favored-checkbox:selected .box {
+    -fx-background-color: #d4af37;
+    -fx-border-color: #f9f6e6;
+}
+
+.caste-checkbox:selected .mark, .favored-checkbox:selected .mark {
+    -fx-background-color: #1e1e1e;
+}
+
+.caste-option {
+    -fx-text-fill: #d4af37;
+    -fx-font-weight: bold;
+}
+
+.bp-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e0e0e0;
+}
+
+/* TabPane styling for dark mode */
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #1a1a1a;
+}
+
+.tab-pane .tab {
+    -fx-background-color: #2d2d2d;
+    -fx-border-width: 1px 1px 0 1px;
+    -fx-border-color: #444;
+}
+
+.tab-pane .tab:selected {
+    -fx-background-color: #1e1e1e;
+    -fx-background-insets: 0;
+    -fx-border-color: #d4af37;
+    -fx-border-width: 2px 2px 0 2px;
+}
+
+.tab-pane .tab .tab-label {
+    -fx-text-fill: #999;
+}
+
+.tab-pane .tab:selected .tab-label {
+    -fx-text-fill: #d4af37;
+    -fx-font-weight: bold;
+}
+
+/* Charms Sidebar Styles */
+.charms-split-pane {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.charms-split-pane .split-pane-divider {
+    -fx-background-color: #333;
+}
+
+.charms-sidebar {
+    -fx-background-color: #1a1a1a;
+    -fx-border-width: 0 0 0 1px;
+    -fx-border-color: #333;
+}
+
+.sidebar-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #d4af37;
+}
+
+.sidebar-reqs {
+    -fx-font-size: 14px;
+    -fx-font-style: italic;
+    -fx-text-fill: #aaa;
+}
+
+.sidebar-stat-header {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #bbb;
+}
+
+.sidebar-stat {
+    -fx-font-size: 14px;
+    -fx-text-fill: #f9f6e6;
+}
+
+.sidebar-desc {
+    -fx-font-size: 15px;
+    -fx-text-fill: #e0e0e0;
+    -fx-line-spacing: 0.2em;
+}
+
+.charm-btn {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-padding: 8px 15px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
