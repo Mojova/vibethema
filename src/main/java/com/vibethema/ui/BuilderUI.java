@@ -316,6 +316,25 @@ public class BuilderUI extends BorderPane {
         abilGrid.setHgap(20);
         abilGrid.setVgap(10);
         
+        javafx.beans.property.IntegerProperty casteCount = new javafx.beans.property.SimpleIntegerProperty(0);
+        javafx.beans.property.IntegerProperty favoredCount = new javafx.beans.property.SimpleIntegerProperty(0);
+        
+        Runnable updateCounts = () -> {
+            int c = 0;
+            int f = 0;
+            for (String abil : CharacterData.ABILITIES) {
+                if (data.getCasteAbility(abil).get()) c++;
+                if (data.getFavoredAbility(abil).get()) f++;
+            }
+            casteCount.set(c);
+            favoredCount.set(f);
+        };
+        for (String abil : CharacterData.ABILITIES) {
+            data.getCasteAbility(abil).addListener((obs, old, nv) -> updateCounts.run());
+            data.getFavoredAbility(abil).addListener((obs, old, nv) -> updateCounts.run());
+        }
+        updateCounts.run();
+        
         int row = 0;
         int col = 0;
         for (String ability : CharacterData.ABILITIES) {
@@ -327,17 +346,29 @@ public class BuilderUI extends BorderPane {
             casteBox.selectedProperty().bindBidirectional(data.getCasteAbility(ability));
             casteBox.disableProperty().bind(Bindings.createBooleanBinding(() -> {
                 CharacterData.Caste c = data.casteProperty().get();
-                return c == null || c == CharacterData.Caste.NONE || !CharacterData.CASTE_OPTIONS.get(c).contains(ability);
-            }, data.casteProperty()));
+                boolean notInCasteList = c == null || c == CharacterData.Caste.NONE || !CharacterData.CASTE_OPTIONS.get(c).contains(ability);
+                boolean atLimit = casteCount.get() >= 5 && !data.getCasteAbility(ability).get();
+                return notInCasteList || atLimit;
+            }, data.casteProperty(), casteCount, data.getCasteAbility(ability)));
 
             CheckBox favoredBox = new CheckBox("F");
             favoredBox.getStyleClass().add("favored-checkbox");
             favoredBox.selectedProperty().bindBidirectional(data.getFavoredAbility(ability));
-            favoredBox.disableProperty().bind(data.getCasteAbility(ability));
+            favoredBox.disableProperty().bind(Bindings.createBooleanBinding(() -> {
+                boolean isCaste = data.getCasteAbility(ability).get();
+                boolean atLimit = favoredCount.get() >= 5 && !data.getFavoredAbility(ability).get();
+                return isCaste || atLimit;
+            }, data.getCasteAbility(ability), favoredCount, data.getFavoredAbility(ability)));
 
             data.getCasteAbility(ability).addListener((obs, oldV, newV) -> {
                 if (newV) {
                     favoredBox.setSelected(false);
+                }
+            });
+            
+            data.getFavoredAbility(ability).addListener((obs, oldV, newV) -> {
+                if (newV && data.getAbility(ability).get() == 0) {
+                    data.getAbility(ability).set(1);
                 }
             });
             
