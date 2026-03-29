@@ -13,10 +13,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.Tooltip;
-import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
@@ -26,7 +22,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import javafx.scene.shape.CubicCurve;
 import javafx.beans.binding.Bindings;
 
 import java.io.InputStream;
@@ -35,7 +33,9 @@ import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BuilderUI extends BorderPane {
     private CharacterData data;
@@ -48,7 +48,9 @@ public class BuilderUI extends BorderPane {
     private Label favoredLabel = new Label();
     private Label bpLabel = new Label();
     
-    private TreeView<Charm> charmsTree;
+    private Pane charmCanvas;
+    private Map<String, VBox> charmNodeMap = new HashMap<>();
+    private List<Charm> currentAbilityCharms = new ArrayList<>();
 
     public BuilderUI(CharacterData data) {
         this.data = data;
@@ -150,6 +152,7 @@ public class BuilderUI extends BorderPane {
         
         data.getUnlockedCharms().addListener((javafx.collections.ListChangeListener.Change<? extends String> c) -> {
             updateFooter();
+            updateWebNodeStyles();
         });
     }
 
@@ -171,10 +174,6 @@ public class BuilderUI extends BorderPane {
         casteLabel.setText("Caste: " + casteCount + "/5");
         favoredLabel.setText("Favored: " + favoredCount + "/5");
         bpLabel.setText("Bonus Points: " + bp + "/15");
-        
-        if (charmsTree != null) {
-            charmsTree.refresh();
-        }
     }
 
     private VBox createContent() {
@@ -372,7 +371,7 @@ public class BuilderUI extends BorderPane {
         SplitPane splitPane = new SplitPane();
         splitPane.getStyleClass().add("charms-split-pane");
         
-        // --- Left Side: Tree ---
+        // --- Left Side: Tree Web Area ---
         VBox leftPane = new VBox(15);
         leftPane.setPadding(new Insets(20));
         
@@ -385,17 +384,17 @@ public class BuilderUI extends BorderPane {
         abilityCombo.setValue("Archery");
         controls.getChildren().addAll(comboLabel, abilityCombo);
         
-        Label title = new Label("Charms Tree");
+        Label title = new Label("Charms Web");
         title.getStyleClass().add("section-title");
         
-        charmsTree = new TreeView<>();
-        TreeItem<Charm> root = new TreeItem<>();
-        charmsTree.setRoot(root);
-        charmsTree.setShowRoot(false);
-        VBox.setVgrow(charmsTree, Priority.ALWAYS);
-        charmsTree.getStyleClass().add("charm-tree");
+        charmCanvas = new Pane();
+        ScrollPane charmScroll = new ScrollPane(charmCanvas);
+        charmScroll.setFitToWidth(true);
+        charmScroll.setPannable(true);
+        charmScroll.getStyleClass().add("scroll-pane-custom");
+        VBox.setVgrow(charmScroll, Priority.ALWAYS);
         
-        leftPane.getChildren().addAll(controls, title, charmsTree);
+        leftPane.getChildren().addAll(controls, title, charmScroll);
         
         // --- Right Side: Sidebar Details ---
         VBox rightPane = new VBox(15);
@@ -455,27 +454,29 @@ public class BuilderUI extends BorderPane {
         rightPane.getChildren().addAll(detailTitle, detailReqs, toggleBtn, statsGrid, descScroll);
         
         Runnable loadCharms = () -> {
-            root.getChildren().clear();
-            List<Charm> charmsList;
+            charmCanvas.getChildren().clear();
+            charmNodeMap.clear();
+            currentAbilityCharms.clear();
+            
             try {
                 String abilityKey = abilityCombo.getValue().toLowerCase().replace(" ", "-");
                 InputStream is = getClass().getResourceAsStream("/charms/" + abilityKey + ".json");
                 if (is != null) {
                     try (Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
                         Type listType = new TypeToken<ArrayList<Charm>>(){}.getType();
-                        charmsList = new Gson().fromJson(reader, listType);
+                        List<Charm> loaded = new Gson().fromJson(reader, listType);
+                        if (loaded != null) {
+                            currentAbilityCharms.addAll(loaded);
+                        }
                     }
-                } else {
-                    charmsList = new ArrayList<>();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                charmsList = new ArrayList<>();
             }
-            buildCharmTree(root, charmsList, java.util.Collections.emptyList());
-            title.setText(abilityCombo.getValue() + " Charms Tree (" + charmsList.size() + ")");
             
-            // clear selection
+            drawCharmWeb(currentAbilityCharms, title, abilityCombo.getValue(), detailTitle, detailReqs, toggleBtn, costLabel, typeLabel, durationLabel, kwLabel, descriptionLabel);
+            title.setText(abilityCombo.getValue() + " Charms Web (" + currentAbilityCharms.size() + ")");
+            
             detailTitle.setText("No Charm Selected");
             detailReqs.setText("");
             costLabel.setText("");
@@ -489,62 +490,158 @@ public class BuilderUI extends BorderPane {
         abilityCombo.valueProperty().addListener((obs, oldV, newV) -> loadCharms.run());
         loadCharms.run();
         
-        charmsTree.setCellFactory(tv -> new TreeCell<Charm>() {
-            @Override
-            protected void updateItem(Charm item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setStyle("");
-                } else {
-                    setText(item.getName());
-                    
-                    if (data.getUnlockedCharms().contains(item.getName())) {
-                        setStyle("-fx-text-fill: #d4af37; -fx-font-weight: bold;");
-                    } else if (item.isEligible(data)) {
-                        setStyle("-fx-text-fill: #e0e0e0;");
-                    } else {
-                        setStyle("-fx-text-fill: #888888; -fx-font-style: italic;");
-                    }
-                }
-            }
-        });
-        
-        charmsTree.setOnMouseClicked(e -> {
-            TreeItem<Charm> selected = charmsTree.getSelectionModel().getSelectedItem();
-            if (selected != null && selected.getValue() != null) {
-                Charm c = selected.getValue();
-                
-                detailTitle.setText(c.getName());
-                
-                String prereqStr = (c.getPrerequisites() == null || c.getPrerequisites().isEmpty()) ? "None" : String.join(", ", c.getPrerequisites());
-                detailReqs.setText("Mins: " + c.getAbility() + " " + c.getMinAbility() + ", Essence " + c.getMinEssence() + "\nPrerequisites: " + prereqStr);
-                
-                costLabel.setText(c.getCost() != null ? c.getCost() : "");
-                typeLabel.setText(c.getType() != null ? c.getType() : "");
-                durationLabel.setText(c.getDuration() != null ? c.getDuration() : "");
-                kwLabel.setText(c.getKeywords() != null ? c.getKeywords() : "");
-                
-                descriptionLabel.setText(c.getFullText() != null ? c.getFullText() : "");
-                
-                toggleBtn.setVisible(true);
-                updateSidebarButton(c, toggleBtn);
-                
-                toggleBtn.setOnAction(ev -> {
-                    if (data.getUnlockedCharms().contains(c.getName())) {
-                        data.getUnlockedCharms().remove(c.getName());
-                    } else if (c.isEligible(data)) {
-                        data.getUnlockedCharms().add(c.getName());
-                    }
-                    updateSidebarButton(c, toggleBtn);
-                    charmsTree.refresh();
-                });
-            }
-        });
-        
         splitPane.getItems().addAll(leftPane, rightPane);
         splitPane.setDividerPositions(0.4);
         return splitPane;
+    }
+    
+    private void drawCharmWeb(List<Charm> charms, Label titleLabel, String ability, 
+                              Label detailTitle, Label detailReqs, Button toggleBtn, 
+                              Label costLabel, Label typeLabel, Label durLabel, 
+                              Label kwLabel, Label descLabel) {
+        
+        // Calculate Topological depth
+        Map<String, Integer> charmDepth = new HashMap<>();
+        boolean changed = true;
+        while (changed) {
+            changed = false;
+            for (Charm c : charms) {
+                int currentDepth = charmDepth.getOrDefault(c.getName(), 0);
+                int reqDepth = 0;
+                if (c.getPrerequisites() != null) {
+                    for (String req : c.getPrerequisites()) {
+                        reqDepth = Math.max(reqDepth, charmDepth.getOrDefault(req, 0) + 1);
+                    }
+                }
+                if (reqDepth > currentDepth) {
+                    charmDepth.put(c.getName(), reqDepth);
+                    changed = true;
+                }
+            }
+        }
+        
+        // Group by Depth Level
+        Map<Integer, List<Charm>> levels = new HashMap<>();
+        int maxDepth = 0;
+        for (Charm c : charms) {
+            int depth = charmDepth.getOrDefault(c.getName(), 0);
+            levels.computeIfAbsent(depth, k -> new ArrayList<>()).add(c);
+            if (depth > maxDepth) maxDepth = depth;
+        }
+        
+        double boxWidth = 220;
+        double boxHeight = 70;
+        double gapX = 40;
+        double gapY = 80;
+        
+        // Determine layout span
+        double maxRowWidth = 0;
+        for (int d = 0; d <= maxDepth; d++) {
+            List<Charm> rowCharms = levels.getOrDefault(d, new ArrayList<>());
+            double rowWidth = rowCharms.size() * boxWidth + Math.max(0, rowCharms.size() - 1) * gapX;
+            if (rowWidth > maxRowWidth) maxRowWidth = rowWidth;
+        }
+        
+        // Ensure scroll content respects constraints cleanly
+        double virtualCanvasWidth = Math.max(800, maxRowWidth + 100); 
+        
+        // Draw Nodes
+        for (int d = 0; d <= maxDepth; d++) {
+            List<Charm> rowCharms = levels.getOrDefault(d, new ArrayList<>());
+            double rowWidth = rowCharms.size() * boxWidth + Math.max(0, rowCharms.size() - 1) * gapX;
+            
+            // Center the entire row geometrically
+            double startX = (virtualCanvasWidth - rowWidth) / 2;
+            double y = 40 + d * (boxHeight + gapY);
+            
+            for (int i = 0; i < rowCharms.size(); i++) {
+                Charm c = rowCharms.get(i);
+                double x = startX + i * (boxWidth + gapX);
+                
+                VBox box = new VBox(5);
+                box.setAlignment(Pos.CENTER);
+                box.setPrefSize(boxWidth, boxHeight);
+                box.getStyleClass().add("charm-node"); 
+                
+                Label nameLbl = new Label(c.getName());
+                nameLbl.getStyleClass().add("charm-node-title");
+                nameLbl.setWrapText(true);
+                
+                Label reqLbl = new Label(c.getAbility() + " " + c.getMinAbility() + ", Ess " + c.getMinEssence());
+                reqLbl.getStyleClass().add("charm-node-reqs");
+                
+                box.getChildren().addAll(nameLbl, reqLbl);
+                box.setLayoutX(x);
+                box.setLayoutY(y);
+                
+                charmNodeMap.put(c.getName(), box);
+                charmCanvas.getChildren().add(box);
+                
+                box.setOnMouseClicked(e -> {
+                    detailTitle.setText(c.getName());
+                    String prereqStr = c.getPrerequisites() == null || c.getPrerequisites().isEmpty() ? "None" : String.join(", ", c.getPrerequisites());
+                    detailReqs.setText("Mins: " + c.getAbility() + " " + c.getMinAbility() + ", Ess: " + c.getMinEssence() + "\nPrereqs: " + prereqStr);
+                    costLabel.setText(c.getCost() != null ? c.getCost() : "");
+                    typeLabel.setText(c.getType() != null ? c.getType() : "");
+                    durLabel.setText(c.getDuration() != null ? c.getDuration() : "");
+                    kwLabel.setText(c.getKeywords() != null ? c.getKeywords() : "");
+                    descLabel.setText(c.getFullText() != null ? c.getFullText() : "");
+                    
+                    toggleBtn.setVisible(true);
+                    updateSidebarButton(c, toggleBtn);
+                    
+                    // Note: Action handler attached once during node creation
+                });
+            }
+        }
+        
+        // Connect the specific button behavior directly
+        toggleBtn.setOnAction(ev -> {
+            String selectedName = detailTitle.getText();
+            Charm c = charms.stream().filter(ch -> ch.getName().equals(selectedName)).findFirst().orElse(null);
+            if (c != null) {
+                if (data.getUnlockedCharms().contains(c.getName())) {
+                    data.getUnlockedCharms().remove(c.getName());
+                } else if (c.isEligible(data)) {
+                    data.getUnlockedCharms().add(c.getName());
+                }
+                updateSidebarButton(c, toggleBtn);
+                updateWebNodeStyles();
+            }
+        });
+        
+        // Draw Connecting Lines
+        for (Charm c : charms) {
+            VBox targetBox = charmNodeMap.get(c.getName());
+            if (targetBox != null && c.getPrerequisites() != null) {
+                for (String req : c.getPrerequisites()) {
+                    VBox sourceBox = charmNodeMap.get(req);
+                    if (sourceBox != null) {
+                        double startX = sourceBox.getLayoutX() + boxWidth / 2;
+                        double startY = sourceBox.getLayoutY() + boxHeight;
+                        double endX = targetBox.getLayoutX() + boxWidth / 2;
+                        double endY = targetBox.getLayoutY();
+                        
+                        CubicCurve curve = new CubicCurve(
+                            startX, startY,
+                            startX, startY + gapY / 1.5,
+                            endX, endY - gapY / 1.5,
+                            endX, endY
+                        );
+                        curve.getStyleClass().add("charm-line");
+                        charmCanvas.getChildren().add(curve);
+                        curve.toBack();
+                    }
+                }
+            }
+        }
+        
+        // Resize actual canvas bounds to match contents
+        double minHeight = (maxDepth + 1) * (boxHeight + gapY) + 40;
+        charmCanvas.setPrefSize(virtualCanvasWidth, minHeight);
+        
+        // Apply immediate styling
+        updateWebNodeStyles();
     }
     
     private void updateSidebarButton(Charm c, Button btn) {
@@ -563,22 +660,18 @@ public class BuilderUI extends BorderPane {
         }
     }
 
-    private void buildCharmTree(TreeItem<Charm> parent, List<Charm> allCharms, List<String> parentNames) {
-        String pName = parent.getValue() == null ? null : parent.getValue().getName();
-        
-        for (Charm c : allCharms) {
-            boolean isChild = false;
-            if (pName == null && (c.getPrerequisites() == null || c.getPrerequisites().isEmpty())) {
-                isChild = true;
-            } else if (pName != null && c.getPrerequisites() != null && !c.getPrerequisites().isEmpty() && c.getPrerequisites().contains(pName)) {
-                isChild = true;
-            }
-            
-            if (isChild) {
-                TreeItem<Charm> item = new TreeItem<>(c);
-                item.setExpanded(true);
-                parent.getChildren().add(item);
-                buildCharmTree(item, allCharms, java.util.Collections.singletonList(c.getName()));
+    private void updateWebNodeStyles() {
+        for (Charm c : currentAbilityCharms) {
+            VBox box = charmNodeMap.get(c.getName());
+            if (box != null) {
+                box.getStyleClass().removeAll("charm-node-unselected", "charm-node-selected", "charm-node-ineligible");
+                if (data.getUnlockedCharms().contains(c.getName())) {
+                    box.getStyleClass().add("charm-node-selected");
+                } else if (c.isEligible(data)) {
+                    box.getStyleClass().add("charm-node-unselected");
+                } else {
+                    box.getStyleClass().add("charm-node-ineligible");
+                }
             }
         }
     }
