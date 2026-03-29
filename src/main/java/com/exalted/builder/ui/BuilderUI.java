@@ -614,6 +614,11 @@ public class BuilderUI extends BorderPane {
                     
                     toggleBtn.setVisible(true);
                     updateSidebarButton(c, toggleBtn);
+                    
+                    if (e.getClickCount() == 2) {
+                        // Delay execution slightly to ensure correct visual state selection before firing
+                        javafx.application.Platform.runLater(() -> toggleBtn.fire());
+                    }
                 });
             }
         }
