@@ -495,16 +495,16 @@ public class BuilderUI extends BorderPane {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText(null);
-                    setStyle("-fx-background-color: transparent;");
+                    setStyle("");
                 } else {
                     setText(item.getName());
                     
                     if (data.getUnlockedCharms().contains(item.getName())) {
-                        setStyle("-fx-text-fill: #d4af37; -fx-font-weight: bold; -fx-background-color: transparent;");
+                        setStyle("-fx-text-fill: #d4af37; -fx-font-weight: bold;");
                     } else if (item.isEligible(data)) {
-                        setStyle("-fx-text-fill: #e0e0e0; -fx-background-color: transparent;");
+                        setStyle("-fx-text-fill: #e0e0e0;");
                     } else {
-                        setStyle("-fx-text-fill: #555555; -fx-background-color: transparent;");
+                        setStyle("-fx-text-fill: #888888; -fx-font-style: italic;");
                     }
                 }
             }

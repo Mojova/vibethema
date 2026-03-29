@@ -208,3 +208,22 @@
     -fx-background-radius: 4px;
     -fx-cursor: hand;
 }
+
+/* TreeView Native Overrides */
+.charm-tree {
+    -fx-control-inner-background: #1e1e1e;
+    -fx-background-color: #1e1e1e;
+    -fx-border-color: #333;
+}
+
+.charm-tree .tree-cell {
+    -fx-background-color: #1e1e1e;
+}
+
+.charm-tree .tree-cell:hover {
+    -fx-background-color: #2d2d2d;
+}
+
+.charm-tree .tree-cell:selected {
+    -fx-background-color: #3d3d3d;
+}
