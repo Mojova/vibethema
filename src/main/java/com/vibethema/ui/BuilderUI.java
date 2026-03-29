@@ -519,17 +519,32 @@ public class BuilderUI extends BorderPane {
         topRow.getChildren().addAll(wpBox, essBox, motesBox);
         
         VBox healthBox = new VBox(5);
-        Label healthLabel = new Label("Health Levels (Click to toggle damage)");
+        Label healthLabel = new Label("Health Levels");
         healthLabel.getStyleClass().add("subsection-title");
         
-        HBox trackBoxes = new HBox(20);
-        trackBoxes.getChildren().addAll(
-            createHealthLevel("-0", 1),
-            createHealthLevel("-1", 2),
-            createHealthLevel("-2", 2),
-            createHealthLevel("-4", 1),
-            createHealthLevel("Incap", 1)
-        );
+        HBox trackBoxes = new HBox(15);
+        trackBoxes.setAlignment(Pos.CENTER_LEFT);
+        
+        Runnable updateHealth = () -> {
+            trackBoxes.getChildren().clear();
+            List<String> levels = data.getHealthLevels();
+            Map<String, Integer> counts = new java.util.LinkedHashMap<>();
+            // Ensure order -0, -1, -2, -4, Incap
+            for (String lv : new String[]{"-0", "-1", "-2", "-4", "Incap"}) counts.put(lv, 0);
+            for (String lv : levels) counts.put(lv, counts.getOrDefault(lv, 0) + 1);
+            
+            for (Map.Entry<String, Integer> entry : counts.entrySet()) {
+                if (entry.getValue() > 0) {
+                    trackBoxes.getChildren().add(createHealthLevel(entry.getKey(), entry.getValue()));
+                }
+            }
+        };
+        
+        data.getAttribute("Stamina").addListener((obs, old, nv) -> updateHealth.run());
+        data.getAbility("Resistance").addListener((obs, old, nv) -> updateHealth.run());
+        data.getUnlockedCharms().addListener((javafx.collections.ListChangeListener.Change<? extends PurchasedCharm> c) -> updateHealth.run());
+        updateHealth.run();
+        
         healthBox.getChildren().addAll(healthLabel, trackBoxes);
         
         advantagesSection.getChildren().addAll(advTitle, topRow, healthBox);
@@ -668,9 +683,17 @@ public class BuilderUI extends BorderPane {
         Button toggleBtn = new Button("Purchase Charm");
         toggleBtn.getStyleClass().add("charm-btn");
         toggleBtn.setMaxWidth(Double.MAX_VALUE);
-        toggleBtn.setVisible(false);
+        HBox.setHgrow(toggleBtn, Priority.ALWAYS);
         
-        rightPane.getChildren().addAll(detailTitle, detailReqs, toggleBtn, statsGrid, descScroll);
+        Button refundBtn = new Button("Refund");
+        refundBtn.getStyleClass().add("charm-btn");
+        refundBtn.setStyle("-fx-base: #a03030;");
+        refundBtn.setVisible(false);
+        refundBtn.setManaged(false);
+        
+        HBox charmButtons = new HBox(10, toggleBtn, refundBtn);
+        
+        rightPane.getChildren().addAll(detailTitle, detailReqs, charmButtons, statsGrid, descScroll);
         
         Runnable loadCharms = () -> {
             charmCanvas.getChildren().clear();
@@ -693,7 +716,7 @@ public class BuilderUI extends BorderPane {
                 e.printStackTrace();
             }
             
-            drawCharmWeb(currentAbilityCharms, title, abilityCombo.getValue(), detailTitle, detailReqs, toggleBtn, costLabel, typeLabel, durationLabel, kwFlow, descriptionLabel);
+            drawCharmWeb(currentAbilityCharms, title, abilityCombo.getValue(), detailTitle, detailReqs, toggleBtn, refundBtn, costLabel, typeLabel, durationLabel, kwFlow, descriptionLabel);
             title.setText(abilityCombo.getValue() + " Charms Web (" + currentAbilityCharms.size() + ")");
             
             detailTitle.setText("No Charm Selected");
@@ -704,6 +727,8 @@ public class BuilderUI extends BorderPane {
             kwFlow.getChildren().clear();
             descriptionLabel.setText("");
             toggleBtn.setVisible(false);
+            refundBtn.setVisible(false);
+            refundBtn.setManaged(false);
         };
         
         abilityCombo.valueProperty().addListener((obs, oldV, newV) -> loadCharms.run());
@@ -715,7 +740,7 @@ public class BuilderUI extends BorderPane {
     }
     
     private void drawCharmWeb(List<Charm> charms, Label titleLabel, String ability, 
-                              Label detailTitle, Label detailReqs, Button toggleBtn, 
+                              Label detailTitle, Label detailReqs, Button toggleBtn, Button refundBtn,
                               Label costLabel, Label typeLabel, Label durLabel, 
                               FlowPane kwFlow, Label descLabel) {
         
@@ -807,7 +832,7 @@ public class BuilderUI extends BorderPane {
                     descLabel.setText(c.getFullText() != null ? c.getFullText() : "");
                     
                     toggleBtn.setVisible(true);
-                    updateSidebarButton(c, toggleBtn);
+                    updateSidebarButton(c, toggleBtn, refundBtn);
                     
                     if (e.getClickCount() == 2) {
                         // Delay execution slightly to ensure correct visual state selection before firing
@@ -822,12 +847,22 @@ public class BuilderUI extends BorderPane {
             String selectedName = detailTitle.getText();
             Charm c = charms.stream().filter(ch -> ch.getName().equals(selectedName)).findFirst().orElse(null);
             if (c != null) {
-                if (data.hasCharm(c.getName())) {
+                if (!c.getName().equals("Ox-Body Technique") && data.hasCharm(c.getName())) {
                     data.removeCharm(c.getName());
-                } else if (c.isEligible(data)) {
+                } else {
                     data.addCharm(new PurchasedCharm(c.getName(), c.getAbility()));
                 }
-                updateSidebarButton(c, toggleBtn);
+                updateSidebarButton(c, toggleBtn, refundBtn);
+                updateWebNodeStyles();
+            }
+        });
+
+        refundBtn.setOnAction(ev -> {
+            String selectedName = detailTitle.getText();
+            Charm c = charms.stream().filter(ch -> ch.getName().equals(selectedName)).findFirst().orElse(null);
+            if (c != null) {
+                data.removeCharm(c.getName());
+                updateSidebarButton(c, toggleBtn, refundBtn);
                 updateWebNodeStyles();
             }
         });
@@ -867,19 +902,35 @@ public class BuilderUI extends BorderPane {
         updateWebNodeStyles();
     }
     
-    private void updateSidebarButton(Charm c, Button btn) {
-        if (data.hasCharm(c.getName())) {
+    private void updateSidebarButton(Charm c, Button btn, Button refundBtn) {
+        int count = data.getCharmCount(c.getName());
+        boolean isOxBody = c.getName().equals("Ox-Body Technique");
+        
+        if (isOxBody) {
+            int limit = data.getAbility("Resistance").get();
+            btn.setText("Purchase (" + count + "/" + limit + ")");
+            btn.setDisable(count >= limit || !c.isEligible(data));
+            btn.setStyle("-fx-base: #d4af37;");
+            refundBtn.setVisible(count > 0);
+            refundBtn.setManaged(count > 0);
+        } else if (data.hasCharm(c.getName())) {
             btn.setText("Refund Charm");
             btn.setDisable(false);
             btn.setStyle("-fx-base: #a03030;"); 
+            refundBtn.setVisible(false);
+            refundBtn.setManaged(false);
         } else if (c.isEligible(data)) {
             btn.setText("Purchase Charm");
             btn.setDisable(false);
             btn.setStyle("-fx-base: #d4af37;"); 
+            refundBtn.setVisible(false);
+            refundBtn.setManaged(false);
         } else {
             btn.setText("Requirements Not Met");
             btn.setDisable(true);
             btn.setStyle("-fx-base: #444444;"); 
+            refundBtn.setVisible(false);
+            refundBtn.setManaged(false);
         }
     }
 

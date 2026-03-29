@@ -119,14 +119,30 @@ public class CharacterData {
         return unlockedCharms.stream().anyMatch(c -> c.name().equals(name));
     }
     
+    public int getCharmCount(String name) {
+        return (int) unlockedCharms.stream().filter(c -> c.name().equals(name)).count();
+    }
+    
     public void addCharm(PurchasedCharm charm) {
-        if (!hasCharm(charm.name())) {
+        boolean stackable = charm.name().equals("Ox-Body Technique");
+        if (stackable) {
+            int limit = getAbility(charm.ability()).get();
+            if (getCharmCount(charm.name()) < limit) {
+                unlockedCharms.add(charm);
+            }
+        } else if (!hasCharm(charm.name())) {
             unlockedCharms.add(charm);
         }
     }
     
     public void removeCharm(String name) {
-        unlockedCharms.removeIf(c -> c.name().equals(name));
+        // Remove only the first instance (relevant for stackable charms)
+        for (int i = 0; i < unlockedCharms.size(); i++) {
+            if (unlockedCharms.get(i).name().equals(name)) {
+                unlockedCharms.remove(i);
+                break;
+            }
+        }
     }
 
     public boolean hasExcellency(String ability) {
@@ -237,6 +253,37 @@ public class CharacterData {
         
         
         return bp;
+    }
+
+    public List<String> getHealthLevels() {
+        List<String> levels = new ArrayList<>(Arrays.asList("-0", "-1", "-1", "-2", "-2", "-4", "Incap"));
+        
+        int stamina = getAttribute("Stamina").get();
+        int oxBodyCount = getCharmCount("Ox-Body Technique");
+        
+        for (int i = 0; i < oxBodyCount; i++) {
+            if (stamina >= 5) {
+                levels.add("-0");
+                levels.add("-1");
+                levels.add("-2");
+            } else if (stamina >= 3) {
+                levels.add("-1");
+                levels.add("-2");
+                levels.add("-2");
+            } else {
+                levels.add("-1");
+                levels.add("-2");
+            }
+        }
+        
+        // Sort levels logically
+        Collections.sort(levels, (a, b) -> {
+            if (a.equals("Incap")) return 1;
+            if (b.equals("Incap")) return -1;
+            return a.compareTo(b); // Sort -0, -1, -2, -4 alphabetically is fine for this limited set
+        });
+        
+        return levels;
     }
     
     public CharacterSaveState exportState() {
