@@ -194,6 +194,18 @@ public class BuilderUI extends BorderPane {
         supernalDropdown.valueProperty().addListener((obs, oldV, newV) -> {
             if (newV != null && supernalDropdown.getItems().contains(newV)) {
                 data.supernalAbilityProperty().set(newV);
+            } else {
+                data.supernalAbilityProperty().set("");
+            }
+        });
+        
+        data.supernalAbilityProperty().addListener((obs, oldV, newV) -> {
+            if (newV != null && !newV.equals(supernalDropdown.getValue())) {
+                if (supernalDropdown.getItems().contains(newV)) {
+                    supernalDropdown.setValue(newV);
+                } else if (newV.isEmpty()) {
+                    supernalDropdown.setValue("");
+                }
             }
         });
         
