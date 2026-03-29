@@ -38,7 +38,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javafx.application.Platform;
 import javafx.stage.FileChooser;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.Menu;
@@ -122,7 +121,7 @@ public class BuilderUI extends BorderPane {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Vibethema Save File", "*.vbtm"));
         // Default filename based on character name if present
         if (data.nameProperty().get() != null && !data.nameProperty().get().isEmpty()) {
-            fileChooser.setInitialFileName(data.nameProperty().get() + ".vbtm");
+            fileChooser.setInitialFileName(data.nameProperty().get());
         }
         File file = fileChooser.showSaveDialog(getScene().getWindow());
         if (file != null) {
