@@ -1,8 +1,8 @@
-package com.exalted.builder.ui;
+package com.vibethema.ui;
 
-import com.exalted.builder.model.CharacterData;
-import com.exalted.builder.model.Charm;
-import com.exalted.builder.model.PurchasedCharm;
+import com.vibethema.model.CharacterData;
+import com.vibethema.model.Charm;
+import com.vibethema.model.PurchasedCharm;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import javafx.geometry.Insets;

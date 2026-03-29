@@ -1,7 +1,7 @@
-package com.exalted.builder;
+package com.vibethema;
 
-import com.exalted.builder.model.CharacterData;
-import com.exalted.builder.ui.BuilderUI;
+import com.vibethema.model.CharacterData;
+import com.vibethema.ui.BuilderUI;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -14,7 +14,8 @@ public class Main extends Application {
         Scene scene = new Scene(root, 1200, 800);
         scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
         
-        primaryStage.setTitle("Exalted 3 Builder");
+        primaryStage.setTitle("Vibethema");
+        primaryStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("/icon.png")));
         primaryStage.setScene(scene);
         primaryStage.show();
     }

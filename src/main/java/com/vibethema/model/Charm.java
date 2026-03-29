@@ -1,4 +1,4 @@
-package com.exalted.builder.model;
+package com.vibethema.model;
 
 import java.util.List;
 

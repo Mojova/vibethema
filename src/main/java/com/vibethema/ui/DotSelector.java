@@ -1,4 +1,4 @@
-package com.exalted.builder.ui;
+package com.vibethema.ui;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.geometry.Pos;

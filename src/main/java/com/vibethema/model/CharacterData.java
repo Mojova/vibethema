@@ -1,4 +1,4 @@
-package com.exalted.builder.model;
+package com.vibethema.model;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
