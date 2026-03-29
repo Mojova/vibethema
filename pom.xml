@@ -46,6 +46,9 @@
                 <version>0.0.8</version>
                 <configuration>
                     <mainClass>com.vibethema.Main</mainClass>
+                    <options>
+                        <option>-Dapple.awt.application.name=Vibethema</option>
+                    </options>
                 </configuration>
             </plugin>
         </plugins>

@@ -21,6 +21,7 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
+        System.setProperty("apple.awt.application.name", "Vibethema");
         launch(args);
     }
 }

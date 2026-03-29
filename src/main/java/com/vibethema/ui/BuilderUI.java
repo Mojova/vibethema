@@ -97,6 +97,7 @@ public class BuilderUI extends BorderPane {
     private VBox createTopSection() {
         VBox topContainer = new VBox();
         MenuBar menuBar = new MenuBar();
+        menuBar.setUseSystemMenuBar(true);
         
         Menu fileMenu = new Menu("File");
         
