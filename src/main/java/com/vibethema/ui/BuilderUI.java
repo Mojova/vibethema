@@ -38,6 +38,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javafx.application.Platform;
+import javafx.stage.FileChooser;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.KeyCombination;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.FileReader;
+import com.vibethema.model.CharacterSaveState;
+import com.google.gson.GsonBuilder;
+
 public class BuilderUI extends BorderPane {
     private CharacterData data;
     
@@ -58,7 +70,7 @@ public class BuilderUI extends BorderPane {
         this.data = data;
         getStyleClass().add("main-pane");
         
-        setTop(createHeader());
+        setTop(createTopSection());
         
         TabPane tabPane = new TabPane();
         tabPane.getStyleClass().add("tab-pane");
@@ -81,6 +93,63 @@ public class BuilderUI extends BorderPane {
         
         setupListeners();
         updateFooter();
+    }
+
+    private VBox createTopSection() {
+        VBox topContainer = new VBox();
+        MenuBar menuBar = new MenuBar();
+        
+        Menu fileMenu = new Menu("File");
+        
+        MenuItem saveItem = new MenuItem("Save Character");
+        saveItem.setAccelerator(KeyCombination.keyCombination("Shortcut+S"));
+        saveItem.setOnAction(e -> saveCharacter());
+        
+        MenuItem loadItem = new MenuItem("Load Character");
+        loadItem.setAccelerator(KeyCombination.keyCombination("Shortcut+O"));
+        loadItem.setOnAction(e -> loadCharacter());
+        
+        fileMenu.getItems().addAll(saveItem, loadItem);
+        menuBar.getMenus().add(fileMenu);
+        
+        topContainer.getChildren().addAll(menuBar, createHeader());
+        return topContainer;
+    }
+
+    private void saveCharacter() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Character");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Vibethema Save File", "*.vbtm"));
+        // Default filename based on character name if present
+        if (data.nameProperty().get() != null && !data.nameProperty().get().isEmpty()) {
+            fileChooser.setInitialFileName(data.nameProperty().get() + ".vbtm");
+        }
+        File file = fileChooser.showSaveDialog(getScene().getWindow());
+        if (file != null) {
+            try (FileWriter writer = new FileWriter(file)) {
+                CharacterSaveState state = data.exportState();
+                new GsonBuilder().setPrettyPrinting().create().toJson(state, writer);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+    
+    private void loadCharacter() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Load Character");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Vibethema Save File", "*.vbtm"));
+        File file = fileChooser.showOpenDialog(getScene().getWindow());
+        if (file != null) {
+            try (FileReader reader = new FileReader(file)) {
+                CharacterSaveState state = new Gson().fromJson(reader, CharacterSaveState.class);
+                if (state != null) {
+                    data.importState(state);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
     private VBox createHeader() {

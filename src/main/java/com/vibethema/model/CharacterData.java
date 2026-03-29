@@ -209,6 +209,66 @@ public class CharacterData {
             }
         }
         
+        
         return bp;
+    }
+    
+    public CharacterSaveState exportState() {
+        CharacterSaveState state = new CharacterSaveState();
+        state.name = this.name.get();
+        state.caste = this.caste.get() != null ? this.caste.get().name() : "NONE";
+        state.supernalAbility = this.supernalAbility.get();
+        state.willpower = this.willpower.get();
+        state.essence = this.essence.get();
+        
+        state.attributes = new HashMap<>();
+        for (String attr : ATTRIBUTES) state.attributes.put(attr, attributes.get(attr).get());
+        
+        state.abilities = new HashMap<>();
+        state.casteAbilities = new ArrayList<>();
+        state.favoredAbilities = new ArrayList<>();
+        
+        for (String abil : ABILITIES) {
+            state.abilities.put(abil, abilities.get(abil).get());
+            if (casteAbilities.get(abil).get()) state.casteAbilities.add(abil);
+            if (favoredAbilities.get(abil).get()) state.favoredAbilities.add(abil);
+        }
+        
+        state.unlockedCharms = new ArrayList<>(unlockedCharms);
+        return state;
+    }
+
+    public void importState(CharacterSaveState state) {
+        if (state == null) return;
+        this.name.set(state.name != null ? state.name : "");
+        try {
+            this.caste.set(Caste.valueOf(state.caste != null ? state.caste : "NONE"));
+        } catch (Exception e) {
+            this.caste.set(Caste.NONE);
+        }
+        
+        this.willpower.set(state.willpower > 0 ? state.willpower : 5);
+        this.essence.set(state.essence > 0 ? state.essence : 1);
+        
+        if (state.attributes != null) {
+            for (String attr : ATTRIBUTES) {
+                attributes.get(attr).set(state.attributes.getOrDefault(attr, 1));
+            }
+        }
+        
+        if (state.abilities != null) {
+            for (String abil : ABILITIES) {
+                abilities.get(abil).set(state.abilities.getOrDefault(abil, 0));
+                casteAbilities.get(abil).set(state.casteAbilities != null && state.casteAbilities.contains(abil));
+                favoredAbilities.get(abil).set(state.favoredAbilities != null && state.favoredAbilities.contains(abil));
+            }
+        }
+        
+        this.supernalAbility.set(state.supernalAbility != null ? state.supernalAbility : "");
+
+        unlockedCharms.clear();
+        if (state.unlockedCharms != null) {
+            unlockedCharms.addAll(state.unlockedCharms);
+        }
     }
 }
