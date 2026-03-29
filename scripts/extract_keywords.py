@@ -23,6 +23,8 @@ def clean_text(text):
     text = re.sub(r'\nEX3\n', '\n', text)
     text = re.sub(r'\nCHARMS\n', '\n', text)
     text = re.sub(r'\nCHAPTER \d+\n', '\n', text)
+    # Remove non-printable characters like \u0007
+    text = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', '', text)
     
     lines = text.strip().split('\n')
     cleaned_lines = []
@@ -71,9 +73,9 @@ def extract_keywords(pdf_path):
     
     output_keywords = []
     
-    # regex matches bullet point, whitespace, word/keyword, and then colon (example: •  Mute: description)
-    # Using re.split with a capturing group to keep the delimiters (keyword names)
-    keyword_block_pattern = r'•\s+([A-Z][A-Za-z0-9-]+):'
+    # regex matches bullet point, any amount of non-uppercase characters (tabs/weird chars),
+    # and then a keyword from our known list, followed by a colon.
+    keyword_block_pattern = r'•[^A-Z]*?(' + '|'.join(re.escape(k) for k in KEYWORDS) + r'):'
     
     segments = re.split(keyword_block_pattern, text)
     # segments[0] is preamble before any bullet
