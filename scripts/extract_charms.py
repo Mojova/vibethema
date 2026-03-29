@@ -44,17 +44,25 @@ def clean_description(text):
             continue
         
         if current_para:
-            # If the current line doesn't start with a capital or follows a period,
-            # it's likely a continuation.
-            # Using a simpler heuristic: just merge lines unless they are very short or the previous ends in "."
-            current_para += " " + line
+            prev_content = current_para.strip()
+            prev_char = prev_content[-1] if prev_content else ""
+            
+            # Heuristics for when to NOT merge
+            is_bullet = line.startswith('•') or line.startswith('- ') or line.startswith('* ')
+            is_continuation = line[0].islower() or prev_char == ','
+            
+            if is_bullet or (not is_continuation and prev_char in ('.', '!', '?', ':', ';')):
+                cleaned_lines.append(current_para)
+                current_para = line
+            else:
+                current_para += " " + line
         else:
             current_para = line
             
     if current_para:
         cleaned_lines.append(current_para)
         
-    return "\n\n".join(cleaned_lines)
+    return "\n".join(cleaned_lines)
 
 def extract_charms(pdf_path):
     print(f"Dumping PDF to text from {pdf_path}...")
