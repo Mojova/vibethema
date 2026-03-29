@@ -415,7 +415,6 @@ public class BuilderUI extends BorderPane {
         
         charmCanvas = new Pane();
         ScrollPane charmScroll = new ScrollPane(charmCanvas);
-        charmScroll.setFitToWidth(true);
         charmScroll.setPannable(true);
         charmScroll.getStyleClass().add("scroll-pane-custom");
         VBox.setVgrow(charmScroll, Priority.ALWAYS);
@@ -663,6 +662,7 @@ public class BuilderUI extends BorderPane {
         // Resize actual canvas bounds to match contents
         double minHeight = (maxDepth + 1) * (boxHeight + gapY) + 40;
         charmCanvas.setPrefSize(virtualCanvasWidth, minHeight);
+        charmCanvas.setMinSize(virtualCanvasWidth, minHeight);
         
         // Apply immediate styling
         updateWebNodeStyles();
