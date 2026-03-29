@@ -2,6 +2,7 @@ package com.exalted.builder.ui;
 
 import com.exalted.builder.model.CharacterData;
 import com.exalted.builder.model.Charm;
+import com.exalted.builder.model.PurchasedCharm;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import javafx.geometry.Insets;
@@ -150,7 +151,7 @@ public class BuilderUI extends BorderPane {
             updateFooter();
         });
         
-        data.getUnlockedCharms().addListener((javafx.collections.ListChangeListener.Change<? extends String> c) -> {
+        data.getUnlockedCharms().addListener((javafx.collections.ListChangeListener.Change<? extends PurchasedCharm> c) -> {
             updateFooter();
             updateWebNodeStyles();
         });
@@ -243,6 +244,26 @@ public class BuilderUI extends BorderPane {
                     abLabel.getStyleClass().remove("caste-option");
                 }
             });
+            
+            Runnable updateExcellency = () -> {
+                if (data.hasExcellency(ability)) {
+                    abLabel.setText(ability + " [E]");
+                    if (!abLabel.getStyleClass().contains("excellency-label")) {
+                        abLabel.getStyleClass().add("excellency-label");
+                    }
+                } else {
+                    abLabel.setText(ability);
+                    abLabel.getStyleClass().remove("excellency-label");
+                }
+            };
+            
+            data.getAbility(ability).addListener((obs, oldV, newV) -> updateExcellency.run());
+            data.getCasteAbility(ability).addListener((obs, oldV, newV) -> updateExcellency.run());
+            data.getFavoredAbility(ability).addListener((obs, oldV, newV) -> updateExcellency.run());
+            data.getUnlockedCharms().addListener((javafx.collections.ListChangeListener.Change<? extends PurchasedCharm> change) -> {
+                updateExcellency.run();
+            });
+            updateExcellency.run();
             
             DotSelector selector = new DotSelector(data.getAbility(ability), 0);
             rowBox.getChildren().addAll(casteBox, favoredBox, abLabel, selector);
@@ -591,8 +612,6 @@ public class BuilderUI extends BorderPane {
                     
                     toggleBtn.setVisible(true);
                     updateSidebarButton(c, toggleBtn);
-                    
-                    // Note: Action handler attached once during node creation
                 });
             }
         }
@@ -602,10 +621,10 @@ public class BuilderUI extends BorderPane {
             String selectedName = detailTitle.getText();
             Charm c = charms.stream().filter(ch -> ch.getName().equals(selectedName)).findFirst().orElse(null);
             if (c != null) {
-                if (data.getUnlockedCharms().contains(c.getName())) {
-                    data.getUnlockedCharms().remove(c.getName());
+                if (data.hasCharm(c.getName())) {
+                    data.removeCharm(c.getName());
                 } else if (c.isEligible(data)) {
-                    data.getUnlockedCharms().add(c.getName());
+                    data.addCharm(new PurchasedCharm(c.getName(), c.getAbility()));
                 }
                 updateSidebarButton(c, toggleBtn);
                 updateWebNodeStyles();
@@ -647,7 +666,7 @@ public class BuilderUI extends BorderPane {
     }
     
     private void updateSidebarButton(Charm c, Button btn) {
-        if (data.getUnlockedCharms().contains(c.getName())) {
+        if (data.hasCharm(c.getName())) {
             btn.setText("Refund Charm");
             btn.setDisable(false);
             btn.setStyle("-fx-base: #a03030;"); 
@@ -667,7 +686,7 @@ public class BuilderUI extends BorderPane {
             VBox box = charmNodeMap.get(c.getName());
             if (box != null) {
                 box.getStyleClass().removeAll("charm-node-unselected", "charm-node-selected", "charm-node-ineligible");
-                if (data.getUnlockedCharms().contains(c.getName())) {
+                if (data.hasCharm(c.getName())) {
                     box.getStyleClass().add("charm-node-selected");
                 } else if (c.isEligible(data)) {
                     box.getStyleClass().add("charm-node-unselected");

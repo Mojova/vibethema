@@ -35,7 +35,7 @@ public class CharacterData {
     private IntegerProperty essence = new SimpleIntegerProperty(1);
     private IntegerProperty willpower = new SimpleIntegerProperty(5);
     
-    private ObservableList<String> unlockedCharms = FXCollections.observableArrayList();
+    private ObservableList<PurchasedCharm> unlockedCharms = FXCollections.observableArrayList();
     
     public static final List<String> PHYSICAL_ATTRIBUTES = Arrays.asList("Strength", "Dexterity", "Stamina");
     public static final List<String> SOCIAL_ATTRIBUTES = Arrays.asList("Charisma", "Manipulation", "Appearance");
@@ -85,8 +85,29 @@ public class CharacterData {
     
     public IntegerProperty essenceProperty() { return essence; }
     public IntegerProperty willpowerProperty() { return willpower; }
+    public ObservableList<PurchasedCharm> getUnlockedCharms() { return unlockedCharms; }
     
-    public ObservableList<String> getUnlockedCharms() { return unlockedCharms; }
+    public boolean hasCharm(String name) {
+        return unlockedCharms.stream().anyMatch(c -> c.name().equals(name));
+    }
+    
+    public void addCharm(PurchasedCharm charm) {
+        if (!hasCharm(charm.name())) {
+            unlockedCharms.add(charm);
+        }
+    }
+    
+    public void removeCharm(String name) {
+        unlockedCharms.removeIf(c -> c.name().equals(name));
+    }
+
+    public boolean hasExcellency(String ability) {
+        if (casteAbilities.containsKey(ability) && favoredAbilities.containsKey(ability)) {
+            boolean isFavored = casteAbilities.get(ability).get() || favoredAbilities.get(ability).get();
+            if (isFavored && abilities.get(ability).get() > 0) return true;
+        }
+        return unlockedCharms.stream().anyMatch(c -> c.ability() != null && c.ability().equals(ability));
+    }
     
     public int getPersonalMotes() {
         return (essence.get() * 3) + 10;
@@ -165,12 +186,25 @@ public class CharacterData {
         if (willpower.get() > 5) {
             bp += (willpower.get() - 5) * 2;
         }
+        // Charms optimal spending
+        List<Integer> charmCosts = new ArrayList<>();
+        for (PurchasedCharm pc : unlockedCharms) {
+            String ability = pc.ability();
+            boolean isFavored = false;
+            if (casteAbilities.containsKey(ability) && favoredAbilities.containsKey(ability)) {
+                isFavored = casteAbilities.get(ability).get() || favoredAbilities.get(ability).get();
+            }
+            charmCosts.add(isFavored ? 4 : 5);
+        }
         
-        // Charms
-        for (String charmName : unlockedCharms) {
-            boolean isCaste = casteAbilities.get("Archery").get();
-            boolean isFavored = favoredAbilities.get("Archery").get();
-            bp += (isCaste || isFavored) ? 4 : 5;
+        Collections.sort(charmCosts, Collections.reverseOrder());
+        int freeCharmsLeft = 15;
+        for (int cost : charmCosts) {
+            if (freeCharmsLeft > 0) {
+                freeCharmsLeft--;
+            } else {
+                bp += cost;
+            }
         }
         
         return bp;

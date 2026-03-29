@@ -34,7 +34,7 @@ public class Charm {
         if (data.getAbility(ability).get() < minAbility) return false;
         if (prerequisites != null) {
             for (String req : prerequisites) {
-                if (!data.getUnlockedCharms().contains(req)) return false;
+                if (!data.hasCharm(req)) return false;
             }
         }
         return true;

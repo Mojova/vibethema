@@ -276,3 +276,9 @@
 .charm-node-selected .charm-node-title {
     -fx-text-fill: #d4af37;
 }
+
+/* Excellency indicator in stats grid */
+.excellency-label {
+    -fx-text-fill: #d4af37;
+    -fx-font-weight: bold;
+}
