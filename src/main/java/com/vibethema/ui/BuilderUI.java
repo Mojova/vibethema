@@ -51,6 +51,7 @@ import com.google.gson.GsonBuilder;
 
 public class BuilderUI extends BorderPane {
     private CharacterData data;
+    private File currentFile = null;
     
     private Label physicalLabel = new Label();
     private Label socialLabel = new Label();
@@ -101,15 +102,19 @@ public class BuilderUI extends BorderPane {
         
         Menu fileMenu = new Menu("File");
         
-        MenuItem saveItem = new MenuItem("Save Character");
+        MenuItem saveItem = new MenuItem("Save");
         saveItem.setAccelerator(KeyCombination.keyCombination("Shortcut+S"));
         saveItem.setOnAction(e -> saveCharacter());
+        
+        MenuItem saveAsItem = new MenuItem("Save As...");
+        saveAsItem.setAccelerator(KeyCombination.keyCombination("Shortcut+Shift+S"));
+        saveAsItem.setOnAction(e -> saveCharacterAs());
         
         MenuItem loadItem = new MenuItem("Load Character");
         loadItem.setAccelerator(KeyCombination.keyCombination("Shortcut+O"));
         loadItem.setOnAction(e -> loadCharacter());
         
-        fileMenu.getItems().addAll(saveItem, loadItem);
+        fileMenu.getItems().addAll(saveItem, saveAsItem, loadItem);
         menuBar.getMenus().add(fileMenu);
         
         topContainer.getChildren().addAll(menuBar, createHeader());
@@ -117,8 +122,16 @@ public class BuilderUI extends BorderPane {
     }
 
     private void saveCharacter() {
+        if (currentFile != null) {
+            performSave(currentFile);
+        } else {
+            saveCharacterAs();
+        }
+    }
+
+    private void saveCharacterAs() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save Character");
+        fileChooser.setTitle("Save Character As");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Vibethema Save File", "*.vbtm"));
         // Default filename based on character name if present
         if (data.nameProperty().get() != null && !data.nameProperty().get().isEmpty()) {
@@ -126,12 +139,18 @@ public class BuilderUI extends BorderPane {
         }
         File file = fileChooser.showSaveDialog(getScene().getWindow());
         if (file != null) {
-            try (FileWriter writer = new FileWriter(file)) {
-                CharacterSaveState state = data.exportState();
-                new GsonBuilder().setPrettyPrinting().create().toJson(state, writer);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            currentFile = file;
+            performSave(file);
+            updateWindowTitle();
+        }
+    }
+
+    private void performSave(File file) {
+        try (FileWriter writer = new FileWriter(file)) {
+            CharacterSaveState state = data.exportState();
+            new GsonBuilder().setPrettyPrinting().create().toJson(state, writer);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
     
@@ -145,10 +164,22 @@ public class BuilderUI extends BorderPane {
                 CharacterSaveState state = new Gson().fromJson(reader, CharacterSaveState.class);
                 if (state != null) {
                     data.importState(state);
+                    currentFile = file;
+                    updateWindowTitle();
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+        }
+    }
+
+    private void updateWindowTitle() {
+        if (getScene() != null && getScene().getWindow() instanceof javafx.stage.Stage stage) {
+            String title = "Vibethema";
+            if (currentFile != null) {
+                title += " - " + currentFile.getName();
+            }
+            stage.setTitle(title);
         }
     }
 
