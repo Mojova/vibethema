@@ -47,6 +47,7 @@ public class BuilderUI extends BorderPane {
     private Label abilitiesLabel = new Label();
     private Label casteLabel = new Label();
     private Label favoredLabel = new Label();
+    private Label charmsLabel = new Label();
     private Label bpLabel = new Label();
     
     private Pane charmCanvas;
@@ -123,7 +124,7 @@ public class BuilderUI extends BorderPane {
         );
         
         row2.getChildren().addAll(
-            new Label("Pools:"), abilitiesLabel,
+            new Label("Pools:"), abilitiesLabel, charmsLabel,
             new Region() {{ HBox.setHgrow(this, Priority.ALWAYS); }},
             bpLabel
         );
@@ -166,12 +167,14 @@ public class BuilderUI extends BorderPane {
         
         long casteCount = CharacterData.ABILITIES.stream().filter(a -> data.getCasteAbility(a).get()).count();
         long favoredCount = CharacterData.ABILITIES.stream().filter(a -> data.getFavoredAbility(a).get()).count();
+        int charmsCount = data.getUnlockedCharms().size();
         
         physicalLabel.setText("Phys: " + phys);
         socialLabel.setText("Soc: " + soc);
         mentalLabel.setText("Ment: " + ment);
         
         abilitiesLabel.setText("Abils: " + abils + "/28");
+        charmsLabel.setText("Charms: " + charmsCount + "/15");
         casteLabel.setText("Caste: " + casteCount + "/5");
         favoredLabel.setText("Favored: " + favoredCount + "/5");
         bpLabel.setText("Bonus Points: " + bp + "/15");
