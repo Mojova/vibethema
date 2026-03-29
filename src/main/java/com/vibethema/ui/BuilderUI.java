@@ -102,7 +102,39 @@ public class BuilderUI extends BorderPane {
         casteBox.setValue(CharacterData.Caste.NONE);
         data.casteProperty().bindBidirectional(casteBox.valueProperty());
         
-        basicInfo.getChildren().addAll(new Label("Name:"), nameField, new Label("Caste:"), casteBox);
+        ComboBox<String> supernalDropdown = new ComboBox<>();
+        supernalDropdown.setPrefWidth(120);
+        
+        Runnable updateSupernalDropdown = () -> {
+            String current = data.supernalAbilityProperty().get();
+            List<String> options = new ArrayList<>();
+            options.add(""); // None
+            for (String abil : CharacterData.ABILITIES) {
+                if (data.getCasteAbility(abil).get()) {
+                    options.add(abil);
+                }
+            }
+            supernalDropdown.getItems().setAll(options);
+            if (options.contains(current)) {
+                supernalDropdown.setValue(current);
+            } else {
+                supernalDropdown.setValue("");
+                data.supernalAbilityProperty().set("");
+            }
+        };
+        
+        supernalDropdown.valueProperty().addListener((obs, oldV, newV) -> {
+            if (newV != null && supernalDropdown.getItems().contains(newV)) {
+                data.supernalAbilityProperty().set(newV);
+            }
+        });
+        
+        for (String abil : CharacterData.ABILITIES) {
+            data.getCasteAbility(abil).addListener((obs, oldV, newV) -> updateSupernalDropdown.run());
+        }
+        updateSupernalDropdown.run();
+        
+        basicInfo.getChildren().addAll(new Label("Name:"), nameField, new Label("Caste:"), casteBox, new Label("Supernal:"), supernalDropdown);
         
         header.getChildren().addAll(title, basicInfo);
         return header;
@@ -208,7 +240,7 @@ public class BuilderUI extends BorderPane {
         attributesSection.getChildren().addAll(attrTitle, attrColumns);
         
         VBox abilitiesSection = new VBox(10);
-        Label abilTitle = new Label("Abilities (C=Caste, F=Favored, S=Supernal)");
+        Label abilTitle = new Label("Abilities (C=Caste, F=Favored)");
         abilTitle.getStyleClass().add("section-title");
         
         GridPane abilGrid = new GridPane();
@@ -234,32 +266,9 @@ public class BuilderUI extends BorderPane {
             favoredBox.selectedProperty().bindBidirectional(data.getFavoredAbility(ability));
             favoredBox.disableProperty().bind(data.getCasteAbility(ability));
 
-            CheckBox supernalBox = new CheckBox("S");
-            supernalBox.getStyleClass().add("caste-checkbox"); // Reused for consistency
-            supernalBox.disableProperty().bind(data.getCasteAbility(ability).not());
-            
-            Runnable updateSupernal = () -> {
-                supernalBox.setSelected(data.supernalAbilityProperty().get().equals(ability));
-            };
-            data.supernalAbilityProperty().addListener((obs, oldV, newV) -> updateSupernal.run());
-            
-            supernalBox.setOnAction(e -> {
-                if (supernalBox.isSelected()) {
-                    data.supernalAbilityProperty().set(ability);
-                } else {
-                    if (data.supernalAbilityProperty().get().equals(ability)) {
-                        data.supernalAbilityProperty().set("");
-                    }
-                }
-            });
-
             data.getCasteAbility(ability).addListener((obs, oldV, newV) -> {
                 if (newV) {
                     favoredBox.setSelected(false);
-                } else {
-                    if (data.supernalAbilityProperty().get().equals(ability)) {
-                        data.supernalAbilityProperty().set("");
-                    }
                 }
             });
             
@@ -299,7 +308,7 @@ public class BuilderUI extends BorderPane {
             updateExcellency.run();
             
             DotSelector selector = new DotSelector(data.getAbility(ability), 0);
-            rowBox.getChildren().addAll(casteBox, favoredBox, supernalBox, abLabel, selector);
+            rowBox.getChildren().addAll(casteBox, favoredBox, abLabel, selector);
             
             abilGrid.add(rowBox, col, row);
             row++;
