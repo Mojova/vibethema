@@ -29,14 +29,24 @@ To run or deeply modify the platform, assure your local environment holds:
    cd exalted
    ```
 
-2. **Run the Application**:
+
+2. Extract charms
+
+Charm data is not included in the repository for copyright reasons, so you need to extract it from your own Exalted 3e Core rulebook. Splat books are not supported. You need to have pdftotext installed.
+
+```bash
+python3 scripts/extract_charms.py <path_to_pdf>
+```
+
+
+3. **Run the Application**:
    Vibethema natively relies on Maven plugins to run its JavaFX runtime smoothly across environments (especially bridging complex UI modules seamlessly on distinct macOS, Linux, or Windows setups). 
    Simply execute the following target at the root directory:
    ```bash
    mvn clean javafx:run
    ```
 
-3. **Packaging a Standalone JAR (Optional)**:
+4. **Packaging a Standalone JAR (Optional)**:
    If you wish to compile an independent payload usable outside explicit Maven contexts:
    ```bash
    mvn clean compile shade:shade
