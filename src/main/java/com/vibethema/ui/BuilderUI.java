@@ -93,6 +93,8 @@ public class BuilderUI extends BorderPane {
         
         setupListeners();
         updateFooter();
+        
+        data.dirtyProperty().addListener((obs, oldV, newV) -> updateWindowTitle());
     }
 
     private VBox createTopSection() {
@@ -149,6 +151,8 @@ public class BuilderUI extends BorderPane {
         try (FileWriter writer = new FileWriter(file)) {
             CharacterSaveState state = data.exportState();
             new GsonBuilder().setPrettyPrinting().create().toJson(state, writer);
+            data.setDirty(false);
+            updateWindowTitle();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -178,6 +182,9 @@ public class BuilderUI extends BorderPane {
             String title = "Vibethema";
             if (currentFile != null) {
                 title += " - " + currentFile.getName();
+            }
+            if (data.isDirty()) {
+                title += "*";
             }
             stage.setTitle(title);
         }

@@ -38,6 +38,9 @@ public class CharacterData {
     
     private ObservableList<PurchasedCharm> unlockedCharms = FXCollections.observableArrayList();
     
+    private BooleanProperty dirty = new SimpleBooleanProperty(false);
+    private boolean isImporting = false;
+
     public static final List<String> PHYSICAL_ATTRIBUTES = Arrays.asList("Strength", "Dexterity", "Stamina");
     public static final List<String> SOCIAL_ATTRIBUTES = Arrays.asList("Charisma", "Manipulation", "Appearance");
     public static final List<String> MENTAL_ATTRIBUTES = Arrays.asList("Perception", "Intelligence", "Wits");
@@ -69,13 +72,36 @@ public class CharacterData {
     public CharacterData() {
         for (String attr : ATTRIBUTES) {
             attributes.put(attr, new SimpleIntegerProperty(1)); // Attributes start at 1
+            attributes.get(attr).addListener((obs, oldV, newV) -> markDirty());
         }
         for (String ability : ABILITIES) {
             abilities.put(ability, new SimpleIntegerProperty(0)); // Abilities start at 0
+            abilities.get(ability).addListener((obs, oldV, newV) -> markDirty());
+            
             casteAbilities.put(ability, new SimpleBooleanProperty(false));
+            casteAbilities.get(ability).addListener((obs, oldV, newV) -> markDirty());
+            
             favoredAbilities.put(ability, new SimpleBooleanProperty(false));
+            favoredAbilities.get(ability).addListener((obs, oldV, newV) -> markDirty());
+        }
+        
+        name.addListener((obs, oldV, newV) -> markDirty());
+        caste.addListener((obs, oldV, newV) -> markDirty());
+        supernalAbility.addListener((obs, oldV, newV) -> markDirty());
+        essence.addListener((obs, oldV, newV) -> markDirty());
+        willpower.addListener((obs, oldV, newV) -> markDirty());
+        unlockedCharms.addListener((javafx.collections.ListChangeListener.Change<? extends PurchasedCharm> c) -> markDirty());
+    }
+
+    private void markDirty() {
+        if (!isImporting) {
+            dirty.set(true);
         }
     }
+
+    public BooleanProperty dirtyProperty() { return dirty; }
+    public boolean isDirty() { return dirty.get(); }
+    public void setDirty(boolean dirty) { this.dirty.set(dirty); }
 
     public StringProperty nameProperty() { return name; }
     public ObjectProperty<Caste> casteProperty() { return caste; }
@@ -240,35 +266,41 @@ public class CharacterData {
 
     public void importState(CharacterSaveState state) {
         if (state == null) return;
-        this.name.set(state.name != null ? state.name : "");
+        isImporting = true;
         try {
-            this.caste.set(Caste.valueOf(state.caste != null ? state.caste : "NONE"));
-        } catch (Exception e) {
-            this.caste.set(Caste.NONE);
-        }
-        
-        this.willpower.set(state.willpower > 0 ? state.willpower : 5);
-        this.essence.set(state.essence > 0 ? state.essence : 1);
-        
-        if (state.attributes != null) {
-            for (String attr : ATTRIBUTES) {
-                attributes.get(attr).set(state.attributes.getOrDefault(attr, 1));
+            this.name.set(state.name != null ? state.name : "");
+            try {
+                this.caste.set(Caste.valueOf(state.caste != null ? state.caste : "NONE"));
+            } catch (Exception e) {
+                this.caste.set(Caste.NONE);
             }
-        }
-        
-        if (state.abilities != null) {
-            for (String abil : ABILITIES) {
-                abilities.get(abil).set(state.abilities.getOrDefault(abil, 0));
-                casteAbilities.get(abil).set(state.casteAbilities != null && state.casteAbilities.contains(abil));
-                favoredAbilities.get(abil).set(state.favoredAbilities != null && state.favoredAbilities.contains(abil));
+            
+            this.willpower.set(state.willpower > 0 ? state.willpower : 5);
+            this.essence.set(state.essence > 0 ? state.essence : 1);
+            
+            if (state.attributes != null) {
+                for (String attr : ATTRIBUTES) {
+                    attributes.get(attr).set(state.attributes.getOrDefault(attr, 1));
+                }
             }
-        }
-        
-        this.supernalAbility.set(state.supernalAbility != null ? state.supernalAbility : "");
+            
+            if (state.abilities != null) {
+                for (String abil : ABILITIES) {
+                    abilities.get(abil).set(state.abilities.getOrDefault(abil, 0));
+                    casteAbilities.get(abil).set(state.casteAbilities != null && state.casteAbilities.contains(abil));
+                    favoredAbilities.get(abil).set(state.favoredAbilities != null && state.favoredAbilities.contains(abil));
+                }
+            }
+            
+            this.supernalAbility.set(state.supernalAbility != null ? state.supernalAbility : "");
 
-        unlockedCharms.clear();
-        if (state.unlockedCharms != null) {
-            unlockedCharms.addAll(state.unlockedCharms);
+            unlockedCharms.clear();
+            if (state.unlockedCharms != null) {
+                unlockedCharms.addAll(state.unlockedCharms);
+            }
+            dirty.set(false);
+        } finally {
+            isImporting = false;
         }
     }
 }
