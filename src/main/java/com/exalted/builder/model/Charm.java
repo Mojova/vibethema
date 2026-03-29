@@ -32,8 +32,10 @@ public class Charm {
     public boolean isEligible(CharacterData data) {
         if (data.essenceProperty().get() < minEssence) return false;
         if (data.getAbility(ability).get() < minAbility) return false;
-        for (String req : prerequisites) {
-            if (!data.getUnlockedCharms().contains(req)) return false;
+        if (prerequisites != null) {
+            for (String req : prerequisites) {
+                if (!data.getUnlockedCharms().contains(req)) return false;
+            }
         }
         return true;
     }

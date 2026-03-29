@@ -174,6 +174,8 @@ public class BuilderUI extends BorderPane {
         casteLabel.setText("Caste: " + casteCount + "/5");
         favoredLabel.setText("Favored: " + favoredCount + "/5");
         bpLabel.setText("Bonus Points: " + bp + "/15");
+        
+        updateWebNodeStyles();
     }
 
     private VBox createContent() {
