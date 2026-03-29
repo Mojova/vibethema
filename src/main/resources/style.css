@@ -197,6 +197,7 @@
     -fx-font-size: 15px;
     -fx-text-fill: #e0e0e0;
     -fx-line-spacing: 0.2em;
+    -fx-padding: 10px;
 }
 
 .charm-btn {
