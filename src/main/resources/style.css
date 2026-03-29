@@ -283,3 +283,18 @@
     -fx-text-fill: #d4af37;
     -fx-font-weight: bold;
 }
+
+.keyword-label {
+    -fx-padding: 0 2px;
+}
+
+.keyword-with-def {
+    -fx-border-color: #d4af37;
+    -fx-border-width: 0 0 1px 0;
+    -fx-border-style: dotted;
+}
+
+.keyword-with-def:hover {
+    -fx-text-fill: #f9f6e6;
+    -fx-background-color: rgba(212, 175, 55, 0.1);
+}

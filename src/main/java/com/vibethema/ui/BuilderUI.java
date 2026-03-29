@@ -21,6 +21,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Pane;
@@ -48,6 +50,7 @@ import java.io.FileWriter;
 import java.io.FileReader;
 import com.vibethema.model.CharacterSaveState;
 import com.google.gson.GsonBuilder;
+import com.vibethema.model.Keyword;
 
 public class BuilderUI extends BorderPane {
     private CharacterData data;
@@ -65,10 +68,12 @@ public class BuilderUI extends BorderPane {
     private Pane charmCanvas;
     private Map<String, VBox> charmNodeMap = new HashMap<>();
     private List<Charm> currentAbilityCharms = new ArrayList<>();
+    private Map<String, String> keywordDefs = new HashMap<>();
 
     public BuilderUI(CharacterData data) {
         this.data = data;
         getStyleClass().add("main-pane");
+        loadKeywords();
         
         setTop(createTopSection());
         
@@ -630,12 +635,12 @@ public class BuilderUI extends BorderPane {
         Label costLabel = new Label();
         Label typeLabel = new Label();
         Label durationLabel = new Label();
-        Label kwLabel = new Label();
+        FlowPane kwFlow = new FlowPane(3, 3);
         
         costLabel.getStyleClass().add("sidebar-stat");
         typeLabel.getStyleClass().add("sidebar-stat");
         durationLabel.getStyleClass().add("sidebar-stat");
-        kwLabel.getStyleClass().add("sidebar-stat");
+        kwFlow.setPrefWrapLength(200);
         
         statsGrid.add(new Label("Cost:"), 0, 0);
         statsGrid.add(costLabel, 1, 0);
@@ -644,7 +649,7 @@ public class BuilderUI extends BorderPane {
         statsGrid.add(new Label("Duration:"), 0, 2);
         statsGrid.add(durationLabel, 1, 2);
         statsGrid.add(new Label("Keywords:"), 0, 3);
-        statsGrid.add(kwLabel, 1, 3);
+        statsGrid.add(kwFlow, 1, 3);
         
         for(javafx.scene.Node n : statsGrid.getChildren()) {
             if (GridPane.getColumnIndex(n) == 0 && n instanceof Label) {
@@ -688,7 +693,7 @@ public class BuilderUI extends BorderPane {
                 e.printStackTrace();
             }
             
-            drawCharmWeb(currentAbilityCharms, title, abilityCombo.getValue(), detailTitle, detailReqs, toggleBtn, costLabel, typeLabel, durationLabel, kwLabel, descriptionLabel);
+            drawCharmWeb(currentAbilityCharms, title, abilityCombo.getValue(), detailTitle, detailReqs, toggleBtn, costLabel, typeLabel, durationLabel, kwFlow, descriptionLabel);
             title.setText(abilityCombo.getValue() + " Charms Web (" + currentAbilityCharms.size() + ")");
             
             detailTitle.setText("No Charm Selected");
@@ -696,7 +701,7 @@ public class BuilderUI extends BorderPane {
             costLabel.setText("");
             typeLabel.setText("");
             durationLabel.setText("");
-            kwLabel.setText("");
+            kwFlow.getChildren().clear();
             descriptionLabel.setText("");
             toggleBtn.setVisible(false);
         };
@@ -712,7 +717,7 @@ public class BuilderUI extends BorderPane {
     private void drawCharmWeb(List<Charm> charms, Label titleLabel, String ability, 
                               Label detailTitle, Label detailReqs, Button toggleBtn, 
                               Label costLabel, Label typeLabel, Label durLabel, 
-                              Label kwLabel, Label descLabel) {
+                              FlowPane kwFlow, Label descLabel) {
         
         // Calculate Topological depth
         Map<String, Integer> charmDepth = new HashMap<>();
@@ -798,7 +803,7 @@ public class BuilderUI extends BorderPane {
                     costLabel.setText(c.getCost() != null ? c.getCost() : "");
                     typeLabel.setText(c.getType() != null ? c.getType() : "");
                     durLabel.setText(c.getDuration() != null ? c.getDuration() : "");
-                    kwLabel.setText(c.getKeywords() != null ? c.getKeywords() : "");
+                    updateKeywords(c.getKeywords(), kwFlow);
                     descLabel.setText(c.getFullText() != null ? c.getFullText() : "");
                     
                     toggleBtn.setVisible(true);
@@ -875,6 +880,58 @@ public class BuilderUI extends BorderPane {
             btn.setText("Requirements Not Met");
             btn.setDisable(true);
             btn.setStyle("-fx-base: #444444;"); 
+        }
+    }
+
+    private void loadKeywords() {
+        try (InputStream is = getClass().getResourceAsStream("/charms/keywords.json")) {
+            if (is != null) {
+                try (Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+                    Type type = new TypeToken<List<Keyword>>() {}.getType();
+                    List<Keyword> keywords = new Gson().fromJson(reader, type);
+                    if (keywords != null) {
+                        for (Keyword kw : keywords) {
+                            keywordDefs.put(kw.getName(), kw.getDescription());
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Could not load keywords: " + e.getMessage());
+        }
+    }
+
+    private void updateKeywords(String keywordsStr, FlowPane kwFlow) {
+        kwFlow.getChildren().clear();
+        if (keywordsStr == null || keywordsStr.isEmpty() || keywordsStr.equalsIgnoreCase("None")) {
+            return;
+        }
+        
+        String[] parts = keywordsStr.split(",");
+        for (int i = 0; i < parts.length; i++) {
+            String name = parts[i].trim();
+            if (name.isEmpty()) continue;
+            
+            Label label = new Label(name);
+            label.getStyleClass().add("sidebar-stat");
+            label.getStyleClass().add("keyword-label");
+            
+            String def = keywordDefs.get(name);
+            if (def != null) {
+                Tooltip tooltip = new Tooltip(def);
+                tooltip.setWrapText(true);
+                tooltip.setMaxWidth(300);
+                label.setTooltip(tooltip);
+                label.getStyleClass().add("keyword-with-def");
+            }
+            
+            kwFlow.getChildren().add(label);
+            
+            if (i < parts.length - 1) {
+                Label comma = new Label(", ");
+                comma.getStyleClass().add("sidebar-stat");
+                kwFlow.getChildren().add(comma);
+            }
         }
     }
 
