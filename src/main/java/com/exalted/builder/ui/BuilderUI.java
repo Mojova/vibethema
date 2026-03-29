@@ -516,7 +516,7 @@ public class BuilderUI extends BorderPane {
         loadCharms.run();
         
         splitPane.getItems().addAll(leftPane, rightPane);
-        splitPane.setDividerPositions(0.4);
+        splitPane.setDividerPositions(0.7);
         return splitPane;
     }
     

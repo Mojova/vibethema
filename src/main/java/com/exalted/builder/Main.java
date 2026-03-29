@@ -11,8 +11,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         CharacterData data = new CharacterData();
         BuilderUI root = new BuilderUI(data);
-        
-        Scene scene = new Scene(root, 900, 700);
+        Scene scene = new Scene(root, 1200, 800);
         scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
         
         primaryStage.setTitle("Exalted 3 Builder");
