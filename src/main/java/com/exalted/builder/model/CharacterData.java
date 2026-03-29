@@ -26,6 +26,7 @@ public class CharacterData {
 
     private StringProperty name = new SimpleStringProperty("");
     private ObjectProperty<Caste> caste = new SimpleObjectProperty<>(Caste.NONE);
+    private StringProperty supernalAbility = new SimpleStringProperty("");
 
     private ObservableMap<String, IntegerProperty> attributes = FXCollections.observableHashMap();
     private ObservableMap<String, IntegerProperty> abilities = FXCollections.observableHashMap();
@@ -78,6 +79,7 @@ public class CharacterData {
 
     public StringProperty nameProperty() { return name; }
     public ObjectProperty<Caste> casteProperty() { return caste; }
+    public StringProperty supernalAbilityProperty() { return supernalAbility; }
     public IntegerProperty getAttribute(String name) { return attributes.get(name); }
     public IntegerProperty getAbility(String name) { return abilities.get(name); }
     public BooleanProperty getCasteAbility(String name) { return casteAbilities.get(name); }

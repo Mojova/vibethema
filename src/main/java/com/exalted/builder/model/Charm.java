@@ -30,7 +30,12 @@ public class Charm {
     public String getFullText() { return fullText; }
 
     public boolean isEligible(CharacterData data) {
-        if (data.essenceProperty().get() < minEssence) return false;
+        int effectiveEssence = data.essenceProperty().get();
+        if (ability != null && ability.equals(data.supernalAbilityProperty().get())) {
+            effectiveEssence = 5;
+        }
+        
+        if (effectiveEssence < minEssence) return false;
         if (data.getAbility(ability).get() < minAbility) return false;
         if (prerequisites != null) {
             for (String req : prerequisites) {

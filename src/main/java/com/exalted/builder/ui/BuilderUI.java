@@ -148,8 +148,14 @@ public class BuilderUI extends BorderPane {
                 for (String abil : CharacterData.ABILITIES) {
                     data.getCasteAbility(abil).set(false);
                 }
+                data.supernalAbilityProperty().set("");
             }
             updateFooter();
+        });
+        
+        data.supernalAbilityProperty().addListener((obs, oldV, newV) -> {
+            updateFooter();
+            updateWebNodeStyles();
         });
         
         data.getUnlockedCharms().addListener((javafx.collections.ListChangeListener.Change<? extends PurchasedCharm> c) -> {
@@ -202,7 +208,7 @@ public class BuilderUI extends BorderPane {
         attributesSection.getChildren().addAll(attrTitle, attrColumns);
         
         VBox abilitiesSection = new VBox(10);
-        Label abilTitle = new Label("Abilities (C=Caste, F=Favored)");
+        Label abilTitle = new Label("Abilities (C=Caste, F=Favored, S=Supernal)");
         abilTitle.getStyleClass().add("section-title");
         
         GridPane abilGrid = new GridPane();
@@ -228,9 +234,32 @@ public class BuilderUI extends BorderPane {
             favoredBox.selectedProperty().bindBidirectional(data.getFavoredAbility(ability));
             favoredBox.disableProperty().bind(data.getCasteAbility(ability));
 
+            CheckBox supernalBox = new CheckBox("S");
+            supernalBox.getStyleClass().add("caste-checkbox"); // Reused for consistency
+            supernalBox.disableProperty().bind(data.getCasteAbility(ability).not());
+            
+            Runnable updateSupernal = () -> {
+                supernalBox.setSelected(data.supernalAbilityProperty().get().equals(ability));
+            };
+            data.supernalAbilityProperty().addListener((obs, oldV, newV) -> updateSupernal.run());
+            
+            supernalBox.setOnAction(e -> {
+                if (supernalBox.isSelected()) {
+                    data.supernalAbilityProperty().set(ability);
+                } else {
+                    if (data.supernalAbilityProperty().get().equals(ability)) {
+                        data.supernalAbilityProperty().set("");
+                    }
+                }
+            });
+
             data.getCasteAbility(ability).addListener((obs, oldV, newV) -> {
                 if (newV) {
                     favoredBox.setSelected(false);
+                } else {
+                    if (data.supernalAbilityProperty().get().equals(ability)) {
+                        data.supernalAbilityProperty().set("");
+                    }
                 }
             });
             
@@ -263,13 +292,14 @@ public class BuilderUI extends BorderPane {
             data.getAbility(ability).addListener((obs, oldV, newV) -> updateExcellency.run());
             data.getCasteAbility(ability).addListener((obs, oldV, newV) -> updateExcellency.run());
             data.getFavoredAbility(ability).addListener((obs, oldV, newV) -> updateExcellency.run());
+            data.supernalAbilityProperty().addListener((obs, oldV, newV) -> updateExcellency.run());
             data.getUnlockedCharms().addListener((javafx.collections.ListChangeListener.Change<? extends PurchasedCharm> change) -> {
                 updateExcellency.run();
             });
             updateExcellency.run();
             
             DotSelector selector = new DotSelector(data.getAbility(ability), 0);
-            rowBox.getChildren().addAll(casteBox, favoredBox, abLabel, selector);
+            rowBox.getChildren().addAll(casteBox, favoredBox, supernalBox, abLabel, selector);
             
             abilGrid.add(rowBox, col, row);
             row++;
