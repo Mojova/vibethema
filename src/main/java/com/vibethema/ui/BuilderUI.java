@@ -466,6 +466,7 @@ public class BuilderUI extends BorderPane {
             casteBox.getStyleClass().add("caste-checkbox");
             casteBox.selectedProperty().bindBidirectional(data.getCasteAbility(ability));
             casteBox.disableProperty().bind(Bindings.createBooleanBinding(() -> {
+                if ("Martial Arts".equals(ability)) return true; // Synced with Brawl
                 CharacterData.Caste c = data.casteProperty().get();
                 boolean notInCasteList = c == null || c == CharacterData.Caste.NONE || !CharacterData.CASTE_OPTIONS.get(c).contains(ability);
                 boolean atLimit = casteCount.get() >= 5 && !data.getCasteAbility(ability).get();
@@ -476,6 +477,7 @@ public class BuilderUI extends BorderPane {
             favoredBox.getStyleClass().add("favored-checkbox");
             favoredBox.selectedProperty().bindBidirectional(data.getFavoredAbility(ability));
             favoredBox.disableProperty().bind(Bindings.createBooleanBinding(() -> {
+                if ("Martial Arts".equals(ability)) return true; // Synced with Brawl
                 boolean isCaste = data.getCasteAbility(ability).get();
                 boolean atLimit = favoredCount.get() >= 5 && !data.getFavoredAbility(ability).get();
                 return isCaste || atLimit;
@@ -495,6 +497,9 @@ public class BuilderUI extends BorderPane {
             
             Label abLabel = new Label(ability);
             abLabel.setPrefWidth(95);
+            if ("Martial Arts".equals(ability)) {
+                Tooltip.install(abLabel, new Tooltip("Caste/Favored status linked to Brawl."));
+            }
             
             data.casteProperty().addListener((obs, oldV, newV) -> {
                 boolean isOption = newV != null && newV != CharacterData.Caste.NONE && CharacterData.CASTE_OPTIONS.get(newV).contains(ability);

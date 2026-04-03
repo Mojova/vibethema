@@ -21,7 +21,14 @@ import java.util.Map;
 
 public class CharacterData {
     public enum Caste {
-        DAWN, ZENITH, TWILIGHT, NIGHT, ECLIPSE, NONE
+        DAWN, ZENITH, TWILIGHT, NIGHT, ECLIPSE, NONE;
+
+        @Override
+        public String toString() {
+            if (this == NONE) return "None";
+            String s = super.toString();
+            return s.substring(0, 1) + s.substring(1).toLowerCase();
+        }
     }
 
     private StringProperty name = new SimpleStringProperty("");
@@ -96,6 +103,18 @@ public class CharacterData {
         getFavoredAbility("Craft").addListener((obs, old, nv) -> {
             for (CraftAbility ca : crafts) ca.setFavored(nv);
         });
+
+        // Special sync for Martial Arts status (linked to Brawl)
+        getCasteAbility("Brawl").addListener((obs, old, nv) -> {
+            getCasteAbility("Martial Arts").set(nv);
+        });
+        getFavoredAbility("Brawl").addListener((obs, old, nv) -> {
+            getFavoredAbility("Martial Arts").set(nv);
+        });
+        
+        // Initial sync for Martial Arts
+        getCasteAbility("Martial Arts").set(getCasteAbility("Brawl").get());
+        getFavoredAbility("Martial Arts").set(getFavoredAbility("Brawl").get());
         
         name.addListener((obs, oldV, newV) -> markDirty());
         caste.addListener((obs, oldV, newV) -> markDirty());
@@ -478,6 +497,10 @@ public class CharacterData {
                 }
             }
             if (crafts.isEmpty()) crafts.add(new CraftAbility("", 0));
+            
+            // Final sync for Martial Arts to ensure it matches Brawl
+            getCasteAbility("Martial Arts").set(getCasteAbility("Brawl").get());
+            getFavoredAbility("Martial Arts").set(getFavoredAbility("Brawl").get());
             
             dirty.set(false);
         } finally {
