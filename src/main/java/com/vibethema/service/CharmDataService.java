@@ -9,11 +9,8 @@ import com.vibethema.model.Keyword;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,91 +37,128 @@ public class CharmDataService {
         Path maPath = getUserMartialArtsPath().resolve(filename);
         Path customPath = getUserCharmsPath().resolve(customFilename);
 
-        // 1. Load standard charms (user-imported, martial arts, or resource)
-        boolean loadedFromFile = false;
+        // 1. Load standard charms (user-imported or martial arts)
         if (Files.exists(userPath)) {
-            loadedFromFile = loadFromFile(userPath, allCharms);
+            loadFromFile(userPath, allCharms);
         } else if (Files.exists(maPath)) {
-            loadedFromFile = loadFromFile(maPath, allCharms);
-        }
-
-        if (!loadedFromFile) {
-            loadFromResource(filename, allCharms);
+            loadFromFile(maPath, allCharms);
         }
         
         // Ensure standard charms have IDs
         assignMigrationIds(allCharms, ability);
 
         // 2. Load custom charms
-        if (Files.exists(customPath)) {
-            try (Reader reader = Files.newBufferedReader(customPath, StandardCharsets.UTF_8)) {
-                Type listType = new TypeToken<ArrayList<Charm>>() {}.getType();
-                List<Charm> custom = gson.fromJson(reader, listType);
-                if (custom != null) {
-                    custom.forEach(c -> {
-                        c.setCustom(true);
-                        if (c.getId() == null || c.getId().isEmpty()) {
-                            c.setId(java.util.UUID.randomUUID().toString());
-                        }
-                    });
-                    allCharms.addAll(custom);
-                }
-            } catch (IOException e) {
-                System.err.println("Error loading custom charm file: " + customPath + " - " + e.getMessage());
-            }
-        }
+        loadFromFile(customPath, allCharms);
 
         return allCharms;
     }
 
-    public void saveCustomCharm(Charm charm) throws IOException {
-        String ability = charm.getAbility();
-        List<Charm> existing = loadCharmsForAbility(ability);
-        List<Charm> customOnly = existing.stream().filter(Charm::isCustom).collect(Collectors.toList());
+    @SuppressWarnings("unused")
+    private static class CharmListWrapper {
+        private String $schema = "./charm-schema.json";
+        private String ability;
+        private String exalt = "solar";
+        private List<Charm> charms = new ArrayList<>();
+
+        public CharmListWrapper() {}
+        public CharmListWrapper(String ability, List<Charm> charms) {
+            this.ability = ability;
+            this.charms = charms;
+        }
+    }
+
+    public void exportSchema() throws IOException {
+        Path charmsDir = getUserCharmsPath();
+        if (!Files.exists(charmsDir)) Files.createDirectories(charmsDir);
         
-        if (charm.getId() == null || charm.getId().isEmpty()) {
-            charm.setId(java.util.UUID.randomUUID().toString());
+        try (InputStream is = getClass().getResourceAsStream("/charms/charm-schema.json")) {
+            if (is != null) {
+                Files.copy(is, charmsDir.resolve("charm-schema.json"), StandardCopyOption.REPLACE_EXISTING);
+            }
         }
         
-        // Check if updating existing custom charm
+        Path maDir = getUserMartialArtsPath();
+        if (!Files.exists(maDir)) Files.createDirectories(maDir);
+        try (InputStream is = getClass().getResourceAsStream("/charms/charm-schema.json")) {
+            if (is != null) {
+                Files.copy(is, maDir.resolve("charm-schema.json"), StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
+    }
+
+    public void saveCharm(Charm charm) throws IOException {
+        String ability = charm.getAbility();
+        String filename = ability.toLowerCase().replace(" ", "-") + ".json";
+        String customFilename = ability.toLowerCase().replace(" ", "-") + "-custom.json";
+        
+        Path targetPath;
+        if (charm.isCustom()) {
+            targetPath = getUserCharmsPath().resolve(customFilename);
+        } else {
+            Path standardAbPath = getUserCharmsPath().resolve(filename);
+            Path maPath = getUserMartialArtsPath().resolve(filename);
+            if (Files.exists(maPath)) targetPath = maPath;
+            else targetPath = standardAbPath;
+        }
+
+        // Ensure directory exists
+        if (!Files.exists(targetPath.getParent())) {
+            Files.createDirectories(targetPath.getParent());
+        }
+
+        // Load existing
+        List<Charm> charms = new ArrayList<>();
+        if (Files.exists(targetPath)) {
+            try (Reader reader = Files.newBufferedReader(targetPath, StandardCharsets.UTF_8)) {
+                CharmListWrapper wrapper = gson.fromJson(reader, CharmListWrapper.class);
+                if (wrapper != null && wrapper.charms != null) {
+                    charms = wrapper.charms;
+                }
+            }
+        }
+
+        // Replace or add
         boolean found = false;
-        for (int i = 0; i < customOnly.size(); i++) {
-            if (customOnly.get(i).getId().equals(charm.getId())) {
-                customOnly.set(i, charm);
+        for (int i = 0; i < charms.size(); i++) {
+            if (charms.get(i).getId().equals(charm.getId())) {
+                charms.set(i, charm);
                 found = true;
                 break;
             }
         }
-        if (!found) {
-            customOnly.add(charm);
+        if (!found) charms.add(charm);
+
+        // Save back pretty-printed with wrapper
+        Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
+        try (Writer writer = Files.newBufferedWriter(targetPath, StandardCharsets.UTF_8)) {
+            prettyGson.toJson(new CharmListWrapper(ability, charms), writer);
         }
-        
-        saveCustomList(ability, customOnly);
+        exportSchema(); // Ensure schema is present for the user
     }
 
     public void deleteCustomCharm(Charm charm) throws IOException {
         String ability = charm.getAbility();
         if (charm.getId() == null || charm.getId().isEmpty()) return;
 
-        List<Charm> existing = loadCharmsForAbility(ability);
-        List<Charm> customOnly = existing.stream()
-                .filter(c -> c.isCustom() && !c.getId().equals(charm.getId()))
-                .collect(Collectors.toList());
-        
-        saveCustomList(ability, customOnly);
-    }
-
-    private void saveCustomList(String ability, List<Charm> charms) throws IOException {
         String filename = ability.toLowerCase().replace(" ", "-") + "-custom.json";
-        Path outDir = getUserCharmsPath();
-        if (!Files.exists(outDir)) {
-            Files.createDirectories(outDir);
-        }
-        Path filePath = outDir.resolve(filename);
+        Path filePath = getUserCharmsPath().resolve(filename);
         
-        Gson prettyGson = new com.google.gson.GsonBuilder().setPrettyPrinting().create();
-        try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
-            prettyGson.toJson(charms, writer);
+        if (!Files.exists(filePath)) return;
+
+        List<Charm> existing = new ArrayList<>();
+        try (Reader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
+            CharmListWrapper wrapper = gson.fromJson(reader, CharmListWrapper.class);
+            if (wrapper != null && wrapper.charms != null) {
+                existing = wrapper.charms;
+            }
+        }
+
+        if (existing != null) {
+            existing.removeIf(c -> c.getId().equals(charm.getId()));
+            Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
+            try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
+                prettyGson.toJson(new CharmListWrapper(ability, existing), writer);
+            }
         }
     }
 
@@ -142,47 +176,21 @@ public class CharmDataService {
             }
         }
 
-        // Fallback to resources
-        try (InputStream is = getClass().getResourceAsStream("/charms/" + filename)) {
-            if (is != null) {
-                try (Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-                    Type listType = new TypeToken<ArrayList<Keyword>>() {}.getType();
-                    return gson.fromJson(reader, listType);
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Error loading resource keyword file: " + filename + " - " + e.getMessage());
-        }
-
         return new ArrayList<>();
     }
 
     private boolean loadFromFile(Path path, List<Charm> allCharms) {
+        if (!Files.exists(path)) return false;
         try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-            Type listType = new TypeToken<ArrayList<Charm>>() {}.getType();
-            List<Charm> base = gson.fromJson(reader, listType);
-            if (base != null) {
-                allCharms.addAll(base);
+            CharmListWrapper wrapper = gson.fromJson(reader, CharmListWrapper.class);
+            if (wrapper != null && wrapper.charms != null) {
+                allCharms.addAll(wrapper.charms);
                 return true;
             }
         } catch (IOException e) {
             System.err.println("Error loading charm file: " + path + " - " + e.getMessage());
         }
         return false;
-    }
-
-    private void loadFromResource(String filename, List<Charm> allCharms) {
-        try (InputStream is = getClass().getResourceAsStream("/charms/" + filename)) {
-            if (is != null) {
-                try (Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-                    Type listType = new TypeToken<ArrayList<Charm>>() {}.getType();
-                    List<Charm> base = gson.fromJson(reader, listType);
-                    if (base != null) allCharms.addAll(base);
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Error loading resource charm file: " + filename + " - " + e.getMessage());
-        }
     }
 
     public List<String> getAvailableMartialArtsStyles() {

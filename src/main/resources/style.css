@@ -274,6 +274,27 @@
     -fx-effect: dropshadow(three-pass-box, rgba(229, 228, 226, 0.4), 8, 0, 0, 0);
 }
 
+.charm-node-problematic {
+    -fx-border-color: #ffaa00; /* Amber Warning */
+    -fx-border-style: dashed;
+}
+
+.charm-node-problematic.charm-node-selected {
+    -fx-border-color: #ffcc00;
+    -fx-border-style: solid;
+    -fx-border-width: 2px;
+}
+
+.problematic-warning {
+    -fx-text-fill: #ffaa00;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 5px;
+    -fx-border-color: #ffaa00;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+}
+
 .charm-node-title {
     -fx-text-fill: #e0e0e0;
     -fx-font-weight: bold;

@@ -63,4 +63,5 @@ A JavaFX-based character creator for Exalted 3rd Edition. The application focuse
 
 ## AI Workflow
 1. **Commits**: Always commit changes after finishing a logical task or a specific user request. Use descriptive commit messages.
-2. **Update this file**: Update this file when the architecture or logic changes.
+2. **Compile**: Always compile the binary after finishing a logical task or a specific user request with scripts/build_app.sh
+3. **Update this file**: Update this file when the architecture or logic changes.

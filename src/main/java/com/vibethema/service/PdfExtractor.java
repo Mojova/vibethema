@@ -157,6 +157,17 @@ public class PdfExtractor {
                     currentField = "Prereqs";
                     descStartIdx = i + 1;
                 } else if (!currentField.isEmpty() && !line.contains(":") && !line.contains("Cost:")) {
+                    // Check for description start heuristics
+                    boolean isLikelyDescription = line.startsWith("The ") || line.startsWith("This ") || 
+                                               line.startsWith("If ") || line.startsWith("When ") || 
+                                               line.startsWith("A ") || line.startsWith("Solar ");
+                    
+                    // Specific "None" check - if we have "None", don't soak description text
+                    if (currentField.equals("Keywords") && keywords.equalsIgnoreCase("none")) isLikelyDescription = true;
+                    if (currentField.equals("Prereqs") && rawPrereqs.equalsIgnoreCase("none")) isLikelyDescription = true;
+
+                    if (isLikelyDescription) break;
+
                     // Continuation line
                     if (currentField.equals("Type")) type += " " + line;
                     else if (currentField.equals("Keywords")) keywords += ", " + line;
@@ -170,10 +181,20 @@ public class PdfExtractor {
             }
 
             List<String> prereqs = new ArrayList<>();
-            if (!rawPrereqs.isEmpty() && !rawPrereqs.equalsIgnoreCase("none")) {
-                for (String p : rawPrereqs.split(",")) {
+            // Clean up "None" or variations like "None The Solar..." accidentally sucked in
+            String cleanPrereqs = rawPrereqs.trim();
+            if (cleanPrereqs.toLowerCase().startsWith("none")) {
+                cleanPrereqs = cleanPrereqs.substring(4).trim();
+                if (cleanPrereqs.startsWith(",")) cleanPrereqs = cleanPrereqs.substring(1).trim();
+            }
+
+            if (!cleanPrereqs.isEmpty()) {
+                for (String p : cleanPrereqs.split(",")) {
                     String trimmed = p.trim();
-                    if (!trimmed.isEmpty()) prereqs.add(trimmed);
+                    // Final sanity check: prerequisite names shouldn't be long sentences
+                    if (!trimmed.isEmpty() && !trimmed.startsWith("The ") && trimmed.length() < 100) {
+                        prereqs.add(trimmed);
+                    }
                 }
             }
 
@@ -253,7 +274,12 @@ public class PdfExtractor {
             String filename = entry.getKey().toLowerCase().replace(" ", "-") + ".json";
             Path filePath = outDir.resolve(filename);
             try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
-                gson.toJson(entry.getValue(), writer);
+                Map<String, Object> wrapper = new LinkedHashMap<>();
+                wrapper.put("$schema", "./charm-schema.json");
+                wrapper.put("ability", entry.getKey());
+                wrapper.put("exalt", "solar");
+                wrapper.put("charms", entry.getValue());
+                gson.toJson(wrapper, writer);
             }
         }
 
@@ -268,9 +294,17 @@ public class PdfExtractor {
             String filename = entry.getKey().toLowerCase().replace(" ", "-") + ".json";
             Path filePath = maOutDir.resolve(filename);
             try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
-                gson.toJson(entry.getValue(), writer);
+                Map<String, Object> wrapper = new LinkedHashMap<>();
+                wrapper.put("$schema", "./charm-schema.json");
+                wrapper.put("ability", entry.getKey());
+                wrapper.put("exalt", "solar");
+                wrapper.put("charms", entry.getValue());
+                gson.toJson(wrapper, writer);
             }
         }
+        
+        // Export schema to both locations
+        new CharmDataService().exportSchema();
     }
 
     private void extractAndSaveKeywords(String text) throws IOException {

@@ -1171,6 +1171,7 @@ public class BuilderUI extends BorderPane {
     }
 
     private class CharmTreeComponent extends SplitPane {
+        private static final Map<String, String> globalCharmNameMap = new java.util.concurrent.ConcurrentHashMap<>();
         private final ComboBox<String> filterCombo;
         private final String filterType; // "Ability" or "Martial Arts Style"
         private Pane charmCanvas = new Pane();
@@ -1190,6 +1191,7 @@ public class BuilderUI extends BorderPane {
         private Button toggleBtn = new Button("Purchase Charm");
         private Button refundBtn = new Button("Refund");
         private Button deleteCustomBtn = new Button("Delete Custom Charm");
+        private Button editBtn = new Button("Edit Charm");
         
         private Charm selectedCharm;
         private javafx.beans.property.IntegerProperty currentRatingProperty;
@@ -1279,12 +1281,12 @@ public class BuilderUI extends BorderPane {
             refundBtn.setVisible(false);
             refundBtn.setManaged(false);
 
-            deleteCustomBtn.getStyleClass().add("charm-btn");
-            deleteCustomBtn.setStyle("-fx-base: #d44444; -fx-text-fill: white;");
-            deleteCustomBtn.setVisible(false);
-            deleteCustomBtn.setManaged(false);
+            editBtn.getStyleClass().add("charm-btn");
+            editBtn.setStyle("-fx-base: #3c3c3c;");
+            editBtn.setVisible(false);
+            editBtn.setManaged(false);
 
-            HBox charmButtons = new HBox(10, toggleBtn, refundBtn, deleteCustomBtn);
+            HBox charmButtons = new HBox(10, toggleBtn, refundBtn, deleteCustomBtn, editBtn);
             rightPane.getChildren().addAll(detailTitle, detailReqs, charmButtons, statsGrid, descScroll);
 
             getItems().addAll(leftPane, rightPane);
@@ -1310,6 +1312,7 @@ public class BuilderUI extends BorderPane {
             List<Charm> loaded = dataService.loadCharmsForAbility(selection);
             if (loaded != null) {
                 currentCharms.addAll(loaded);
+                for (Charm c : loaded) globalCharmNameMap.put(c.getId(), c.getName());
             }
 
             currentRatingProperty = data.getAbilityProperty(selection);
@@ -1339,21 +1342,25 @@ public class BuilderUI extends BorderPane {
         }
 
         private void drawCharmWeb(List<Charm> charms, String ability) {
-            // Topological Sort Logic
+            // Mapping for display resolution (ID -> Name)
+            Map<String, String> idToName = new HashMap<>();
+            for (Charm c : charms) idToName.put(c.getId(), c.getName());
+
+            // Topological Sort Logic - User IDs for depth calculation
             Map<String, Integer> charmDepth = new HashMap<>();
             boolean changed = true;
             while (changed) {
                 changed = false;
                 for (Charm c : charms) {
-                    int currentDepth = charmDepth.getOrDefault(c.getName(), 0);
+                    int currentDepth = charmDepth.getOrDefault(c.getId(), 0);
                     int reqDepth = 0;
                     if (c.getPrerequisites() != null) {
-                        for (String req : c.getPrerequisites()) {
-                            reqDepth = Math.max(reqDepth, charmDepth.getOrDefault(req, 0) + 1);
+                        for (String reqId : c.getPrerequisites()) {
+                            reqDepth = Math.max(reqDepth, charmDepth.getOrDefault(reqId, 0) + 1);
                         }
                     }
                     if (reqDepth > currentDepth) {
-                        charmDepth.put(c.getName(), reqDepth);
+                        charmDepth.put(c.getId(), reqDepth);
                         changed = true;
                     }
                 }
@@ -1362,7 +1369,7 @@ public class BuilderUI extends BorderPane {
             Map<Integer, List<Charm>> levels = new HashMap<>();
             int maxDepth = 0;
             for (Charm c : charms) {
-                int depth = charmDepth.getOrDefault(c.getName(), 0);
+                int depth = charmDepth.getOrDefault(c.getId(), 0);
                 levels.computeIfAbsent(depth, k -> new ArrayList<>()).add(c);
                 if (depth > maxDepth) maxDepth = depth;
             }
@@ -1394,7 +1401,7 @@ public class BuilderUI extends BorderPane {
                     box.setPrefSize(boxWidth, boxHeight);
                     box.getStyleClass().add("charm-node");
 
-                    Label nameLbl = new Label(c.getName());
+                    Label nameLbl = new Label((c.isPotentiallyProblematicImport() ? "⚠️ " : "") + c.getName());
                     nameLbl.getStyleClass().add("charm-node-title");
                     nameLbl.setWrapText(true);
 
@@ -1402,19 +1409,38 @@ public class BuilderUI extends BorderPane {
                     reqLbl.getStyleClass().add("charm-node-reqs");
 
                     box.getChildren().addAll(nameLbl, reqLbl);
+                    if (c.isPotentiallyProblematicImport()) {
+                        Tooltip tt = new Tooltip("Warning: This charm may have incomplete data due to a problematic PDF import.");
+                        tt.setWrapText(true);
+                        tt.setMaxWidth(250);
+                        Tooltip.install(box, tt);
+                    }
                     box.setLayoutX(x);
                     box.setLayoutY(y);
 
-                    charmNodeMap.put(c.getName(), box);
+                    charmNodeMap.put(c.getId(), box);
                     charmCanvas.getChildren().add(box);
 
                     box.setOnMouseClicked(e -> {
                         selectedCharm = c;
                         detailTitle.setText(c.getName());
-                        String prereqStr = c.getPrerequisites() == null || c.getPrerequisites().isEmpty() ? "None"
-                                : String.join(", ", c.getPrerequisites());
-                        detailReqs.setText("Mins: " + c.getAbility() + " " + c.getMinAbility() + ", Ess: "
-                                + c.getMinEssence() + "\nPrereqs: " + prereqStr);
+                        
+                        List<String> prereqNames = new ArrayList<>();
+                        if (c.getPrerequisites() != null) {
+                            for (String rid : c.getPrerequisites()) {
+                                String resolvedName = globalCharmNameMap.get(rid);
+                                if (resolvedName == null) resolvedName = idToName.getOrDefault(rid, rid);
+                                prereqNames.add(resolvedName);
+                            }
+                        }
+                        String prereqStr = prereqNames.isEmpty() ? "None" : String.join(", ", prereqNames);
+                        
+                        String baseReqs = "Mins: " + c.getAbility() + " " + c.getMinAbility() + ", Ess: "
+                                + c.getMinEssence() + "\nPrereqs: " + prereqStr;
+                        if (c.isPotentiallyProblematicImport()) {
+                            baseReqs = "⚠️ WARNING: Problematic Import\n" + baseReqs;
+                        }
+                        detailReqs.setText(baseReqs);
                         costLabel.setText(c.getCost() != null ? c.getCost() : "");
                         typeLabel.setText(c.getType() != null ? c.getType() : "");
                         durationLabel.setText(c.getDuration() != null ? c.getDuration() : "");
@@ -1422,6 +1448,9 @@ public class BuilderUI extends BorderPane {
                         descriptionLabel.setText(c.getFullText() != null ? c.getFullText() : "");
 
                         toggleBtn.setVisible(true);
+                        editBtn.setVisible(true);
+                        editBtn.setManaged(true);
+                        editBtn.setOnAction(ev -> showEditCharmDialog(c));
                         updateSidebarButton(c);
 
                         if (e.getClickCount() == 2) {
@@ -1470,10 +1499,10 @@ public class BuilderUI extends BorderPane {
             });
 
             for (Charm c : charms) {
-                VBox targetBox = charmNodeMap.get(c.getName());
+                VBox targetBox = charmNodeMap.get(c.getId());
                 if (targetBox != null && c.getPrerequisites() != null) {
-                    for (String req : c.getPrerequisites()) {
-                        VBox sourceBox = charmNodeMap.get(req);
+                    for (String reqId : c.getPrerequisites()) {
+                        VBox sourceBox = charmNodeMap.get(reqId);
                         if (sourceBox != null) {
                             double startX = sourceBox.getLayoutX() + boxWidth / 2;
                             double startY = sourceBox.getLayoutY() + boxHeight;
@@ -1532,7 +1561,7 @@ public class BuilderUI extends BorderPane {
 
         public void updateWebNodeStyles() {
             for (Charm c : currentCharms) {
-                VBox box = charmNodeMap.get(c.getName());
+                VBox box = charmNodeMap.get(c.getId());
                 if (box != null) {
                     box.getStyleClass().removeAll("charm-node-unselected", "charm-node-selected", "charm-node-ineligible");
                     boolean bought = data.hasCharm(c.getId());
@@ -1547,6 +1576,12 @@ public class BuilderUI extends BorderPane {
                         if (!box.getStyleClass().contains("charm-node-custom")) box.getStyleClass().add("charm-node-custom");
                     } else {
                         box.getStyleClass().remove("charm-node-custom");
+                    }
+
+                    if (c.isPotentiallyProblematicImport()) {
+                        if (!box.getStyleClass().contains("charm-node-problematic")) box.getStyleClass().add("charm-node-problematic");
+                    } else {
+                        box.getStyleClass().remove("charm-node-problematic");
                     }
                 }
             }
@@ -1596,7 +1631,7 @@ public class BuilderUI extends BorderPane {
         dialog.initOwner(getScene().getWindow());
         dialog.setTitle("Create Custom Charm");
 
-        VBox root = new VBox(15);
+        VBox root = new VBox(20);
         root.setPadding(new Insets(20));
         root.getStyleClass().add("dialog-pane");
         root.setStyle("-fx-background-color: #1e1e1e;");
@@ -1646,9 +1681,12 @@ public class BuilderUI extends BorderPane {
         prereqList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         prereqList.setPrefHeight(100);
 
+        Map<String, String> nameToId = new HashMap<>();
         Runnable updatePrereqs = () -> {
             String selectedAb = abCombo.getValue();
             List<Charm> charms = dataService.loadCharmsForAbility(selectedAb);
+            nameToId.clear();
+            for (Charm c : charms) nameToId.put(c.getName(), c.getId());
             prereqList.getItems().setAll(charms.stream().map(Charm::getName).collect(Collectors.toList()));
         };
         abCombo.valueProperty().addListener((obs, oldV, newV) -> updatePrereqs.run());
@@ -1690,21 +1728,154 @@ public class BuilderUI extends BorderPane {
             nc.setKeywords(keywordsField.getText());
             nc.setDuration(durationField.getText());
             nc.setFullText(descArea.getText());
-            nc.setPrerequisites(new ArrayList<>(prereqList.getSelectionModel().getSelectedItems()));
+            List<String> selectedIds = prereqList.getSelectionModel().getSelectedItems().stream()
+                .map(nameToId::get)
+                .collect(Collectors.toList());
+            nc.setPrerequisites(selectedIds);
             nc.setCustom(true);
 
             try {
-                dataService.saveCustomCharm(nc);
-                dialog.close();
+                dataService.saveCharm(nc);
+                data.setDirty(true);
                 refreshCharms();
             } catch (IOException ex) {
-                ex.printStackTrace();
-                new Alert(Alert.AlertType.ERROR, "Failed to save charm: " + ex.getMessage()).showAndWait();
+                new Alert(Alert.AlertType.ERROR, "Failed to save custom charm: " + ex.getMessage()).showAndWait();
             }
         });
 
         root.getChildren().addAll(grid, descBox, saveBtn);
-        dialog.setScene(new javafx.scene.Scene(root));
+        javafx.scene.Scene scene = new javafx.scene.Scene(root);
+        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+        dialog.setScene(scene);
         dialog.show();
+    }
+
+    private void showEditCharmDialog(Charm charm) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Edit Charm: " + charm.getName());
+        dialog.setHeaderText("Modify charm details and prerequisites.");
+        DialogPane dialogPane = dialog.getDialogPane();
+        dialogPane.getStyleClass().add("dialog-pane-custom");
+        dialogPane.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+        dialogPane.setStyle("-fx-background-color: #1e1e1e;");
+
+        GridPane grid = new GridPane();
+        grid.setHgap(15); grid.setVgap(10);
+        grid.setPadding(new Insets(20));
+
+        TextField nameField = new TextField(charm.getName());
+        ComboBox<String> abCombo = new ComboBox<>();
+        abCombo.getItems().addAll(CharacterData.ABILITIES);
+        abCombo.getItems().addAll(dataService.getAvailableMartialArtsStyles());
+        abCombo.setValue(charm.getAbility());
+        
+        Spinner<Integer> minAb = new Spinner<>(0, 5, charm.getMinAbility());
+        Spinner<Integer> minEss = new Spinner<>(1, 5, charm.getMinEssence());
+        TextField costField = new TextField(charm.getCost());
+        TextField typeField = new TextField(charm.getType());
+        TextField keywordsField = new TextField(charm.getKeywords());
+        TextField durationField = new TextField(charm.getDuration());
+        TextArea descArea = new TextArea(charm.getFullText());
+        descArea.setWrapText(true);
+        descArea.setPrefRowCount(10);
+
+        TextArea rawDataArea = new TextArea(charm.getRawData() != null ? charm.getRawData() : "No raw data available.");
+        rawDataArea.setEditable(false);
+        rawDataArea.setWrapText(true);
+        rawDataArea.setPrefRowCount(8);
+        rawDataArea.setStyle("-fx-font-family: 'Monospaced'; -fx-font-size: 11px; -fx-opacity: 0.8;");
+
+        CheckBox problemCheck = new CheckBox("Problematic Import (⚠️ warning icon)");
+        problemCheck.setSelected(charm.isPotentiallyProblematicImport());
+        problemCheck.setStyle("-fx-text-fill: #f9f6e6;");
+
+        ListView<String> prereqList = new ListView<>();
+        prereqList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        prereqList.setPrefHeight(120);
+
+        Map<String, String> nameToId = new HashMap<>();
+        Map<String, String> idToNameLocal = new HashMap<>(); // For initial selection
+        Runnable updatePrereqs = () -> {
+            String selectedAb = abCombo.getValue();
+            List<Charm> charms = dataService.loadCharmsForAbility(selectedAb);
+            nameToId.clear();
+            for (Charm c : charms) {
+                if (!c.getId().equals(charm.getId())) { // Don't allow self-prerequisite
+                    nameToId.put(c.getName(), c.getId());
+                    idToNameLocal.put(c.getId(), c.getName());
+                }
+            }
+            prereqList.getItems().setAll(nameToId.keySet().stream().sorted().collect(Collectors.toList()));
+            
+            // Re-select existing prerequisites
+            if (charm.getPrerequisites() != null) {
+                for (String rid : charm.getPrerequisites()) {
+                    String rname = idToNameLocal.get(rid);
+                    if (rname != null) {
+                        prereqList.getSelectionModel().select(rname);
+                    }
+                }
+            }
+        };
+        abCombo.valueProperty().addListener((obs, oldV, newV) -> updatePrereqs.run());
+        updatePrereqs.run();
+
+        grid.add(new Label("Name:"), 0, 0); grid.add(nameField, 1, 0);
+        grid.add(new Label("Ability:"), 0, 1); grid.add(abCombo, 1, 1);
+        grid.add(new Label("Min Ability:"), 0, 2); grid.add(minAb, 1, 2);
+        grid.add(new Label("Min Essence:"), 0, 3); grid.add(minEss, 1, 3);
+        grid.add(new Label("Cost:"), 0, 4); grid.add(costField, 1, 4);
+        grid.add(new Label("Type:"), 0, 5); grid.add(typeField, 1, 5);
+        grid.add(new Label("Keywords:"), 0, 6); grid.add(keywordsField, 1, 6);
+        grid.add(new Label("Duration:"), 0, 7); grid.add(durationField, 1, 7);
+        grid.add(problemCheck, 1, 8);
+        grid.add(new Label("Prerequisites:"), 2, 0); grid.add(prereqList, 2, 1, 1, 8);
+
+        VBox rightColumn = new VBox(10);
+        rightColumn.getChildren().addAll(new Label("Description:"), descArea, new Label("Raw Import Data (Read Only):"), rawDataArea);
+        
+        for (javafx.scene.Node n : grid.getChildren()) {
+            if (n instanceof Label l) l.setStyle("-fx-text-fill: #f9f6e6; -fx-font-weight: bold;");
+        }
+        for (javafx.scene.Node n : rightColumn.getChildren()) {
+            if (n instanceof Label l) l.setStyle("-fx-text-fill: #f9f6e6; -fx-font-weight: bold;");
+        }
+
+        HBox mainContent = new HBox(20, grid, rightColumn);
+        dialogPane.setContent(mainContent);
+
+        ButtonType saveType = new ButtonType("Save Edits", ButtonBar.ButtonData.OK_DONE);
+        dialogPane.getButtonTypes().addAll(saveType, ButtonType.CANCEL);
+
+        dialog.setResultConverter(bt -> {
+            if (bt == saveType) {
+                charm.setName(nameField.getText());
+                charm.setAbility(abCombo.getValue());
+                charm.setMinAbility(minAb.getValue());
+                charm.setMinEssence(minEss.getValue());
+                charm.setCost(costField.getText());
+                charm.setType(typeField.getText());
+                charm.setKeywords(keywordsField.getText());
+                charm.setDuration(durationField.getText());
+                charm.setFullText(descArea.getText());
+                charm.setPotentiallyProblematicImport(problemCheck.isSelected());
+                
+                List<String> selectedIds = prereqList.getSelectionModel().getSelectedItems().stream()
+                    .map(nameToId::get)
+                    .collect(Collectors.toList());
+                charm.setPrerequisites(selectedIds);
+                
+                try {
+                    dataService.saveCharm(charm);
+                    data.setDirty(true);
+                    return bt;
+                } catch (IOException ex) {
+                    new Alert(Alert.AlertType.ERROR, "Failed to save charm: " + ex.getMessage()).showAndWait();
+                }
+            }
+            return null;
+        });
+
+        dialog.showAndWait().ifPresent(r -> refreshCharms());
     }
 }
