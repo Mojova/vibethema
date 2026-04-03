@@ -3,6 +3,7 @@ package com.vibethema.ui;
 import com.vibethema.model.CharacterData;
 import com.vibethema.model.Charm;
 import com.vibethema.model.PurchasedCharm;
+import com.vibethema.model.Specialty;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import javafx.geometry.Insets;
@@ -50,7 +51,10 @@ import java.io.FileWriter;
 import java.io.FileReader;
 import com.vibethema.model.CharacterSaveState;
 import com.google.gson.GsonBuilder;
+import com.vibethema.model.CraftAbility;
 import com.vibethema.model.Keyword;
+import com.vibethema.model.Merit;
+
 
 public class BuilderUI extends BorderPane {
     private CharacterData data;
@@ -63,6 +67,8 @@ public class BuilderUI extends BorderPane {
     private Label casteLabel = new Label();
     private Label favoredLabel = new Label();
     private Label charmsLabel = new Label();
+    private Label meritsLabel = new Label();
+    private Label specialtiesLabel = new Label();
     private Label bpLabel = new Label();
     
     private Pane charmCanvas;
@@ -87,11 +93,19 @@ public class BuilderUI extends BorderPane {
         statsScroll.getStyleClass().add("scroll-pane-custom");
         statsTab.setContent(statsScroll);
         
+        Tab meritsTab = new Tab("Merits");
+        meritsTab.setClosable(false);
+        ScrollPane meritsScroll = new ScrollPane(createMeritsContent());
+        meritsScroll.setFitToWidth(true);
+        meritsScroll.getStyleClass().add("scroll-pane-custom");
+        meritsTab.setContent(meritsScroll);
+        
         Tab charmsTab = new Tab("Charms");
         charmsTab.setClosable(false);
         charmsTab.setContent(createCharmsContent());
         
-        tabPane.getTabs().addAll(statsTab, charmsTab);
+        tabPane.getTabs().addAll(statsTab, meritsTab, charmsTab);
+
         setCenter(tabPane);
         
         setBottom(createFooter());
@@ -280,7 +294,7 @@ public class BuilderUI extends BorderPane {
         );
         
         row2.getChildren().addAll(
-            new Label("Pools:"), abilitiesLabel, charmsLabel,
+            new Label("Pools:"), abilitiesLabel, charmsLabel, meritsLabel, specialtiesLabel,
             new Region() {{ HBox.setHgrow(this, Priority.ALWAYS); }},
             bpLabel
         );
@@ -318,6 +332,55 @@ public class BuilderUI extends BorderPane {
             updateFooter();
             updateWebNodeStyles();
         });
+        
+        data.getMerits().addListener((javafx.collections.ListChangeListener.Change<? extends Merit> c) -> {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    for (Merit m : c.getAddedSubList()) {
+                        m.ratingProperty().addListener((obs, ov, nv) -> updateFooter());
+                    }
+                }
+            }
+            updateFooter();
+        });
+        
+        data.getSpecialties().addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    for (Specialty s : c.getAddedSubList()) {
+                        s.nameProperty().addListener((obs, ov, nv) -> updateFooter());
+                        s.abilityProperty().addListener((obs, ov, nv) -> updateFooter());
+                    }
+                }
+            }
+            updateFooter();
+        });
+        
+        data.getCrafts().addListener((javafx.collections.ListChangeListener<? super CraftAbility>) c -> {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    for (CraftAbility ca : c.getAddedSubList()) {
+                        ca.expertiseProperty().addListener((obs, ov, nv) -> updateFooter());
+                        ca.ratingProperty().addListener((obs, ov, nv) -> updateFooter());
+                    }
+                }
+            }
+            updateFooter();
+        });
+        
+        // Initial listeners
+        for (Merit m : data.getMerits()) {
+            m.ratingProperty().addListener((obs, ov, nv) -> updateFooter());
+        }
+        for (Specialty s : data.getSpecialties()) {
+            s.nameProperty().addListener((obs, ov, nv) -> updateFooter());
+            s.abilityProperty().addListener((obs, ov, nv) -> updateFooter());
+        }
+        for (CraftAbility ca : data.getCrafts()) {
+            ca.expertiseProperty().addListener((obs, ov, nv) -> updateFooter());
+            ca.ratingProperty().addListener((obs, ov, nv) -> updateFooter());
+        }
+
     }
 
     private void updateFooter() {
@@ -337,6 +400,8 @@ public class BuilderUI extends BorderPane {
         
         abilitiesLabel.setText("Abils: " + abils + "/28");
         charmsLabel.setText("Charms: " + charmsCount + "/15");
+        meritsLabel.setText("Merits: " + data.getMeritTotal() + "/10");
+        specialtiesLabel.setText("Specialties: " + data.getSpecialties().size() + "/4");
         casteLabel.setText("Caste: " + casteCount + "/5");
         favoredLabel.setText("Favored: " + favoredCount + "/5");
         bpLabel.setText("Bonus Points: " + bp + "/15");
@@ -393,6 +458,7 @@ public class BuilderUI extends BorderPane {
         int row = 0;
         int col = 0;
         for (String ability : CharacterData.ABILITIES) {
+            if ("Craft".equals(ability)) continue;
             HBox rowBox = new HBox(6);
             rowBox.setAlignment(Pos.CENTER_LEFT);
             
@@ -474,8 +540,144 @@ public class BuilderUI extends BorderPane {
         }
         abilitiesSection.getChildren().addAll(abilTitle, abilGrid);
         
-        content.getChildren().addAll(advantagesSection, attributesSection, abilitiesSection);
+        VBox craftsSection = createCraftsSection(casteCount, favoredCount);
+        VBox specialtiesSection = createSpecialtiesSection();
+        
+        VBox sideStuff = new VBox(20);
+        sideStuff.setPrefWidth(450);
+        sideStuff.getChildren().addAll(craftsSection, specialtiesSection);
+        
+        HBox abilAndSide = new HBox(30);
+        abilAndSide.getChildren().addAll(abilitiesSection, sideStuff);
+        
+        content.getChildren().addAll(advantagesSection, attributesSection, abilAndSide);
         return content;
+    }
+    
+    private VBox createCraftsSection(javafx.beans.property.IntegerProperty casteCount, javafx.beans.property.IntegerProperty favoredCount) {
+        VBox section = new VBox(10);
+        
+        HBox titleRow = new HBox(15);
+        titleRow.setAlignment(Pos.CENTER_LEFT);
+        Label title = new Label("Crafts");
+        title.getStyleClass().add("section-title");
+        
+        // Add C/F checkboxes for the global Craft status
+        HBox statusBox = new HBox(6);
+        statusBox.setAlignment(Pos.CENTER_LEFT);
+        
+        CheckBox casteBox = new CheckBox("C");
+        casteBox.getStyleClass().add("caste-checkbox");
+        casteBox.selectedProperty().bindBidirectional(data.getCasteAbility("Craft"));
+        casteBox.disableProperty().bind(Bindings.createBooleanBinding(() -> {
+            CharacterData.Caste c = data.casteProperty().get();
+            boolean notInCasteList = c == null || c == CharacterData.Caste.NONE || !CharacterData.CASTE_OPTIONS.get(c).contains("Craft");
+            boolean atLimit = casteCount.get() >= 5 && !data.getCasteAbility("Craft").get();
+            return notInCasteList || atLimit;
+        }, data.casteProperty(), casteCount, data.getCasteAbility("Craft")));
+
+        CheckBox favoredBox = new CheckBox("F");
+        favoredBox.getStyleClass().add("favored-checkbox");
+        favoredBox.selectedProperty().bindBidirectional(data.getFavoredAbility("Craft"));
+        favoredBox.disableProperty().bind(Bindings.createBooleanBinding(() -> {
+            boolean isCaste = data.getCasteAbility("Craft").get();
+            boolean atLimit = favoredCount.get() >= 5 && !data.getFavoredAbility("Craft").get();
+            return isCaste || atLimit;
+        }, data.getCasteAbility("Craft"), favoredCount, data.getFavoredAbility("Craft")));
+
+        data.getCasteAbility("Craft").addListener((obs, oldV, newV) -> {
+            if (newV) favoredBox.setSelected(false);
+        });
+        
+        statusBox.getChildren().addAll(casteBox, favoredBox);
+        titleRow.getChildren().addAll(title, statusBox);
+        
+        VBox craftList = new VBox(8);
+        
+        Runnable refreshCrafts = () -> {
+            craftList.getChildren().clear();
+            for (CraftAbility ca : data.getCrafts()) {
+                HBox row = new HBox(12);
+                row.setAlignment(Pos.CENTER_LEFT);
+                row.getStyleClass().add("merit-row");
+                row.setPadding(new Insets(8));
+                
+                TextField expertiseField = new TextField();
+                expertiseField.setPromptText("Expertise (e.g. Metallurgy)");
+                expertiseField.textProperty().bindBidirectional(ca.expertiseProperty());
+                expertiseField.setPrefWidth(180);
+                
+                DotSelector selector = new DotSelector(ca.ratingProperty(), 0, 5);
+                
+                Region spacer = new Region();
+                HBox.setHgrow(spacer, Priority.ALWAYS);
+                
+                Button removeBtn = new Button("✕");
+                removeBtn.getStyleClass().add("remove-btn");
+                removeBtn.setOnAction(e -> data.getCrafts().remove(ca));
+                
+                row.getChildren().addAll(expertiseField, spacer, selector, removeBtn);
+                craftList.getChildren().add(row);
+            }
+        };
+        
+        data.getCrafts().addListener((javafx.collections.ListChangeListener<? super CraftAbility>) c -> refreshCrafts.run());
+        refreshCrafts.run();
+        
+        Button addBtn = new Button("+ Add Craft Field");
+        addBtn.getStyleClass().add("action-btn");
+        addBtn.setOnAction(e -> data.getCrafts().add(new CraftAbility("", 0)));
+        
+        section.getChildren().addAll(titleRow, craftList, addBtn);
+        return section;
+    }
+    
+    private VBox createSpecialtiesSection() {
+        VBox section = new VBox(10);
+        Label title = new Label("Specialties");
+        title.getStyleClass().add("section-title");
+        
+        VBox specList = new VBox(8);
+        
+        Runnable refreshSpecs = () -> {
+            specList.getChildren().clear();
+            for (Specialty s : data.getSpecialties()) {
+                HBox row = new HBox(12);
+                row.setAlignment(Pos.CENTER_LEFT);
+                row.getStyleClass().add("merit-row"); // reuse style
+                row.setPadding(new Insets(8));
+                
+                TextField nameField = new TextField();
+                nameField.setPromptText("Specialty Name");
+                nameField.textProperty().bindBidirectional(s.nameProperty());
+                nameField.setPrefWidth(200);
+                
+                ComboBox<String> abilPicker = new ComboBox<>();
+                abilPicker.getItems().addAll(CharacterData.ABILITIES);
+                abilPicker.valueProperty().bindBidirectional(s.abilityProperty());
+                abilPicker.setPromptText("Select Ability");
+                
+                Region spacer = new Region();
+                HBox.setHgrow(spacer, Priority.ALWAYS);
+                
+                Button removeBtn = new Button("✕");
+                removeBtn.getStyleClass().add("remove-btn");
+                removeBtn.setOnAction(e -> data.getSpecialties().remove(s));
+                
+                row.getChildren().addAll(nameField, abilPicker, spacer, removeBtn);
+                specList.getChildren().add(row);
+            }
+        };
+        
+        data.getSpecialties().addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> refreshSpecs.run());
+        refreshSpecs.run();
+        
+        Button addBtn = new Button("+ Add Specialty");
+        addBtn.getStyleClass().add("action-btn");
+        addBtn.setOnAction(e -> data.getSpecialties().add(new Specialty("", "")));
+        
+        section.getChildren().addAll(title, specList, addBtn);
+        return section;
     }
     
     private VBox createAdvantagesSection() {
@@ -600,6 +802,58 @@ public class BuilderUI extends BorderPane {
             box.getChildren().add(row);
         }
         return box;
+    }
+
+    private VBox createMeritsContent() {
+        VBox content = new VBox(20);
+        content.getStyleClass().add("content-area");
+        content.setPadding(new Insets(20));
+
+        Label title = new Label("Merits");
+        title.getStyleClass().add("section-title");
+
+        VBox meritsList = new VBox(12);
+        meritsList.getStyleClass().add("merits-list");
+
+        Runnable refreshMerits = () -> {
+            meritsList.getChildren().clear();
+            for (Merit merit : data.getMerits()) {
+                HBox row = new HBox(15);
+                row.setAlignment(Pos.CENTER_LEFT);
+                row.getStyleClass().add("merit-row");
+                row.setPadding(new Insets(10));
+
+                TextField nameField = new TextField();
+                nameField.setPromptText("Merit Name (e.g. Artifact)");
+                nameField.textProperty().bindBidirectional(merit.nameProperty());
+                nameField.setPrefWidth(250);
+
+                Region spacer = new Region();
+                HBox.setHgrow(spacer, Priority.ALWAYS);
+
+                DotSelector selector = new DotSelector(merit.ratingProperty(), 1, 5);
+
+                Button removeBtn = new Button("✕");
+                removeBtn.getStyleClass().add("remove-btn");
+                removeBtn.setTooltip(new Tooltip("Remove Merit"));
+                removeBtn.setStyle("-fx-text-fill: #ff4444; -fx-background-color: transparent; -fx-font-weight: bold; -fx-font-size: 14px;");
+                removeBtn.setOnAction(e -> data.getMerits().remove(merit));
+
+                row.getChildren().addAll(nameField, spacer, selector, removeBtn);
+                meritsList.getChildren().add(row);
+            }
+        };
+
+        data.getMerits().addListener((javafx.collections.ListChangeListener.Change<? extends Merit> c) -> refreshMerits.run());
+        refreshMerits.run();
+
+        Button addBtn = new Button("+ Add New Merit");
+        addBtn.getStyleClass().add("action-btn");
+        addBtn.setPrefWidth(200);
+        addBtn.setOnAction(e -> data.getMerits().add(new Merit("", 1)));
+
+        content.getChildren().addAll(title, meritsList, addBtn);
+        return content;
     }
 
     private SplitPane createCharmsContent() {

@@ -36,7 +36,11 @@ public class CharacterData {
     private IntegerProperty essence = new SimpleIntegerProperty(1);
     private IntegerProperty willpower = new SimpleIntegerProperty(5);
     
-    private ObservableList<PurchasedCharm> unlockedCharms = FXCollections.observableArrayList();
+    private final ObservableList<PurchasedCharm> unlockedCharms = FXCollections.observableArrayList();
+    private final ObservableList<Merit> merits = FXCollections.observableArrayList();
+    private final ObservableList<Specialty> specialties = FXCollections.observableArrayList();
+    private final ObservableList<CraftAbility> crafts = FXCollections.observableArrayList();
+
     
     private BooleanProperty dirty = new SimpleBooleanProperty(false);
     private boolean isImporting = false;
@@ -85,12 +89,66 @@ public class CharacterData {
             favoredAbilities.get(ability).addListener((obs, oldV, newV) -> markDirty());
         }
         
+        // Special sync for Craft status
+        getCasteAbility("Craft").addListener((obs, old, nv) -> {
+            for (CraftAbility ca : crafts) ca.setCaste(nv);
+        });
+        getFavoredAbility("Craft").addListener((obs, old, nv) -> {
+            for (CraftAbility ca : crafts) ca.setFavored(nv);
+        });
+        
         name.addListener((obs, oldV, newV) -> markDirty());
         caste.addListener((obs, oldV, newV) -> markDirty());
         supernalAbility.addListener((obs, oldV, newV) -> markDirty());
         essence.addListener((obs, oldV, newV) -> markDirty());
         willpower.addListener((obs, oldV, newV) -> markDirty());
-        unlockedCharms.addListener((javafx.collections.ListChangeListener.Change<? extends PurchasedCharm> c) -> markDirty());
+        merits.addListener((javafx.collections.ListChangeListener.Change<? extends Merit> c) -> {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    for (Merit m : c.getAddedSubList()) {
+                        m.nameProperty().addListener((obs, ov, nv) -> markDirty());
+                        m.ratingProperty().addListener((obs, ov, nv) -> markDirty());
+                    }
+                }
+            }
+            markDirty();
+        });
+        
+        specialties.addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    for (Specialty s : c.getAddedSubList()) {
+                        s.nameProperty().addListener((obs, ov, nv) -> markDirty());
+                        s.abilityProperty().addListener((obs, ov, nv) -> markDirty());
+                    }
+                }
+            }
+            markDirty();
+        });
+        
+        crafts.addListener((javafx.collections.ListChangeListener<? super CraftAbility>) c -> {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    for (CraftAbility ca : c.getAddedSubList()) {
+                        ca.expertiseProperty().addListener((obs, ov, nv) -> markDirty());
+                        ca.ratingProperty().addListener((obs, ov, nv) -> markDirty());
+                        ca.casteProperty().addListener((obs, ov, nv) -> markDirty());
+                        ca.favoredProperty().addListener((obs, ov, nv) -> markDirty());
+                        
+                        // Inherit current global status
+                        ca.setCaste(getCasteAbility("Craft").get());
+                        ca.setFavored(getFavoredAbility("Craft").get());
+                    }
+                }
+            }
+            markDirty();
+        });
+        
+        // Start with one empty merit, specialty, and craft by default
+        merits.add(new Merit("", 1));
+        specialties.add(new Specialty("", ""));
+        crafts.add(new CraftAbility("", 0));
+        dirty.set(false); // Don't mark as dirty initially
     }
 
     private void markDirty() {
@@ -114,6 +172,9 @@ public class CharacterData {
     public IntegerProperty essenceProperty() { return essence; }
     public IntegerProperty willpowerProperty() { return willpower; }
     public ObservableList<PurchasedCharm> getUnlockedCharms() { return unlockedCharms; }
+    public ObservableList<Merit> getMerits() { return merits; }
+    public ObservableList<Specialty> getSpecialties() { return specialties; }
+    public ObservableList<CraftAbility> getCrafts() { return crafts; }
     
     public boolean hasCharm(String name) {
         return unlockedCharms.stream().anyMatch(c -> c.name().equals(name));
@@ -171,6 +232,14 @@ public class CharacterData {
         return ABILITIES.stream()
                 .mapToInt(ability -> abilities.get(ability).get())
                 .sum();
+    }
+    
+    public int getMeritTotal() {
+        int total = 0;
+        for (Merit m : merits) {
+            total += m.getRating();
+        }
+        return total;
     }
     
     public int getBonusPointsSpent() {
@@ -251,6 +320,14 @@ public class CharacterData {
             }
         }
         
+        // Merits optimal spending (10 free dots, then 1 BP per dot)
+        bp += Math.max(0, getMeritTotal() - 10);
+        
+        // Specialties optimal spending (4 free, then 1 BP each)
+        bp += Math.max(0, specialties.size() - 4);
+        
+        // Crafts are separate abilities. The first craft is just another ability.
+        // We handle them in the totalAbils calculation.
         
         return bp;
     }
@@ -289,25 +366,55 @@ public class CharacterData {
     public CharacterSaveState exportState() {
         CharacterSaveState state = new CharacterSaveState();
         state.name = this.name.get();
-        state.caste = this.caste.get() != null ? this.caste.get().name() : "NONE";
-        state.supernalAbility = this.supernalAbility.get();
-        state.willpower = this.willpower.get();
-        state.essence = this.essence.get();
+        state.caste = caste.get();
+        state.supernalAbility = supernalAbility.get();
+        state.essence = essence.get();
+        state.willpower = willpower.get();
         
         state.attributes = new HashMap<>();
-        for (String attr : ATTRIBUTES) state.attributes.put(attr, attributes.get(attr).get());
+        for (String attr : ATTRIBUTES) {
+            state.attributes.put(attr, attributes.get(attr).get());
+        }
         
         state.abilities = new HashMap<>();
-        state.casteAbilities = new ArrayList<>();
-        state.favoredAbilities = new ArrayList<>();
-        
         for (String abil : ABILITIES) {
             state.abilities.put(abil, abilities.get(abil).get());
+        }
+        
+        state.casteAbilities = new ArrayList<>();
+        for (String abil : ABILITIES) {
             if (casteAbilities.get(abil).get()) state.casteAbilities.add(abil);
+        }
+        
+        state.favoredAbilities = new ArrayList<>();
+        for (String abil : ABILITIES) {
             if (favoredAbilities.get(abil).get()) state.favoredAbilities.add(abil);
         }
         
         state.unlockedCharms = new ArrayList<>(unlockedCharms);
+        
+        state.merits = new HashMap<>();
+        for (Merit m : merits) {
+            state.merits.put(m.getName(), m.getRating());
+        }
+        
+        state.specialties = new ArrayList<>();
+        for (Specialty s : specialties) {
+            CharacterSaveState.SpecialtyData sd = new CharacterSaveState.SpecialtyData();
+            sd.name = s.getName();
+            sd.ability = s.getAbility();
+            state.specialties.add(sd);
+        }
+        
+        state.crafts = new ArrayList<>();
+        for (CraftAbility ca : crafts) {
+            CharacterSaveState.CraftData cd = new CharacterSaveState.CraftData();
+            cd.expertise = ca.getExpertise();
+            cd.rating = ca.getRating();
+            cd.isCaste = ca.isCaste();
+            cd.isFavored = ca.isFavored();
+            state.crafts.add(cd);
+        }
         return state;
     }
 
@@ -316,35 +423,62 @@ public class CharacterData {
         isImporting = true;
         try {
             this.name.set(state.name != null ? state.name : "");
-            try {
-                this.caste.set(Caste.valueOf(state.caste != null ? state.caste : "NONE"));
-            } catch (Exception e) {
-                this.caste.set(Caste.NONE);
-            }
             
-            this.willpower.set(state.willpower > 0 ? state.willpower : 5);
-            this.essence.set(state.essence > 0 ? state.essence : 1);
+            caste.set(state.caste != null ? state.caste : Caste.NONE);
+            supernalAbility.set(state.supernalAbility != null ? state.supernalAbility : "");
+            essence.set(state.essence);
+            willpower.set(state.willpower);
             
             if (state.attributes != null) {
                 for (String attr : ATTRIBUTES) {
-                    attributes.get(attr).set(state.attributes.getOrDefault(attr, 1));
+                    if (state.attributes.containsKey(attr)) {
+                        attributes.get(attr).set(state.attributes.get(attr));
+                    }
                 }
             }
             
             if (state.abilities != null) {
                 for (String abil : ABILITIES) {
-                    abilities.get(abil).set(state.abilities.getOrDefault(abil, 0));
-                    casteAbilities.get(abil).set(state.casteAbilities != null && state.casteAbilities.contains(abil));
-                    favoredAbilities.get(abil).set(state.favoredAbilities != null && state.favoredAbilities.contains(abil));
+                    if (state.abilities.containsKey(abil)) {
+                        abilities.get(abil).set(state.abilities.get(abil));
+                    }
                 }
             }
             
-            this.supernalAbility.set(state.supernalAbility != null ? state.supernalAbility : "");
-
-            unlockedCharms.clear();
-            if (state.unlockedCharms != null) {
-                unlockedCharms.addAll(state.unlockedCharms);
+            for (String abil : ABILITIES) {
+                casteAbilities.get(abil).set(state.casteAbilities != null && state.casteAbilities.contains(abil));
+                favoredAbilities.get(abil).set(state.favoredAbilities != null && state.favoredAbilities.contains(abil));
             }
+            
+            unlockedCharms.setAll(state.unlockedCharms != null ? state.unlockedCharms : new ArrayList<>());
+            
+            merits.clear();
+            if (state.merits != null) {
+                for (Map.Entry<String, Integer> entry : state.merits.entrySet()) {
+                    merits.add(new Merit(entry.getKey(), entry.getValue()));
+                }
+            }
+            if (merits.isEmpty()) merits.add(new Merit("", 1));
+            
+            specialties.clear();
+            if (state.specialties != null) {
+                for (CharacterSaveState.SpecialtyData sd : state.specialties) {
+                    specialties.add(new Specialty(sd.name, sd.ability));
+                }
+            }
+            if (specialties.isEmpty()) specialties.add(new Specialty("", ""));
+            
+            crafts.clear();
+            if (state.crafts != null) {
+                for (CharacterSaveState.CraftData cd : state.crafts) {
+                    CraftAbility ca = new CraftAbility(cd.expertise, cd.rating);
+                    ca.setCaste(cd.isCaste);
+                    ca.setFavored(cd.isFavored);
+                    crafts.add(ca);
+                }
+            }
+            if (crafts.isEmpty()) crafts.add(new CraftAbility("", 0));
+            
             dirty.set(false);
         } finally {
             isImporting = false;
