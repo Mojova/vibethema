@@ -14,6 +14,7 @@ public class Charm {
     private String keywords;
     private String duration;
     private String fullText;
+    private transient boolean isCustom;
 
     public Charm() {}
 
@@ -28,6 +29,20 @@ public class Charm {
     public String getKeywords() { return keywords; }
     public String getDuration() { return duration; }
     public String getFullText() { return fullText; }
+
+    public void setName(String name) { this.name = name; }
+    public void setAbility(String ability) { this.ability = ability; }
+    public void setMinAbility(int minAbility) { this.minAbility = minAbility; }
+    public void setMinEssence(int minEssence) { this.minEssence = minEssence; }
+    public void setPrerequisites(List<String> prerequisites) { this.prerequisites = prerequisites; }
+    public void setCost(String cost) { this.cost = cost; }
+    public void setType(String type) { this.type = type; }
+    public void setKeywords(String keywords) { this.keywords = keywords; }
+    public void setDuration(String duration) { this.duration = duration; }
+    public void setFullText(String fullText) { this.fullText = fullText; }
+
+    public boolean isCustom() { return isCustom; }
+    public void setCustom(boolean custom) { isCustom = custom; }
 
     public boolean isEligible(CharacterData data) {
         int effectiveEssence = data.essenceProperty().get();

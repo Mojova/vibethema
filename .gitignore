@@ -1,3 +1,5 @@
 target
 data_source
 src/main/resources/charms
+.DS_Store
+src/main/resources/charms_backup

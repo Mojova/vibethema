@@ -13,19 +13,19 @@ A JavaFX-based character creator for Exalted 3rd Edition. The application focuse
     - Centralized calculations for **Bonus Points**, **Mote Pools** (Personal/Peripheral), and **Health Levels** (based on Stamina/Resistance).
     - Tracks "Dirty" state for unsaved changes.
     - Handles **Charm Prerequisites** (checks highest Craft rating for Craft-based requirements).
-- **`CharacterSaveState`**: A DTO (Data Transfer Object) designed for GSON serialization. Use `exportState()` and `importState()` in `CharacterData` to bridge between the live model and this state.
+- **`CharacterSaveState`**: A DTO (Data Header Object) designed for GSON serialization. Use `exportState()` and `importState()` in `CharacterData` to bridge between the live model and this state.
 - **Specialized Entities**:
     - `Merit`: name/rating.
     - `Specialty`: name/ability link.
     - `CraftAbility`: expertise/rating/status (Caste/Favored).
     - `MartialArtsStyle`: style name/rating/status (Caste/Favored).
     - `Charm`/`PurchasedCharm`: metadata vs. instance data.
-
-### UI Layer (`com.vibethema.ui`)
-- **`BuilderUI`**: The main entry point for the builder interface.
-    - Uses a `TabPane` for navigation (Stats, Merits, Charms).
-    - **Footer**: Displays critical tallies (Attributes, Abilities, Charms, Merits, Specialties, and BP).
     - **Reactive Updates**: Relies on listeners attached in `setupListeners()` to refresh the footer and other dynamic elements when model properties change.
+
+### Service Layer (`com.vibethema.service`)
+- **`CharmDataService`**: Manages charm loading from resources and local storage.
+    - Merges core data with user-defined charms from `[ability]-custom.json`.
+- **`PdfExtractor`**: Handles run-time extraction of data from the Exalted 3e Core PDF using Apache PDFBox.
 - **`DotSelector`**: A custom UI component for rating attributes and abilities (0-5 dots).
 
 ### Style (`src/main/resources/style.css`)
@@ -48,13 +48,18 @@ A JavaFX-based character creator for Exalted 3rd Edition. The application focuse
 2. **Caste/Favored Status**: Toggling "Craft" as Caste/Favored propagates to all crafts. "Martial Arts" status is directly linked to the **Brawl** ability status.
 3. **Save/Load Compatibility**: When adding new fields to the character, update BOTH `CharacterSaveState` (serialization) and `CharacterData` (export/import logic).
 4. **Default Entries**: For better UX, Merits and Specialties should always have at least one empty entry added to their lists if they are empty. Craft and Martial Arts styles do NOT have default entries; users must click "+ Add" to create them.
+5. **Custom Charms**: Custom charms are stored in `~/.vibethema/charms/[ability]-custom.json`. They are visually distinguished in the UI via the `.charm-node-custom` CSS class (silver border).
+6. **PDF Import**: PDF extraction happens at run-time. Data is cached in the user's home directory.
 
 ## File Map
 - `src/main/java/com/vibethema/Main.java`: App Launcher.
-- `src/main/java/com/vibethema/model/CharacterData.java`: The primary logic engine.
+- `src/main/java/com/vibethema/ui/StartScreen.java`: Welcome screen / file selection.
 - `src/main/java/com/vibethema/ui/BuilderUI.java`: The primary UI engine.
+- `src/main/java/com/vibethema/service/CharmDataService.java`: Persistence helper for charm data.
+- `src/main/java/com/vibethema/service/PdfExtractor.java`: Run-time PDF parsing logic.
+- `src/main/java/com/vibethema/model/CharacterData.java`: The primary logic engine.
 - `src/main/resources/charms/`: JSON database for Charms and Keywords.
+- `~/.vibethema/charms/`: User-specific storage for imported/custom charms.
 
 ## AI Workflow
 1. **Commits**: Always commit changes after finishing a logical task or a specific user request. Use descriptive commit messages.
-
