@@ -56,6 +56,7 @@ public class CharmDataService {
     @SuppressWarnings("unused")
     private static class CharmListWrapper {
         private String $schema = "./charm-schema.json";
+        private String version = "0.1.0";
         private String ability;
         private String exalt = "solar";
         private List<Charm> charms = new ArrayList<>();

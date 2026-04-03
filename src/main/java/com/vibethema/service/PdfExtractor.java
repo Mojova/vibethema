@@ -283,6 +283,7 @@ public class PdfExtractor {
             try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
                 Map<String, Object> wrapper = new LinkedHashMap<>();
                 wrapper.put("$schema", "./charm-schema.json");
+                wrapper.put("version", "0.1.0");
                 wrapper.put("ability", entry.getKey());
                 wrapper.put("exalt", "solar");
                 wrapper.put("charms", entry.getValue());
@@ -303,6 +304,7 @@ public class PdfExtractor {
             try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
                 Map<String, Object> wrapper = new LinkedHashMap<>();
                 wrapper.put("$schema", "./charm-schema.json");
+                wrapper.put("version", "0.1.0");
                 wrapper.put("ability", entry.getKey());
                 wrapper.put("exalt", "solar");
                 wrapper.put("charms", entry.getValue());
