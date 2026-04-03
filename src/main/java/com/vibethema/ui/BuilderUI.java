@@ -1,55 +1,33 @@
 package com.vibethema.ui;
 
+import com.vibethema.service.CharmDataService;
+import com.vibethema.service.PdfExtractor;
 import com.vibethema.model.CharacterData;
 import com.vibethema.model.Charm;
 import com.vibethema.model.MartialArtsStyle;
 import com.vibethema.model.PurchasedCharm;
 import com.vibethema.model.Specialty;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import javafx.beans.binding.Bindings;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.Button;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.control.Tooltip;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Pane;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.shape.CubicCurve;
-import javafx.beans.binding.Bindings;
-
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.scene.input.KeyCombination;
+import javafx.concurrent.Task;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javafx.stage.FileChooser;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.input.KeyCombination;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.FileReader;
 import com.vibethema.model.CharacterSaveState;
 import com.google.gson.GsonBuilder;
 import com.vibethema.model.CraftAbility;
@@ -75,6 +53,10 @@ public class BuilderUI extends BorderPane {
     private Map<String, VBox> charmNodeMap = new HashMap<>();
     private List<Charm> currentAbilityCharms = new ArrayList<>();
     private Map<String, String> keywordDefs = new HashMap<>();
+    
+    private CharmDataService dataService;
+    private ComboBox<String> abilityCombo;
+    private Runnable loadCharmsRef;
 
     public BuilderUI(CharacterData data) {
         this(data, null);
@@ -83,6 +65,7 @@ public class BuilderUI extends BorderPane {
     public BuilderUI(CharacterData data, File currentFile) {
         this.data = data;
         this.currentFile = currentFile;
+        this.dataService = new CharmDataService();
         getStyleClass().add("main-pane");
         loadKeywords();
 
@@ -106,11 +89,18 @@ public class BuilderUI extends BorderPane {
         meritsScroll.getStyleClass().add("scroll-pane-custom");
         meritsTab.setContent(meritsScroll);
 
+        Tab equipmentTab = new Tab("Equipment");
+        equipmentTab.setClosable(false);
+        ScrollPane equipmentScroll = new ScrollPane(createEquipmentContent());
+        equipmentScroll.setFitToWidth(true);
+        equipmentScroll.getStyleClass().add("scroll-pane-custom");
+        equipmentTab.setContent(equipmentScroll);
+
         Tab charmsTab = new Tab("Charms");
         charmsTab.setClosable(false);
         charmsTab.setContent(createCharmsContent());
 
-        tabPane.getTabs().addAll(statsTab, meritsTab, charmsTab);
+        tabPane.getTabs().addAll(statsTab, meritsTab, equipmentTab, charmsTab);
 
         setCenter(tabPane);
 
@@ -141,7 +131,10 @@ public class BuilderUI extends BorderPane {
         loadItem.setAccelerator(KeyCombination.keyCombination("Shortcut+O"));
         loadItem.setOnAction(e -> loadCharacter());
 
-        fileMenu.getItems().addAll(saveItem, saveAsItem, loadItem);
+        MenuItem importPdfItem = new MenuItem("Import Core PDF...");
+        importPdfItem.setOnAction(e -> importPdf());
+
+        fileMenu.getItems().addAll(saveItem, saveAsItem, loadItem, new SeparatorMenuItem(), importPdfItem);
         menuBar.getMenus().add(fileMenu);
 
         topContainer.getChildren().addAll(menuBar, createHeader());
@@ -421,6 +414,28 @@ public class BuilderUI extends BorderPane {
         bpLabel.setText("Bonus Points: " + bp + "/15");
 
         updateWebNodeStyles();
+    }
+
+    private VBox createEquipmentContent() {
+        VBox content = new VBox(25);
+        content.getStyleClass().add("content-area");
+        content.setPadding(new Insets(20));
+
+        VBox weaponsSection = createEquipmentSection("Weapons");
+        VBox armorSection = createEquipmentSection("Armor");
+        VBox hearthstonesSection = createEquipmentSection("Hearthstones");
+        VBox otherSection = createEquipmentSection("Other");
+
+        content.getChildren().addAll(weaponsSection, armorSection, hearthstonesSection, otherSection);
+        return content;
+    }
+
+    private VBox createEquipmentSection(String titleText) {
+        VBox section = new VBox(10);
+        Label title = new Label(titleText);
+        title.getStyleClass().add("section-title");
+        section.getChildren().add(title);
+        return section;
     }
 
     private VBox createContent() {
@@ -967,7 +982,7 @@ public class BuilderUI extends BorderPane {
         controls.setAlignment(Pos.CENTER_LEFT);
         Label comboLabel = new Label("Ability:");
         comboLabel.getStyleClass().add("label");
-        ComboBox<String> abilityCombo = new ComboBox<>();
+        abilityCombo = new ComboBox<>();
         abilityCombo.getItems().addAll(CharacterData.ABILITIES);
         abilityCombo.setValue("Archery");
         controls.getChildren().addAll(comboLabel, abilityCombo);
@@ -1048,26 +1063,14 @@ public class BuilderUI extends BorderPane {
 
         rightPane.getChildren().addAll(detailTitle, detailReqs, charmButtons, statsGrid, descScroll);
 
-        Runnable loadCharms = () -> {
+        loadCharmsRef = () -> {
             charmCanvas.getChildren().clear();
             charmNodeMap.clear();
             currentAbilityCharms.clear();
 
-            try {
-                String abilityKey = abilityCombo.getValue().toLowerCase().replace(" ", "-");
-                InputStream is = getClass().getResourceAsStream("/charms/" + abilityKey + ".json");
-                if (is != null) {
-                    try (Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-                        Type listType = new TypeToken<ArrayList<Charm>>() {
-                        }.getType();
-                        List<Charm> loaded = new Gson().fromJson(reader, listType);
-                        if (loaded != null) {
-                            currentAbilityCharms.addAll(loaded);
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            List<Charm> loaded = dataService.loadCharmsForAbility(abilityCombo.getValue());
+            if (loaded != null) {
+                currentAbilityCharms.addAll(loaded);
             }
 
             drawCharmWeb(currentAbilityCharms, title, abilityCombo.getValue(), detailTitle, detailReqs, toggleBtn,
@@ -1086,8 +1089,8 @@ public class BuilderUI extends BorderPane {
             refundBtn.setManaged(false);
         };
 
-        abilityCombo.valueProperty().addListener((obs, oldV, newV) -> loadCharms.run());
-        loadCharms.run();
+        abilityCombo.valueProperty().addListener((obs, oldV, newV) -> loadCharmsRef.run());
+        loadCharmsRef.run();
 
         splitPane.getItems().addAll(leftPane, rightPane);
         splitPane.setDividerPositions(0.7);
@@ -1294,21 +1297,77 @@ public class BuilderUI extends BorderPane {
     }
 
     private void loadKeywords() {
-        try (InputStream is = getClass().getResourceAsStream("/charms/keywords.json")) {
-            if (is != null) {
-                try (Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-                    Type type = new TypeToken<List<Keyword>>() {
-                    }.getType();
-                    List<Keyword> keywords = new Gson().fromJson(reader, type);
-                    if (keywords != null) {
-                        for (Keyword kw : keywords) {
-                            keywordDefs.put(kw.getName(), kw.getDescription());
-                        }
-                    }
-                }
+        if (dataService == null) return;
+        List<Keyword> keywords = dataService.loadKeywords();
+        for (Keyword kw : keywords) {
+            keywordDefs.put(kw.getName(), kw.getDescription());
+        }
+    }
+
+    private void importPdf() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select Exalted Core 3e PDF");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+        File file = fileChooser.showOpenDialog(getScene().getWindow());
+
+        if (file != null) {
+            showImportProgress(file);
+        }
+    }
+
+    private void showImportProgress(File pdfFile) {
+        Stage progressStage = new Stage();
+        progressStage.initModality(Modality.WINDOW_MODAL);
+        progressStage.initOwner(getScene().getWindow());
+        progressStage.setTitle("Importing PDF...");
+
+        VBox layout = new VBox(15);
+        layout.setPadding(new Insets(20));
+        layout.setAlignment(Pos.CENTER);
+        layout.setStyle("-fx-background-color: #1e1e1e;");
+
+        Label label = new Label("Extracting data from PDF...\nThis may take a minute.");
+        label.setStyle("-fx-text-fill: #f9f6e6; -fx-text-alignment: center;");
+        ProgressBar progressBar = new ProgressBar(0);
+        progressBar.setPrefWidth(300);
+
+        layout.getChildren().addAll(label, progressBar);
+        progressStage.setScene(new javafx.scene.Scene(layout));
+        progressStage.show();
+
+        Task<Void> task = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                PdfExtractor extractor = new PdfExtractor();
+                extractor.extractAll(pdfFile, progress -> {
+                    Platform.runLater(() -> progressBar.setProgress(progress));
+                });
+                return null;
             }
-        } catch (Exception e) {
-            System.err.println("Could not load keywords: " + e.getMessage());
+        };
+
+        task.setOnSucceeded(e -> {
+            progressStage.close();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Import complete! Charms and keywords have been updated.", ButtonType.OK);
+            alert.showAndWait();
+            refreshCharms();
+        });
+
+        task.setOnFailed(e -> {
+            progressStage.close();
+            Throwable ex = task.getException();
+            ex.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Import failed: " + ex.getMessage(), ButtonType.OK);
+            alert.showAndWait();
+        });
+
+        new Thread(task).start();
+    }
+
+    private void refreshCharms() {
+        loadKeywords();
+        if (loadCharmsRef != null) {
+            loadCharmsRef.run();
         }
     }
 
