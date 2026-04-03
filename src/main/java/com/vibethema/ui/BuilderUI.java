@@ -1587,15 +1587,14 @@ public class BuilderUI extends BorderPane {
             }
         }
 
-        private void updateKeywords(String keywordsStr, FlowPane kwFlow) {
+        private void updateKeywords(List<String> keywords, FlowPane kwFlow) {
             kwFlow.getChildren().clear();
-            if (keywordsStr == null || keywordsStr.isEmpty() || keywordsStr.equalsIgnoreCase("None")) {
+            if (keywords == null || keywords.isEmpty()) {
                 return;
             }
 
-            String[] parts = keywordsStr.split(",");
-            for (int i = 0; i < parts.length; i++) {
-                String name = parts[i].trim();
+            for (int i = 0; i < keywords.size(); i++) {
+                String name = keywords.get(i).trim();
                 if (name.isEmpty())
                     continue;
 
@@ -1614,7 +1613,7 @@ public class BuilderUI extends BorderPane {
 
                 kwFlow.getChildren().add(label);
 
-                if (i < parts.length - 1) {
+                if (i < keywords.size() - 1) {
                     Label comma = new Label(", ");
                     comma.getStyleClass().add("sidebar-stat");
                     kwFlow.getChildren().add(comma);
@@ -1725,7 +1724,15 @@ public class BuilderUI extends BorderPane {
             nc.setMinEssence(minEss.getValue());
             nc.setCost(costField.getText());
             nc.setType(typeField.getText());
-            nc.setKeywords(keywordsField.getText());
+            
+            List<String> kwList = new ArrayList<>();
+            if (!keywordsField.getText().trim().isEmpty()) {
+                for (String kw : keywordsField.getText().split(",")) {
+                    String t = kw.trim();
+                    if (!t.isEmpty() && !t.equalsIgnoreCase("None")) kwList.add(t);
+                }
+            }
+            nc.setKeywords(kwList);
             nc.setDuration(durationField.getText());
             nc.setFullText(descArea.getText());
             List<String> selectedIds = prereqList.getSelectionModel().getSelectedItems().stream()
@@ -1773,7 +1780,8 @@ public class BuilderUI extends BorderPane {
         Spinner<Integer> minEss = new Spinner<>(1, 5, charm.getMinEssence());
         TextField costField = new TextField(charm.getCost());
         TextField typeField = new TextField(charm.getType());
-        TextField keywordsField = new TextField(charm.getKeywords());
+        String initialKeywords = charm.getKeywords() != null ? String.join(", ", charm.getKeywords()) : "";
+        TextField keywordsField = new TextField(initialKeywords);
         TextField durationField = new TextField(charm.getDuration());
         TextArea descArea = new TextArea(charm.getFullText());
         descArea.setWrapText(true);
@@ -1855,7 +1863,15 @@ public class BuilderUI extends BorderPane {
                 charm.setMinEssence(minEss.getValue());
                 charm.setCost(costField.getText());
                 charm.setType(typeField.getText());
-                charm.setKeywords(keywordsField.getText());
+                
+                List<String> kwList = new ArrayList<>();
+                if (!keywordsField.getText().trim().isEmpty()) {
+                    for (String kw : keywordsField.getText().split(",")) {
+                        String t = kw.trim();
+                        if (!t.isEmpty() && !t.equalsIgnoreCase("None")) kwList.add(t);
+                    }
+                }
+                charm.setKeywords(kwList);
                 charm.setDuration(durationField.getText());
                 charm.setFullText(descArea.getText());
                 charm.setPotentiallyProblematicImport(problemCheck.isSelected());

@@ -220,7 +220,14 @@ public class PdfExtractor {
             charmMap.put("prerequisites", prereqs);
             charmMap.put("cost", cost);
             charmMap.put("type", type);
-            charmMap.put("keywords", keywords);
+            List<String> kwList = new ArrayList<>();
+            if (!keywords.isEmpty() && !keywords.equalsIgnoreCase("None")) {
+                for (String kw : keywords.split(",")) {
+                    String t = kw.trim();
+                    if (!t.isEmpty()) kwList.add(t);
+                }
+            }
+            charmMap.put("keywords", kwList);
             charmMap.put("duration", duration);
             charmMap.put("fullText", fullText);
             charmMap.put("rawData", part.trim());

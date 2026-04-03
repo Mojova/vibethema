@@ -12,7 +12,7 @@ public class Charm {
     
     private String cost;
     private String type;
-    private String keywords;
+    private List<String> keywords;
     private String duration;
     private String fullText;
     private String rawData;
@@ -32,7 +32,7 @@ public class Charm {
     
     public String getCost() { return cost; }
     public String getType() { return type; }
-    public String getKeywords() { return keywords; }
+    public List<String> getKeywords() { return keywords; }
     public String getDuration() { return duration; }
     public String getFullText() { return fullText; }
     public String getRawData() { return rawData; }
@@ -44,7 +44,7 @@ public class Charm {
     public void setPrerequisites(List<String> prerequisites) { this.prerequisites = prerequisites; }
     public void setCost(String cost) { this.cost = cost; }
     public void setType(String type) { this.type = type; }
-    public void setKeywords(String keywords) { this.keywords = keywords; }
+    public void setKeywords(List<String> keywords) { this.keywords = keywords; }
     public void setDuration(String duration) { this.duration = duration; }
     public void setFullText(String fullText) { this.fullText = fullText; }
     public void setRawData(String rawData) { this.rawData = rawData; }
