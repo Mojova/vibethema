@@ -51,6 +51,7 @@ A JavaFX-based character creator for Exalted 3rd Edition. The application focuse
 5. **Custom Charms**: Custom charms are stored in `~/.vibethema/charms/[ability]-custom.json`. They are visually distinguished in the UI via the `.charm-node-custom` CSS class (silver border).
 6. **PDF Import**: PDF extraction happens at run-time. Data is cached in the user's home directory. Charms include a `rawData` field containing the original PDF text block. The `potentiallyProblematicImport` flag (boolean) indicates if any prerequisites could not be resolved.
 7. **Keyword Format**: Charm keywords are stored as a `List<String>` in the model and a JSON array in the database. Empty keywords (e.g. from a "None" value in PDF) are represented by an empty array `[]`.
+8. **Data Versioning**: All charm collections (standard and custom JSON) include a `version` field (currently `0.1.0`) to track data format compatibility. This field is required by the schema.
 
 ## File Map
 - `src/main/java/com/vibethema/Main.java`: App Launcher.
