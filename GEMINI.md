@@ -50,6 +50,7 @@ A JavaFX-based character creator for Exalted 3rd Edition. The application focuse
 4. **Default Entries**: For better UX, Merits and Specialties should always have at least one empty entry added to their lists if they are empty. Craft and Martial Arts styles do NOT have default entries; users must click "+ Add" to create them.
 5. **Custom Charms**: Custom charms are stored in `~/.vibethema/charms/[ability]-custom.json`. They are visually distinguished in the UI via the `.charm-node-custom` CSS class (silver border).
 6. **PDF Import**: PDF extraction happens at run-time. Data is cached in the user's home directory. Charms include a `rawData` field containing the original PDF text block. The `potentiallyProblematicImport` flag (boolean) indicates if any prerequisites could not be resolved.
+7. **Keyword Format**: Charm keywords are stored as a `List<String>` in the model and a JSON array in the database. Empty keywords (e.g. from a "None" value in PDF) are represented by an empty array `[]`.
 
 ## File Map
 - `src/main/java/com/vibethema/Main.java`: App Launcher.
