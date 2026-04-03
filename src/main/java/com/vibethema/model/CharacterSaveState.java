@@ -18,6 +18,7 @@ public class CharacterSaveState {
     public Map<String, Integer> merits = new HashMap<>(); // name -> rating
     public List<SpecialtyData> specialties = new ArrayList<>();
     public List<CraftData> crafts = new ArrayList<>();
+    public List<MartialArtsData> martialArts = new ArrayList<>();
     
     public static class SpecialtyData {
         public String name;
@@ -26,6 +27,13 @@ public class CharacterSaveState {
 
     public static class CraftData {
         public String expertise;
+        public int rating;
+        public boolean isCaste;
+        public boolean isFavored;
+    }
+
+    public static class MartialArtsData {
+        public String styleName;
         public int rating;
         public boolean isCaste;
         public boolean isFavored;

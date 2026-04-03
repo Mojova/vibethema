@@ -2,6 +2,7 @@ package com.vibethema.ui;
 
 import com.vibethema.model.CharacterData;
 import com.vibethema.model.Charm;
+import com.vibethema.model.MartialArtsStyle;
 import com.vibethema.model.PurchasedCharm;
 import com.vibethema.model.Specialty;
 import com.google.gson.Gson;
@@ -458,7 +459,7 @@ public class BuilderUI extends BorderPane {
         int row = 0;
         int col = 0;
         for (String ability : CharacterData.ABILITIES) {
-            if ("Craft".equals(ability)) continue;
+            if ("Craft".equals(ability) || "Martial Arts".equals(ability)) continue;
             HBox rowBox = new HBox(6);
             rowBox.setAlignment(Pos.CENTER_LEFT);
             
@@ -546,17 +547,71 @@ public class BuilderUI extends BorderPane {
         abilitiesSection.getChildren().addAll(abilTitle, abilGrid);
         
         VBox craftsSection = createCraftsSection(casteCount, favoredCount);
+        VBox martialArtsSection = createMartialArtsSection();
         VBox specialtiesSection = createSpecialtiesSection();
         
         VBox sideStuff = new VBox(20);
         sideStuff.setPrefWidth(450);
-        sideStuff.getChildren().addAll(craftsSection, specialtiesSection);
+        sideStuff.getChildren().addAll(craftsSection, martialArtsSection, specialtiesSection);
         
         HBox abilAndSide = new HBox(30);
         abilAndSide.getChildren().addAll(abilitiesSection, sideStuff);
         
         content.getChildren().addAll(advantagesSection, attributesSection, abilAndSide);
         return content;
+    }
+    
+    private VBox createMartialArtsSection() {
+        VBox section = new VBox(10);
+        
+        HBox titleRow = new HBox(15);
+        titleRow.setAlignment(Pos.CENTER_LEFT);
+        Label title = new Label("Martial Arts");
+        title.getStyleClass().add("section-title");
+        
+        Label statusInfo = new Label("(Linked to Brawl)");
+        statusInfo.getStyleClass().add("label-small");
+        
+        titleRow.getChildren().addAll(title, statusInfo);
+        
+        VBox styleList = new VBox(8);
+        
+        Runnable refreshStyles = () -> {
+            styleList.getChildren().clear();
+            for (MartialArtsStyle mas : data.getMartialArtsStyles()) {
+                HBox row = new HBox(12);
+                row.setAlignment(Pos.CENTER_LEFT);
+                row.getStyleClass().add("merit-row");
+                row.setPadding(new Insets(8));
+                
+                TextField styleField = new TextField();
+                styleField.setPromptText("Style Name (e.g. Snake Style)");
+                styleField.textProperty().bindBidirectional(mas.styleNameProperty());
+                styleField.setPrefWidth(180);
+                
+                DotSelector selector = new DotSelector(mas.ratingProperty(), 0, 5);
+                
+                Region spacer = new Region();
+                HBox.setHgrow(spacer, Priority.ALWAYS);
+                
+                Button removeBtn = new Button("✕");
+                removeBtn.getStyleClass().add("remove-btn");
+                removeBtn.setOnAction(e -> data.getMartialArtsStyles().remove(mas));
+                
+                row.getChildren().addAll(styleField, spacer, selector, removeBtn);
+                styleList.getChildren().add(row);
+            }
+        };
+        
+        data.getMartialArtsStyles().addListener((javafx.collections.ListChangeListener<? super MartialArtsStyle>) c -> refreshStyles.run());
+        refreshStyles.run();
+        
+        Button addBtn = new Button("+ Add Martial Arts Style");
+        addBtn.getStyleClass().add("action-btn");
+        addBtn.setOnAction(e -> data.getMartialArtsStyles().add(new MartialArtsStyle("", 0)));
+        
+        section.getChildren().addAll(titleRow, styleList, addBtn);
+        return section;
     }
     
     private VBox createCraftsSection(javafx.beans.property.IntegerProperty casteCount, javafx.beans.property.IntegerProperty favoredCount) {

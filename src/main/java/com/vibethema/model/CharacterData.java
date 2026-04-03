@@ -47,6 +47,7 @@ public class CharacterData {
     private final ObservableList<Merit> merits = FXCollections.observableArrayList();
     private final ObservableList<Specialty> specialties = FXCollections.observableArrayList();
     private final ObservableList<CraftAbility> crafts = FXCollections.observableArrayList();
+    private final ObservableList<MartialArtsStyle> martialArtsStyles = FXCollections.observableArrayList();
 
     
     private BooleanProperty dirty = new SimpleBooleanProperty(false);
@@ -107,14 +108,20 @@ public class CharacterData {
         // Special sync for Martial Arts status (linked to Brawl)
         getCasteAbility("Brawl").addListener((obs, old, nv) -> {
             getCasteAbility("Martial Arts").set(nv);
+            for (MartialArtsStyle mas : martialArtsStyles) mas.setCaste(nv);
         });
         getFavoredAbility("Brawl").addListener((obs, old, nv) -> {
             getFavoredAbility("Martial Arts").set(nv);
+            for (MartialArtsStyle mas : martialArtsStyles) mas.setFavored(nv);
         });
         
-        // Initial sync for Martial Arts
+        // Initial sync for Martial Arts - ensure they match Brawl
         getCasteAbility("Martial Arts").set(getCasteAbility("Brawl").get());
         getFavoredAbility("Martial Arts").set(getFavoredAbility("Brawl").get());
+        for (MartialArtsStyle mas : martialArtsStyles) {
+            mas.setCaste(getCasteAbility("Brawl").get());
+            mas.setFavored(getFavoredAbility("Brawl").get());
+        }
         
         name.addListener((obs, oldV, newV) -> markDirty());
         caste.addListener((obs, oldV, newV) -> markDirty());
@@ -163,10 +170,29 @@ public class CharacterData {
             markDirty();
         });
         
-        // Start with one empty merit, specialty, and craft by default
+        martialArtsStyles.addListener((javafx.collections.ListChangeListener<? super MartialArtsStyle>) c -> {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    for (MartialArtsStyle mas : c.getAddedSubList()) {
+                        mas.styleNameProperty().addListener((obs, ov, nv) -> markDirty());
+                        mas.ratingProperty().addListener((obs, ov, nv) -> markDirty());
+                        mas.casteProperty().addListener((obs, ov, nv) -> markDirty());
+                        mas.favoredProperty().addListener((obs, ov, nv) -> markDirty());
+                        
+                        // Inherit current global status from Brawl
+                        mas.setCaste(getCasteAbility("Brawl").get());
+                        mas.setFavored(getFavoredAbility("Brawl").get());
+                    }
+                }
+            }
+            markDirty();
+        });
+        
+        // Start with one empty merit, specialty, craft, and martial arts style by default
         merits.add(new Merit("", 1));
         specialties.add(new Specialty("", ""));
         crafts.add(new CraftAbility("", 0));
+        martialArtsStyles.add(new MartialArtsStyle("", 0));
         dirty.set(false); // Don't mark as dirty initially
     }
 
@@ -194,6 +220,7 @@ public class CharacterData {
     public ObservableList<Merit> getMerits() { return merits; }
     public ObservableList<Specialty> getSpecialties() { return specialties; }
     public ObservableList<CraftAbility> getCrafts() { return crafts; }
+    public ObservableList<MartialArtsStyle> getMartialArtsStyles() { return martialArtsStyles; }
     
     public boolean hasCharm(String name) {
         return unlockedCharms.stream().anyMatch(c -> c.name().equals(name));
@@ -248,9 +275,15 @@ public class CharacterData {
     }
     
     public int getAbilityTotal() {
-        return ABILITIES.stream()
+        int total = ABILITIES.stream()
+                .filter(abil -> !"Craft".equals(abil) && !"Martial Arts".equals(abil))
                 .mapToInt(ability -> abilities.get(ability).get())
                 .sum();
+        
+        for (CraftAbility ca : crafts) total += ca.getRating();
+        for (MartialArtsStyle mas : martialArtsStyles) total += mas.getRating();
+        
+        return total;
     }
     
     public int getMeritTotal() {
@@ -287,16 +320,33 @@ public class CharacterData {
         List<Integer> poolDots = new ArrayList<>();
         
         for (String abil : ABILITIES) {
+            if ("Craft".equals(abil) || "Martial Arts".equals(abil)) continue;
+            
             int dots = abilities.get(abil).get();
             boolean isFavored = casteAbilities.get(abil).get() || favoredAbilities.get(abil).get();
             int costPerDot = isFavored ? 1 : 2;
             
             for (int i = 1; i <= dots; i++) {
-                if (i > 3) { // dots 4 and 5 must cost bonus points
-                    mustBp += costPerDot;
-                } else {
-                    poolDots.add(costPerDot); // eligible for 28 free dots pool
-                }
+                if (i > 3) mustBp += costPerDot;
+                else poolDots.add(costPerDot);
+            }
+        }
+        
+        for (CraftAbility ca : crafts) {
+            int dots = ca.getRating();
+            int costPerDot = (ca.isCaste() || ca.isFavored()) ? 1 : 2;
+            for (int i = 1; i <= dots; i++) {
+                if (i > 3) mustBp += costPerDot;
+                else poolDots.add(costPerDot);
+            }
+        }
+        
+        for (MartialArtsStyle mas : martialArtsStyles) {
+            int dots = mas.getRating();
+            int costPerDot = (mas.isCaste() || mas.isFavored()) ? 1 : 2;
+            for (int i = 1; i <= dots; i++) {
+                if (i > 3) mustBp += costPerDot;
+                else poolDots.add(costPerDot);
             }
         }
         
@@ -434,6 +484,16 @@ public class CharacterData {
             cd.isFavored = ca.isFavored();
             state.crafts.add(cd);
         }
+        
+        state.martialArts = new ArrayList<>();
+        for (MartialArtsStyle mas : martialArtsStyles) {
+            CharacterSaveState.MartialArtsData md = new CharacterSaveState.MartialArtsData();
+            md.styleName = mas.getStyleName();
+            md.rating = mas.getRating();
+            md.isCaste = mas.isCaste();
+            md.isFavored = mas.isFavored();
+            state.martialArts.add(md);
+        }
         return state;
     }
 
@@ -498,9 +558,22 @@ public class CharacterData {
             }
             if (crafts.isEmpty()) crafts.add(new CraftAbility("", 0));
             
-            // Final sync for Martial Arts to ensure it matches Brawl
-            getCasteAbility("Martial Arts").set(getCasteAbility("Brawl").get());
-            getFavoredAbility("Martial Arts").set(getFavoredAbility("Brawl").get());
+            martialArtsStyles.clear();
+            if (state.martialArts != null) {
+                for (CharacterSaveState.MartialArtsData md : state.martialArts) {
+                    MartialArtsStyle mas = new MartialArtsStyle(md.styleName, md.rating);
+                    mas.setCaste(md.isCaste);
+                    mas.setFavored(md.isFavored);
+                    martialArtsStyles.add(mas);
+                }
+            }
+            if (martialArtsStyles.isEmpty()) martialArtsStyles.add(new MartialArtsStyle("", 0));
+            
+            // Final sync for Martial Arts to ensure styles match Brawl
+            for (MartialArtsStyle mas : martialArtsStyles) {
+                mas.setCaste(getCasteAbility("Brawl").get());
+                mas.setFavored(getFavoredAbility("Brawl").get());
+            }
             
             dirty.set(false);
         } finally {
