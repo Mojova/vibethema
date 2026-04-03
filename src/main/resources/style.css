@@ -340,3 +340,68 @@
 .action-btn:hover {
     -fx-background-color: #f9f6e6;
 }
+
+/* Start Screen Styles */
+.start-screen {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 100%, #2a2a2a, #121212);
+}
+
+.start-card {
+    -fx-background-color: rgba(45, 45, 45, 0.7);
+    -fx-padding: 60px;
+    -fx-border-color: rgba(212, 175, 55, 0.3);
+    -fx-border-width: 1px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 20, 0, 0, 10);
+}
+
+.start-title {
+    -fx-font-size: 48px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #d4af37;
+    /* No shadow here for clean look, use on container if needed */
+}
+
+.start-subtitle {
+    -fx-font-size: 18px;
+    -fx-text-fill: #aaa;
+}
+
+.start-button {
+    -fx-background-color: linear-gradient(to bottom, #d4af37, #b8860b);
+    -fx-text-fill: #1e1e1e;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-padding: 15px 40px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+    -fx-min-width: 250px;
+}
+
+.start-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #f9f6e6, #d4af37);
+    -fx-effect: dropshadow(three-pass-box, rgba(212, 175, 55, 0.4), 15, 0, 0, 0);
+}
+
+.start-button-secondary {
+    -fx-background-color: transparent;
+    -fx-border-color: #d4af37;
+    -fx-border-width: 2px;
+    -fx-text-fill: #d4af37;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-padding: 15px 40px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+    -fx-min-width: 250px;
+}
+
+.start-button-secondary:hover {
+    -fx-background-color: rgba(212, 175, 55, 0.1);
+    -fx-border-color: #f9f6e6;
+    -fx-text-fill: #f9f6e6;
+}
+

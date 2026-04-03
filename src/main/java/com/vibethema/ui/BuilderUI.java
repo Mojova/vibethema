@@ -56,11 +56,10 @@ import com.vibethema.model.CraftAbility;
 import com.vibethema.model.Keyword;
 import com.vibethema.model.Merit;
 
-
 public class BuilderUI extends BorderPane {
     private CharacterData data;
     private File currentFile = null;
-    
+
     private Label physicalLabel = new Label();
     private Label socialLabel = new Label();
     private Label mentalLabel = new Label();
@@ -71,49 +70,55 @@ public class BuilderUI extends BorderPane {
     private Label meritsLabel = new Label();
     private Label specialtiesLabel = new Label();
     private Label bpLabel = new Label();
-    
+
     private Pane charmCanvas;
     private Map<String, VBox> charmNodeMap = new HashMap<>();
     private List<Charm> currentAbilityCharms = new ArrayList<>();
     private Map<String, String> keywordDefs = new HashMap<>();
 
     public BuilderUI(CharacterData data) {
+        this(data, null);
+    }
+
+    public BuilderUI(CharacterData data, File currentFile) {
         this.data = data;
+        this.currentFile = currentFile;
         getStyleClass().add("main-pane");
         loadKeywords();
-        
+
+
         setTop(createTopSection());
-        
+
         TabPane tabPane = new TabPane();
         tabPane.getStyleClass().add("tab-pane");
-        
+
         Tab statsTab = new Tab("Stats");
         statsTab.setClosable(false);
         ScrollPane statsScroll = new ScrollPane(createContent());
         statsScroll.setFitToWidth(true);
         statsScroll.getStyleClass().add("scroll-pane-custom");
         statsTab.setContent(statsScroll);
-        
+
         Tab meritsTab = new Tab("Merits");
         meritsTab.setClosable(false);
         ScrollPane meritsScroll = new ScrollPane(createMeritsContent());
         meritsScroll.setFitToWidth(true);
         meritsScroll.getStyleClass().add("scroll-pane-custom");
         meritsTab.setContent(meritsScroll);
-        
+
         Tab charmsTab = new Tab("Charms");
         charmsTab.setClosable(false);
         charmsTab.setContent(createCharmsContent());
-        
+
         tabPane.getTabs().addAll(statsTab, meritsTab, charmsTab);
 
         setCenter(tabPane);
-        
+
         setBottom(createFooter());
-        
+
         setupListeners();
         updateFooter();
-        
+
         data.dirtyProperty().addListener((obs, oldV, newV) -> updateWindowTitle());
     }
 
@@ -121,24 +126,24 @@ public class BuilderUI extends BorderPane {
         VBox topContainer = new VBox();
         MenuBar menuBar = new MenuBar();
         menuBar.setUseSystemMenuBar(true);
-        
+
         Menu fileMenu = new Menu("File");
-        
+
         MenuItem saveItem = new MenuItem("Save");
         saveItem.setAccelerator(KeyCombination.keyCombination("Shortcut+S"));
         saveItem.setOnAction(e -> saveCharacter());
-        
+
         MenuItem saveAsItem = new MenuItem("Save As...");
         saveAsItem.setAccelerator(KeyCombination.keyCombination("Shortcut+Shift+S"));
         saveAsItem.setOnAction(e -> saveCharacterAs());
-        
+
         MenuItem loadItem = new MenuItem("Load Character");
         loadItem.setAccelerator(KeyCombination.keyCombination("Shortcut+O"));
         loadItem.setOnAction(e -> loadCharacter());
-        
+
         fileMenu.getItems().addAll(saveItem, saveAsItem, loadItem);
         menuBar.getMenus().add(fileMenu);
-        
+
         topContainer.getChildren().addAll(menuBar, createHeader());
         return topContainer;
     }
@@ -177,7 +182,7 @@ public class BuilderUI extends BorderPane {
             ex.printStackTrace();
         }
     }
-    
+
     private void loadCharacter() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Load Character");
@@ -213,25 +218,25 @@ public class BuilderUI extends BorderPane {
     private VBox createHeader() {
         VBox header = new VBox(10);
         header.getStyleClass().add("header");
-        
+
         Text title = new Text("Exalted 3rd Edition Solar Builder");
         title.getStyleClass().add("title-text");
-        
+
         HBox basicInfo = new HBox(15);
         basicInfo.getStyleClass().add("info-bar");
-        
+
         TextField nameField = new TextField();
         nameField.setPromptText("Character Name");
         nameField.textProperty().bindBidirectional(data.nameProperty());
-        
+
         ComboBox<CharacterData.Caste> casteBox = new ComboBox<>();
         casteBox.getItems().addAll(CharacterData.Caste.values());
         casteBox.setValue(CharacterData.Caste.NONE);
         data.casteProperty().bindBidirectional(casteBox.valueProperty());
-        
+
         ComboBox<String> supernalDropdown = new ComboBox<>();
         supernalDropdown.setPrefWidth(120);
-        
+
         Runnable updateSupernalDropdown = () -> {
             String current = data.supernalAbilityProperty().get();
             List<String> options = new ArrayList<>();
@@ -249,7 +254,7 @@ public class BuilderUI extends BorderPane {
                 data.supernalAbilityProperty().set("");
             }
         };
-        
+
         supernalDropdown.valueProperty().addListener((obs, oldV, newV) -> {
             if (newV != null && supernalDropdown.getItems().contains(newV)) {
                 data.supernalAbilityProperty().set(newV);
@@ -257,7 +262,7 @@ public class BuilderUI extends BorderPane {
                 data.supernalAbilityProperty().set("");
             }
         });
-        
+
         data.supernalAbilityProperty().addListener((obs, oldV, newV) -> {
             if (newV != null && !newV.equals(supernalDropdown.getValue())) {
                 if (supernalDropdown.getItems().contains(newV)) {
@@ -267,43 +272,50 @@ public class BuilderUI extends BorderPane {
                 }
             }
         });
-        
+
         for (String abil : CharacterData.ABILITIES) {
             data.getCasteAbility(abil).addListener((obs, oldV, newV) -> updateSupernalDropdown.run());
         }
         updateSupernalDropdown.run();
-        
-        basicInfo.getChildren().addAll(new Label("Name:"), nameField, new Label("Caste:"), casteBox, new Label("Supernal:"), supernalDropdown);
-        
+
+        basicInfo.getChildren().addAll(new Label("Name:"), nameField, new Label("Caste:"), casteBox,
+                new Label("Supernal:"), supernalDropdown);
+
         header.getChildren().addAll(title, basicInfo);
         return header;
     }
-    
+
     private VBox createFooter() {
         VBox footer = new VBox(10);
         footer.getStyleClass().add("footer");
-        
+
         HBox row1 = new HBox(20);
         HBox row2 = new HBox(20);
-        
+
         bpLabel.getStyleClass().add("bp-label");
-        
+
         row1.getChildren().addAll(
-            new Label("Attributes (8/6/4):"), physicalLabel, socialLabel, mentalLabel,
-            new Region() {{ HBox.setHgrow(this, Priority.ALWAYS); }},
-            casteLabel, favoredLabel
-        );
-        
+                new Label("Attributes (8/6/4):"), physicalLabel, socialLabel, mentalLabel,
+                new Region() {
+                    {
+                        HBox.setHgrow(this, Priority.ALWAYS);
+                    }
+                },
+                casteLabel, favoredLabel);
+
         row2.getChildren().addAll(
-            new Label("Pools:"), abilitiesLabel, charmsLabel, meritsLabel, specialtiesLabel,
-            new Region() {{ HBox.setHgrow(this, Priority.ALWAYS); }},
-            bpLabel
-        );
-        
+                new Label("Pools:"), abilitiesLabel, charmsLabel, meritsLabel, specialtiesLabel,
+                new Region() {
+                    {
+                        HBox.setHgrow(this, Priority.ALWAYS);
+                    }
+                },
+                bpLabel);
+
         footer.getChildren().addAll(row1, row2);
         return footer;
     }
-    
+
     private void setupListeners() {
         for (String attr : CharacterData.ATTRIBUTES) {
             data.getAttribute(attr).addListener((obs, oldV, newV) -> updateFooter());
@@ -323,17 +335,18 @@ public class BuilderUI extends BorderPane {
             }
             updateFooter();
         });
-        
+
         data.supernalAbilityProperty().addListener((obs, oldV, newV) -> {
             updateFooter();
             updateWebNodeStyles();
         });
-        
-        data.getUnlockedCharms().addListener((javafx.collections.ListChangeListener.Change<? extends PurchasedCharm> c) -> {
-            updateFooter();
-            updateWebNodeStyles();
-        });
-        
+
+        data.getUnlockedCharms()
+                .addListener((javafx.collections.ListChangeListener.Change<? extends PurchasedCharm> c) -> {
+                    updateFooter();
+                    updateWebNodeStyles();
+                });
+
         data.getMerits().addListener((javafx.collections.ListChangeListener.Change<? extends Merit> c) -> {
             while (c.next()) {
                 if (c.wasAdded()) {
@@ -344,7 +357,7 @@ public class BuilderUI extends BorderPane {
             }
             updateFooter();
         });
-        
+
         data.getSpecialties().addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
@@ -356,7 +369,7 @@ public class BuilderUI extends BorderPane {
             }
             updateFooter();
         });
-        
+
         data.getCrafts().addListener((javafx.collections.ListChangeListener<? super CraftAbility>) c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
@@ -368,7 +381,7 @@ public class BuilderUI extends BorderPane {
             }
             updateFooter();
         });
-        
+
         // Initial listeners
         for (Merit m : data.getMerits()) {
             m.ratingProperty().addListener((obs, ov, nv) -> updateFooter());
@@ -390,15 +403,15 @@ public class BuilderUI extends BorderPane {
         int ment = data.getAttributeTotal(CharacterData.MENTAL_ATTRIBUTES);
         int abils = data.getAbilityTotal();
         int bp = data.getBonusPointsSpent();
-        
+
         long casteCount = CharacterData.ABILITIES.stream().filter(a -> data.getCasteAbility(a).get()).count();
         long favoredCount = CharacterData.ABILITIES.stream().filter(a -> data.getFavoredAbility(a).get()).count();
         int charmsCount = data.getUnlockedCharms().size();
-        
+
         physicalLabel.setText("Phys: " + phys);
         socialLabel.setText("Soc: " + soc);
         mentalLabel.setText("Ment: " + ment);
-        
+
         abilitiesLabel.setText("Abils: " + abils + "/28");
         charmsLabel.setText("Charms: " + charmsCount + "/15");
         meritsLabel.setText("Merits: " + data.getMeritTotal() + "/10");
@@ -406,7 +419,7 @@ public class BuilderUI extends BorderPane {
         casteLabel.setText("Caste: " + casteCount + "/5");
         favoredLabel.setText("Favored: " + favoredCount + "/5");
         bpLabel.setText("Bonus Points: " + bp + "/15");
-        
+
         updateWebNodeStyles();
     }
 
@@ -414,38 +427,39 @@ public class BuilderUI extends BorderPane {
         VBox content = new VBox(20);
         content.getStyleClass().add("content-area");
         content.setPadding(new Insets(20));
-        
+
         VBox advantagesSection = createAdvantagesSection();
-        
+
         VBox attributesSection = new VBox(10);
         Label attrTitle = new Label("Attributes");
         attrTitle.getStyleClass().add("section-title");
-        
+
         HBox attrColumns = new HBox(30);
         attrColumns.getChildren().addAll(
-            createAttributeColumn("Physical", CharacterData.PHYSICAL_ATTRIBUTES),
-            createAttributeColumn("Social", CharacterData.SOCIAL_ATTRIBUTES),
-            createAttributeColumn("Mental", CharacterData.MENTAL_ATTRIBUTES)
-        );
+                createAttributeColumn("Physical", CharacterData.PHYSICAL_ATTRIBUTES),
+                createAttributeColumn("Social", CharacterData.SOCIAL_ATTRIBUTES),
+                createAttributeColumn("Mental", CharacterData.MENTAL_ATTRIBUTES));
         attributesSection.getChildren().addAll(attrTitle, attrColumns);
-        
+
         VBox abilitiesSection = new VBox(10);
         Label abilTitle = new Label("Abilities (C=Caste, F=Favored)");
         abilTitle.getStyleClass().add("section-title");
-        
+
         GridPane abilGrid = new GridPane();
         abilGrid.setHgap(20);
         abilGrid.setVgap(10);
-        
+
         javafx.beans.property.IntegerProperty casteCount = new javafx.beans.property.SimpleIntegerProperty(0);
         javafx.beans.property.IntegerProperty favoredCount = new javafx.beans.property.SimpleIntegerProperty(0);
-        
+
         Runnable updateCounts = () -> {
             int c = 0;
             int f = 0;
             for (String abil : CharacterData.ABILITIES) {
-                if (data.getCasteAbility(abil).get()) c++;
-                if (data.getFavoredAbility(abil).get()) f++;
+                if (data.getCasteAbility(abil).get())
+                    c++;
+                if (data.getFavoredAbility(abil).get())
+                    f++;
             }
             casteCount.set(c);
             favoredCount.set(f);
@@ -455,21 +469,24 @@ public class BuilderUI extends BorderPane {
             data.getFavoredAbility(abil).addListener((obs, old, nv) -> updateCounts.run());
         }
         updateCounts.run();
-        
+
         int row = 0;
         int col = 0;
         for (String ability : CharacterData.ABILITIES) {
-            if ("Craft".equals(ability) || "Martial Arts".equals(ability)) continue;
+            if ("Craft".equals(ability) || "Martial Arts".equals(ability))
+                continue;
             HBox rowBox = new HBox(6);
             rowBox.setAlignment(Pos.CENTER_LEFT);
-            
+
             CheckBox casteBox = new CheckBox("C");
             casteBox.getStyleClass().add("caste-checkbox");
             casteBox.selectedProperty().bindBidirectional(data.getCasteAbility(ability));
             casteBox.disableProperty().bind(Bindings.createBooleanBinding(() -> {
-                if ("Martial Arts".equals(ability)) return true; // Synced with Brawl
+                if ("Martial Arts".equals(ability))
+                    return true; // Synced with Brawl
                 CharacterData.Caste c = data.casteProperty().get();
-                boolean notInCasteList = c == null || c == CharacterData.Caste.NONE || !CharacterData.CASTE_OPTIONS.get(c).contains(ability);
+                boolean notInCasteList = c == null || c == CharacterData.Caste.NONE
+                        || !CharacterData.CASTE_OPTIONS.get(c).contains(ability);
                 boolean atLimit = casteCount.get() >= 5 && !data.getCasteAbility(ability).get();
                 return notInCasteList || atLimit;
             }, data.casteProperty(), casteCount, data.getCasteAbility(ability)));
@@ -478,7 +495,8 @@ public class BuilderUI extends BorderPane {
             favoredBox.getStyleClass().add("favored-checkbox");
             favoredBox.selectedProperty().bindBidirectional(data.getFavoredAbility(ability));
             favoredBox.disableProperty().bind(Bindings.createBooleanBinding(() -> {
-                if ("Martial Arts".equals(ability)) return true; // Synced with Brawl
+                if ("Martial Arts".equals(ability))
+                    return true; // Synced with Brawl
                 boolean isCaste = data.getCasteAbility(ability).get();
                 boolean atLimit = favoredCount.get() >= 5 && !data.getFavoredAbility(ability).get();
                 return isCaste || atLimit;
@@ -489,21 +507,22 @@ public class BuilderUI extends BorderPane {
                     favoredBox.setSelected(false);
                 }
             });
-            
+
             data.getFavoredAbility(ability).addListener((obs, oldV, newV) -> {
                 if (newV && data.getAbility(ability).get() == 0) {
                     data.getAbility(ability).set(1);
                 }
             });
-            
+
             Label abLabel = new Label(ability);
             abLabel.setPrefWidth(95);
             if ("Martial Arts".equals(ability)) {
                 Tooltip.install(abLabel, new Tooltip("Caste/Favored status linked to Brawl."));
             }
-            
+
             data.casteProperty().addListener((obs, oldV, newV) -> {
-                boolean isOption = newV != null && newV != CharacterData.Caste.NONE && CharacterData.CASTE_OPTIONS.get(newV).contains(ability);
+                boolean isOption = newV != null && newV != CharacterData.Caste.NONE
+                        && CharacterData.CASTE_OPTIONS.get(newV).contains(ability);
                 if (isOption) {
                     if (!abLabel.getStyleClass().contains("caste-option")) {
                         abLabel.getStyleClass().add("caste-option");
@@ -512,7 +531,7 @@ public class BuilderUI extends BorderPane {
                     abLabel.getStyleClass().remove("caste-option");
                 }
             });
-            
+
             Runnable updateExcellency = () -> {
                 if (data.hasExcellency(ability)) {
                     abLabel.setText(ability + " [E]");
@@ -524,19 +543,20 @@ public class BuilderUI extends BorderPane {
                     abLabel.getStyleClass().remove("excellency-label");
                 }
             };
-            
+
             data.getAbility(ability).addListener((obs, oldV, newV) -> updateExcellency.run());
             data.getCasteAbility(ability).addListener((obs, oldV, newV) -> updateExcellency.run());
             data.getFavoredAbility(ability).addListener((obs, oldV, newV) -> updateExcellency.run());
             data.supernalAbilityProperty().addListener((obs, oldV, newV) -> updateExcellency.run());
-            data.getUnlockedCharms().addListener((javafx.collections.ListChangeListener.Change<? extends PurchasedCharm> change) -> {
-                updateExcellency.run();
-            });
+            data.getUnlockedCharms()
+                    .addListener((javafx.collections.ListChangeListener.Change<? extends PurchasedCharm> change) -> {
+                        updateExcellency.run();
+                    });
             updateExcellency.run();
-            
+
             DotSelector selector = new DotSelector(data.getAbility(ability), 0);
             rowBox.getChildren().addAll(casteBox, favoredBox, abLabel, selector);
-            
+
             abilGrid.add(rowBox, col, row);
             row++;
             if (row >= 13) {
@@ -545,37 +565,37 @@ public class BuilderUI extends BorderPane {
             }
         }
         abilitiesSection.getChildren().addAll(abilTitle, abilGrid);
-        
+
         VBox craftsSection = createCraftsSection(casteCount, favoredCount);
         VBox martialArtsSection = createMartialArtsSection();
         VBox specialtiesSection = createSpecialtiesSection();
-        
+
         VBox sideStuff = new VBox(20);
         sideStuff.setPrefWidth(450);
         sideStuff.getChildren().addAll(craftsSection, martialArtsSection, specialtiesSection);
-        
+
         HBox abilAndSide = new HBox(30);
         abilAndSide.getChildren().addAll(abilitiesSection, sideStuff);
-        
+
         content.getChildren().addAll(advantagesSection, attributesSection, abilAndSide);
         return content;
     }
-    
+
     private VBox createMartialArtsSection() {
         VBox section = new VBox(10);
-        
+
         HBox titleRow = new HBox(15);
         titleRow.setAlignment(Pos.CENTER_LEFT);
         Label title = new Label("Martial Arts");
         title.getStyleClass().add("section-title");
-        
+
         Label statusInfo = new Label("(Linked to Brawl)");
         statusInfo.getStyleClass().add("label-small");
-        
+
         titleRow.getChildren().addAll(title, statusInfo);
-        
+
         VBox styleList = new VBox(8);
-        
+
         Runnable refreshStyles = () -> {
             styleList.getChildren().clear();
             for (MartialArtsStyle mas : data.getMartialArtsStyles()) {
@@ -583,55 +603,58 @@ public class BuilderUI extends BorderPane {
                 row.setAlignment(Pos.CENTER_LEFT);
                 row.getStyleClass().add("merit-row");
                 row.setPadding(new Insets(8));
-                
+
                 TextField styleField = new TextField();
                 styleField.setPromptText("Style Name (e.g. Snake Style)");
                 styleField.textProperty().bindBidirectional(mas.styleNameProperty());
                 styleField.setPrefWidth(180);
-                
+
                 DotSelector selector = new DotSelector(mas.ratingProperty(), 0, 5);
-                
+
                 Region spacer = new Region();
                 HBox.setHgrow(spacer, Priority.ALWAYS);
-                
+
                 Button removeBtn = new Button("✕");
                 removeBtn.getStyleClass().add("remove-btn");
                 removeBtn.setOnAction(e -> data.getMartialArtsStyles().remove(mas));
-                
+
                 row.getChildren().addAll(styleField, spacer, selector, removeBtn);
                 styleList.getChildren().add(row);
             }
         };
-        
-        data.getMartialArtsStyles().addListener((javafx.collections.ListChangeListener<? super MartialArtsStyle>) c -> refreshStyles.run());
+
+        data.getMartialArtsStyles().addListener(
+                (javafx.collections.ListChangeListener<? super MartialArtsStyle>) c -> refreshStyles.run());
         refreshStyles.run();
-        
+
         Button addBtn = new Button("+ Add Martial Arts Style");
         addBtn.getStyleClass().add("action-btn");
         addBtn.setOnAction(e -> data.getMartialArtsStyles().add(new MartialArtsStyle("", 0)));
-        
+
         section.getChildren().addAll(titleRow, styleList, addBtn);
         return section;
     }
-    
-    private VBox createCraftsSection(javafx.beans.property.IntegerProperty casteCount, javafx.beans.property.IntegerProperty favoredCount) {
+
+    private VBox createCraftsSection(javafx.beans.property.IntegerProperty casteCount,
+            javafx.beans.property.IntegerProperty favoredCount) {
         VBox section = new VBox(10);
-        
+
         HBox titleRow = new HBox(15);
         titleRow.setAlignment(Pos.CENTER_LEFT);
         Label title = new Label("Crafts");
         title.getStyleClass().add("section-title");
-        
+
         // Add C/F checkboxes for the global Craft status
         HBox statusBox = new HBox(6);
         statusBox.setAlignment(Pos.CENTER_LEFT);
-        
+
         CheckBox casteBox = new CheckBox("C");
         casteBox.getStyleClass().add("caste-checkbox");
         casteBox.selectedProperty().bindBidirectional(data.getCasteAbility("Craft"));
         casteBox.disableProperty().bind(Bindings.createBooleanBinding(() -> {
             CharacterData.Caste c = data.casteProperty().get();
-            boolean notInCasteList = c == null || c == CharacterData.Caste.NONE || !CharacterData.CASTE_OPTIONS.get(c).contains("Craft");
+            boolean notInCasteList = c == null || c == CharacterData.Caste.NONE
+                    || !CharacterData.CASTE_OPTIONS.get(c).contains("Craft");
             boolean atLimit = casteCount.get() >= 5 && !data.getCasteAbility("Craft").get();
             return notInCasteList || atLimit;
         }, data.casteProperty(), casteCount, data.getCasteAbility("Craft")));
@@ -646,14 +669,15 @@ public class BuilderUI extends BorderPane {
         }, data.getCasteAbility("Craft"), favoredCount, data.getFavoredAbility("Craft")));
 
         data.getCasteAbility("Craft").addListener((obs, oldV, newV) -> {
-            if (newV) favoredBox.setSelected(false);
+            if (newV)
+                favoredBox.setSelected(false);
         });
-        
+
         statusBox.getChildren().addAll(casteBox, favoredBox);
         titleRow.getChildren().addAll(title, statusBox);
-        
+
         VBox craftList = new VBox(8);
-        
+
         Runnable refreshCrafts = () -> {
             craftList.getChildren().clear();
             for (CraftAbility ca : data.getCrafts()) {
@@ -661,44 +685,45 @@ public class BuilderUI extends BorderPane {
                 row.setAlignment(Pos.CENTER_LEFT);
                 row.getStyleClass().add("merit-row");
                 row.setPadding(new Insets(8));
-                
+
                 TextField expertiseField = new TextField();
                 expertiseField.setPromptText("Expertise (e.g. Metallurgy)");
                 expertiseField.textProperty().bindBidirectional(ca.expertiseProperty());
                 expertiseField.setPrefWidth(180);
-                
+
                 DotSelector selector = new DotSelector(ca.ratingProperty(), 0, 5);
-                
+
                 Region spacer = new Region();
                 HBox.setHgrow(spacer, Priority.ALWAYS);
-                
+
                 Button removeBtn = new Button("✕");
                 removeBtn.getStyleClass().add("remove-btn");
                 removeBtn.setOnAction(e -> data.getCrafts().remove(ca));
-                
+
                 row.getChildren().addAll(expertiseField, spacer, selector, removeBtn);
                 craftList.getChildren().add(row);
             }
         };
-        
-        data.getCrafts().addListener((javafx.collections.ListChangeListener<? super CraftAbility>) c -> refreshCrafts.run());
+
+        data.getCrafts()
+                .addListener((javafx.collections.ListChangeListener<? super CraftAbility>) c -> refreshCrafts.run());
         refreshCrafts.run();
-        
-        Button addBtn = new Button("+ Add Craft Field");
+
+        Button addBtn = new Button("+ Add Craft Ability");
         addBtn.getStyleClass().add("action-btn");
         addBtn.setOnAction(e -> data.getCrafts().add(new CraftAbility("", 0)));
-        
+
         section.getChildren().addAll(titleRow, craftList, addBtn);
         return section;
     }
-    
+
     private VBox createSpecialtiesSection() {
         VBox section = new VBox(10);
         Label title = new Label("Specialties");
         title.getStyleClass().add("section-title");
-        
+
         VBox specList = new VBox(8);
-        
+
         Runnable refreshSpecs = () -> {
             specList.getChildren().clear();
             for (Specialty s : data.getSpecialties()) {
@@ -706,68 +731,69 @@ public class BuilderUI extends BorderPane {
                 row.setAlignment(Pos.CENTER_LEFT);
                 row.getStyleClass().add("merit-row"); // reuse style
                 row.setPadding(new Insets(8));
-                
+
                 TextField nameField = new TextField();
                 nameField.setPromptText("Specialty Name");
                 nameField.textProperty().bindBidirectional(s.nameProperty());
                 nameField.setPrefWidth(200);
-                
+
                 ComboBox<String> abilPicker = new ComboBox<>();
                 abilPicker.getItems().addAll(CharacterData.ABILITIES);
                 abilPicker.valueProperty().bindBidirectional(s.abilityProperty());
                 abilPicker.setPromptText("Select Ability");
-                
+
                 Region spacer = new Region();
                 HBox.setHgrow(spacer, Priority.ALWAYS);
-                
+
                 Button removeBtn = new Button("✕");
                 removeBtn.getStyleClass().add("remove-btn");
                 removeBtn.setOnAction(e -> data.getSpecialties().remove(s));
-                
+
                 row.getChildren().addAll(nameField, abilPicker, spacer, removeBtn);
                 specList.getChildren().add(row);
             }
         };
-        
-        data.getSpecialties().addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> refreshSpecs.run());
+
+        data.getSpecialties()
+                .addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> refreshSpecs.run());
         refreshSpecs.run();
-        
+
         Button addBtn = new Button("+ Add Specialty");
         addBtn.getStyleClass().add("action-btn");
         addBtn.setOnAction(e -> data.getSpecialties().add(new Specialty("", "")));
-        
+
         section.getChildren().addAll(title, specList, addBtn);
         return section;
     }
-    
+
     private VBox createAdvantagesSection() {
         VBox advantagesSection = new VBox(15);
         Label advTitle = new Label("Advantages");
         advTitle.getStyleClass().add("section-title");
-        
+
         HBox topRow = new HBox(50);
-        
+
         VBox wpBox = new VBox(5);
         Label wpLabel = new Label("Willpower");
         wpLabel.getStyleClass().add("subsection-title");
         DotSelector wpSelector = new DotSelector(data.willpowerProperty(), 5, 10);
         wpBox.getChildren().addAll(wpLabel, wpSelector);
-        
+
         VBox essBox = new VBox(5);
         Label essLabel = new Label("Essence");
         essLabel.getStyleClass().add("subsection-title");
         DotSelector essSelector = new DotSelector(data.essenceProperty(), 1, 5);
         essBox.getChildren().addAll(essLabel, essSelector);
-        
+
         VBox motesBox = new VBox(5);
         Label motesLabel = new Label("Mote Pools");
         motesLabel.getStyleClass().add("subsection-title");
-        
+
         Label personalLabel = new Label();
         Label peripheralLabel = new Label();
         personalLabel.getStyleClass().add("label");
         peripheralLabel.getStyleClass().add("label");
-        
+
         Runnable updateMotes = () -> {
             personalLabel.setText("Personal: " + data.getPersonalMotes());
             peripheralLabel.setText("Peripheral: " + data.getPeripheralMotes());
@@ -775,83 +801,94 @@ public class BuilderUI extends BorderPane {
         };
         data.essenceProperty().addListener((obs, oldV, newV) -> updateMotes.run());
         updateMotes.run();
-        
+
         motesBox.getChildren().addAll(motesLabel, personalLabel, peripheralLabel);
-        
+
         topRow.getChildren().addAll(wpBox, essBox, motesBox);
-        
+
         VBox healthBox = new VBox(5);
         Label healthLabel = new Label("Health Levels");
         healthLabel.getStyleClass().add("subsection-title");
-        
+
         HBox trackBoxes = new HBox(15);
         trackBoxes.setAlignment(Pos.CENTER_LEFT);
-        
+
         Runnable updateHealth = () -> {
             trackBoxes.getChildren().clear();
             List<String> levels = data.getHealthLevels();
             Map<String, Integer> counts = new java.util.LinkedHashMap<>();
             // Ensure order -0, -1, -2, -4, Incap
-            for (String lv : new String[]{"-0", "-1", "-2", "-4", "Incap"}) counts.put(lv, 0);
-            for (String lv : levels) counts.put(lv, counts.getOrDefault(lv, 0) + 1);
-            
+            for (String lv : new String[] { "-0", "-1", "-2", "-4", "Incap" })
+                counts.put(lv, 0);
+            for (String lv : levels)
+                counts.put(lv, counts.getOrDefault(lv, 0) + 1);
+
             for (Map.Entry<String, Integer> entry : counts.entrySet()) {
                 if (entry.getValue() > 0) {
                     trackBoxes.getChildren().add(createHealthLevel(entry.getKey(), entry.getValue()));
                 }
             }
         };
-        
+
         data.getAttribute("Stamina").addListener((obs, old, nv) -> updateHealth.run());
         data.getAbility("Resistance").addListener((obs, old, nv) -> updateHealth.run());
-        data.getUnlockedCharms().addListener((javafx.collections.ListChangeListener.Change<? extends PurchasedCharm> c) -> updateHealth.run());
+        data.getUnlockedCharms().addListener(
+                (javafx.collections.ListChangeListener.Change<? extends PurchasedCharm> c) -> updateHealth.run());
         updateHealth.run();
-        
+
         healthBox.getChildren().addAll(healthLabel, trackBoxes);
-        
+
         advantagesSection.getChildren().addAll(advTitle, topRow, healthBox);
         return advantagesSection;
     }
-    
+
     private HBox createHealthLevel(String label, int count) {
         HBox box = new HBox(5);
         box.setAlignment(Pos.CENTER_LEFT);
         Label l = new Label(label);
         l.getStyleClass().add("label");
         box.getChildren().add(l);
-        for(int i=0; i<count; i++) {
+        for (int i = 0; i < count; i++) {
             StackPane pane = new StackPane();
             javafx.scene.shape.Rectangle rect = new javafx.scene.shape.Rectangle(16, 16);
             rect.setFill(javafx.scene.paint.Color.web("#2d2d2d"));
             rect.setStroke(javafx.scene.paint.Color.web("#d4af37"));
             rect.setStrokeWidth(1.0);
-            
+
             Label mark = new Label("");
             mark.setStyle("-fx-text-fill: #f9f6e6; -fx-font-weight: bold; -fx-font-size: 14px;");
-            
+
             pane.getChildren().addAll(rect, mark);
             pane.setCursor(javafx.scene.Cursor.HAND);
             pane.setOnMouseClicked(e -> {
                 String current = mark.getText();
                 switch (current) {
-                    case "": mark.setText("/"); break;
-                    case "/": mark.setText("X"); break;
-                    case "X": mark.setText("*"); break;
-                    case "*": mark.setText(""); break;
+                    case "":
+                        mark.setText("/");
+                        break;
+                    case "/":
+                        mark.setText("X");
+                        break;
+                    case "X":
+                        mark.setText("*");
+                        break;
+                    case "*":
+                        mark.setText("");
+                        break;
                 }
             });
             box.getChildren().add(pane);
         }
         return box;
     }
-    
+
     private VBox createAttributeColumn(String title, List<String> attrs) {
         VBox box = new VBox(8);
         box.getStyleClass().add("attribute-column");
         Label titleLabel = new Label(title);
         titleLabel.getStyleClass().add("subsection-title");
         box.getChildren().add(titleLabel);
-        
+
         for (String attr : attrs) {
             HBox row = new HBox(10);
             row.setAlignment(Pos.CENTER_LEFT);
@@ -896,7 +933,8 @@ public class BuilderUI extends BorderPane {
                 Button removeBtn = new Button("✕");
                 removeBtn.getStyleClass().add("remove-btn");
                 removeBtn.setTooltip(new Tooltip("Remove Merit"));
-                removeBtn.setStyle("-fx-text-fill: #ff4444; -fx-background-color: transparent; -fx-font-weight: bold; -fx-font-size: 14px;");
+                removeBtn.setStyle(
+                        "-fx-text-fill: #ff4444; -fx-background-color: transparent; -fx-font-weight: bold; -fx-font-size: 14px;");
                 removeBtn.setOnAction(e -> data.getMerits().remove(merit));
 
                 row.getChildren().addAll(nameField, spacer, selector, removeBtn);
@@ -904,7 +942,8 @@ public class BuilderUI extends BorderPane {
             }
         };
 
-        data.getMerits().addListener((javafx.collections.ListChangeListener.Change<? extends Merit> c) -> refreshMerits.run());
+        data.getMerits()
+                .addListener((javafx.collections.ListChangeListener.Change<? extends Merit> c) -> refreshMerits.run());
         refreshMerits.run();
 
         Button addBtn = new Button("+ Add New Merit");
@@ -919,11 +958,11 @@ public class BuilderUI extends BorderPane {
     private SplitPane createCharmsContent() {
         SplitPane splitPane = new SplitPane();
         splitPane.getStyleClass().add("charms-split-pane");
-        
+
         // --- Left Side: Tree Web Area ---
         VBox leftPane = new VBox(15);
         leftPane.setPadding(new Insets(20));
-        
+
         HBox controls = new HBox(15);
         controls.setAlignment(Pos.CENTER_LEFT);
         Label comboLabel = new Label("Ability:");
@@ -932,45 +971,45 @@ public class BuilderUI extends BorderPane {
         abilityCombo.getItems().addAll(CharacterData.ABILITIES);
         abilityCombo.setValue("Archery");
         controls.getChildren().addAll(comboLabel, abilityCombo);
-        
+
         Label title = new Label("Charms Web");
         title.getStyleClass().add("section-title");
-        
+
         charmCanvas = new Pane();
         ScrollPane charmScroll = new ScrollPane(charmCanvas);
         charmScroll.setPannable(true);
         charmScroll.getStyleClass().add("scroll-pane-custom");
         VBox.setVgrow(charmScroll, Priority.ALWAYS);
-        
+
         leftPane.getChildren().addAll(controls, title, charmScroll);
-        
+
         // --- Right Side: Sidebar Details ---
         VBox rightPane = new VBox(15);
         rightPane.setPadding(new Insets(20));
         rightPane.getStyleClass().add("charms-sidebar");
-        
+
         Label detailTitle = new Label("No Charm Selected");
         detailTitle.getStyleClass().add("sidebar-title");
         detailTitle.setWrapText(true);
-        
+
         Label detailReqs = new Label();
         detailReqs.getStyleClass().add("sidebar-reqs");
         detailReqs.setWrapText(true);
-        
+
         GridPane statsGrid = new GridPane();
         statsGrid.setHgap(15);
         statsGrid.setVgap(10);
-        
+
         Label costLabel = new Label();
         Label typeLabel = new Label();
         Label durationLabel = new Label();
         FlowPane kwFlow = new FlowPane(3, 3);
-        
+
         costLabel.getStyleClass().add("sidebar-stat");
         typeLabel.getStyleClass().add("sidebar-stat");
         durationLabel.getStyleClass().add("sidebar-stat");
         kwFlow.setPrefWrapLength(200);
-        
+
         statsGrid.add(new Label("Cost:"), 0, 0);
         statsGrid.add(costLabel, 1, 0);
         statsGrid.add(new Label("Type:"), 0, 1);
@@ -979,13 +1018,13 @@ public class BuilderUI extends BorderPane {
         statsGrid.add(durationLabel, 1, 2);
         statsGrid.add(new Label("Keywords:"), 0, 3);
         statsGrid.add(kwFlow, 1, 3);
-        
-        for(javafx.scene.Node n : statsGrid.getChildren()) {
+
+        for (javafx.scene.Node n : statsGrid.getChildren()) {
             if (GridPane.getColumnIndex(n) == 0 && n instanceof Label) {
                 n.getStyleClass().add("sidebar-stat-header");
             }
         }
-        
+
         Label descriptionLabel = new Label();
         descriptionLabel.getStyleClass().add("sidebar-desc");
         descriptionLabel.setWrapText(true);
@@ -993,33 +1032,34 @@ public class BuilderUI extends BorderPane {
         descScroll.setFitToWidth(true);
         descScroll.getStyleClass().add("scroll-pane-custom");
         VBox.setVgrow(descScroll, Priority.ALWAYS);
-        
+
         Button toggleBtn = new Button("Purchase Charm");
         toggleBtn.getStyleClass().add("charm-btn");
         toggleBtn.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(toggleBtn, Priority.ALWAYS);
-        
+
         Button refundBtn = new Button("Refund");
         refundBtn.getStyleClass().add("charm-btn");
         refundBtn.setStyle("-fx-base: #a03030;");
         refundBtn.setVisible(false);
         refundBtn.setManaged(false);
-        
+
         HBox charmButtons = new HBox(10, toggleBtn, refundBtn);
-        
+
         rightPane.getChildren().addAll(detailTitle, detailReqs, charmButtons, statsGrid, descScroll);
-        
+
         Runnable loadCharms = () -> {
             charmCanvas.getChildren().clear();
             charmNodeMap.clear();
             currentAbilityCharms.clear();
-            
+
             try {
                 String abilityKey = abilityCombo.getValue().toLowerCase().replace(" ", "-");
                 InputStream is = getClass().getResourceAsStream("/charms/" + abilityKey + ".json");
                 if (is != null) {
                     try (Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-                        Type listType = new TypeToken<ArrayList<Charm>>(){}.getType();
+                        Type listType = new TypeToken<ArrayList<Charm>>() {
+                        }.getType();
                         List<Charm> loaded = new Gson().fromJson(reader, listType);
                         if (loaded != null) {
                             currentAbilityCharms.addAll(loaded);
@@ -1029,10 +1069,11 @@ public class BuilderUI extends BorderPane {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            
-            drawCharmWeb(currentAbilityCharms, title, abilityCombo.getValue(), detailTitle, detailReqs, toggleBtn, refundBtn, costLabel, typeLabel, durationLabel, kwFlow, descriptionLabel);
+
+            drawCharmWeb(currentAbilityCharms, title, abilityCombo.getValue(), detailTitle, detailReqs, toggleBtn,
+                    refundBtn, costLabel, typeLabel, durationLabel, kwFlow, descriptionLabel);
             title.setText(abilityCombo.getValue() + " Charms Web (" + currentAbilityCharms.size() + ")");
-            
+
             detailTitle.setText("No Charm Selected");
             detailReqs.setText("");
             costLabel.setText("");
@@ -1044,20 +1085,20 @@ public class BuilderUI extends BorderPane {
             refundBtn.setVisible(false);
             refundBtn.setManaged(false);
         };
-        
+
         abilityCombo.valueProperty().addListener((obs, oldV, newV) -> loadCharms.run());
         loadCharms.run();
-        
+
         splitPane.getItems().addAll(leftPane, rightPane);
         splitPane.setDividerPositions(0.7);
         return splitPane;
     }
-    
-    private void drawCharmWeb(List<Charm> charms, Label titleLabel, String ability, 
-                              Label detailTitle, Label detailReqs, Button toggleBtn, Button refundBtn,
-                              Label costLabel, Label typeLabel, Label durLabel, 
-                              FlowPane kwFlow, Label descLabel) {
-        
+
+    private void drawCharmWeb(List<Charm> charms, Label titleLabel, String ability,
+            Label detailTitle, Label detailReqs, Button toggleBtn, Button refundBtn,
+            Label costLabel, Label typeLabel, Label durLabel,
+            FlowPane kwFlow, Label descLabel) {
+
         // Calculate Topological depth
         Map<String, Integer> charmDepth = new HashMap<>();
         boolean changed = true;
@@ -1077,85 +1118,90 @@ public class BuilderUI extends BorderPane {
                 }
             }
         }
-        
+
         // Group by Depth Level
         Map<Integer, List<Charm>> levels = new HashMap<>();
         int maxDepth = 0;
         for (Charm c : charms) {
             int depth = charmDepth.getOrDefault(c.getName(), 0);
             levels.computeIfAbsent(depth, k -> new ArrayList<>()).add(c);
-            if (depth > maxDepth) maxDepth = depth;
+            if (depth > maxDepth)
+                maxDepth = depth;
         }
-        
+
         double boxWidth = 220;
         double boxHeight = 70;
         double gapX = 40;
         double gapY = 80;
-        
+
         // Determine layout span
         double maxRowWidth = 0;
         for (int d = 0; d <= maxDepth; d++) {
             List<Charm> rowCharms = levels.getOrDefault(d, new ArrayList<>());
             double rowWidth = rowCharms.size() * boxWidth + Math.max(0, rowCharms.size() - 1) * gapX;
-            if (rowWidth > maxRowWidth) maxRowWidth = rowWidth;
+            if (rowWidth > maxRowWidth)
+                maxRowWidth = rowWidth;
         }
-        
+
         // Ensure scroll content respects constraints cleanly
-        double virtualCanvasWidth = Math.max(800, maxRowWidth + 100); 
-        
+        double virtualCanvasWidth = Math.max(800, maxRowWidth + 100);
+
         // Draw Nodes
         for (int d = 0; d <= maxDepth; d++) {
             List<Charm> rowCharms = levels.getOrDefault(d, new ArrayList<>());
             double rowWidth = rowCharms.size() * boxWidth + Math.max(0, rowCharms.size() - 1) * gapX;
-            
+
             // Center the entire row geometrically
             double startX = (virtualCanvasWidth - rowWidth) / 2;
             double y = 40 + d * (boxHeight + gapY);
-            
+
             for (int i = 0; i < rowCharms.size(); i++) {
                 Charm c = rowCharms.get(i);
                 double x = startX + i * (boxWidth + gapX);
-                
+
                 VBox box = new VBox(5);
                 box.setAlignment(Pos.CENTER);
                 box.setPrefSize(boxWidth, boxHeight);
-                box.getStyleClass().add("charm-node"); 
-                
+                box.getStyleClass().add("charm-node");
+
                 Label nameLbl = new Label(c.getName());
                 nameLbl.getStyleClass().add("charm-node-title");
                 nameLbl.setWrapText(true);
-                
+
                 Label reqLbl = new Label(c.getAbility() + " " + c.getMinAbility() + ", Ess " + c.getMinEssence());
                 reqLbl.getStyleClass().add("charm-node-reqs");
-                
+
                 box.getChildren().addAll(nameLbl, reqLbl);
                 box.setLayoutX(x);
                 box.setLayoutY(y);
-                
+
                 charmNodeMap.put(c.getName(), box);
                 charmCanvas.getChildren().add(box);
-                
+
                 box.setOnMouseClicked(e -> {
                     detailTitle.setText(c.getName());
-                    String prereqStr = c.getPrerequisites() == null || c.getPrerequisites().isEmpty() ? "None" : String.join(", ", c.getPrerequisites());
-                    detailReqs.setText("Mins: " + c.getAbility() + " " + c.getMinAbility() + ", Ess: " + c.getMinEssence() + "\nPrereqs: " + prereqStr);
+                    String prereqStr = c.getPrerequisites() == null || c.getPrerequisites().isEmpty() ? "None"
+                            : String.join(", ", c.getPrerequisites());
+                    detailReqs.setText("Mins: " + c.getAbility() + " " + c.getMinAbility() + ", Ess: "
+                            + c.getMinEssence() + "\nPrereqs: " + prereqStr);
                     costLabel.setText(c.getCost() != null ? c.getCost() : "");
                     typeLabel.setText(c.getType() != null ? c.getType() : "");
                     durLabel.setText(c.getDuration() != null ? c.getDuration() : "");
                     updateKeywords(c.getKeywords(), kwFlow);
                     descLabel.setText(c.getFullText() != null ? c.getFullText() : "");
-                    
+
                     toggleBtn.setVisible(true);
                     updateSidebarButton(c, toggleBtn, refundBtn);
-                    
+
                     if (e.getClickCount() == 2) {
-                        // Delay execution slightly to ensure correct visual state selection before firing
+                        // Delay execution slightly to ensure correct visual state selection before
+                        // firing
                         javafx.application.Platform.runLater(() -> toggleBtn.fire());
                     }
                 });
             }
         }
-        
+
         // Connect the specific button behavior directly
         toggleBtn.setOnAction(ev -> {
             String selectedName = detailTitle.getText();
@@ -1180,7 +1226,7 @@ public class BuilderUI extends BorderPane {
                 updateWebNodeStyles();
             }
         });
-        
+
         // Draw Connecting Lines
         for (Charm c : charms) {
             VBox targetBox = charmNodeMap.get(c.getName());
@@ -1192,13 +1238,12 @@ public class BuilderUI extends BorderPane {
                         double startY = sourceBox.getLayoutY() + boxHeight;
                         double endX = targetBox.getLayoutX() + boxWidth / 2;
                         double endY = targetBox.getLayoutY();
-                        
+
                         CubicCurve curve = new CubicCurve(
-                            startX, startY,
-                            startX, startY + gapY / 1.5,
-                            endX, endY - gapY / 1.5,
-                            endX, endY
-                        );
+                                startX, startY,
+                                startX, startY + gapY / 1.5,
+                                endX, endY - gapY / 1.5,
+                                endX, endY);
                         curve.getStyleClass().add("charm-line");
                         charmCanvas.getChildren().add(curve);
                         curve.toBack();
@@ -1206,20 +1251,20 @@ public class BuilderUI extends BorderPane {
                 }
             }
         }
-        
+
         // Resize actual canvas bounds to match contents
         double minHeight = (maxDepth + 1) * (boxHeight + gapY) + 40;
         charmCanvas.setPrefSize(virtualCanvasWidth, minHeight);
         charmCanvas.setMinSize(virtualCanvasWidth, minHeight);
-        
+
         // Apply immediate styling
         updateWebNodeStyles();
     }
-    
+
     private void updateSidebarButton(Charm c, Button btn, Button refundBtn) {
         int count = data.getCharmCount(c.getName());
         boolean isOxBody = c.getName().equals("Ox-Body Technique");
-        
+
         if (isOxBody) {
             int limit = data.getAbility("Resistance").get();
             btn.setText("Purchase (" + count + "/" + limit + ")");
@@ -1230,19 +1275,19 @@ public class BuilderUI extends BorderPane {
         } else if (data.hasCharm(c.getName())) {
             btn.setText("Refund Charm");
             btn.setDisable(false);
-            btn.setStyle("-fx-base: #a03030;"); 
+            btn.setStyle("-fx-base: #a03030;");
             refundBtn.setVisible(false);
             refundBtn.setManaged(false);
         } else if (c.isEligible(data)) {
             btn.setText("Purchase Charm");
             btn.setDisable(false);
-            btn.setStyle("-fx-base: #d4af37;"); 
+            btn.setStyle("-fx-base: #d4af37;");
             refundBtn.setVisible(false);
             refundBtn.setManaged(false);
         } else {
             btn.setText("Requirements Not Met");
             btn.setDisable(true);
-            btn.setStyle("-fx-base: #444444;"); 
+            btn.setStyle("-fx-base: #444444;");
             refundBtn.setVisible(false);
             refundBtn.setManaged(false);
         }
@@ -1252,7 +1297,8 @@ public class BuilderUI extends BorderPane {
         try (InputStream is = getClass().getResourceAsStream("/charms/keywords.json")) {
             if (is != null) {
                 try (Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-                    Type type = new TypeToken<List<Keyword>>() {}.getType();
+                    Type type = new TypeToken<List<Keyword>>() {
+                    }.getType();
                     List<Keyword> keywords = new Gson().fromJson(reader, type);
                     if (keywords != null) {
                         for (Keyword kw : keywords) {
@@ -1271,16 +1317,17 @@ public class BuilderUI extends BorderPane {
         if (keywordsStr == null || keywordsStr.isEmpty() || keywordsStr.equalsIgnoreCase("None")) {
             return;
         }
-        
+
         String[] parts = keywordsStr.split(",");
         for (int i = 0; i < parts.length; i++) {
             String name = parts[i].trim();
-            if (name.isEmpty()) continue;
-            
+            if (name.isEmpty())
+                continue;
+
             Label label = new Label(name);
             label.getStyleClass().add("sidebar-stat");
             label.getStyleClass().add("keyword-label");
-            
+
             String def = keywordDefs.get(name);
             if (def != null) {
                 Tooltip tooltip = new Tooltip(def);
@@ -1289,9 +1336,9 @@ public class BuilderUI extends BorderPane {
                 label.setTooltip(tooltip);
                 label.getStyleClass().add("keyword-with-def");
             }
-            
+
             kwFlow.getChildren().add(label);
-            
+
             if (i < parts.length - 1) {
                 Label comma = new Label(", ");
                 comma.getStyleClass().add("sidebar-stat");

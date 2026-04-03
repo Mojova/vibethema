@@ -54,3 +54,7 @@ A JavaFX-based character creator for Exalted 3rd Edition. The application focuse
 - `src/main/java/com/vibethema/model/CharacterData.java`: The primary logic engine.
 - `src/main/java/com/vibethema/ui/BuilderUI.java`: The primary UI engine.
 - `src/main/resources/charms/`: JSON database for Charms and Keywords.
+
+## AI Workflow
+1. **Commits**: Always commit changes after finishing a logical task or a specific user request. Use descriptive commit messages.
+
