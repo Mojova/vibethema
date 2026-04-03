@@ -7,6 +7,8 @@ import com.vibethema.model.Charm;
 import com.vibethema.model.MartialArtsStyle;
 import com.vibethema.model.PurchasedCharm;
 import com.vibethema.model.Specialty;
+import com.vibethema.service.CharmDataService;
+import com.vibethema.service.PdfExtractor;
 import com.google.gson.Gson;
 import javafx.beans.binding.Bindings;
 import javafx.application.Platform;
@@ -51,14 +53,9 @@ public class BuilderUI extends BorderPane {
     private Label specialtiesLabel = new Label();
     private Label bpLabel = new Label();
 
-    private Pane charmCanvas;
-    private Map<String, VBox> charmNodeMap = new HashMap<>();
-    private List<Charm> currentAbilityCharms = new ArrayList<>();
     private Map<String, String> keywordDefs = new HashMap<>();
-    
     private CharmDataService dataService;
-    private ComboBox<String> abilityCombo;
-    private Runnable loadCharmsRef;
+    private List<CharmTreeComponent> charmTrees = new java.util.ArrayList<>();
 
     public BuilderUI(CharacterData data) {
         this(data, null);
@@ -102,7 +99,11 @@ public class BuilderUI extends BorderPane {
         charmsTab.setClosable(false);
         charmsTab.setContent(createCharmsContent());
 
-        tabPane.getTabs().addAll(statsTab, meritsTab, equipmentTab, charmsTab);
+        Tab martialArtsTab = new Tab("Martial Arts");
+        martialArtsTab.setClosable(false);
+        martialArtsTab.setContent(createMartialArtsContent());
+
+        tabPane.getTabs().addAll(statsTab, meritsTab, equipmentTab, charmsTab, martialArtsTab);
 
         setCenter(tabPane);
 
@@ -333,13 +334,13 @@ public class BuilderUI extends BorderPane {
 
         data.supernalAbilityProperty().addListener((obs, oldV, newV) -> {
             updateFooter();
-            updateWebNodeStyles();
+            updateAllWebNodeStyles();
         });
 
         data.getUnlockedCharms()
                 .addListener((javafx.collections.ListChangeListener.Change<? extends PurchasedCharm> c) -> {
                     updateFooter();
-                    updateWebNodeStyles();
+                    updateAllWebNodeStyles();
                 });
 
         data.getMerits().addListener((javafx.collections.ListChangeListener.Change<? extends Merit> c) -> {
@@ -415,7 +416,13 @@ public class BuilderUI extends BorderPane {
         favoredLabel.setText("Favored: " + favoredCount + "/5");
         bpLabel.setText("Bonus Points: " + bp + "/15");
 
-        updateWebNodeStyles();
+        updateAllWebNodeStyles();
+    }
+
+    private void updateAllWebNodeStyles() {
+        for (CharmTreeComponent tree : charmTrees) {
+            tree.updateWebNodeStyles();
+        }
     }
 
     private VBox createEquipmentContent() {
@@ -584,12 +591,11 @@ public class BuilderUI extends BorderPane {
         abilitiesSection.getChildren().addAll(abilTitle, abilGrid);
 
         VBox craftsSection = createCraftsSection(casteCount, favoredCount);
-        VBox martialArtsSection = createMartialArtsSection();
         VBox specialtiesSection = createSpecialtiesSection();
 
         VBox sideStuff = new VBox(20);
         sideStuff.setPrefWidth(450);
-        sideStuff.getChildren().addAll(craftsSection, martialArtsSection, specialtiesSection);
+        sideStuff.getChildren().addAll(craftsSection, specialtiesSection);
 
         HBox abilAndSide = new HBox(30);
         abilAndSide.getChildren().addAll(abilitiesSection, sideStuff);
@@ -598,7 +604,11 @@ public class BuilderUI extends BorderPane {
         return content;
     }
 
-    private VBox createMartialArtsSection() {
+    private ScrollPane createMartialArtsContent() {
+        VBox content = new VBox(20);
+        content.getStyleClass().add("content-area");
+        content.setPadding(new Insets(20));
+
         VBox section = new VBox(10);
 
         HBox titleRow = new HBox(15);
@@ -613,6 +623,26 @@ public class BuilderUI extends BorderPane {
 
         VBox styleList = new VBox(8);
 
+        ComboBox<String> stylePicker = new ComboBox<>();
+        stylePicker.setPromptText("Select Style to View Charms");
+        stylePicker.setPrefWidth(220);
+
+        Runnable refreshStylePicker = () -> {
+            List<String> names = new java.util.ArrayList<>();
+            for (MartialArtsStyle mas : data.getMartialArtsStyles()) {
+                if (mas.getStyleName() != null && !mas.getStyleName().isEmpty() && !names.contains(mas.getStyleName())) {
+                    names.add(mas.getStyleName());
+                }
+            }
+            String currentSelection = stylePicker.getValue();
+            stylePicker.getItems().setAll(names);
+            if (names.contains(currentSelection)) {
+                stylePicker.setValue(currentSelection);
+            } else if (!names.isEmpty() && (currentSelection == null || currentSelection.isEmpty())) {
+                stylePicker.setValue(names.get(0));
+            }
+        };
+
         Runnable refreshStyles = () -> {
             styleList.getChildren().clear();
             for (MartialArtsStyle mas : data.getMartialArtsStyles()) {
@@ -621,10 +651,9 @@ public class BuilderUI extends BorderPane {
                 row.getStyleClass().add("merit-row");
                 row.setPadding(new Insets(8));
 
-                TextField styleField = new TextField();
-                styleField.setPromptText("Style Name (e.g. Snake Style)");
-                styleField.textProperty().bindBidirectional(mas.styleNameProperty());
-                styleField.setPrefWidth(180);
+                Label nameLabel = new Label(mas.getStyleName());
+                nameLabel.getStyleClass().add("label");
+                nameLabel.setPrefWidth(180);
 
                 DotSelector selector = new DotSelector(mas.ratingProperty(), 0, 5);
 
@@ -635,21 +664,101 @@ public class BuilderUI extends BorderPane {
                 removeBtn.getStyleClass().add("remove-btn");
                 removeBtn.setOnAction(e -> data.getMartialArtsStyles().remove(mas));
 
-                row.getChildren().addAll(styleField, spacer, selector, removeBtn);
+                row.getChildren().addAll(nameLabel, spacer, selector, removeBtn);
                 styleList.getChildren().add(row);
             }
+            refreshStylePicker.run();
         };
 
         data.getMartialArtsStyles().addListener(
-                (javafx.collections.ListChangeListener<? super MartialArtsStyle>) c -> refreshStyles.run());
+                (javafx.collections.ListChangeListener<? super MartialArtsStyle>) c -> {
+                    refreshStyles.run();
+                    // Listeners for individual style names
+                    while (c.next()) {
+                        if (c.wasAdded()) {
+                            for (MartialArtsStyle mas : c.getAddedSubList()) {
+                                mas.styleNameProperty().addListener((obs, ov, nv) -> refreshStylePicker.run());
+                            }
+                        }
+                    }
+                });
+        for (MartialArtsStyle mas : data.getMartialArtsStyles()) {
+            mas.styleNameProperty().addListener((obs, ov, nv) -> refreshStylePicker.run());
+        }
         refreshStyles.run();
 
         Button addBtn = new Button("+ Add Martial Arts Style");
         addBtn.getStyleClass().add("action-btn");
-        addBtn.setOnAction(e -> data.getMartialArtsStyles().add(new MartialArtsStyle("", 0)));
+        addBtn.setOnAction(e -> {
+            List<String> available = dataService.getAvailableMartialArtsStyles();
+            // Filter out already added styles
+            List<String> current = data.getMartialArtsStyles().stream().map(MartialArtsStyle::getStyleName).toList();
+            available.removeIf(current::contains);
 
-        section.getChildren().addAll(titleRow, styleList, addBtn);
-        return section;
+            if (available.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, "No new styles found. Create a new one first!", ButtonType.OK);
+                alert.showAndWait();
+                return;
+            }
+
+            ChoiceDialog<String> dialog = new ChoiceDialog<>(available.get(0), available);
+            dialog.setTitle("Add Martial Arts Style");
+            dialog.setHeaderText("Select a style to add to your character:");
+            dialog.setContentText("Style:");
+            dialog.showAndWait().ifPresent(selection -> {
+                MartialArtsStyle mas = new MartialArtsStyle(null, selection, 1);
+                data.getMartialArtsStyles().add(mas);
+            });
+        });
+
+        Button createBtn = new Button("Create New Style");
+        createBtn.getStyleClass().add("action-btn");
+        createBtn.setOnAction(e -> {
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Create Martial Arts Style");
+            dialog.setHeaderText("Create a new style definition:");
+            dialog.setContentText("Style Name (e.g. Tiger Style):");
+            dialog.showAndWait().ifPresent(name -> {
+                if (!name.trim().isEmpty()) {
+                    try {
+                        dataService.createNewMartialArtsStyle(name.trim());
+                        // Automatically add it if they created it
+                        data.getMartialArtsStyles().add(new MartialArtsStyle(null, name.trim(), 0));
+                    } catch (java.io.IOException ex) {
+                        new Alert(Alert.AlertType.ERROR, "Failed to create style: " + ex.getMessage(), ButtonType.OK).showAndWait();
+                    }
+                }
+            });
+        });
+
+        HBox maButtons = new HBox(10, addBtn, createBtn);
+        section.getChildren().addAll(titleRow, styleList, maButtons);
+        content.getChildren().add(section);
+
+        Separator sep = new Separator();
+        sep.setPadding(new Insets(20, 0, 20, 0));
+        content.getChildren().add(sep);
+
+        Label treeTitle = new Label("Style Charm Tree");
+        treeTitle.getStyleClass().add("section-title");
+        
+        HBox treeControls = new HBox(15);
+        treeControls.setAlignment(Pos.CENTER_LEFT);
+        treeControls.getChildren().addAll(new Label("Select Style:"), stylePicker);
+        
+        content.getChildren().addAll(treeTitle, treeControls);
+
+        CharmTreeComponent maCharmTree = new CharmTreeComponent(stylePicker, "Martial Arts Style");
+        charmTrees.add(maCharmTree);
+        
+        VBox fullLayout = new VBox(0);
+        fullLayout.getChildren().addAll(content, maCharmTree);
+        VBox.setVgrow(maCharmTree, Priority.ALWAYS);
+
+        ScrollPane scrollPane = new ScrollPane(fullLayout);
+        scrollPane.setFitToWidth(true);
+        scrollPane.getStyleClass().add("scroll-pane-custom");
+        return scrollPane;
     }
 
     private VBox createCraftsSection(javafx.beans.property.IntegerProperty casteCount,
@@ -972,364 +1081,18 @@ public class BuilderUI extends BorderPane {
         return content;
     }
 
-    private SplitPane createCharmsContent() {
-        SplitPane splitPane = new SplitPane();
-        splitPane.getStyleClass().add("charms-split-pane");
-
-        // --- Left Side: Tree Web Area ---
-        VBox leftPane = new VBox(15);
-        leftPane.setPadding(new Insets(20));
-
-        HBox controls = new HBox(15);
-        controls.setAlignment(Pos.CENTER_LEFT);
-        Label comboLabel = new Label("Ability:");
-        comboLabel.getStyleClass().add("label");
-        abilityCombo = new ComboBox<>();
-        abilityCombo.getItems().addAll(CharacterData.ABILITIES);
+    private javafx.scene.Node createCharmsContent() {
+        ComboBox<String> abilityCombo = new ComboBox<>();
+        abilityCombo.getItems().addAll(
+            CharacterData.ABILITIES.stream()
+                .filter(a -> !a.equals("Martial Arts"))
+                .collect(Collectors.toList())
+        );
         abilityCombo.setValue("Archery");
         
-        Button createCharmBtn = new Button("Create New Charm");
-        createCharmBtn.getStyleClass().add("action-btn");
-        createCharmBtn.setOnAction(e -> showCreateCharmDialog());
-
-        controls.getChildren().addAll(comboLabel, abilityCombo, createCharmBtn);
-
-        Label title = new Label("Charms Web");
-        title.getStyleClass().add("section-title");
-
-        charmCanvas = new Pane();
-        ScrollPane charmScroll = new ScrollPane(charmCanvas);
-        charmScroll.setPannable(true);
-        charmScroll.getStyleClass().add("scroll-pane-custom");
-        VBox.setVgrow(charmScroll, Priority.ALWAYS);
-
-        leftPane.getChildren().addAll(controls, title, charmScroll);
-
-        // --- Right Side: Sidebar Details ---
-        VBox rightPane = new VBox(15);
-        rightPane.setPadding(new Insets(20));
-        rightPane.getStyleClass().add("charms-sidebar");
-
-        Label detailTitle = new Label("No Charm Selected");
-        detailTitle.getStyleClass().add("sidebar-title");
-        detailTitle.setWrapText(true);
-
-        Label detailReqs = new Label();
-        detailReqs.getStyleClass().add("sidebar-reqs");
-        detailReqs.setWrapText(true);
-
-        GridPane statsGrid = new GridPane();
-        statsGrid.setHgap(15);
-        statsGrid.setVgap(10);
-
-        Label costLabel = new Label();
-        Label typeLabel = new Label();
-        Label durationLabel = new Label();
-        FlowPane kwFlow = new FlowPane(3, 3);
-
-        costLabel.getStyleClass().add("sidebar-stat");
-        typeLabel.getStyleClass().add("sidebar-stat");
-        durationLabel.getStyleClass().add("sidebar-stat");
-        kwFlow.setPrefWrapLength(200);
-
-        statsGrid.add(new Label("Cost:"), 0, 0);
-        statsGrid.add(costLabel, 1, 0);
-        statsGrid.add(new Label("Type:"), 0, 1);
-        statsGrid.add(typeLabel, 1, 1);
-        statsGrid.add(new Label("Duration:"), 0, 2);
-        statsGrid.add(durationLabel, 1, 2);
-        statsGrid.add(new Label("Keywords:"), 0, 3);
-        statsGrid.add(kwFlow, 1, 3);
-
-        for (javafx.scene.Node n : statsGrid.getChildren()) {
-            if (GridPane.getColumnIndex(n) == 0 && n instanceof Label) {
-                n.getStyleClass().add("sidebar-stat-header");
-            }
-        }
-
-        Label descriptionLabel = new Label();
-        descriptionLabel.getStyleClass().add("sidebar-desc");
-        descriptionLabel.setWrapText(true);
-        ScrollPane descScroll = new ScrollPane(descriptionLabel);
-        descScroll.setFitToWidth(true);
-        descScroll.getStyleClass().add("scroll-pane-custom");
-        VBox.setVgrow(descScroll, Priority.ALWAYS);
-
-        Button toggleBtn = new Button("Purchase Charm");
-        toggleBtn.getStyleClass().add("charm-btn");
-        toggleBtn.setMaxWidth(Double.MAX_VALUE);
-        HBox.setHgrow(toggleBtn, Priority.ALWAYS);
-
-        Button refundBtn = new Button("Refund");
-        refundBtn.getStyleClass().add("charm-btn");
-        refundBtn.setStyle("-fx-base: #a03030;");
-        refundBtn.setVisible(false);
-        refundBtn.setManaged(false);
-
-        Button deleteCustomBtn = new Button("Delete Custom Charm");
-        deleteCustomBtn.getStyleClass().add("charm-btn");
-        deleteCustomBtn.setStyle("-fx-base: #d44444; -fx-text-fill: white;");
-        deleteCustomBtn.setVisible(false);
-        deleteCustomBtn.setManaged(false);
-
-        HBox charmButtons = new HBox(10, toggleBtn, refundBtn, deleteCustomBtn);
-
-        rightPane.getChildren().addAll(detailTitle, detailReqs, charmButtons, statsGrid, descScroll);
-
-        loadCharmsRef = () -> {
-            charmCanvas.getChildren().clear();
-            charmNodeMap.clear();
-            currentAbilityCharms.clear();
-
-            List<Charm> loaded = dataService.loadCharmsForAbility(abilityCombo.getValue());
-            if (loaded != null) {
-                currentAbilityCharms.addAll(loaded);
-            }
-
-            drawCharmWeb(currentAbilityCharms, title, abilityCombo.getValue(), detailTitle, detailReqs, toggleBtn,
-                    refundBtn, costLabel, typeLabel, durationLabel, kwFlow, descriptionLabel, deleteCustomBtn);
-            title.setText(abilityCombo.getValue() + " Charms Web (" + currentAbilityCharms.size() + ")");
-
-            detailTitle.setText("No Charm Selected");
-            detailReqs.setText("");
-            costLabel.setText("");
-            typeLabel.setText("");
-            durationLabel.setText("");
-            kwFlow.getChildren().clear();
-            descriptionLabel.setText("");
-            toggleBtn.setVisible(false);
-            refundBtn.setVisible(false);
-            refundBtn.setManaged(false);
-            deleteCustomBtn.setVisible(false);
-            deleteCustomBtn.setManaged(false);
-        };
-
-        abilityCombo.valueProperty().addListener((obs, oldV, newV) -> loadCharmsRef.run());
-        loadCharmsRef.run();
-
-        splitPane.getItems().addAll(leftPane, rightPane);
-        splitPane.setDividerPositions(0.7);
-        return splitPane;
-    }
-
-    private void drawCharmWeb(List<Charm> charms, Label titleLabel, String ability,
-            Label detailTitle, Label detailReqs, Button toggleBtn, Button refundBtn,
-            Label costLabel, Label typeLabel, Label durLabel,
-            FlowPane kwFlow, Label descLabel, Button deleteCustomBtn) {
-
-        // Calculate Topological depth
-        Map<String, Integer> charmDepth = new HashMap<>();
-        boolean changed = true;
-        while (changed) {
-            changed = false;
-            for (Charm c : charms) {
-                int currentDepth = charmDepth.getOrDefault(c.getName(), 0);
-                int reqDepth = 0;
-                if (c.getPrerequisites() != null) {
-                    for (String req : c.getPrerequisites()) {
-                        reqDepth = Math.max(reqDepth, charmDepth.getOrDefault(req, 0) + 1);
-                    }
-                }
-                if (reqDepth > currentDepth) {
-                    charmDepth.put(c.getName(), reqDepth);
-                    changed = true;
-                }
-            }
-        }
-
-        // Group by Depth Level
-        Map<Integer, List<Charm>> levels = new HashMap<>();
-        int maxDepth = 0;
-        for (Charm c : charms) {
-            int depth = charmDepth.getOrDefault(c.getName(), 0);
-            levels.computeIfAbsent(depth, k -> new ArrayList<>()).add(c);
-            if (depth > maxDepth)
-                maxDepth = depth;
-        }
-
-        double boxWidth = 220;
-        double boxHeight = 70;
-        double gapX = 40;
-        double gapY = 80;
-
-        // Determine layout span
-        double maxRowWidth = 0;
-        for (int d = 0; d <= maxDepth; d++) {
-            List<Charm> rowCharms = levels.getOrDefault(d, new ArrayList<>());
-            double rowWidth = rowCharms.size() * boxWidth + Math.max(0, rowCharms.size() - 1) * gapX;
-            if (rowWidth > maxRowWidth)
-                maxRowWidth = rowWidth;
-        }
-
-        // Ensure scroll content respects constraints cleanly
-        double virtualCanvasWidth = Math.max(800, maxRowWidth + 100);
-
-        // Draw Nodes
-        for (int d = 0; d <= maxDepth; d++) {
-            List<Charm> rowCharms = levels.getOrDefault(d, new ArrayList<>());
-            double rowWidth = rowCharms.size() * boxWidth + Math.max(0, rowCharms.size() - 1) * gapX;
-
-            // Center the entire row geometrically
-            double startX = (virtualCanvasWidth - rowWidth) / 2;
-            double y = 40 + d * (boxHeight + gapY);
-
-            for (int i = 0; i < rowCharms.size(); i++) {
-                Charm c = rowCharms.get(i);
-                double x = startX + i * (boxWidth + gapX);
-
-                VBox box = new VBox(5);
-                box.setAlignment(Pos.CENTER);
-                box.setPrefSize(boxWidth, boxHeight);
-                box.getStyleClass().add("charm-node");
-
-                Label nameLbl = new Label(c.getName());
-                nameLbl.getStyleClass().add("charm-node-title");
-                nameLbl.setWrapText(true);
-
-                Label reqLbl = new Label(c.getAbility() + " " + c.getMinAbility() + ", Ess " + c.getMinEssence());
-                reqLbl.getStyleClass().add("charm-node-reqs");
-
-                box.getChildren().addAll(nameLbl, reqLbl);
-                box.setLayoutX(x);
-                box.setLayoutY(y);
-
-                charmNodeMap.put(c.getName(), box);
-                charmCanvas.getChildren().add(box);
-
-                box.setOnMouseClicked(e -> {
-                    detailTitle.setText(c.getName());
-                    String prereqStr = c.getPrerequisites() == null || c.getPrerequisites().isEmpty() ? "None"
-                            : String.join(", ", c.getPrerequisites());
-                    detailReqs.setText("Mins: " + c.getAbility() + " " + c.getMinAbility() + ", Ess: "
-                            + c.getMinEssence() + "\nPrereqs: " + prereqStr);
-                    costLabel.setText(c.getCost() != null ? c.getCost() : "");
-                    typeLabel.setText(c.getType() != null ? c.getType() : "");
-                    durLabel.setText(c.getDuration() != null ? c.getDuration() : "");
-                    updateKeywords(c.getKeywords(), kwFlow);
-                    descLabel.setText(c.getFullText() != null ? c.getFullText() : "");
-
-                    toggleBtn.setVisible(true);
-                    updateSidebarButton(c, toggleBtn, refundBtn, deleteCustomBtn);
-
-                    if (e.getClickCount() == 2) {
-                        // Delay execution slightly to ensure correct visual state selection before
-                        // firing
-                        javafx.application.Platform.runLater(() -> toggleBtn.fire());
-                    }
-                });
-            }
-        }
-
-        // Connect the specific button behavior directly
-        toggleBtn.setOnAction(ev -> {
-            String selectedName = detailTitle.getText();
-            Charm c = charms.stream().filter(ch -> ch.getName().equals(selectedName)).findFirst().orElse(null);
-            if (c != null) {
-                if (!c.getName().equals("Ox-Body Technique") && data.hasCharm(c.getName())) {
-                    data.removeCharm(c.getName());
-                } else {
-                    data.addCharm(new PurchasedCharm(c.getName(), c.getAbility()));
-                }
-                updateSidebarButton(c, toggleBtn, refundBtn, deleteCustomBtn);
-                updateWebNodeStyles();
-            }
-        });
-
-        refundBtn.setOnAction(ev -> {
-            String selectedName = detailTitle.getText();
-            Charm c = charms.stream().filter(ch -> ch.getName().equals(selectedName)).findFirst().orElse(null);
-            if (c != null) {
-                data.removeCharm(c.getName());
-                updateSidebarButton(c, toggleBtn, refundBtn, deleteCustomBtn);
-                updateWebNodeStyles();
-            }
-        });
-
-        deleteCustomBtn.setOnAction(ev -> {
-            String selectedName = detailTitle.getText();
-            Charm c = charms.stream().filter(ch -> ch.getName().equals(selectedName)).findFirst().orElse(null);
-            if (c != null && c.isCustom()) {
-                Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete the custom charm '" + c.getName() + "'?", ButtonType.YES, ButtonType.NO);
-                confirm.showAndWait().ifPresent(response -> {
-                    if (response == ButtonType.YES) {
-                        try {
-                            dataService.deleteCustomCharm(c);
-                            refreshCharms();
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                });
-            }
-        });
-
-        // Draw Connecting Lines
-        for (Charm c : charms) {
-            VBox targetBox = charmNodeMap.get(c.getName());
-            if (targetBox != null && c.getPrerequisites() != null) {
-                for (String req : c.getPrerequisites()) {
-                    VBox sourceBox = charmNodeMap.get(req);
-                    if (sourceBox != null) {
-                        double startX = sourceBox.getLayoutX() + boxWidth / 2;
-                        double startY = sourceBox.getLayoutY() + boxHeight;
-                        double endX = targetBox.getLayoutX() + boxWidth / 2;
-                        double endY = targetBox.getLayoutY();
-
-                        CubicCurve curve = new CubicCurve(
-                                startX, startY,
-                                startX, startY + gapY / 1.5,
-                                endX, endY - gapY / 1.5,
-                                endX, endY);
-                        curve.getStyleClass().add("charm-line");
-                        charmCanvas.getChildren().add(curve);
-                        curve.toBack();
-                    }
-                }
-            }
-        }
-
-        // Resize actual canvas bounds to match contents
-        double minHeight = (maxDepth + 1) * (boxHeight + gapY) + 40;
-        charmCanvas.setPrefSize(virtualCanvasWidth, minHeight);
-        charmCanvas.setMinSize(virtualCanvasWidth, minHeight);
-
-        // Apply immediate styling
-        updateWebNodeStyles();
-    }
-
-    private void updateSidebarButton(Charm c, Button btn, Button refundBtn, Button deleteCustomBtn) {
-        int count = data.getCharmCount(c.getName());
-        boolean isOxBody = c.getName().equals("Ox-Body Technique");
-
-        deleteCustomBtn.setVisible(c.isCustom());
-        deleteCustomBtn.setManaged(c.isCustom());
-
-        if (isOxBody) {
-            int limit = data.getAbility("Resistance").get();
-            btn.setText("Purchase (" + count + "/" + limit + ")");
-            btn.setDisable(count >= limit || !c.isEligible(data));
-            btn.setStyle("-fx-base: #d4af37;");
-            refundBtn.setVisible(count > 0);
-            refundBtn.setManaged(count > 0);
-        } else if (data.hasCharm(c.getName())) {
-            btn.setText("Refund Charm");
-            btn.setDisable(false);
-            btn.setStyle("-fx-base: #a03030;");
-            refundBtn.setVisible(false);
-            refundBtn.setManaged(false);
-        } else if (c.isEligible(data)) {
-            btn.setText("Purchase Charm");
-            btn.setDisable(false);
-            btn.setStyle("-fx-base: #d4af37;");
-            refundBtn.setVisible(false);
-            refundBtn.setManaged(false);
-        } else {
-            btn.setText("Requirements Not Met");
-            btn.setDisable(true);
-            btn.setStyle("-fx-base: #444444;");
-            refundBtn.setVisible(false);
-            refundBtn.setManaged(false);
-        }
+        CharmTreeComponent charmsView = new CharmTreeComponent(abilityCombo, "Ability");
+        charmTrees.add(charmsView);
+        return charmsView;
     }
 
     private void loadKeywords() {
@@ -1402,71 +1165,432 @@ public class BuilderUI extends BorderPane {
 
     private void refreshCharms() {
         loadKeywords();
-        if (loadCharmsRef != null) {
-            loadCharmsRef.run();
+        for (CharmTreeComponent tree : charmTrees) {
+            tree.refresh();
         }
     }
 
-    private void updateKeywords(String keywordsStr, FlowPane kwFlow) {
-        kwFlow.getChildren().clear();
-        if (keywordsStr == null || keywordsStr.isEmpty() || keywordsStr.equalsIgnoreCase("None")) {
-            return;
+    private class CharmTreeComponent extends SplitPane {
+        private final ComboBox<String> filterCombo;
+        private final String filterType; // "Ability" or "Martial Arts Style"
+        private Pane charmCanvas = new Pane();
+        private Map<String, VBox> charmNodeMap = new HashMap<>();
+        private List<Charm> currentCharms = new ArrayList<>();
+        
+        private Label titleLabel = new Label();
+        private Label detailTitle = new Label("No Charm Selected");
+        private Label detailReqs = new Label();
+        
+        private Label costLabel = new Label();
+        private Label typeLabel = new Label();
+        private Label durationLabel = new Label();
+        private FlowPane kwFlow = new FlowPane(3, 3);
+        private Label descriptionLabel = new Label();
+        
+        private Button toggleBtn = new Button("Purchase Charm");
+        private Button refundBtn = new Button("Refund");
+        private Button deleteCustomBtn = new Button("Delete Custom Charm");
+        
+        private Charm selectedCharm;
+        private javafx.beans.property.IntegerProperty currentRatingProperty;
+        private javafx.beans.value.ChangeListener<Number> ratingListener;
+
+        public CharmTreeComponent(ComboBox<String> filterCombo, String filterType) {
+            this.filterCombo = filterCombo;
+            this.filterType = filterType;
+            getStyleClass().add("charms-split-pane");
+
+            setupUI();
+            filterCombo.valueProperty().addListener((obs, oldV, newV) -> refresh());
+            refresh();
         }
 
-        String[] parts = keywordsStr.split(",");
-        for (int i = 0; i < parts.length; i++) {
-            String name = parts[i].trim();
-            if (name.isEmpty())
-                continue;
+        private void setupUI() {
+            // Left Side: Tree Web Area
+            VBox leftPane = new VBox(15);
+            leftPane.setPadding(new Insets(20));
 
-            Label label = new Label(name);
-            label.getStyleClass().add("sidebar-stat");
-            label.getStyleClass().add("keyword-label");
+            HBox controls = new HBox(15);
+            controls.setAlignment(Pos.CENTER_LEFT);
+            Label comboLabel = new Label(filterType + ":");
+            comboLabel.getStyleClass().add("label");
+            
+            Button createCharmBtn = new Button("Create New Charm");
+            createCharmBtn.getStyleClass().add("action-btn");
+            createCharmBtn.setOnAction(e -> showCreateCharmDialog(filterCombo.getValue(), filterType.equals("Martial Arts Style")));
 
-            String def = keywordDefs.get(name);
-            if (def != null) {
-                Tooltip tooltip = new Tooltip(def);
-                tooltip.setWrapText(true);
-                tooltip.setMaxWidth(300);
-                label.setTooltip(tooltip);
-                label.getStyleClass().add("keyword-with-def");
-            }
+            controls.getChildren().addAll(comboLabel, filterCombo, createCharmBtn);
 
-            kwFlow.getChildren().add(label);
+            titleLabel.getStyleClass().add("section-title");
 
-            if (i < parts.length - 1) {
-                Label comma = new Label(", ");
-                comma.getStyleClass().add("sidebar-stat");
-                kwFlow.getChildren().add(comma);
-            }
-        }
-    }
+            ScrollPane charmScroll = new ScrollPane(charmCanvas);
+            charmScroll.setPannable(true);
+            charmScroll.getStyleClass().add("scroll-pane-custom");
+            VBox.setVgrow(charmScroll, Priority.ALWAYS);
 
-    private void updateWebNodeStyles() {
-        for (Charm c : currentAbilityCharms) {
-            VBox box = charmNodeMap.get(c.getName());
-            if (box != null) {
-                box.getStyleClass().removeAll("charm-node-unselected", "charm-node-selected", "charm-node-ineligible");
-                if (data.hasCharm(c.getName())) {
-                    box.getStyleClass().add("charm-node-selected");
-                } else if (c.isEligible(data)) {
-                    box.getStyleClass().add("charm-node-unselected");
-                } else {
-                    box.getStyleClass().add("charm-node-ineligible");
+            leftPane.getChildren().addAll(controls, titleLabel, charmScroll);
+
+            // Right Side: Sidebar Details
+            VBox rightPane = new VBox(15);
+            rightPane.setPadding(new Insets(20));
+            rightPane.getStyleClass().add("charms-sidebar");
+
+            detailTitle.getStyleClass().add("sidebar-title");
+            detailTitle.setWrapText(true);
+            detailReqs.getStyleClass().add("sidebar-reqs");
+            detailReqs.setWrapText(true);
+
+            GridPane statsGrid = new GridPane();
+            statsGrid.setHgap(15);
+            statsGrid.setVgap(10);
+            costLabel.getStyleClass().add("sidebar-stat");
+            typeLabel.getStyleClass().add("sidebar-stat");
+            durationLabel.getStyleClass().add("sidebar-stat");
+            kwFlow.setPrefWrapLength(200);
+
+            statsGrid.add(new Label("Cost:"), 0, 0);
+            statsGrid.add(costLabel, 1, 0);
+            statsGrid.add(new Label("Type:"), 0, 1);
+            statsGrid.add(typeLabel, 1, 1);
+            statsGrid.add(new Label("Duration:"), 0, 2);
+            statsGrid.add(durationLabel, 1, 2);
+            statsGrid.add(new Label("Keywords:"), 0, 3);
+            statsGrid.add(kwFlow, 1, 3);
+
+            for (javafx.scene.Node n : statsGrid.getChildren()) {
+                if (GridPane.getColumnIndex(n) == 0 && n instanceof Label) {
+                    n.getStyleClass().add("sidebar-stat-header");
                 }
-                
-                if (c.isCustom()) {
-                    if (!box.getStyleClass().contains("charm-node-custom")) {
-                        box.getStyleClass().add("charm-node-custom");
+            }
+
+            descriptionLabel.getStyleClass().add("sidebar-desc");
+            descriptionLabel.setWrapText(true);
+            ScrollPane descScroll = new ScrollPane(descriptionLabel);
+            descScroll.setFitToWidth(true);
+            descScroll.getStyleClass().add("scroll-pane-custom");
+            VBox.setVgrow(descScroll, Priority.ALWAYS);
+
+            toggleBtn.getStyleClass().add("charm-btn");
+            toggleBtn.setMaxWidth(Double.MAX_VALUE);
+            HBox.setHgrow(toggleBtn, Priority.ALWAYS);
+
+            refundBtn.getStyleClass().add("charm-btn");
+            refundBtn.setStyle("-fx-base: #a03030;");
+            refundBtn.setVisible(false);
+            refundBtn.setManaged(false);
+
+            deleteCustomBtn.getStyleClass().add("charm-btn");
+            deleteCustomBtn.setStyle("-fx-base: #d44444; -fx-text-fill: white;");
+            deleteCustomBtn.setVisible(false);
+            deleteCustomBtn.setManaged(false);
+
+            HBox charmButtons = new HBox(10, toggleBtn, refundBtn, deleteCustomBtn);
+            rightPane.getChildren().addAll(detailTitle, detailReqs, charmButtons, statsGrid, descScroll);
+
+            getItems().addAll(leftPane, rightPane);
+            setDividerPositions(0.7);
+        }
+
+        public void refresh() {
+            charmCanvas.getChildren().clear();
+            charmNodeMap.clear();
+            currentCharms.clear();
+            selectedCharm = null;
+            
+            if (ratingListener != null && currentRatingProperty != null) {
+                currentRatingProperty.removeListener(ratingListener);
+            }
+
+            String selection = filterCombo.getValue();
+            if (selection == null || selection.isEmpty()) {
+                titleLabel.setText("Select a " + filterType + " to view charms");
+                return;
+            }
+
+            List<Charm> loaded = dataService.loadCharmsForAbility(selection);
+            if (loaded != null) {
+                currentCharms.addAll(loaded);
+            }
+
+            currentRatingProperty = data.getAbilityProperty(selection);
+            if (currentRatingProperty != null) {
+                ratingListener = (obs, ov, nv) -> {
+                    updateWebNodeStyles();
+                    if (selectedCharm != null) updateSidebarButton(selectedCharm);
+                };
+                currentRatingProperty.addListener(ratingListener);
+            }
+
+            drawCharmWeb(currentCharms, selection);
+            titleLabel.setText(selection + " Charms Web (" + currentCharms.size() + ")");
+
+            detailTitle.setText("No Charm Selected");
+            detailReqs.setText("");
+            costLabel.setText("");
+            typeLabel.setText("");
+            durationLabel.setText("");
+            kwFlow.getChildren().clear();
+            descriptionLabel.setText("");
+            toggleBtn.setVisible(false);
+            refundBtn.setVisible(false);
+            refundBtn.setManaged(false);
+            deleteCustomBtn.setVisible(false);
+            deleteCustomBtn.setManaged(false);
+        }
+
+        private void drawCharmWeb(List<Charm> charms, String ability) {
+            // Topological Sort Logic
+            Map<String, Integer> charmDepth = new HashMap<>();
+            boolean changed = true;
+            while (changed) {
+                changed = false;
+                for (Charm c : charms) {
+                    int currentDepth = charmDepth.getOrDefault(c.getName(), 0);
+                    int reqDepth = 0;
+                    if (c.getPrerequisites() != null) {
+                        for (String req : c.getPrerequisites()) {
+                            reqDepth = Math.max(reqDepth, charmDepth.getOrDefault(req, 0) + 1);
+                        }
                     }
-                } else {
-                    box.getStyleClass().remove("charm-node-custom");
+                    if (reqDepth > currentDepth) {
+                        charmDepth.put(c.getName(), reqDepth);
+                        changed = true;
+                    }
+                }
+            }
+
+            Map<Integer, List<Charm>> levels = new HashMap<>();
+            int maxDepth = 0;
+            for (Charm c : charms) {
+                int depth = charmDepth.getOrDefault(c.getName(), 0);
+                levels.computeIfAbsent(depth, k -> new ArrayList<>()).add(c);
+                if (depth > maxDepth) maxDepth = depth;
+            }
+
+            double boxWidth = 220; double boxHeight = 70;
+            double gapX = 40; double gapY = 80;
+
+            double maxRowWidth = 0;
+            for (int d = 0; d <= maxDepth; d++) {
+                List<Charm> rowCharms = levels.getOrDefault(d, new ArrayList<>());
+                double rowWidth = rowCharms.size() * boxWidth + Math.max(0, rowCharms.size() - 1) * gapX;
+                if (rowWidth > maxRowWidth) maxRowWidth = rowWidth;
+            }
+
+            double virtualCanvasWidth = Math.max(800, maxRowWidth + 100);
+
+            for (int d = 0; d <= maxDepth; d++) {
+                List<Charm> rowCharms = levels.getOrDefault(d, new ArrayList<>());
+                double rowWidth = rowCharms.size() * boxWidth + Math.max(0, rowCharms.size() - 1) * gapX;
+                double startX = (virtualCanvasWidth - rowWidth) / 2;
+                double y = 40 + d * (boxHeight + gapY);
+
+                for (int i = 0; i < rowCharms.size(); i++) {
+                    Charm c = rowCharms.get(i);
+                    double x = startX + i * (boxWidth + gapX);
+
+                    VBox box = new VBox(5);
+                    box.setAlignment(Pos.CENTER);
+                    box.setPrefSize(boxWidth, boxHeight);
+                    box.getStyleClass().add("charm-node");
+
+                    Label nameLbl = new Label(c.getName());
+                    nameLbl.getStyleClass().add("charm-node-title");
+                    nameLbl.setWrapText(true);
+
+                    Label reqLbl = new Label(c.getAbility() + " " + c.getMinAbility() + ", Ess " + c.getMinEssence());
+                    reqLbl.getStyleClass().add("charm-node-reqs");
+
+                    box.getChildren().addAll(nameLbl, reqLbl);
+                    box.setLayoutX(x);
+                    box.setLayoutY(y);
+
+                    charmNodeMap.put(c.getName(), box);
+                    charmCanvas.getChildren().add(box);
+
+                    box.setOnMouseClicked(e -> {
+                        selectedCharm = c;
+                        detailTitle.setText(c.getName());
+                        String prereqStr = c.getPrerequisites() == null || c.getPrerequisites().isEmpty() ? "None"
+                                : String.join(", ", c.getPrerequisites());
+                        detailReqs.setText("Mins: " + c.getAbility() + " " + c.getMinAbility() + ", Ess: "
+                                + c.getMinEssence() + "\nPrereqs: " + prereqStr);
+                        costLabel.setText(c.getCost() != null ? c.getCost() : "");
+                        typeLabel.setText(c.getType() != null ? c.getType() : "");
+                        durationLabel.setText(c.getDuration() != null ? c.getDuration() : "");
+                        updateKeywords(c.getKeywords(), kwFlow);
+                        descriptionLabel.setText(c.getFullText() != null ? c.getFullText() : "");
+
+                        toggleBtn.setVisible(true);
+                        updateSidebarButton(c);
+
+                        if (e.getClickCount() == 2) {
+                            javafx.application.Platform.runLater(() -> toggleBtn.fire());
+                        }
+                    });
+                }
+            }
+
+            toggleBtn.setOnAction(ev -> {
+                if (selectedCharm != null) {
+                    if (!data.hasCharm(selectedCharm.getId())) {
+                        data.addCharm(new PurchasedCharm(selectedCharm.getId(), selectedCharm.getName(), selectedCharm.getAbility()));
+                    } else {
+                        data.removeCharm(selectedCharm.getId());
+                    }
+                    updateSidebarButton(selectedCharm);
+                    updateWebNodeStyles();
+                }
+            });
+
+            refundBtn.setOnAction(ev -> {
+                if (selectedCharm != null) {
+                    data.removeCharm(selectedCharm.getId());
+                    updateSidebarButton(selectedCharm);
+                    updateWebNodeStyles();
+                }
+            });
+
+            deleteCustomBtn.setOnAction(ev -> {
+                String selectedName = detailTitle.getText();
+                Charm c = charms.stream().filter(ch -> ch.getName().equals(selectedName)).findFirst().orElse(null);
+                if (c != null && c.isCustom()) {
+                    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete the custom charm '" + c.getName() + "'?", ButtonType.YES, ButtonType.NO);
+                    confirm.showAndWait().ifPresent(response -> {
+                        if (response == ButtonType.YES) {
+                            try {
+                                dataService.deleteCustomCharm(c);
+                                refreshCharms();
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            });
+
+            for (Charm c : charms) {
+                VBox targetBox = charmNodeMap.get(c.getName());
+                if (targetBox != null && c.getPrerequisites() != null) {
+                    for (String req : c.getPrerequisites()) {
+                        VBox sourceBox = charmNodeMap.get(req);
+                        if (sourceBox != null) {
+                            double startX = sourceBox.getLayoutX() + boxWidth / 2;
+                            double startY = sourceBox.getLayoutY() + boxHeight;
+                            double endX = targetBox.getLayoutX() + boxWidth / 2;
+                            double endY = targetBox.getLayoutY();
+
+                            CubicCurve curve = new CubicCurve(startX, startY, startX, startY + gapY / 1.5, endX, endY - gapY / 1.5, endX, endY);
+                            curve.getStyleClass().add("charm-line");
+                            charmCanvas.getChildren().add(curve);
+                            curve.toBack();
+                        }
+                    }
+                }
+            }
+
+            double minHeight = (maxDepth + 1) * (boxHeight + gapY) + 40;
+            charmCanvas.setPrefSize(virtualCanvasWidth, minHeight);
+            charmCanvas.setMinSize(virtualCanvasWidth, minHeight);
+            updateWebNodeStyles();
+        }
+
+        private void updateSidebarButton(Charm c) {
+            int count = data.getCharmCount(c.getId());
+            boolean isOxBody = c.getName().equals("Ox-Body Technique");
+
+            deleteCustomBtn.setVisible(c.isCustom());
+            deleteCustomBtn.setManaged(c.isCustom());
+
+            if (isOxBody) {
+                int limit = data.getAbility("Resistance").get();
+                toggleBtn.setText("Purchase (" + count + "/" + limit + ")");
+                toggleBtn.setDisable(count >= limit || !c.isEligible(data));
+                toggleBtn.setStyle("-fx-base: #d4af37;");
+                refundBtn.setVisible(count > 0);
+                refundBtn.setManaged(count > 0);
+            } else if (data.hasCharm(c.getId())) {
+                toggleBtn.setText("Refund Charm");
+                toggleBtn.setDisable(false);
+                toggleBtn.setStyle("-fx-base: #a03030;");
+                refundBtn.setVisible(false);
+                refundBtn.setManaged(false);
+            } else if (c.isEligible(data)) {
+                toggleBtn.setText("Purchase Charm");
+                toggleBtn.setDisable(false);
+                toggleBtn.setStyle("-fx-base: #d4af37;");
+                refundBtn.setVisible(false);
+                refundBtn.setManaged(false);
+            } else {
+                toggleBtn.setText("Requirements Not Met");
+                toggleBtn.setDisable(true);
+                toggleBtn.setStyle("-fx-base: #444444;");
+                refundBtn.setVisible(false);
+                refundBtn.setManaged(false);
+            }
+        }
+
+        public void updateWebNodeStyles() {
+            for (Charm c : currentCharms) {
+                VBox box = charmNodeMap.get(c.getName());
+                if (box != null) {
+                    box.getStyleClass().removeAll("charm-node-unselected", "charm-node-selected", "charm-node-ineligible");
+                    boolean bought = data.hasCharm(c.getId());
+                    if (bought) {
+                        box.getStyleClass().add("charm-node-selected");
+                    } else if (c.isEligible(data)) {
+                        box.getStyleClass().add("charm-node-unselected");
+                    } else {
+                        box.getStyleClass().add("charm-node-ineligible");
+                    }
+                    if (c.isCustom()) {
+                        if (!box.getStyleClass().contains("charm-node-custom")) box.getStyleClass().add("charm-node-custom");
+                    } else {
+                        box.getStyleClass().remove("charm-node-custom");
+                    }
+                }
+            }
+        }
+
+        private void updateKeywords(String keywordsStr, FlowPane kwFlow) {
+            kwFlow.getChildren().clear();
+            if (keywordsStr == null || keywordsStr.isEmpty() || keywordsStr.equalsIgnoreCase("None")) {
+                return;
+            }
+
+            String[] parts = keywordsStr.split(",");
+            for (int i = 0; i < parts.length; i++) {
+                String name = parts[i].trim();
+                if (name.isEmpty())
+                    continue;
+
+                Label label = new Label(name);
+                label.getStyleClass().add("sidebar-stat");
+                label.getStyleClass().add("keyword-label");
+
+                String def = keywordDefs.get(name);
+                if (def != null) {
+                    Tooltip tooltip = new Tooltip(def);
+                    tooltip.setWrapText(true);
+                    tooltip.setMaxWidth(300);
+                    label.setTooltip(tooltip);
+                    label.getStyleClass().add("keyword-with-def");
+                }
+
+                kwFlow.getChildren().add(label);
+
+                if (i < parts.length - 1) {
+                    Label comma = new Label(", ");
+                    comma.getStyleClass().add("sidebar-stat");
+                    kwFlow.getChildren().add(comma);
                 }
             }
         }
     }
 
-    private void showCreateCharmDialog() {
+
+
+    private void showCreateCharmDialog(String defaultAbility, boolean martialArtsOnly) {
         Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(getScene().getWindow());
@@ -1485,8 +1609,18 @@ public class BuilderUI extends BorderPane {
         nameField.setPromptText("Charm Name");
         
         ComboBox<String> abCombo = new ComboBox<>();
-        abCombo.getItems().addAll(CharacterData.ABILITIES);
-        abCombo.setValue(abilityCombo.getValue());
+        if (martialArtsOnly) {
+            // Only add Martial Arts styles for the MA tab context
+            for (MartialArtsStyle mas : data.getMartialArtsStyles()) {
+                if (mas.getStyleName() != null && !mas.getStyleName().isEmpty() && !abCombo.getItems().contains(mas.getStyleName())) {
+                    abCombo.getItems().add(mas.getStyleName());
+                }
+            }
+        } else {
+            // Regular abilities for the standard Charms tab
+            abCombo.getItems().addAll(CharacterData.ABILITIES);
+        }
+        abCombo.setValue(defaultAbility != null ? defaultAbility : "Archery");
 
         Spinner<Integer> minAb = new Spinner<>(0, 5, 1);
         Spinner<Integer> minEss = new Spinner<>(1, 5, 1);

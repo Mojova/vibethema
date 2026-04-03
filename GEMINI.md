@@ -49,7 +49,7 @@ A JavaFX-based character creator for Exalted 3rd Edition. The application focuse
 3. **Save/Load Compatibility**: When adding new fields to the character, update BOTH `CharacterSaveState` (serialization) and `CharacterData` (export/import logic).
 4. **Default Entries**: For better UX, Merits and Specialties should always have at least one empty entry added to their lists if they are empty. Craft and Martial Arts styles do NOT have default entries; users must click "+ Add" to create them.
 5. **Custom Charms**: Custom charms are stored in `~/.vibethema/charms/[ability]-custom.json`. They are visually distinguished in the UI via the `.charm-node-custom` CSS class (silver border).
-6. **PDF Import**: PDF extraction happens at run-time. Data is cached in the user's home directory.
+6. **PDF Import**: PDF extraction happens at run-time. Data is cached in the user's home directory. Charms include a `rawData` field containing the original PDF text block. The `potentiallyProblematicImport` flag (boolean) indicates if any prerequisites could not be resolved.
 
 ## File Map
 - `src/main/java/com/vibethema/Main.java`: App Launcher.
@@ -63,3 +63,4 @@ A JavaFX-based character creator for Exalted 3rd Edition. The application focuse
 
 ## AI Workflow
 1. **Commits**: Always commit changes after finishing a logical task or a specific user request. Use descriptive commit messages.
+2. **Update this file**: Update this file when the architecture or logic changes.

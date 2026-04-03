@@ -3,6 +3,7 @@ package com.vibethema.model;
 import java.util.List;
 
 public class Charm {
+    private String id;
     private String name;
     private String ability;
     private int minAbility;
@@ -14,7 +15,12 @@ public class Charm {
     private String keywords;
     private String duration;
     private String fullText;
+    private String rawData;
+    private boolean potentiallyProblematicImport;
     private transient boolean isCustom;
+
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
     public Charm() {}
 
@@ -29,6 +35,7 @@ public class Charm {
     public String getKeywords() { return keywords; }
     public String getDuration() { return duration; }
     public String getFullText() { return fullText; }
+    public String getRawData() { return rawData; }
 
     public void setName(String name) { this.name = name; }
     public void setAbility(String ability) { this.ability = ability; }
@@ -40,21 +47,43 @@ public class Charm {
     public void setKeywords(String keywords) { this.keywords = keywords; }
     public void setDuration(String duration) { this.duration = duration; }
     public void setFullText(String fullText) { this.fullText = fullText; }
+    public void setRawData(String rawData) { this.rawData = rawData; }
 
     public boolean isCustom() { return isCustom; }
     public void setCustom(boolean custom) { isCustom = custom; }
 
+    public boolean isPotentiallyProblematicImport() { return potentiallyProblematicImport; }
+    public void setPotentiallyProblematicImport(boolean value) { this.potentiallyProblematicImport = value; }
+
     public boolean isEligible(CharacterData data) {
+        if (data == null) return false;
+        
         int effectiveEssence = data.essenceProperty().get();
-        if (ability != null && ability.equals(data.supernalAbilityProperty().get())) {
-            effectiveEssence = 5;
+        String supernal = data.supernalAbilityProperty().get();
+        
+        // Handle Supernal Ability
+        if (ability != null && !supernal.isEmpty()) {
+            boolean isSupernal = ability.equals(supernal);
+            // Supernal Martial Arts covers all styles
+            if (!isSupernal && "Martial Arts".equals(supernal) && data.isMartialArtsStyle(ability)) {
+                isSupernal = true;
+            }
+            // Supernal Craft covers all expertise types
+            if (!isSupernal && "Craft".equals(supernal) && data.isCraftExpertise(ability)) {
+                isSupernal = true;
+            }
+            
+            if (isSupernal) {
+                effectiveEssence = 5;
+            }
         }
         
         if (effectiveEssence < minEssence) return false;
-        if (data.getAbility(ability).get() < minAbility) return false;
+        if (data.getAbilityRating(ability) < minAbility) return false;
+        
         if (prerequisites != null) {
-            for (String req : prerequisites) {
-                if (!data.hasCharm(req)) return false;
+            for (String reqId : prerequisites) {
+                if (!data.hasCharm(reqId)) return false;
             }
         }
         return true;

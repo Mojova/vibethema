@@ -33,6 +33,7 @@ public class CharacterSaveState {
     }
 
     public static class MartialArtsData {
+        public String id;
         public String styleName;
         public int rating;
         public boolean isCaste;

@@ -58,9 +58,12 @@ public class PdfExtractor {
 
     private void extractAndSaveCharms(String text) throws IOException {
         Map<String, List<Map<String, Object>>> charmsByAbility = new HashMap<>();
+        Map<String, List<Map<String, Object>>> charmsByMartialArtsStyle = new HashMap<>();
         for (String abil : ABILITIES) {
             charmsByAbility.put(abil, new ArrayList<>());
         }
+
+        String currentMartialArtsStyle = null;
 
         // Split by potential charm starts: [Name]\nCost:
         // Java regex split with lookahead
@@ -70,10 +73,39 @@ public class PdfExtractor {
             String[] lines = part.trim().split("\n");
             if (lines.length < 3) continue;
 
-            String name = lines[0].trim();
-            String costLine = lines[1].trim();
+            String name = "";
+            String ability = "";
+            int minAbilityValue = 0;
+            int minEssenceValue = 0;
+            String costLine = "";
+            int descStartIdx = 0;
 
-            if (!costLine.startsWith("Cost:")) continue;
+            // Pattern for style headers: e.g. "Snake Style" or "Tiger Style"
+            Pattern stylePattern = Pattern.compile("^([A-Z][\\w\\s]+ Style)$", Pattern.MULTILINE);
+            
+            // Look for Style changes in the whole part (especially at the beginning before name)
+            Matcher styleMatcher = stylePattern.matcher(part);
+            while (styleMatcher.find()) {
+                currentMartialArtsStyle = styleMatcher.group(1).trim();
+            }
+
+            // Find the Name and Cost line
+            for (int i = 0; i < lines.length - 1; i++) {
+                if (lines[i+1].trim().startsWith("Cost:")) {
+                    name = lines[i].trim();
+                    costLine = lines[i+1].trim();
+                    descStartIdx = i + 2;
+                    break;
+                }
+            }
+
+            if (name.isEmpty() || costLine.isEmpty()) continue;
+
+            // Skip if it looks like a Style header was mistaken for a name
+            if (name.endsWith("Style")) {
+                currentMartialArtsStyle = name;
+                continue;
+            }
 
             // Pattern: Mins: [Ability] [Dots], Essence [Dots]
             Pattern minsPattern = Pattern.compile("Mins: ([\\w\\s]+) (\\d+), Essence (\\d+)");
@@ -81,9 +113,7 @@ public class PdfExtractor {
 
             if (!minsMatcher.find()) continue;
 
-            String ability = minsMatcher.group(1).trim();
-            int minAbilityValue;
-            int minEssenceValue;
+            ability = minsMatcher.group(1).trim();
             try {
                 minAbilityValue = Integer.parseInt(minsMatcher.group(2));
                 minEssenceValue = Integer.parseInt(minsMatcher.group(3));
@@ -93,38 +123,64 @@ public class PdfExtractor {
 
             if (!ABILITIES.contains(ability)) continue;
 
+            // If it's a Martial Arts charm, assign it to the current style if we have one
+            if (ability.equalsIgnoreCase("Martial Arts") && currentMartialArtsStyle != null) {
+                ability = currentMartialArtsStyle;
+            }
+
+            // Extract headers (Type, Keywords, Duration, Prereqs) with multi-line support
+            String type = "";
+            String keywords = "";
+            String duration = "";
+            String rawPrereqs = "";
+            String currentField = "";
+            
+            int headerSearchIdx = descStartIdx;
+            for (int i = headerSearchIdx; i < Math.min(lines.length, headerSearchIdx + 10); i++) {
+                String line = lines[i].trim();
+                if (line.isEmpty()) continue;
+
+                if (line.startsWith("Type:")) {
+                    type = line.replace("Type:", "").trim();
+                    currentField = "Type";
+                    descStartIdx = i + 1;
+                } else if (line.startsWith("Keywords:")) {
+                    keywords = line.replace("Keywords:", "").trim();
+                    currentField = "Keywords";
+                    descStartIdx = i + 1;
+                } else if (line.startsWith("Duration:")) {
+                    duration = line.replace("Duration:", "").trim();
+                    currentField = "Duration";
+                    descStartIdx = i + 1;
+                } else if (line.startsWith("Prerequisite Charms:")) {
+                    rawPrereqs = line.replace("Prerequisite Charms:", "").trim();
+                    currentField = "Prereqs";
+                    descStartIdx = i + 1;
+                } else if (!currentField.isEmpty() && !line.contains(":") && !line.contains("Cost:")) {
+                    // Continuation line
+                    if (currentField.equals("Type")) type += " " + line;
+                    else if (currentField.equals("Keywords")) keywords += ", " + line;
+                    else if (currentField.equals("Duration")) duration += " " + line;
+                    else if (currentField.equals("Prereqs")) rawPrereqs += " " + line;
+                    descStartIdx = i + 1;
+                } else {
+                    // Likely start of description
+                    break;
+                }
+            }
+
+            List<String> prereqs = new ArrayList<>();
+            if (!rawPrereqs.isEmpty() && !rawPrereqs.equalsIgnoreCase("none")) {
+                for (String p : rawPrereqs.split(",")) {
+                    String trimmed = p.trim();
+                    if (!trimmed.isEmpty()) prereqs.add(trimmed);
+                }
+            }
+
             // Extract Cost
             Pattern costPattern = Pattern.compile("Cost: (.*?);");
             Matcher costMatcher = costPattern.matcher(costLine);
             String cost = costMatcher.find() ? costMatcher.group(1) : costLine.replace("Cost: ", "").split(";")[0];
-
-            String type = "";
-            String keywords = "";
-            String duration = "";
-            List<String> prereqs = new ArrayList<>();
-            int descStartIdx = 2;
-
-            for (int i = 2; i < Math.min(lines.length, 7); i++) {
-                String line = lines[i].trim();
-                if (line.startsWith("Type:")) {
-                    type = line.replace("Type:", "").trim();
-                    descStartIdx = i + 1;
-                } else if (line.startsWith("Keywords:")) {
-                    keywords = line.replace("Keywords:", "").trim();
-                    descStartIdx = i + 1;
-                } else if (line.startsWith("Duration:")) {
-                    duration = line.replace("Duration:", "").trim();
-                    descStartIdx = i + 1;
-                } else if (line.startsWith("Prerequisite Charms:")) {
-                    String pText = line.replace("Prerequisite Charms:", "").trim();
-                    if (!pText.isEmpty() && !pText.equalsIgnoreCase("none")) {
-                        for (String p : pText.split(",")) {
-                            prereqs.add(p.trim());
-                        }
-                    }
-                    descStartIdx = i + 1;
-                }
-            }
 
             StringBuilder descRaw = new StringBuilder();
             for (int i = descStartIdx; i < lines.length; i++) {
@@ -132,8 +188,10 @@ public class PdfExtractor {
             }
 
             String fullText = cleanDescription(descRaw.toString());
+            String charmId = java.util.UUID.nameUUIDFromBytes((name.trim() + "|" + ability.trim()).getBytes()).toString();
 
             Map<String, Object> charmMap = new LinkedHashMap<>();
+            charmMap.put("id", charmId);
             charmMap.put("name", name);
             charmMap.put("ability", ability);
             charmMap.put("minAbility", minAbilityValue);
@@ -144,8 +202,44 @@ public class PdfExtractor {
             charmMap.put("keywords", keywords);
             charmMap.put("duration", duration);
             charmMap.put("fullText", fullText);
+            charmMap.put("rawData", part.trim());
 
-            charmsByAbility.get(ability).add(charmMap);
+            if (charmsByAbility.containsKey(ability)) {
+                charmsByAbility.get(ability).add(charmMap);
+            } else {
+                charmsByMartialArtsStyle.computeIfAbsent(ability, k -> new ArrayList<>()).add(charmMap);
+            }
+        }
+
+        // --- POST-PROCESSING: Convert Prereq names to IDs and check integrity ---
+        Set<String> allExtractedIds = new HashSet<>();
+        List<Map<String, Object>> allExtractedCharms = new ArrayList<>();
+        charmsByAbility.values().forEach(allExtractedCharms::addAll);
+        charmsByMartialArtsStyle.values().forEach(allExtractedCharms::addAll);
+        
+        for (Map<String, Object> charm : allExtractedCharms) {
+            allExtractedIds.add((String) charm.get("id"));
+        }
+
+        for (Map<String, Object> charm : allExtractedCharms) {
+            String ability = (String) charm.get("ability");
+            @SuppressWarnings("unchecked")
+            List<String> prereqNames = (List<String>) charm.get("prerequisites");
+            List<String> prereqIds = new ArrayList<>();
+            boolean problematic = false;
+
+            if (prereqNames != null) {
+                for (String pName : prereqNames) {
+                    // Generate deterministic ID for the prerequisite (assuming same ability)
+                    String pId = java.util.UUID.nameUUIDFromBytes((pName.trim() + "|" + ability.trim()).getBytes()).toString();
+                    prereqIds.add(pId);
+                    if (!allExtractedIds.contains(pId)) {
+                        problematic = true;
+                    }
+                }
+            }
+            charm.put("prerequisites", prereqIds);
+            charm.put("potentiallyProblematicImport", problematic);
         }
 
         Path outDir = CharmDataService.getUserCharmsPath();
@@ -153,10 +247,26 @@ public class PdfExtractor {
             Files.createDirectories(outDir);
         }
 
+        // Save Standard Abilities
         for (Map.Entry<String, List<Map<String, Object>>> entry : charmsByAbility.entrySet()) {
             if (entry.getValue().isEmpty()) continue;
             String filename = entry.getKey().toLowerCase().replace(" ", "-") + ".json";
             Path filePath = outDir.resolve(filename);
+            try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
+                gson.toJson(entry.getValue(), writer);
+            }
+        }
+
+        // Save Martial Arts Styles to dedicated directory
+        Path maOutDir = CharmDataService.getUserMartialArtsPath();
+        if (!Files.exists(maOutDir)) {
+            Files.createDirectories(maOutDir);
+        }
+
+        for (Map.Entry<String, List<Map<String, Object>>> entry : charmsByMartialArtsStyle.entrySet()) {
+            if (entry.getValue().isEmpty()) continue;
+            String filename = entry.getKey().toLowerCase().replace(" ", "-") + ".json";
+            Path filePath = maOutDir.resolve(filename);
             try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
                 gson.toJson(entry.getValue(), writer);
             }
@@ -166,8 +276,6 @@ public class PdfExtractor {
     private void extractAndSaveKeywords(String text) throws IOException {
         List<Map<String, String>> outputKeywords = new ArrayList<>();
         
-        // Pattern matches bullet point, any amount of non-uppercase characters,
-        // and then a keyword from our list followed by a colon.
         StringBuilder sb = new StringBuilder("•[^A-Z]*?(");
         for (int i = 0; i < KEYWORD_LIST.size(); i++) {
             sb.append(Pattern.quote(KEYWORD_LIST.get(i)));
@@ -196,7 +304,6 @@ public class PdfExtractor {
             addKeyword(outputKeywords, currentKeyword, rawDesc);
         }
         
-        // Manual fallback for Mastery/Terrestrial sidebar
         if (outputKeywords.stream().noneMatch(k -> k.get("name").equals("Mastery"))) {
             Pattern sidebarPattern = Pattern.compile("MASTER’S HAND: SOLAR MASTERY AND TERRESTRIAL EFFECTS(.*?)(?=CHAPTER|EX3|\\d{3})", Pattern.DOTALL);
             Matcher sidebarMatcher = sidebarPattern.matcher(text);
@@ -237,13 +344,11 @@ public class PdfExtractor {
     }
 
     private String cleanDescription(String text) {
-        // Remove page numbers, chapter headers, etc.
         text = text.replaceAll("\\n\\d+\\nEX3\\n", "\n");
         text = text.replaceAll("\\nEX3\\n", "\n");
         text = text.replaceAll("\\nCHARMS\\n", "\n");
         text = text.replaceAll("\\nCHAPTER \\d+\\n", "\n");
         text = text.replaceAll("Syntax Warning:.*", "");
-        // Remove non-printable characters
         text = text.replaceAll("[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f\\x7f]", "");
 
         String[] lines = text.trim().split("\n");

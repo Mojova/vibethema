@@ -8,15 +8,20 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class MartialArtsStyle {
+    private final StringProperty id = new SimpleStringProperty(java.util.UUID.randomUUID().toString());
     private final StringProperty styleName = new SimpleStringProperty("");
     private final IntegerProperty rating = new SimpleIntegerProperty(0);
     private final BooleanProperty isCaste = new SimpleBooleanProperty(false);
     private final BooleanProperty isFavored = new SimpleBooleanProperty(false);
 
-    public MartialArtsStyle(String styleName, int rating) {
+    public MartialArtsStyle(String id, String styleName, int rating) {
+        if (id != null && !id.isEmpty()) this.id.set(id);
         this.styleName.set(styleName);
         this.rating.set(rating);
     }
+
+    public StringProperty idProperty() { return id; }
+    public String getId() { return id.get(); }
 
     public StringProperty styleNameProperty() { return styleName; }
     public String getStyleName() { return styleName.get(); }
