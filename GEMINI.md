@@ -47,7 +47,7 @@ A JavaFX-based character creator for Exalted 3rd Edition. The application focuse
 1. **Craft & Martial Arts Handling**: `Craft` and `Martial Arts` are NOT in the main abilities grid. They are managed in dynamic `ObservableList` collections. When checking for a rating (e.g. for Charms), use `data.getAbilityRating(Name)` which returns the `max()` of all specialized instances.
 2. **Caste/Favored Status**: Toggling "Craft" as Caste/Favored propagates to all crafts. "Martial Arts" status is directly linked to the **Brawl** ability status.
 3. **Save/Load Compatibility**: When adding new fields to the character, update BOTH `CharacterSaveState` (serialization) and `CharacterData` (export/import logic).
-4. **Default Entries**: For better UX, Merits, Specialties, Crafts, and Martial Arts should always have at least one empty entry added to their lists if they are empty.
+4. **Default Entries**: For better UX, Merits and Specialties should always have at least one empty entry added to their lists if they are empty. Craft and Martial Arts styles do NOT have default entries; users must click "+ Add" to create them.
 
 ## File Map
 - `src/main/java/com/vibethema/Main.java`: App Launcher.

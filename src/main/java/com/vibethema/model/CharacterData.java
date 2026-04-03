@@ -188,11 +188,9 @@ public class CharacterData {
             markDirty();
         });
         
-        // Start with one empty merit, specialty, craft, and martial arts style by default
+        // Start with one empty merit and specialty by default
         merits.add(new Merit("", 1));
         specialties.add(new Specialty("", ""));
-        crafts.add(new CraftAbility("", 0));
-        martialArtsStyles.add(new MartialArtsStyle("", 0));
         dirty.set(false); // Don't mark as dirty initially
     }
 
@@ -556,7 +554,6 @@ public class CharacterData {
                     crafts.add(ca);
                 }
             }
-            if (crafts.isEmpty()) crafts.add(new CraftAbility("", 0));
             
             martialArtsStyles.clear();
             if (state.martialArts != null) {
@@ -567,7 +564,6 @@ public class CharacterData {
                     martialArtsStyles.add(mas);
                 }
             }
-            if (martialArtsStyles.isEmpty()) martialArtsStyles.add(new MartialArtsStyle("", 0));
             
             // Final sync for Martial Arts to ensure styles match Brawl
             for (MartialArtsStyle mas : martialArtsStyles) {
