@@ -18,6 +18,7 @@ A JavaFX-based character creator for Exalted 3rd Edition. The application focuse
     - `Merit`: name/rating.
     - `Specialty`: name/ability link.
     - `CraftAbility`: expertise/rating/status (Caste/Favored).
+    - `MartialArtsStyle`: style name/rating/status (Caste/Favored).
     - `Charm`/`PurchasedCharm`: metadata vs. instance data.
 
 ### UI Layer (`com.vibethema.ui`)
@@ -36,17 +37,17 @@ A JavaFX-based character creator for Exalted 3rd Edition. The application focuse
 | Feature | Creation Rule | Scaling / BP Cost |
 | :--- | :--- | :--- |
 | **Attributes** | 8/6/4 distribution | N/A (Standard creator) |
-| **Abilities** | 28 dots | Above 28: 1 BP per dot (Note: Crafts are separate) |
+| **Abilities** | 28 dots | Above 28: 1 BP per dot (Note: Crafts and Martial Arts are separate) |
 | **Merits** | 10 Free Dots | Above 10: 1 BP per dot |
 | **Specialties** | 4 Free Specialties | Above 4: 1 BP each |
 | **Charms** | 15 Start | Above 15: N/A in current implementation (Manual purchase logic) |
 
 ## Development Gotchas
 
-1. **Craft Handling**: `Craft` is NOT in the main abilities grid. It is managed in a dynamic `ObservableList<CraftAbility>`. When checking for a "Craft" ability rating (e.g. for Charms), use `data.getAbilityRating("Craft")` which returns the `max()` of all specialized crafts.
-2. **Caste/Favored Status**: Toggling "Craft" as Caste/Favored in the UI header propagates that status to ALL individual specialized craft instances.
+1. **Craft & Martial Arts Handling**: `Craft` and `Martial Arts` are NOT in the main abilities grid. They are managed in dynamic `ObservableList` collections. When checking for a rating (e.g. for Charms), use `data.getAbilityRating(Name)` which returns the `max()` of all specialized instances.
+2. **Caste/Favored Status**: Toggling "Craft" as Caste/Favored propagates to all crafts. "Martial Arts" status is directly linked to the **Brawl** ability status.
 3. **Save/Load Compatibility**: When adding new fields to the character, update BOTH `CharacterSaveState` (serialization) and `CharacterData` (export/import logic).
-4. **Default Entries**: For better UX, Merits, Specialties, and Crafts should always have at least one empty entry added to their lists if they are empty (handled in `CharacterData` constructor and `importState`).
+4. **Default Entries**: For better UX, Merits, Specialties, Crafts, and Martial Arts should always have at least one empty entry added to their lists if they are empty.
 
 ## File Map
 - `src/main/java/com/vibethema/Main.java`: App Launcher.
