@@ -57,6 +57,8 @@ public class CharacterData {
     private final ObservableList<OtherEquipment> otherEquipment = FXCollections.observableArrayList();
     private final ObservableList<Intimacy> intimacies = FXCollections.observableArrayList(i -> 
         new javafx.beans.Observable[] { i.nameProperty(), i.intensityProperty(), i.descriptionProperty() });
+    private final ObservableList<ShapingRitual> shapingRituals = FXCollections.observableArrayList(r ->
+        new javafx.beans.Observable[] { r.nameProperty(), r.descriptionProperty() });
 
     private final IntegerProperty naturalSoak = new SimpleIntegerProperty(0);
     private final IntegerProperty armorSoak = new SimpleIntegerProperty(0);
@@ -191,6 +193,17 @@ public class CharacterData {
                 }
             }
         });
+        shapingRituals.addListener((javafx.collections.ListChangeListener<? super ShapingRitual>) c -> {
+            markDirty();
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    for (ShapingRitual r : c.getAddedSubList()) {
+                        r.nameProperty().addListener((obs, ov, nv) -> markDirty());
+                        r.descriptionProperty().addListener((obs, ov, nv) -> markDirty());
+                    }
+                }
+            }
+        });
         
         merits.add(new Merit("", 1));
         specialties.add(new Specialty("", ""));
@@ -281,6 +294,7 @@ public class CharacterData {
     public ObservableList<Hearthstone> getHearthstones() { return hearthstones; }
     public ObservableList<OtherEquipment> getOtherEquipment() { return otherEquipment; }
     public ObservableList<Intimacy> getIntimacies() { return intimacies; }
+    public ObservableList<ShapingRitual> getShapingRituals() { return shapingRituals; }
     
     public IntegerProperty naturalSoakProperty() { return naturalSoak; }
     public IntegerProperty armorSoakProperty() { return armorSoak; }
@@ -552,6 +566,12 @@ public class CharacterData {
             idata.description = i.getDescription();
             state.intimacies.add(idata);
         }
+        state.shapingRituals = new ArrayList<>();
+        for (ShapingRitual r : shapingRituals) {
+            CharacterSaveState.ShapingRitualData rd = new CharacterSaveState.ShapingRitualData();
+            rd.id = r.getId(); rd.name = r.getName(); rd.description = r.getDescription();
+            state.shapingRituals.add(rd);
+        }
         return state;
     }
 
@@ -670,6 +690,12 @@ public class CharacterData {
                     Intimacy i = new Intimacy(idata.id, idata.name, idata.type, idata.intensity);
                     i.setDescription(idata.description);
                     intimacies.add(i);
+                }
+            }
+            shapingRituals.clear();
+            if (state.shapingRituals != null) {
+                for (CharacterSaveState.ShapingRitualData rd : state.shapingRituals) {
+                    shapingRituals.add(new ShapingRitual(rd.id, rd.name, rd.description));
                 }
             }
             dirty.set(false);

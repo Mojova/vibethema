@@ -27,6 +27,8 @@ public class CharacterSaveState {
     public List<OtherEquipmentData> otherEquipment = new ArrayList<>();
     public List<IntimacyData> intimacies = new ArrayList<>();
     
+    public List<ShapingRitualData> shapingRituals = new ArrayList<>();
+    
     public static class SpecialtyData {
         public String id;
         public String name;
@@ -90,6 +92,12 @@ public class CharacterSaveState {
         public String name;
         public Intimacy.Type type;
         public Intimacy.Intensity intensity;
+        public String description;
+    }
+
+    public static class ShapingRitualData {
+        public String id;
+        public String name;
         public String description;
     }
 }
