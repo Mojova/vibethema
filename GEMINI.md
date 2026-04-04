@@ -62,17 +62,20 @@ A JavaFX-based character creator for Exalted 3rd Edition. The application focuse
 8. **Data Versioning**: All charm collections (standard and custom JSON) include a `version` field (currently `0.1.0`) to track data format compatibility. This field is required by the schema. Redundant fields like `ability` and `artifactId` are no longer serialized into individual charm entries.
 9. **Weapon Stat Calculation**: Weapon stats are automatically updated via properties and listeners in `Weapon.java`. Accuracy/Defense apply primarily to `CLOSE` range, while `ARCHERY`/`THROWN` populate 5 range-specific bonuses. Artifacts add a fixed +5 Attunement.
 10. **Evocation Eligibility**: Evocations are only purchaseable if the character possesses the corresponding artifact in their equipment list (Weapons, Armors, or Other Equipment). The `artifactId` of the evocation must match the unique ID of the equipment item.
+11. **Custom Spells & Keywords**: User-defined spells are stored in `~/.vibethema/spells/custom-[circle].json`. Custom keywords are stored globally in `~/.vibethema/keywords.json`.
 
 ## File Map
 - `src/main/java/com/vibethema/Main.java`: App Launcher.
 - `src/main/java/com/vibethema/ui/StartScreen.java`: Welcome screen / file selection.
 - `src/main/java/com/vibethema/ui/BuilderUI.java`: The primary UI engine.
-- `src/main/java/com/vibethema/service/CharmDataService.java`: Persistence helper for charm data.
+- `src/main/java/com/vibethema/ui/charms/CharmTreeComponent.java`: Standalone component for charm web rendering.
+- `src/main/java/com/vibethema/service/CharmDataService.java`: Persistence helper for charm, spell, and keyword data.
 - `src/main/java/com/vibethema/service/PdfExtractor.java`: Run-time PDF parsing logic.
 - `src/main/java/com/vibethema/model/Weapon.java`: The weapon data and calculation model.
 - `src/main/java/com/vibethema/model/CharacterData.java`: The primary logic engine.
 - `src/main/resources/charms/`: JSON database for Charms and Keywords.
 - `~/.vibethema/charms/`: User-specific storage for imported/custom charms.
+- `~/.vibethema/spells/`: User-specific storage for custom spells.
 
 ## AI Workflow
 1. **Commits**: Always commit changes after finishing a logical task or a specific user request. Use descriptive commit messages.
