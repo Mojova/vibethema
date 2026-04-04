@@ -14,8 +14,11 @@ import com.vibethema.model.MartialArtsStyle;
 import com.vibethema.model.PurchasedCharm;
 import com.vibethema.model.Specialty;
 import com.vibethema.model.Weapon;
+import com.vibethema.model.ShapingRitual;
+import com.vibethema.model.Spell;
 import com.google.gson.Gson;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -80,6 +83,10 @@ public class BuilderUI extends BorderPane {
     private ComboBox<String> stylePicker;
     private VBox principlesListContainer;
     private VBox tiesListContainer;
+    private VBox shapingRitualsListContainer;
+    private VBox spellsListContainer;
+    private VBox sorceryMainContent;
+    private Label sorceryWarningLabel;
 
     private void loadTagDescriptions() {
         Map<String, List<EquipmentDataService.Tag>> allTags = equipmentService.loadEquipmentTags();
@@ -144,7 +151,11 @@ public class BuilderUI extends BorderPane {
         intimaciesTab.setClosable(false);
         intimaciesTab.setContent(createIntimaciesContent());
 
-        mainTabPane.getTabs().addAll(statsTab, meritsTab, equipmentTab, charmsTab, martialArtsTab, intimaciesTab);
+        Tab sorceryTab = new Tab("Sorcery");
+        sorceryTab.setClosable(false);
+        sorceryTab.setContent(createSorceryContent());
+
+        mainTabPane.getTabs().addAll(statsTab, meritsTab, equipmentTab, charmsTab, martialArtsTab, intimaciesTab, sorceryTab);
 
         setCenter(mainTabPane);
 
@@ -263,6 +274,10 @@ public class BuilderUI extends BorderPane {
         intimaciesTabItem.setAccelerator(KeyCombination.keyCombination("Shortcut+6"));
         intimaciesTabItem.setOnAction(e -> selectAndFocusTab(5));
 
+        MenuItem sorceryTabItem = new MenuItem("Sorcery");
+        sorceryTabItem.setAccelerator(KeyCombination.keyCombination("Shortcut+7"));
+        sorceryTabItem.setOnAction(e -> selectAndFocusTab(6));
+
         MenuItem nextTabItem = new MenuItem("Next Tab");
         nextTabItem.setAccelerator(KeyCombination.keyCombination("Shortcut+Shift+]"));
         nextTabItem.setOnAction(e -> cycleTab(1));
@@ -272,7 +287,7 @@ public class BuilderUI extends BorderPane {
         prevTabItem.setOnAction(e -> cycleTab(-1));
 
         viewMenu.getItems().addAll(
-            statsTabItem, meritsTabItem, equipmentTabItem, charmsTabItem, martialArtsTabItem, intimaciesTabItem,
+            statsTabItem, meritsTabItem, equipmentTabItem, charmsTabItem, martialArtsTabItem, intimaciesTabItem, sorceryTabItem,
             new SeparatorMenuItem(),
             nextTabItem, prevTabItem
         );
@@ -584,7 +599,38 @@ public class BuilderUI extends BorderPane {
             }
             updateFooter();
         });
+        
+        data.getShapingRituals().addListener((javafx.collections.ListChangeListener<? super ShapingRitual>) c -> {
+            boolean structuralChange = false;
+            while (c.next()) {
+                if (c.wasAdded() || c.wasRemoved() || c.wasPermutated()) {
+                    structuralChange = true;
+                }
+            }
+            if (structuralChange) {
+                refreshShapingRituals();
+            }
+            updateFooter();
+        });
 
+        data.getSpells().addListener((javafx.collections.ListChangeListener<? super Spell>) c -> {
+            boolean structuralChange = false;
+            while (c.next()) {
+                if (c.wasAdded() || c.wasRemoved() || c.wasPermutated()) {
+                    structuralChange = true;
+                }
+            }
+            if (structuralChange) {
+                refreshSpellsList();
+            }
+            refreshSorceryEligibility();
+            updateFooter();
+        });
+
+        data.getUnlockedCharms().addListener((javafx.collections.ListChangeListener<? super PurchasedCharm>) c -> {
+            refreshSorceryEligibility();
+            updateFooter();
+        });
     }
 
     private void updateFooter() {
@@ -596,7 +642,7 @@ public class BuilderUI extends BorderPane {
 
         long casteCount = CharacterData.ABILITIES.stream().filter(a -> data.getCasteAbility(a).get()).count();
         long favoredCount = CharacterData.ABILITIES.stream().filter(a -> data.getFavoredAbility(a).get()).count();
-        int charmsCount = data.getUnlockedCharms().size();
+        int charmsCount = data.getTotalCharmPoolUsage();
 
         physicalLabel.setText("Phys: " + phys);
         socialLabel.setText("Soc: " + soc);
@@ -609,6 +655,11 @@ public class BuilderUI extends BorderPane {
         casteLabel.setText("Caste: " + casteCount + "/5");
         favoredLabel.setText("Favored: " + favoredCount + "/5");
         bpLabel.setText("Bonus Points: " + bp + "/15");
+        if (bp > 15) {
+            bpLabel.setStyle("-fx-text-fill: #ff4d4d; -fx-font-weight: bold;");
+        } else {
+            bpLabel.setStyle("");
+        }
 
         updateAllWebNodeStyles();
     }
@@ -773,7 +824,22 @@ public class BuilderUI extends BorderPane {
 
             data.getFavoredAbility(ability).addListener((obs, oldV, newV) -> {
                 if (newV && data.getAbility(ability).get() == 0) {
-                    data.getAbility(ability).set(1);
+                    if ("Brawl".equals(ability)) {
+                        boolean maHasDots = data.getMartialArtsStyles().stream().anyMatch(s -> s.getRating() > 0);
+                        if (!maHasDots) data.getAbility(ability).set(1);
+                    } else if ("Craft".equals(ability)) {
+                        if (data.getCrafts().isEmpty()) {
+                            CraftAbility ca = new CraftAbility("General", 1);
+                            ca.setCaste(data.getCasteAbility("Craft").get());
+                            ca.setFavored(true);
+                            data.getCrafts().add(ca);
+                        } else {
+                            boolean craftHasDots = data.getCrafts().stream().anyMatch(c -> c.getRating() > 0);
+                            if (!craftHasDots) data.getCrafts().get(0).ratingProperty().set(1);
+                        }
+                    } else {
+                        data.getAbility(ability).set(1);
+                    }
                 }
             });
 
@@ -822,6 +888,36 @@ public class BuilderUI extends BorderPane {
             updateExcellency.run();
 
             DotSelector selector = new DotSelector(data.getAbility(ability), 0);
+            if ("Brawl".equals(ability)) {
+                // To trigger re-evaluation on MA rating changes, we need to bind to the item properties too.
+                // A simpler way is to have a listener on MA styles that triggers a dummy property update or just re-binds.
+                SimpleIntegerProperty maTotalDots = new SimpleIntegerProperty(0);
+                Runnable updateMaTotal = () -> {
+                    int total = data.getMartialArtsStyles().stream().mapToInt(MartialArtsStyle::getRating).sum();
+                    maTotalDots.set(total);
+                };
+                data.getMartialArtsStyles().addListener((javafx.collections.ListChangeListener<? super MartialArtsStyle>) c -> {
+                    updateMaTotal.run();
+                    while (c.next()) {
+                        if (c.wasAdded()) {
+                            for (MartialArtsStyle mas : c.getAddedSubList()) {
+                                mas.ratingProperty().addListener((obs, ov, nv) -> updateMaTotal.run());
+                            }
+                        }
+                    }
+                });
+                for (MartialArtsStyle mas : data.getMartialArtsStyles()) {
+                    mas.ratingProperty().addListener((obs, ov, nv) -> updateMaTotal.run());
+                }
+                updateMaTotal.run();
+
+                selector.minDotsProperty().bind(Bindings.createIntegerBinding(() -> {
+                    if (!data.getFavoredAbility("Brawl").get()) return 0;
+                    return maTotalDots.get() > 0 ? 0 : 1;
+                }, data.getFavoredAbility("Brawl"), maTotalDots));
+            } else {
+                selector.minDotsProperty().bind(Bindings.when(data.getFavoredAbility(ability)).then(1).otherwise(0));
+            }
             rowBox.getChildren().addAll(casteBox, favoredBox, abLabel, selector);
 
             abilGrid.add(rowBox, colCount, rowCount);
@@ -891,6 +987,18 @@ public class BuilderUI extends BorderPane {
 
         Runnable refreshStyles = () -> {
             styleList.getChildren().clear();
+            
+            // To track total dots in all MA styles for minimum dots enforcement
+            SimpleIntegerProperty maTotalDots = new SimpleIntegerProperty(0);
+            Runnable updateMaTotal = () -> {
+                int total = data.getMartialArtsStyles().stream().mapToInt(MartialArtsStyle::getRating).sum();
+                maTotalDots.set(total);
+            };
+            for (MartialArtsStyle mas : data.getMartialArtsStyles()) {
+                mas.ratingProperty().addListener((obs, ov, nv) -> updateMaTotal.run());
+            }
+            updateMaTotal.run();
+
             for (MartialArtsStyle mas : data.getMartialArtsStyles()) {
                 HBox row = new HBox(12);
                 row.setAlignment(Pos.CENTER_LEFT);
@@ -906,6 +1014,14 @@ public class BuilderUI extends BorderPane {
                 });
 
                 DotSelector selector = new DotSelector(mas.ratingProperty(), 0, 5);
+                
+                // If Brawl is favored, at least one dot across Brawl + MA must exist.
+                selector.minDotsProperty().bind(Bindings.createIntegerBinding(() -> {
+                    if (!data.getFavoredAbility("Brawl").get()) return 0;
+                    int brawlDots = data.getAbility("Brawl").get();
+                    int otherMaDots = maTotalDots.get() - mas.getRating();
+                    return (brawlDots == 0 && otherMaDots == 0) ? 1 : 0;
+                }, data.getFavoredAbility("Brawl"), data.getAbility("Brawl"), maTotalDots));
 
                 Region spacer = new Region();
                 HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -1088,6 +1204,250 @@ public class BuilderUI extends BorderPane {
         }
     }
 
+    private ScrollPane createSorceryContent() {
+        VBox content = new VBox(20);
+        content.getStyleClass().add("content-area");
+        content.setPadding(new Insets(20));
+
+        sorceryWarningLabel = new Label("Purchase Occult charm Terrestrial Circle Sorcery to enable sorcery.");
+        sorceryWarningLabel.getStyleClass().add("problematic-warning");
+        sorceryWarningLabel.setMaxWidth(Double.MAX_VALUE);
+        sorceryWarningLabel.setAlignment(Pos.CENTER);
+        
+        sorceryMainContent = new VBox(25);
+
+        VBox shapingSection = createEquipmentSection("Shaping Rituals");
+        shapingRitualsListContainer = new VBox(10);
+        shapingRitualsListContainer.getStyleClass().add("merit-row-container");
+
+        Button addRitualBtn = new Button("+ Add Shaping Ritual");
+        addRitualBtn.getStyleClass().add("add-btn");
+        addRitualBtn.getStyleClass().add("action-btn");
+        addRitualBtn.setOnAction(e -> {
+            ShapingRitual r = new ShapingRitual("New Ritual", "Description of the ritual's benefits and triggers...");
+            data.getShapingRituals().add(r);
+        });
+        shapingSection.getChildren().addAll(shapingRitualsListContainer, addRitualBtn);
+
+        VBox spellsSection = createEquipmentSection("Spells");
+        spellsListContainer = new VBox(10);
+        spellsListContainer.getStyleClass().add("merit-row-container");
+
+        Button addSpellBtn = new Button("+ Add Spell");
+        addSpellBtn.getStyleClass().add("add-btn");
+        addSpellBtn.getStyleClass().add("action-btn");
+        addSpellBtn.setOnAction(e -> showSpellSelectionDialog());
+        spellsSection.getChildren().addAll(spellsListContainer, addSpellBtn);
+
+        sorceryMainContent.getChildren().addAll(shapingSection, spellsSection);
+        content.getChildren().addAll(sorceryWarningLabel, sorceryMainContent);
+        
+        refreshShapingRituals();
+        refreshSpellsList();
+        refreshSorceryEligibility();
+
+        ScrollPane scrollPane = new ScrollPane(content);
+        scrollPane.setFitToWidth(true);
+        scrollPane.getStyleClass().add("scroll-pane-custom");
+        return scrollPane;
+    }
+
+    private void refreshSorceryEligibility() {
+        if (sorceryWarningLabel == null || sorceryMainContent == null) return;
+        
+        boolean hasTerrestrial = data.hasCharmByName(CharacterData.TERRESTRIAL_CIRCLE_SORCERY);
+        sorceryWarningLabel.setVisible(!hasTerrestrial);
+        sorceryWarningLabel.setManaged(!hasTerrestrial);
+        sorceryMainContent.setDisable(!hasTerrestrial);
+    }
+
+    private void refreshShapingRituals() {
+        if (shapingRitualsListContainer == null) return;
+        shapingRitualsListContainer.getChildren().clear();
+
+        for (ShapingRitual r : data.getShapingRituals()) {
+            VBox rowContainer = new VBox(5);
+            rowContainer.getStyleClass().add("merit-row");
+            rowContainer.setPadding(new Insets(10));
+
+            HBox header = new HBox(15);
+            header.setAlignment(Pos.CENTER_LEFT);
+
+            TextField nameField = new TextField(r.getName());
+            nameField.setPromptText("Ritual Name (e.g. Soul-Perfecting Method)");
+            HBox.setHgrow(nameField, Priority.ALWAYS);
+            nameField.textProperty().addListener((obs, ov, nv) -> r.setName(nv));
+
+            Button delBtn = new Button("🗑");
+            delBtn.getStyleClass().add("remove-btn");
+            delBtn.setOnAction(e -> data.getShapingRituals().remove(r));
+
+            header.getChildren().addAll(nameField, delBtn);
+
+            TextArea descArea = new TextArea(r.getDescription());
+            descArea.setPromptText("Describe the shaping ritual rules...");
+            descArea.setPrefRowCount(3);
+            descArea.setWrapText(true);
+            descArea.textProperty().addListener((obs, ov, nv) -> r.setDescription(nv));
+
+            rowContainer.getChildren().addAll(header, descArea);
+            shapingRitualsListContainer.getChildren().add(rowContainer);
+        }
+    }
+
+    private void refreshSpellsList() {
+        if (spellsListContainer == null) return;
+        spellsListContainer.getChildren().clear();
+
+        for (Spell s : data.getSpells()) {
+            VBox row = new VBox(5);
+            row.getStyleClass().add("merit-row");
+            row.setPadding(new Insets(10));
+
+            HBox header = new HBox(15);
+            header.setAlignment(Pos.CENTER_LEFT);
+
+            Label title = new Label(s.getName());
+            title.getStyleClass().add("merit-name");
+            HBox.setHgrow(title, Priority.ALWAYS);
+
+            Label circleLabel = new Label(s.getCircle());
+            circleLabel.setStyle("-fx-font-style: italic; -fx-text-fill: #d4af37;");
+
+            Button delBtn = new Button("🗑");
+            delBtn.getStyleClass().add("remove-btn");
+            delBtn.setOnAction(e -> data.getSpells().remove(s));
+
+            header.getChildren().addAll(title, circleLabel, delBtn);
+
+            GridPane details = new GridPane();
+            details.setHgap(20);
+            details.setVgap(5);
+            details.add(new Label("Cost: " + s.getCost()), 0, 0);
+            details.add(new Label("Duration: " + s.getDuration()), 1, 0);
+            
+            if (!s.getKeywords().isEmpty()) {
+                details.add(new Label("Keywords: " + String.join(", ", s.getKeywords())), 0, 1, 2, 1);
+            }
+
+            Label desc = new Label(s.getDescription());
+            desc.setWrapText(true);
+            desc.setMaxWidth(700);
+            desc.getStyleClass().add("spell-desc");
+
+            row.getChildren().addAll(header, details, desc);
+            spellsListContainer.getChildren().add(row);
+        }
+    }
+
+    private void showSpellSelectionDialog() {
+        Stage dialog = new Stage();
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.setTitle("Select Spells");
+        dialog.setMinWidth(600);
+        dialog.setMinHeight(500);
+
+        VBox layout = new VBox(15);
+        layout.setPadding(new Insets(20));
+        layout.getStyleClass().add("main-pane");
+
+        TextField filterField = new TextField();
+        filterField.setPromptText("Filter spells...");
+
+        TabPane circlesTabPane = new TabPane();
+        circlesTabPane.getStyleClass().add("tab-pane");
+
+        String[] circles = {"TERRESTRIAL", "CELESTIAL", "SOLAR"};
+        for (String circle : circles) {
+            Tab tab = new Tab(circle.substring(0, 1) + circle.substring(1).toLowerCase());
+            tab.setClosable(false);
+            
+            // Check for circle eligibility
+            boolean eligible = true;
+            if (circle.equals("CELESTIAL") && !data.hasCharmByName(CharacterData.CELESTIAL_CIRCLE_SORCERY)) eligible = false;
+            if (circle.equals("SOLAR") && !data.hasCharmByName(CharacterData.SOLAR_CIRCLE_SORCERY)) eligible = false;
+            
+            if (!eligible) {
+                tab.setDisable(true);
+                tab.setTooltip(new Tooltip("Missing " + (circle.equals("CELESTIAL") ? "Celestial" : "Solar") + " Circle Sorcery charm"));
+            }
+            
+            ListView<Spell> listView = new ListView<>();
+            List<Spell> availableSpells = dataService.loadSpells(circle);
+            listView.getItems().addAll(availableSpells);
+
+            listView.setCellFactory(lv -> new ListCell<Spell>() {
+                @Override
+                protected void updateItem(Spell item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setText(null);
+                        setGraphic(null);
+                    } else {
+                        VBox box = new VBox(2);
+                        Label name = new Label(item.getName());
+                        name.setStyle("-fx-font-weight: bold;");
+                        Label cost = new Label(item.getCost());
+                        cost.setStyle("-fx-font-size: 0.9em; -fx-opacity: 0.8;");
+                        box.getChildren().addAll(name, cost);
+                        setGraphic(box);
+                    }
+                }
+            });
+
+            filterField.textProperty().addListener((obs, ov, nv) -> {
+                String filter = nv.toLowerCase();
+                listView.getItems().setAll(availableSpells.stream()
+                    .filter(s -> s.getName().toLowerCase().contains(filter) || s.getDescription().toLowerCase().contains(filter))
+                    .collect(Collectors.toList()));
+            });
+
+            tab.setContent(listView);
+            circlesTabPane.getTabs().add(tab);
+        }
+
+        Button addBtn = new Button("Add Selected");
+        addBtn.getStyleClass().add("action-btn");
+        addBtn.setDisable(true);
+
+        circlesTabPane.getSelectionModel().selectedItemProperty().addListener((obs, ov, nv) -> {
+            if (nv != null && nv.getContent() instanceof ListView) {
+                @SuppressWarnings("unchecked")
+                ListView<Spell> lv = (ListView<Spell>) nv.getContent();
+                addBtn.disableProperty().bind(Bindings.isEmpty(lv.getSelectionModel().getSelectedItems()));
+            }
+        });
+
+        // Add selection listener for first tab initially
+        if (!circlesTabPane.getTabs().isEmpty() && circlesTabPane.getTabs().get(0).getContent() instanceof ListView) {
+            @SuppressWarnings("unchecked")
+            ListView<Spell> lv = (ListView<Spell>) circlesTabPane.getTabs().get(0).getContent();
+            addBtn.disableProperty().bind(Bindings.isEmpty(lv.getSelectionModel().getSelectedItems()));
+        }
+
+        addBtn.setOnAction(e -> {
+            Tab selectedTab = circlesTabPane.getSelectionModel().getSelectedItem();
+            if (selectedTab != null && selectedTab.getContent() instanceof ListView) {
+                @SuppressWarnings("unchecked")
+                ListView<Spell> lv = (ListView<Spell>) selectedTab.getContent();
+                for (Spell s : lv.getSelectionModel().getSelectedItems()) {
+                    // Check if already owned
+                    if (data.getSpells().stream().noneMatch(existing -> existing.getName().equals(s.getName()))) {
+                        data.getSpells().add(s);
+                    }
+                }
+                dialog.close();
+            }
+        });
+
+        layout.getChildren().addAll(new Label("Available Spells"), filterField, circlesTabPane, addBtn);
+        
+        Scene scene = new Scene(layout);
+        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+        dialog.setScene(scene);
+        dialog.show();
+    }
+
     private VBox createCraftsSection(javafx.beans.property.IntegerProperty casteCount,
             javafx.beans.property.IntegerProperty favoredCount) {
         VBox section = new VBox(10);
@@ -1133,6 +1493,17 @@ public class BuilderUI extends BorderPane {
 
         Runnable refreshCrafts = () -> {
             craftList.getChildren().clear();
+            
+            SimpleIntegerProperty craftTotalDots = new SimpleIntegerProperty(0);
+            Runnable updateCraftTotal = () -> {
+                int total = data.getCrafts().stream().mapToInt(CraftAbility::getRating).sum();
+                craftTotalDots.set(total);
+            };
+            for (CraftAbility ca : data.getCrafts()) {
+                ca.ratingProperty().addListener((obs, ov, nv) -> updateCraftTotal.run());
+            }
+            updateCraftTotal.run();
+
             for (CraftAbility ca : data.getCrafts()) {
                 HBox row = new HBox(12);
                 row.setAlignment(Pos.CENTER_LEFT);
@@ -1150,6 +1521,11 @@ public class BuilderUI extends BorderPane {
                 jumpBtn.setOnAction(e -> jumpToCharmAbility("Craft"));
 
                 DotSelector selector = new DotSelector(ca.ratingProperty(), 0, 5);
+                selector.minDotsProperty().bind(Bindings.createIntegerBinding(() -> {
+                    if (!data.getFavoredAbility("Craft").get()) return 0;
+                    int otherDots = craftTotalDots.get() - ca.getRating();
+                    return otherDots > 0 ? 0 : 1;
+                }, data.getFavoredAbility("Craft"), craftTotalDots));
 
                 Region spacer = new Region();
                 HBox.setHgrow(spacer, Priority.ALWAYS);

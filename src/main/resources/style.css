@@ -200,6 +200,13 @@
     -fx-padding: 10px;
 }
 
+.spell-desc {
+    -fx-font-size: 15px;
+    -fx-text-fill: #e0e0e0;
+    -fx-line-spacing: 0.3em;
+    -fx-padding: 10px 0 0 0;
+}
+
 .charm-btn {
     -fx-font-size: 14px;
     -fx-font-weight: bold;

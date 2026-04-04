@@ -39,6 +39,11 @@ public class SolarCharm extends Charm {
                 isSupernal = true;
             }
             
+            // Exception: Sorcery Circle Charms always require Essence minimums
+            if (isSupernal && ("Celestial Circle Sorcery".equals(getName()) || "Solar Circle Sorcery".equals(getName()))) {
+                isSupernal = false;
+            }
+            
             if (isSupernal) {
                 effectiveEssence = 5;
             }

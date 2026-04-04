@@ -72,7 +72,7 @@ public class PdfImportHelper {
 
         task.setOnSucceeded(e -> {
             progressStage.close();
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Import complete! Charms and keywords have been updated.", ButtonType.OK);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Import complete! Charms, spells, and keywords have been updated.", ButtonType.OK);
             alert.showAndWait();
             if (onComplete != null) {
                 onComplete.run();

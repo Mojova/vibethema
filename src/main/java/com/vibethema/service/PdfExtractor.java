@@ -63,8 +63,15 @@ public class PdfExtractor {
                 extractAndSaveKeywords(keywordText);
             }
 
-            // Extract Equipment Tags - Only for Core
             if (source == PdfSource.CORE) {
+                if (progressCallback != null) progressCallback.accept(0.50);
+                // Sorcery chapter: spells themselves are between 470 and 495 in Core PDF
+                stripper.setStartPage(470);
+                stripper.setEndPage(495);
+                String spellText = stripper.getText(document);
+                if (progressCallback != null) progressCallback.accept(0.60);
+                extractAndSaveSpells(spellText, suffix);
+
                 if (progressCallback != null) progressCallback.accept(0.85);
                 extractAndSaveEquipmentTags(document, stripper);
             }
@@ -364,6 +371,120 @@ public class PdfExtractor {
         
         // Export schema to both locations
         new CharmDataService().exportSchema();
+    }
+
+    private void extractAndSaveSpells(String text, String suffix) throws IOException {
+        Map<String, List<Map<String, Object>>> spellsByCircle = new HashMap<>();
+        spellsByCircle.put("TERRESTRIAL", new ArrayList<>());
+        spellsByCircle.put("CELESTIAL", new ArrayList<>());
+        spellsByCircle.put("SOLAR", new ArrayList<>());
+
+        String currentCircle = "TERRESTRIAL";
+        String[] lines = text.split("\r?\n");
+
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i].trim();
+            if (line.isEmpty()) continue;
+
+            // Detect Circle shifts - these are usually on their own line as headers
+            if (line.contains("Terrestrial Circle Spells")) {
+                currentCircle = "TERRESTRIAL";
+                continue;
+            } else if (line.contains("Celestial Circle Spells")) {
+                currentCircle = "CELESTIAL";
+                continue;
+            } else if (line.contains("Solar Circle Spells")) {
+                currentCircle = "SOLAR";
+                continue;
+            }
+
+            // Potential spell start: current line is name, next line starts with "Cost:"
+            if (i + 1 < lines.length && lines[i+1].trim().startsWith("Cost:")) {
+                String name = line;
+                String costLine = lines[i+1].trim();
+                String cost = costLine.replace("Cost:", "").trim();
+
+                // Validation: Spells must contain "sm" (Sorcerous Motes) or "Ritual"
+                // Charms contain "m" or "i" or "wp" but not "sm".
+                if (!cost.toLowerCase().contains("sm") && !cost.toLowerCase().contains("ritual")) {
+                    continue; 
+                }
+
+                String keywords = "";
+                String duration = "";
+                int descStartIdx = i + 2;
+
+                // Scan for Keywords and Duration (usually within next 3 lines)
+                for (int j = descStartIdx; j < Math.min(lines.length, descStartIdx + 3); j++) {
+                    String l = lines[j].trim();
+                    if (l.startsWith("Keywords:")) {
+                        keywords = l.replace("Keywords:", "").trim();
+                        descStartIdx = j + 1;
+                    } else if (l.startsWith("Duration:")) {
+                        duration = l.replace("Duration:", "").trim();
+                        descStartIdx = j + 1;
+                    }
+                }
+
+                // Capture description and look for "Distortion"
+                StringBuilder descRaw = new StringBuilder();
+                int k = descStartIdx;
+                while (k < lines.length) {
+                    String l = lines[k].trim();
+                    
+                    // Stop at next potential spell (name + cost) or circle header or next chapter
+                    if (k + 1 < lines.length && lines[k+1].trim().startsWith("Cost:")) break;
+                    if (l.contains("Circle Spells")) break;
+                    if (l.startsWith("Sorcerous Workings")) break;
+
+                    descRaw.append(lines[k]).append("\n");
+                    k++;
+                }
+                
+                // Move i to the last line processed for this spell
+                i = k - 1;
+
+                String description = cleanDescription(descRaw.toString());
+                String spellId = java.util.UUID.nameUUIDFromBytes((name.trim() + "|" + currentCircle).getBytes()).toString();
+
+                Map<String, Object> spellMap = new LinkedHashMap<>();
+                spellMap.put("id", spellId);
+                spellMap.put("name", name);
+                spellMap.put("circle", currentCircle);
+                spellMap.put("cost", cost);
+                
+                List<String> kwList = new ArrayList<>();
+                if (!keywords.isEmpty() && !keywords.equalsIgnoreCase("None")) {
+                    for (String kw : keywords.split(",")) {
+                        String t = kw.trim();
+                        if (!t.isEmpty()) kwList.add(t);
+                    }
+                }
+                spellMap.put("keywords", kwList);
+                spellMap.put("duration", duration);
+                spellMap.put("description", description);
+
+                spellsByCircle.get(currentCircle).add(spellMap);
+            }
+        }
+
+        Path outDir = CharmDataService.getUserSpellsPath();
+        if (!Files.exists(outDir)) {
+            Files.createDirectories(outDir);
+        }
+
+        for (Map.Entry<String, List<Map<String, Object>>> entry : spellsByCircle.entrySet()) {
+            if (entry.getValue().isEmpty()) continue;
+            String filename = entry.getKey().toLowerCase() + suffix + ".json";
+            Path filePath = outDir.resolve(filename);
+            try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
+                Map<String, Object> wrapper = new LinkedHashMap<>();
+                wrapper.put("version", "0.1.0");
+                wrapper.put("circle", entry.getKey());
+                wrapper.put("spells", entry.getValue());
+                gson.toJson(wrapper, writer);
+            }
+        }
     }
 
     private void extractAndSaveKeywords(String text) throws IOException {

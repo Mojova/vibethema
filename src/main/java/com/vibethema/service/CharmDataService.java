@@ -7,6 +7,8 @@ import com.vibethema.model.Charm;
 import com.vibethema.model.SolarCharm;
 import com.vibethema.model.Evocation;
 import com.vibethema.model.Keyword;
+import com.vibethema.model.Spell;
+import com.vibethema.model.CharacterSaveState;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -20,6 +22,7 @@ public class CharmDataService {
     private static final String CHARMS_DIR = "charms";
     private static final String MA_DIR = "martial_arts";
     private static final String EVOCATIONS_DIR = "evocations";
+    private static final String SPELLS_DIR = "spells";
     private final Gson gson = new GsonBuilder()
         .registerTypeAdapter(Charm.class, (com.google.gson.JsonDeserializer<Charm>) (json, typeOfT, context) -> {
             com.google.gson.JsonObject obj = json.getAsJsonObject();
@@ -42,6 +45,10 @@ public class CharmDataService {
 
     public static Path getUserEvocationsPath() {
         return Paths.get(System.getProperty("user.home"), APP_DIR, CHARMS_DIR, EVOCATIONS_DIR);
+    }
+
+    public static Path getUserSpellsPath() {
+        return Paths.get(System.getProperty("user.home"), APP_DIR, SPELLS_DIR);
     }
 
     public List<Charm> loadCharmsForAbility(String ability) {
@@ -100,6 +107,14 @@ public class CharmDataService {
             this.artifactName = artifactName;
             this.evocations = charms;
         }
+    }
+
+    private static class SpellListWrapper {
+        @SuppressWarnings("unused")
+        public String version;
+        @SuppressWarnings("unused")
+        public String circle;
+        public List<CharacterSaveState.SpellData> spells;
     }
 
     public void exportSchema() throws IOException {
@@ -379,6 +394,26 @@ public class CharmDataService {
                 c.setId(id);
             }
         }
+    }
+
+    public List<Spell> loadSpells(String circle) {
+        String filename = circle.toLowerCase() + ".json";
+        Path path = getUserSpellsPath().resolve(filename);
+        if (Files.exists(path)) {
+            try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+                SpellListWrapper wrapper = gson.fromJson(reader, SpellListWrapper.class);
+                if (wrapper != null && wrapper.spells != null) {
+                    List<Spell> result = new ArrayList<>();
+                    for (CharacterSaveState.SpellData sd : wrapper.spells) {
+                        result.add(new Spell(sd.id, sd.name, sd.circle, sd.cost, sd.keywords, sd.duration, sd.description));
+                    }
+                    return result;
+                }
+            } catch (IOException e) {
+                System.err.println("Error loading spells: " + path + " - " + e.getMessage());
+            }
+        }
+        return new ArrayList<>();
     }
 
 }

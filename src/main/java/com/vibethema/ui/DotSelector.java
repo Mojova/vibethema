@@ -1,6 +1,7 @@
 package com.vibethema.ui;
 
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Circle;
@@ -9,7 +10,7 @@ public class DotSelector extends HBox {
     private final int maxDots;
     private final IntegerProperty valueProperty;
     private final Circle[] dots;
-    private final int minDots;
+    private final IntegerProperty minDotsProperty;
 
     public DotSelector(IntegerProperty valueProperty, int minDots) {
         this(valueProperty, minDots, 5);
@@ -17,7 +18,7 @@ public class DotSelector extends HBox {
     
     public DotSelector(IntegerProperty valueProperty, int minDots, int maxDots) {
         this.valueProperty = valueProperty;
-        this.minDots = minDots;
+        this.minDotsProperty = new SimpleIntegerProperty(minDots);
         this.maxDots = maxDots;
         this.dots = new Circle[maxDots];
         
@@ -32,10 +33,11 @@ public class DotSelector extends HBox {
             final int dotIndex = i + 1;
             
             dot.setOnMouseClicked(e -> {
-                if (valueProperty.get() == dotIndex && dotIndex > minDots) {
+                int currentMin = minDotsProperty.get();
+                if (valueProperty.get() == dotIndex && dotIndex > currentMin) {
                     // Clicked the current max dot, decrease by 1
                     valueProperty.set(dotIndex - 1);
-                } else if (dotIndex >= minDots) {
+                } else if (dotIndex >= currentMin) {
                     valueProperty.set(dotIndex);
                 }
                 updateDots();
@@ -46,7 +48,17 @@ public class DotSelector extends HBox {
         }
         
         valueProperty.addListener((obs, oldVal, newVal) -> updateDots());
+        minDotsProperty.addListener((obs, oldVal, newVal) -> {
+            if (valueProperty.get() < newVal.intValue()) {
+                valueProperty.set(newVal.intValue());
+            }
+            updateDots();
+        });
         updateDots();
+    }
+    
+    public IntegerProperty minDotsProperty() {
+        return minDotsProperty;
     }
     
     private void updateDots() {

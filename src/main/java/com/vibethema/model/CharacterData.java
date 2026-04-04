@@ -88,6 +88,10 @@ public class CharacterData {
         "Occult", "Performance", "Presence", "Resistance", "Ride",
         "Sail", "Socialize", "Stealth", "Survival", "Thrown", "War"
     );
+    
+    public static final String TERRESTRIAL_CIRCLE_SORCERY = "Terrestrial Circle Sorcery";
+    public static final String CELESTIAL_CIRCLE_SORCERY = "Celestial Circle Sorcery";
+    public static final String SOLAR_CIRCLE_SORCERY = "Solar Circle Sorcery";
 
     public static final Map<Caste, List<String>> CASTE_OPTIONS = new HashMap<>();
     static {
@@ -353,6 +357,11 @@ public class CharacterData {
         return (int) unlockedCharms.stream().filter(c -> c.id().equals(id) || c.name().equals(id)).count();
     }
     
+    public boolean hasCharmByName(String name) {
+        if (name == null) return false;
+        return unlockedCharms.stream().anyMatch(c -> c.name().equalsIgnoreCase(name.trim()));
+    }
+    
     public void addCharm(PurchasedCharm pc) {
         unlockedCharms.add(pc);
         markDirty();
@@ -401,6 +410,12 @@ public class CharacterData {
         int total = 0;
         for (Merit m : merits) total += m.getRating();
         return total;
+    }
+
+    public int getTotalCharmPoolUsage() {
+        boolean hasTCS = hasCharmByName(TERRESTRIAL_CIRCLE_SORCERY);
+        int billableSpells = Math.max(0, spells.size() - (hasTCS ? 1 : 0));
+        return unlockedCharms.size() + billableSpells;
     }
     
     public int getBonusPointsSpent() {
@@ -466,6 +481,19 @@ public class CharacterData {
             }
             charmCosts.add(isFavored ? 4 : 5);
         }
+        
+        // Spells after the first one count as charms (or BP if 15 pool exceeded)
+        // Terrestrial Circle Sorcery grants 1 free spell (not counted towards slots/BP)
+        boolean hasTCS = hasCharmByName(TERRESTRIAL_CIRCLE_SORCERY);
+        int billableSpells = Math.max(0, spells.size() - (hasTCS ? 1 : 0));
+        if (billableSpells > 0) {
+            boolean isOccultFavored = casteAbilities.get("Occult").get() || favoredAbilities.get("Occult").get();
+            int spellCost = isOccultFavored ? 4 : 5;
+            for (int i = 0; i < billableSpells; i++) {
+                charmCosts.add(spellCost);
+            }
+        }
+        
         Collections.sort(charmCosts, Collections.reverseOrder());
         int freeCharmsLeft = 15;
         for (int cost : charmCosts) {
