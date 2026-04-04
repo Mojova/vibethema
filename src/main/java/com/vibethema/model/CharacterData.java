@@ -217,6 +217,17 @@ public class CharacterData {
         unlockedCharms.removeIf(c -> c.id().equals(id) || c.name().equals(id));
         markDirty();
     }
+    
+    public void removeOneCharm(String id) {
+        for (int i = unlockedCharms.size() - 1; i >= 0; i--) {
+            PurchasedCharm c = unlockedCharms.get(i);
+            if (c.id().equals(id) || c.name().equals(id)) {
+                unlockedCharms.remove(i);
+                break;
+            }
+        }
+        markDirty();
+    }
 
     public boolean hasExcellency(String ability) {
         if (casteAbilities.containsKey(ability)) {

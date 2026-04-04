@@ -7,8 +7,6 @@ import com.vibethema.model.Charm;
 import com.vibethema.model.MartialArtsStyle;
 import com.vibethema.model.PurchasedCharm;
 import com.vibethema.model.Specialty;
-import com.vibethema.service.CharmDataService;
-import com.vibethema.service.PdfExtractor;
 import com.google.gson.Gson;
 import javafx.beans.binding.Bindings;
 import javafx.application.Platform;
@@ -1476,7 +1474,10 @@ public class BuilderUI extends BorderPane {
 
             toggleBtn.setOnAction(ev -> {
                 if (selectedCharm != null) {
-                    if (!data.hasCharm(selectedCharm.getId())) {
+                    boolean stackable = selectedCharm.getKeywords() != null && selectedCharm.getKeywords().contains("Stackable");
+                    if (stackable) {
+                        data.addCharm(new PurchasedCharm(selectedCharm.getId(), selectedCharm.getName(), selectedCharm.getAbility()));
+                    } else if (!data.hasCharm(selectedCharm.getId())) {
                         data.addCharm(new PurchasedCharm(selectedCharm.getId(), selectedCharm.getName(), selectedCharm.getAbility()));
                     } else {
                         data.removeCharm(selectedCharm.getId());
@@ -1488,7 +1489,7 @@ public class BuilderUI extends BorderPane {
 
             refundBtn.setOnAction(ev -> {
                 if (selectedCharm != null) {
-                    data.removeCharm(selectedCharm.getId());
+                    data.removeOneCharm(selectedCharm.getId());
                     updateSidebarButton(selectedCharm);
                     updateWebNodeStyles();
                 }
@@ -1541,12 +1542,13 @@ public class BuilderUI extends BorderPane {
         private void updateSidebarButton(Charm c) {
             int count = data.getCharmCount(c.getId());
             boolean isOxBody = c.getName().equals("Ox-Body Technique");
+            boolean stackable = c.getKeywords() != null && c.getKeywords().contains("Stackable");
 
             deleteCustomBtn.setVisible(c.isCustom());
             deleteCustomBtn.setManaged(c.isCustom());
 
-            if (isOxBody) {
-                int limit = data.getAbility("Resistance").get();
+            if (stackable) {
+                int limit = isOxBody ? data.getAbility("Resistance").get() : 10; // Default limit for other stackable
                 toggleBtn.setText("Purchase (" + count + "/" + limit + ")");
                 toggleBtn.setDisable(count >= limit || !c.isEligible(data));
                 toggleBtn.setStyle("-fx-base: #d4af37;");
