@@ -63,10 +63,10 @@ public class PdfExtractor {
                 extractAndSaveKeywords(keywordText);
             }
 
-            // Extract Weapon Tags - Only for Core
+            // Extract Equipment Tags - Only for Core
             if (source == PdfSource.CORE) {
                 if (progressCallback != null) progressCallback.accept(0.85);
-                extractAndSaveWeaponTags(document, stripper);
+                extractAndSaveEquipmentTags(document, stripper);
             }
             
             if (progressCallback != null) progressCallback.accept(1.0);
@@ -419,7 +419,7 @@ public class PdfExtractor {
         }
     }
 
-    private void extractAndSaveWeaponTags(PDDocument document, PDFTextStripper stripper) throws IOException {
+    private void extractAndSaveEquipmentTags(PDDocument document, PDFTextStripper stripper) throws IOException {
         Map<String, List<Map<String, String>>> output = new LinkedHashMap<>();
 
         // Melee Tags: p. 585-587
@@ -432,13 +432,18 @@ public class PdfExtractor {
         stripper.setEndPage(589);
         output.put("thrown", parseTags(findTagDefinitions(stripper.getText(document)), "thrown"));
 
-        // Archery & Ammunition Tags: p. 591-592
+        // Archery Tags: p. 591
         stripper.setStartPage(591);
-        stripper.setEndPage(592);
+        stripper.setEndPage(591);
         output.put("archery", parseTags(findTagDefinitions(stripper.getText(document)), "archery"));
 
-        Path outDir = CharmDataService.getUserCharmsPath();
-        Path filePath = outDir.resolve("weapon_tags.json");
+        // Armor Tags: p. 594
+        stripper.setStartPage(594);
+        stripper.setEndPage(594);
+        output.put("armor", parseTags(findTagDefinitions(stripper.getText(document)), "armor"));
+
+        Path outDir = CharmDataService.getUserCharmsPath().getParent();
+        Path filePath = outDir.resolve("equipment_tags.json");
         try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
             gson.toJson(output, writer);
         }
@@ -462,6 +467,7 @@ public class PdfExtractor {
                 "Dual Wielding", "Thrown weaPonS", "arChery weaPonS", 
                 "Special Materials", "mundane armor", "Mortal Armor", 
                 "Donning & Removing Armor", "Light Armor", "Medium Armor", "Heavy Armor",
+                "Soak:", "Mobility Penalty:", "Hardness:",
                 "EX3", "CHAPTER", "T H E  G R A N D  P A N O P L Y"
             };
             for (String stop : stopWords) {
