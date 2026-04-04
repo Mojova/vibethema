@@ -17,6 +17,7 @@ public class CharmDataService {
     private static final String APP_DIR = ".vibethema";
     private static final String CHARMS_DIR = "charms";
     private static final String MA_DIR = "martial_arts";
+    private static final String EVOCATIONS_DIR = "evocations";
     private final Gson gson = new GsonBuilder().create();
 
     public static Path getUserCharmsPath() {
@@ -24,7 +25,11 @@ public class CharmDataService {
     }
 
     public static Path getUserMartialArtsPath() {
-        return Paths.get(System.getProperty("user.home"), APP_DIR, MA_DIR);
+        return Paths.get(System.getProperty("user.home"), APP_DIR, CHARMS_DIR, MA_DIR);
+    }
+
+    public static Path getUserEvocationsPath() {
+        return Paths.get(System.getProperty("user.home"), APP_DIR, CHARMS_DIR, EVOCATIONS_DIR);
     }
 
     public List<Charm> loadCharmsForAbility(String ability) {
@@ -177,6 +182,54 @@ public class CharmDataService {
             try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
                 prettyGson.toJson(new CharmListWrapper(ability, typeAttr, existing), writer);
             }
+        }
+    }
+
+    public List<Charm> loadEvocations(String artifactId) {
+        List<Charm> charms = new ArrayList<>();
+        Path filePath = getUserEvocationsPath().resolve(artifactId + ".json");
+        if (Files.exists(filePath)) {
+            loadFromFile(filePath, charms);
+        }
+        return charms;
+    }
+
+    public void saveEvocation(String artifactId, String artifactName, Charm charm) throws IOException {
+        Path filePath = getUserEvocationsPath().resolve(artifactId + ".json");
+        if (!Files.exists(filePath.getParent())) {
+            Files.createDirectories(filePath.getParent());
+        }
+
+        List<Charm> charms = loadEvocations(artifactId);
+        boolean found = false;
+        for (int i = 0; i < charms.size(); i++) {
+            if (charms.get(i).getId().equals(charm.getId())) {
+                charms.set(i, charm);
+                found = true;
+                break;
+            }
+        }
+        if (!found) charms.add(charm);
+
+        Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
+        try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
+            prettyGson.toJson(new CharmListWrapper(artifactName, "evocation", charms), writer);
+        }
+    }
+
+    public void deleteEvocation(String artifactId, Charm charm) throws IOException {
+        Path filePath = getUserEvocationsPath().resolve(artifactId + ".json");
+        if (!Files.exists(filePath)) return;
+
+        List<Charm> charms = loadEvocations(artifactId);
+        charms.removeIf(c -> c.getId().equals(charm.getId()));
+
+        Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
+        try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
+            // Need the artifact name for the wrapper. We can extract it from the existing file or pass it.
+            // Let's reload everything to be safe.
+            String artifactName = charm.getAbility(); 
+            prettyGson.toJson(new CharmListWrapper(artifactName, "evocation", charms), writer);
         }
     }
 

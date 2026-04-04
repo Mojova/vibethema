@@ -22,6 +22,7 @@ import javafx.scene.layout.*;
 import javafx.scene.Parent;
 import javafx.scene.text.Text;
 import javafx.scene.shape.CubicCurve;
+import javafx.scene.Scene;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.scene.Cursor;
@@ -1872,7 +1873,8 @@ public class BuilderUI extends BorderPane {
     private class CharmTreeComponent extends SplitPane {
         private static final Map<String, String> globalCharmNameMap = new java.util.concurrent.ConcurrentHashMap<>();
         private final ComboBox<String> filterCombo;
-        private final String filterType; // "Ability" or "Martial Arts Style"
+        private final String filterType; // "Ability", "Martial Arts Style", or "Evocation"
+        private final String artifactId; // Only used for "Evocation" mode
         private Pane charmCanvas = new Pane();
         private Map<String, VBox> charmNodeMap = new HashMap<>();
         private List<Charm> currentCharms = new ArrayList<>();
@@ -1897,12 +1899,19 @@ public class BuilderUI extends BorderPane {
         private javafx.beans.value.ChangeListener<Number> ratingListener;
 
         public CharmTreeComponent(ComboBox<String> filterCombo, String filterType) {
+            this(filterCombo, filterType, null);
+        }
+
+        public CharmTreeComponent(ComboBox<String> filterCombo, String filterType, String artifactId) {
             this.filterCombo = filterCombo;
             this.filterType = filterType;
+            this.artifactId = artifactId;
             getStyleClass().add("charms-split-pane");
 
             setupUI();
-            filterCombo.valueProperty().addListener((obs, oldV, newV) -> refresh());
+            if (filterCombo != null) {
+                filterCombo.valueProperty().addListener((obs, oldV, newV) -> refresh());
+            }
             refresh();
         }
 
@@ -1913,14 +1922,18 @@ public class BuilderUI extends BorderPane {
 
             HBox controls = new HBox(15);
             controls.setAlignment(Pos.CENTER_LEFT);
-            Label comboLabel = new Label(filterType + ":");
-            comboLabel.getStyleClass().add("label");
+            if (filterCombo != null) {
+                Label comboLabel = new Label(filterType + ":");
+                comboLabel.getStyleClass().add("label");
+                controls.getChildren().addAll(comboLabel, filterCombo);
+            }
             
             Button createCharmBtn = new Button("Create New Charm");
             createCharmBtn.getStyleClass().add("action-btn");
-            createCharmBtn.setOnAction(e -> showCreateCharmDialog(filterCombo.getValue(), filterType.equals("Martial Arts Style")));
+            String contextName = filterCombo != null ? filterCombo.getValue() : artifactId;
+            createCharmBtn.setOnAction(e -> showCreateCharmDialog(contextName, filterType));
 
-            controls.getChildren().addAll(comboLabel, filterCombo, createCharmBtn);
+            controls.getChildren().add(createCharmBtn);
 
             titleLabel.getStyleClass().add("section-title");
 
@@ -2002,19 +2015,25 @@ public class BuilderUI extends BorderPane {
                 currentRatingProperty.removeListener(ratingListener);
             }
 
-            String selection = filterCombo.getValue();
+            String selection = filterCombo != null ? filterCombo.getValue() : artifactId;
             if (selection == null || selection.isEmpty()) {
                 titleLabel.setText("Select a " + filterType + " to view charms");
                 return;
             }
 
-            List<Charm> loaded = dataService.loadCharmsForAbility(selection);
+            List<Charm> loaded;
+            if ("Evocation".equals(filterType)) {
+                loaded = dataService.loadEvocations(selection);
+            } else {
+                loaded = dataService.loadCharmsForAbility(selection);
+            }
+
             if (loaded != null) {
                 currentCharms.addAll(loaded);
                 for (Charm c : loaded) globalCharmNameMap.put(c.getId(), c.getName());
             }
 
-            currentRatingProperty = data.getAbilityProperty(selection);
+            currentRatingProperty = "Evocation".equals(filterType) ? null : data.getAbilityProperty(selection);
             if (currentRatingProperty != null) {
                 ratingListener = (obs, ov, nv) -> {
                     updateWebNodeStyles();
@@ -2343,7 +2362,23 @@ public class BuilderUI extends BorderPane {
 
 
 
-    private void showCreateCharmDialog(String defaultAbility, boolean martialArtsOnly) {
+    private void showEvocationsDialog(String id, String name) {
+        Stage dialog = new Stage();
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.initOwner(getScene().getWindow());
+        dialog.setTitle("Evocations: " + name);
+
+        CharmTreeComponent tree = new CharmTreeComponent(null, "Evocation", id);
+        
+        VBox root = new VBox(tree);
+        VBox.setVgrow(tree, Priority.ALWAYS);
+        Scene scene = new Scene(root, 1000, 700);
+        scene.getStylesheets().addAll(getScene().getStylesheets());
+        dialog.setScene(scene);
+        dialog.show();
+    }
+
+    private void showCreateCharmDialog(String defaultAbility, String filterType) {
         Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(getScene().getWindow());
@@ -2362,13 +2397,16 @@ public class BuilderUI extends BorderPane {
         nameField.setPromptText("Charm Name");
         
         ComboBox<String> abCombo = new ComboBox<>();
-        if (martialArtsOnly) {
+        if ("Martial Arts Style".equals(filterType)) {
             // Only add Martial Arts styles for the MA tab context
             for (MartialArtsStyle mas : data.getMartialArtsStyles()) {
                 if (mas.getStyleName() != null && !mas.getStyleName().isEmpty() && !abCombo.getItems().contains(mas.getStyleName())) {
                     abCombo.getItems().add(mas.getStyleName());
                 }
             }
+        } else if ("Evocation".equals(filterType)) {
+            abCombo.getItems().add(defaultAbility);
+            abCombo.setDisable(true);
         } else {
             // Regular abilities for the standard Charms tab
             abCombo.getItems().addAll(CharacterData.ABILITIES);
@@ -2402,7 +2440,12 @@ public class BuilderUI extends BorderPane {
         Map<String, String> nameToId = new HashMap<>();
         Runnable updatePrereqs = () -> {
             String selectedAb = abCombo.getValue();
-            List<Charm> charms = dataService.loadCharmsForAbility(selectedAb);
+            List<Charm> charms;
+            if ("Evocation".equals(filterType)) {
+                charms = dataService.loadEvocations(selectedAb);
+            } else {
+                charms = dataService.loadCharmsForAbility(selectedAb);
+            }
             nameToId.clear();
             for (Charm c : charms) nameToId.put(c.getName(), c.getId());
             prereqList.getItems().setAll(charms.stream().map(Charm::getName).collect(Collectors.toList()));
@@ -2460,12 +2503,24 @@ public class BuilderUI extends BorderPane {
             nc.setPrerequisites(selectedIds);
             nc.setCustom(true);
 
-            try {
-                dataService.saveCharm(nc);
-                data.setDirty(true);
-                refreshCharms();
-            } catch (IOException ex) {
-                new Alert(Alert.AlertType.ERROR, "Failed to save custom charm: " + ex.getMessage()).showAndWait();
+            if ("Evocation".equals(filterType)) {
+                try {
+                    dataService.saveEvocation(defaultAbility, defaultAbility, nc);
+                    data.setDirty(true);
+                    refreshCharms();
+                    dialog.close();
+                } catch (IOException ex) {
+                    new Alert(Alert.AlertType.ERROR, "Error saving evocation: " + ex.getMessage()).showAndWait();
+                }
+            } else {
+                try {
+                    dataService.saveCharm(nc);
+                    data.setDirty(true);
+                    refreshCharms();
+                    dialog.close();
+                } catch (IOException ex) {
+                    new Alert(Alert.AlertType.ERROR, "Failed to save custom charm: " + ex.getMessage()).showAndWait();
+                }
             }
         });
 
@@ -2655,12 +2710,18 @@ public class BuilderUI extends BorderPane {
             editBtn.setStyle("-fx-base: #cea212;");
             editBtn.setOnAction(e -> showWeaponDialog(w));
 
+            Button evocationBtn = new Button("✨ Evocations");
+            evocationBtn.getStyleClass().add("action-btn-small");
+            evocationBtn.setOnAction(e -> showEvocationsDialog(w.getId(), w.getName()));
+            evocationBtn.setVisible(w.getType() == Weapon.WeaponType.ARTIFACT);
+            evocationBtn.setManaged(w.getType() == Weapon.WeaponType.ARTIFACT);
+
             Button delBtn = new Button("🗑");
             delBtn.getStyleClass().add("remove-btn");
             delBtn.setOnAction(e -> data.getWeapons().remove(w));
 
             HBox.setHgrow(details, Priority.ALWAYS);
-            row.getChildren().addAll(details, editBtn, delBtn);
+            row.getChildren().addAll(details, editBtn, evocationBtn, delBtn);
             weaponsListContainer.getChildren().add(row);
         }
     }
@@ -2862,7 +2923,14 @@ public class BuilderUI extends BorderPane {
             delBtn.setOnAction(e -> data.getArmors().remove(a));
 
             HBox.setHgrow(details, Priority.ALWAYS);
-            row.getChildren().addAll(equippedCb, details, editBtn, delBtn);
+
+            Button evocationBtn = new Button("✨ Evocations");
+            evocationBtn.getStyleClass().add("action-btn-small");
+            evocationBtn.setOnAction(e -> showEvocationsDialog(a.getId(), a.getName()));
+            evocationBtn.setVisible(a.getType() == Armor.ArmorType.ARTIFACT);
+            evocationBtn.setManaged(a.getType() == Armor.ArmorType.ARTIFACT);
+
+            row.getChildren().addAll(equippedCb, details, editBtn, evocationBtn, delBtn);
             armorListContainer.getChildren().add(row);
         }
     }
