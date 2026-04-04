@@ -1098,10 +1098,98 @@ public class BuilderUI extends BorderPane {
         combatBox.getChildren().addAll(combatLabel, statsList);
 
         HBox statsRow = new HBox(40);
-        statsRow.getChildren().addAll(healthBox, combatBox, createAttackPoolsSection());
+        statsRow.getChildren().addAll(healthBox, combatBox, createSocialStatsSection());
 
-        advantagesSection.getChildren().addAll(advTitle, topRow, statsRow);
+        advantagesSection.getChildren().addAll(advTitle, topRow, statsRow, createAttackPoolsSection());
         return advantagesSection;
+    }
+
+    private VBox createSocialStatsSection() {
+        VBox section = new VBox(5);
+        Label title = new Label("Social Statistics");
+        title.getStyleClass().add("subsection-title");
+        
+        VBox statsList = new VBox(5);
+        statsList.getStyleClass().add("merit-row-container");
+        statsList.setPadding(new Insets(5, 10, 5, 10));
+        
+        // Resolve
+        HBox resolveBox = new HBox(0);
+        resolveBox.setAlignment(Pos.CENTER_LEFT);
+        Label resolveBaseLabel = new Label();
+        resolveBaseLabel.getStyleClass().add("merit-name");
+        Label resolveBonusLabel = new Label();
+        resolveBonusLabel.getStyleClass().add("merit-name");
+        resolveBonusLabel.setStyle("-fx-text-fill: #3498db; -fx-font-weight: bold;");
+        Tooltip resolveTooltip = new Tooltip("If integrity specialty applies");
+        resolveBox.getChildren().addAll(resolveBaseLabel, resolveBonusLabel);
+
+        Runnable updateResolve = () -> {
+            int wits = data.getAttribute("Wits").get();
+            int integrity = data.getAbility("Integrity").get();
+            int base = (int) Math.ceil((wits + integrity) / 2.0);
+            int total = (int) Math.ceil((wits + integrity + 1) / 2.0);
+            int bonus = total - base;
+            
+            boolean hasSpec = data.getSpecialties().stream()
+                    .anyMatch(s -> "Integrity".equals(s.getAbility()) && s.getName() != null && !s.getName().trim().isEmpty());
+            
+            resolveBaseLabel.setText("Resolve: " + base);
+            if (hasSpec) {
+                resolveBonusLabel.setText(" + " + bonus);
+                Tooltip.install(resolveBonusLabel, resolveTooltip);
+            } else {
+                resolveBonusLabel.setText("");
+                Tooltip.uninstall(resolveBonusLabel, resolveTooltip);
+            }
+        };
+
+        // Guile
+        HBox guileBox = new HBox(0);
+        guileBox.setAlignment(Pos.CENTER_LEFT);
+        Label guileBaseLabel = new Label();
+        guileBaseLabel.getStyleClass().add("merit-name");
+        Label guileBonusLabel = new Label();
+        guileBonusLabel.getStyleClass().add("merit-name");
+        guileBonusLabel.setStyle("-fx-text-fill: #3498db; -fx-font-weight: bold;");
+        Tooltip guileTooltip = new Tooltip("If socialize specialty applies");
+        guileBox.getChildren().addAll(guileBaseLabel, guileBonusLabel);
+
+        Runnable updateGuile = () -> {
+            int manipulation = data.getAttribute("Manipulation").get();
+            int socialize = data.getAbility("Socialize").get();
+            int base = (int) Math.ceil((manipulation + socialize) / 2.0);
+            int total = (int) Math.ceil((manipulation + socialize + 1) / 2.0);
+            int bonus = total - base;
+            
+            boolean hasSpec = data.getSpecialties().stream()
+                    .anyMatch(s -> "Socialize".equals(s.getAbility()) && s.getName() != null && !s.getName().trim().isEmpty());
+            
+            guileBaseLabel.setText("Guile: " + base);
+            if (hasSpec) {
+                guileBonusLabel.setText(" + " + bonus);
+                Tooltip.install(guileBonusLabel, guileTooltip);
+            } else {
+                guileBonusLabel.setText("");
+                Tooltip.uninstall(guileBonusLabel, guileTooltip);
+            }
+        };
+
+        data.getAttribute("Wits").addListener((obs, old, nv) -> updateResolve.run());
+        data.getAbility("Integrity").addListener((obs, old, nv) -> updateResolve.run());
+        data.getAttribute("Manipulation").addListener((obs, old, nv) -> updateGuile.run());
+        data.getAbility("Socialize").addListener((obs, old, nv) -> updateGuile.run());
+        data.getSpecialties().addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> {
+            updateResolve.run();
+            updateGuile.run();
+        });
+
+        updateResolve.run();
+        updateGuile.run();
+        
+        statsList.getChildren().addAll(resolveBox, guileBox);
+        section.getChildren().addAll(title, statsList);
+        return section;
     }
 
     private VBox createAttackPoolsSection() {
