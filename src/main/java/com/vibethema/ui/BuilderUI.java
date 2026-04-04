@@ -1333,7 +1333,7 @@ public class BuilderUI extends BorderPane {
         
         dodgeBox.getChildren().addAll(dodgeBaseLabel, dodgeBonusLabel);
 
-        Runnable updateDodge = () -> {
+        Runnable updateEvasion = () -> {
             int dex = data.getAttribute("Dexterity").get();
             int dodge = data.getAbility("Dodge").get();
             int base = (int) Math.ceil((dex + dodge) / 2.0);
@@ -1343,7 +1343,7 @@ public class BuilderUI extends BorderPane {
             boolean hasDodgeSpec = data.getSpecialties().stream()
                     .anyMatch(s -> "Dodge".equals(s.getAbility()) && s.getName() != null && !s.getName().trim().isEmpty());
             
-            dodgeBaseLabel.setText("Dodge Defense: " + base);
+            dodgeBaseLabel.setText("Evasion: " + base);
             if (hasDodgeSpec) {
                 dodgeBonusLabel.setText(" + " + bonus);
                 Tooltip.install(dodgeBonusLabel, dodgeTooltip);
@@ -1352,10 +1352,10 @@ public class BuilderUI extends BorderPane {
                 Tooltip.uninstall(dodgeBonusLabel, dodgeTooltip);
             }
         };
-        data.getAttribute("Dexterity").addListener((obs, oldVal, newVal) -> updateDodge.run());
-        data.getAbility("Dodge").addListener((obs, oldVal, newVal) -> updateDodge.run());
-        data.getSpecialties().addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> updateDodge.run());
-        updateDodge.run();
+        data.getAttribute("Dexterity").addListener((obs, oldVal, newVal) -> updateEvasion.run());
+        data.getAbility("Dodge").addListener((obs, oldVal, newVal) -> updateEvasion.run());
+        data.getSpecialties().addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> updateEvasion.run());
+        updateEvasion.run();
         
         statsList.getChildren().addAll(naturalSoakVal, armorSoakVal, totalSoakVal, hardnessVal, dodgeBox);
         combatBox.getChildren().addAll(combatLabel, statsList);
