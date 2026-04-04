@@ -48,5 +48,8 @@ public class CharacterSaveState {
         public Weapon.WeaponType type;
         public Weapon.WeaponCategory category;
         public List<String> tags = new ArrayList<>();
+        
+        public int accuracy, damage, defense, overwhelming, attunement;
+        public int closeRangeBonus, shortRangeBonus, mediumRangeBonus, longRangeBonus, extremeRangeBonus;
     }
 }

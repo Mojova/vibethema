@@ -1,6 +1,8 @@
 package com.vibethema.model;
 
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -46,8 +48,24 @@ public class Weapon {
     private final ObjectProperty<WeaponCategory> category = new SimpleObjectProperty<>(WeaponCategory.MEDIUM);
     private final ObservableList<String> tags = FXCollections.observableArrayList();
 
+    // Stats
+    private final IntegerProperty accuracy = new SimpleIntegerProperty(0);
+    private final IntegerProperty damage = new SimpleIntegerProperty(0);
+    private final IntegerProperty defense = new SimpleIntegerProperty(0);
+    private final IntegerProperty overwhelming = new SimpleIntegerProperty(0);
+    private final IntegerProperty attunement = new SimpleIntegerProperty(0);
+
+    // Range Bonuses
+    private final IntegerProperty closeRangeBonus = new SimpleIntegerProperty(0);
+    private final IntegerProperty shortRangeBonus = new SimpleIntegerProperty(0);
+    private final IntegerProperty mediumRangeBonus = new SimpleIntegerProperty(0);
+    private final IntegerProperty longRangeBonus = new SimpleIntegerProperty(0);
+    private final IntegerProperty extremeRangeBonus = new SimpleIntegerProperty(0);
+
     public Weapon(String name) {
         this.name.set(name);
+        setupListeners();
+        updateStats();
     }
 
     public Weapon(String id, String name, WeaponRange range, WeaponType type, WeaponCategory category) {
@@ -56,8 +74,121 @@ public class Weapon {
         this.range.set(range);
         this.type.set(type);
         this.category.set(category);
+        setupListeners();
+        updateStats();
     }
 
+    private void setupListeners() {
+        range.addListener((obs, old, ov) -> updateStats());
+        type.addListener((obs, old, ov) -> updateStats());
+        category.addListener((obs, old, ov) -> updateStats());
+    }
+
+    private void updateStats() {
+        WeaponRange r = range.get();
+        WeaponType t = type.get();
+        WeaponCategory c = category.get();
+
+        if (t == WeaponType.MORTAL) {
+            attunement.set(0);
+            if (r == WeaponRange.CLOSE) {
+                switch (c) {
+                    case LIGHT: accuracy.set(4); damage.set(7); defense.set(0); overwhelming.set(1); break;
+                    case MEDIUM: accuracy.set(2); damage.set(9); defense.set(1); overwhelming.set(1); break;
+                    case HEAVY: accuracy.set(0); damage.set(11); defense.set(-1); overwhelming.set(1); break;
+                }
+                clearRangeBonuses();
+            } else if (r == WeaponRange.THROWN) {
+                accuracy.set(0); // Accuracy for ranged is usually 0, range bonuses apply
+                defense.set(0);  // Ranged weapons usually have no defense bonus
+                switch (c) {
+                    case LIGHT: damage.set(7); overwhelming.set(1); break;
+                    case MEDIUM: damage.set(9); overwhelming.set(1); break;
+                    case HEAVY: damage.set(11); overwhelming.set(1); break;
+                }
+                closeRangeBonus.set(4); shortRangeBonus.set(3); mediumRangeBonus.set(2); longRangeBonus.set(-1); extremeRangeBonus.set(-3);
+            } else if (r == WeaponRange.ARCHERY) {
+                accuracy.set(0);
+                defense.set(0);
+                switch (c) {
+                    case LIGHT: damage.set(7); overwhelming.set(1); break;
+                    case MEDIUM: damage.set(9); overwhelming.set(1); break;
+                    case HEAVY: damage.set(11); overwhelming.set(1); break;
+                }
+                closeRangeBonus.set(-2); shortRangeBonus.set(4); mediumRangeBonus.set(2); longRangeBonus.set(0); extremeRangeBonus.set(-2);
+            }
+        } else { // ARTIFACT
+            attunement.set(5);
+            if (r == WeaponRange.CLOSE) {
+                switch (c) {
+                    case LIGHT: accuracy.set(5); damage.set(10); defense.set(0); overwhelming.set(3); break;
+                    case MEDIUM: accuracy.set(3); damage.set(12); defense.set(1); overwhelming.set(4); break;
+                    case HEAVY: accuracy.set(1); damage.set(14); defense.set(0); overwhelming.set(5); break;
+                }
+                clearRangeBonuses();
+            } else if (r == WeaponRange.THROWN) {
+                accuracy.set(0);
+                defense.set(0);
+                switch (c) {
+                    case LIGHT: damage.set(10); overwhelming.set(3); break;
+                    case MEDIUM: damage.set(12); overwhelming.set(4); break;
+                    case HEAVY: damage.set(14); overwhelming.set(5); break;
+                }
+                closeRangeBonus.set(5); shortRangeBonus.set(4); mediumRangeBonus.set(3); longRangeBonus.set(0); extremeRangeBonus.set(-2);
+            } else if (r == WeaponRange.ARCHERY) {
+                accuracy.set(0);
+                defense.set(0);
+                switch (c) {
+                    case LIGHT: damage.set(10); overwhelming.set(3); break;
+                    case MEDIUM: damage.set(12); overwhelming.set(4); break;
+                    case HEAVY: damage.set(14); overwhelming.set(5); break;
+                }
+                closeRangeBonus.set(-1); shortRangeBonus.set(5); mediumRangeBonus.set(3); longRangeBonus.set(1); extremeRangeBonus.set(-1);
+            }
+        }
+    }
+
+    private void clearRangeBonuses() {
+        closeRangeBonus.set(0); shortRangeBonus.set(0); mediumRangeBonus.set(0); longRangeBonus.set(0); extremeRangeBonus.set(0);
+    }
+
+    // Accessors for new properties
+    public IntegerProperty accuracyProperty() { return accuracy; }
+    public int getAccuracy() { return accuracy.get(); }
+    public void setAccuracy(int v) { accuracy.set(v); }
+
+    public IntegerProperty damageProperty() { return damage; }
+    public int getDamage() { return damage.get(); }
+    public void setDamage(int v) { damage.set(v); }
+
+    public IntegerProperty defenseProperty() { return defense; }
+    public int getDefense() { return defense.get(); }
+    public void setDefense(int v) { defense.set(v); }
+
+    public IntegerProperty overwhelmingProperty() { return overwhelming; }
+    public int getOverwhelming() { return overwhelming.get(); }
+    public void setOverwhelming(int v) { overwhelming.set(v); }
+
+    public IntegerProperty attunementProperty() { return attunement; }
+    public int getAttunement() { return attunement.get(); }
+    public void setAttunement(int v) { attunement.set(v); }
+
+    public IntegerProperty closeRangeBonusProperty() { return closeRangeBonus; }
+    public int getCloseRangeBonus() { return closeRangeBonus.get(); }
+
+    public IntegerProperty shortRangeBonusProperty() { return shortRangeBonus; }
+    public int getShortRangeBonus() { return shortRangeBonus.get(); }
+
+    public IntegerProperty mediumRangeBonusProperty() { return mediumRangeBonus; }
+    public int getMediumRangeBonus() { return mediumRangeBonus.get(); }
+
+    public IntegerProperty longRangeBonusProperty() { return longRangeBonus; }
+    public int getLongRangeBonus() { return longRangeBonus.get(); }
+
+    public IntegerProperty extremeRangeBonusProperty() { return extremeRangeBonus; }
+    public int getExtremeRangeBonus() { return extremeRangeBonus.get(); }
+
+    // Existing accessors
     public StringProperty idProperty() { return id; }
     public String getId() { return id.get(); }
     public void setId(String id) { this.id.set(id); }

@@ -19,6 +19,7 @@ A JavaFX-based character creator for Exalted 3rd Edition. The application focuse
     - `Specialty`: name/ability link.
     - `CraftAbility`: expertise/rating/status (Caste/Favored).
     - `MartialArtsStyle`: style name/rating/status (Caste/Favored).
+    - `Weapon`: name/range/type/category/tags/stats.
     - `Charm`/`PurchasedCharm`: metadata vs. instance data.
     - **Reactive Updates**: Relies on listeners attached in `setupListeners()` to refresh the footer and other dynamic elements when model properties change.
 
@@ -41,6 +42,7 @@ A JavaFX-based character creator for Exalted 3rd Edition. The application focuse
 | **Merits** | 10 Free Dots | Above 10: 1 BP per dot |
 | **Specialties** | 4 Free Specialties | Above 4: 1 BP each |
 | **Charms** | 15 Start | Above 15: N/A in current implementation (Manual purchase logic) |
+| **Weapons** | Automatic stats | Stats (Accuracy, Damage, Defense, Overwhelming, Attunement) are auto-calculated from Range, Type, and Category. |
 
 ## Development Gotchas
 
@@ -52,6 +54,7 @@ A JavaFX-based character creator for Exalted 3rd Edition. The application focuse
 6. **PDF Import**: PDF extraction happens at run-time. Data is cached in the user's home directory. Charms include a `rawData` field containing the original PDF text block. The `potentiallyProblematicImport` flag (boolean) indicates if any prerequisites could not be resolved.
 7. **Keyword Format**: Charm keywords are stored as a `List<String>` in the model and a JSON array in the database. Empty keywords (e.g. from a "None" value in PDF) are represented by an empty array `[]`.
 8. **Data Versioning**: All charm collections (standard and custom JSON) include a `version` field (currently `0.1.0`) to track data format compatibility. This field is required by the schema.
+9. **Weapon Stat Calculation**: Weapon stats are automatically updated via properties and listeners in `Weapon.java`. Accuracy/Defense apply primarily to `CLOSE` range, while `ARCHERY`/`THROWN` populate 5 range-specific bonuses. Artifacts add a fixed +5 Attunement.
 
 ## File Map
 - `src/main/java/com/vibethema/Main.java`: App Launcher.
@@ -59,6 +62,7 @@ A JavaFX-based character creator for Exalted 3rd Edition. The application focuse
 - `src/main/java/com/vibethema/ui/BuilderUI.java`: The primary UI engine.
 - `src/main/java/com/vibethema/service/CharmDataService.java`: Persistence helper for charm data.
 - `src/main/java/com/vibethema/service/PdfExtractor.java`: Run-time PDF parsing logic.
+- `src/main/java/com/vibethema/model/Weapon.java`: The weapon data and calculation model.
 - `src/main/java/com/vibethema/model/CharacterData.java`: The primary logic engine.
 - `src/main/resources/charms/`: JSON database for Charms and Keywords.
 - `~/.vibethema/charms/`: User-specific storage for imported/custom charms.

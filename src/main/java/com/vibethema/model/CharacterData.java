@@ -382,6 +382,12 @@ public class CharacterData {
             wd.range = w.getRange(); wd.type = w.getType();
             wd.category = w.getCategory();
             wd.tags = new ArrayList<>(w.getTags());
+            wd.accuracy = w.getAccuracy(); wd.damage = w.getDamage();
+            wd.defense = w.getDefense(); wd.overwhelming = w.getOverwhelming();
+            wd.attunement = w.getAttunement();
+            wd.closeRangeBonus = w.getCloseRangeBonus(); wd.shortRangeBonus = w.getShortRangeBonus();
+            wd.mediumRangeBonus = w.getMediumRangeBonus(); wd.longRangeBonus = w.getLongRangeBonus();
+            wd.extremeRangeBonus = w.getExtremeRangeBonus();
             state.weapons.add(wd);
         }
         return state;
@@ -453,6 +459,8 @@ public class CharacterData {
                     if (id == null || id.isEmpty()) id = java.util.UUID.randomUUID().toString();
                     Weapon w = new Weapon(id, wd.name, wd.range, wd.type, wd.category);
                     if (wd.tags != null) w.getTags().setAll(wd.tags);
+                    // Stats are automatically calculated by the constructor/listeners, but we can set them explicitly if we allow manual overrides later.
+                    // For now, since they are automatic, we just ensure the meta-data (range, type, category) is correct.
                     weapons.add(w);
                 }
             }
