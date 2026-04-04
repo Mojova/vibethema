@@ -18,6 +18,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PdfExtractor {
+    public enum PdfSource {
+        CORE,
+        MOSE
+    }
+
     private static final List<String> ABILITIES = Arrays.asList(
             "Archery", "Athletics", "Awareness", "Brawl", "Bureaucracy",
             "Craft", "Dodge", "Integrity", "Investigation", "Larceny",
@@ -36,6 +41,10 @@ public class PdfExtractor {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public void extractAll(File pdfFile, Consumer<Double> progressCallback) throws IOException {
+        extractAll(pdfFile, "", true, PdfSource.CORE, progressCallback);
+    }
+
+    public void extractAll(File pdfFile, String suffix, boolean extractKeywords, PdfSource source, Consumer<Double> progressCallback) throws IOException {
         try (PDDocument document = Loader.loadPDF(pdfFile)) {
             PDFTextStripper stripper = new PDFTextStripper();
             
@@ -43,20 +52,22 @@ public class PdfExtractor {
             if (progressCallback != null) progressCallback.accept(0.1);
             String fullText = stripper.getText(document);
             if (progressCallback != null) progressCallback.accept(0.4);
-            extractAndSaveCharms(fullText);
+            extractAndSaveCharms(fullText, suffix, source);
             
-            // Extract Keywords (Pages 250-260)
-            if (progressCallback != null) progressCallback.accept(0.7);
-            stripper.setStartPage(250);
-            stripper.setEndPage(260);
-            String keywordText = stripper.getText(document);
-            extractAndSaveKeywords(keywordText);
+            // Extract Keywords (Pages 250-260) - Skip if not requested or not Core
+            if (extractKeywords && source == PdfSource.CORE) {
+                if (progressCallback != null) progressCallback.accept(0.7);
+                stripper.setStartPage(250);
+                stripper.setEndPage(260);
+                String keywordText = stripper.getText(document);
+                extractAndSaveKeywords(keywordText);
+            }
             
             if (progressCallback != null) progressCallback.accept(1.0);
         }
     }
 
-    private void extractAndSaveCharms(String text) throws IOException {
+    private void extractAndSaveCharms(String text, String suffix, PdfSource source) throws IOException {
         Map<String, List<Map<String, Object>>> charmsByAbility = new HashMap<>();
         Map<String, List<Map<String, Object>>> charmsByMartialArtsStyle = new HashMap<>();
         for (String abil : ABILITIES) {
@@ -67,7 +78,10 @@ public class PdfExtractor {
 
         // Split by potential charm starts: [Name]\nCost:
         // Java regex split with lookahead
-        String[] parts = text.split("\n(?=[^\n]+\nCost:)");
+        String splitRegex = (source == PdfSource.MOSE) ? 
+            "\n(?=[^\n:]+\r?\n+(?:Backer:.*\n+)?Cost:)" : 
+            "\n(?=[^\n]+\nCost:)";
+        String[] parts = text.split(splitRegex);
 
         for (String part : parts) {
             String[] lines = part.trim().split("\n");
@@ -90,12 +104,35 @@ public class PdfExtractor {
             }
 
             // Find the Name and Cost line
-            for (int i = 0; i < lines.length - 1; i++) {
-                if (lines[i+1].trim().startsWith("Cost:")) {
-                    name = lines[i].trim();
-                    costLine = lines[i+1].trim();
-                    descStartIdx = i + 2;
-                    break;
+            if (source == PdfSource.MOSE) {
+                for (int i = 0; i < lines.length - 1; i++) {
+                    String line = lines[i].trim();
+                    if (line.isEmpty() || line.startsWith("Backer:")) continue;
+                    
+                    // Look ahead for "Cost:" skipping blank lines and Backer lines
+                    for (int j = i + 1; j < Math.min(lines.length, i + 5); j++) {
+                        String nextLine = lines[j].trim();
+                        if (nextLine.startsWith("Cost:")) {
+                            name = line;
+                            costLine = nextLine;
+                            descStartIdx = j + 1;
+                            break;
+                        }
+                        if (!nextLine.isEmpty() && !nextLine.startsWith("Backer:")) {
+                            // Hit something that isn't Cost and isn't a known skip line
+                            break;
+                        }
+                    }
+                    if (!name.isEmpty()) break;
+                }
+            } else {
+                for (int i = 0; i < lines.length - 1; i++) {
+                    if (lines[i+1].trim().startsWith("Cost:")) {
+                        name = lines[i].trim();
+                        costLine = lines[i+1].trim();
+                        descStartIdx = i + 2;
+                        break;
+                    }
                 }
             }
 
@@ -109,7 +146,12 @@ public class PdfExtractor {
 
             // Pattern: Mins: [Ability] [Dots], Essence [Dots]
             Pattern minsPattern = Pattern.compile("Mins: ([\\w\\s]+) (\\d+), Essence (\\d+)");
-            Matcher minsMatcher = minsPattern.matcher(costLine);
+            Matcher minsMatcher;
+            if (source == PdfSource.MOSE) {
+                minsMatcher = minsPattern.matcher(part);
+            } else {
+                minsMatcher = minsPattern.matcher(costLine);
+            }
 
             if (!minsMatcher.find()) continue;
 
@@ -278,7 +320,7 @@ public class PdfExtractor {
         // Save Standard Abilities
         for (Map.Entry<String, List<Map<String, Object>>> entry : charmsByAbility.entrySet()) {
             if (entry.getValue().isEmpty()) continue;
-            String filename = entry.getKey().toLowerCase().replace(" ", "-") + ".json";
+            String filename = entry.getKey().toLowerCase().replace(" ", "-") + suffix + ".json";
             Path filePath = outDir.resolve(filename);
             try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
                 Map<String, Object> wrapper = new LinkedHashMap<>();
@@ -299,7 +341,7 @@ public class PdfExtractor {
 
         for (Map.Entry<String, List<Map<String, Object>>> entry : charmsByMartialArtsStyle.entrySet()) {
             if (entry.getValue().isEmpty()) continue;
-            String filename = entry.getKey().toLowerCase().replace(" ", "-") + ".json";
+            String filename = entry.getKey().toLowerCase().replace(" ", "-") + suffix + ".json";
             Path filePath = maOutDir.resolve(filename);
             try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
                 Map<String, Object> wrapper = new LinkedHashMap<>();

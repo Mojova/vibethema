@@ -137,7 +137,10 @@ public class BuilderUI extends BorderPane {
         MenuItem importPdfItem = new MenuItem("Import Core PDF...");
         importPdfItem.setOnAction(e -> importPdf());
 
-        fileMenu.getItems().addAll(saveItem, saveAsItem, loadItem, new SeparatorMenuItem(), importPdfItem);
+        MenuItem importMosePdfItem = new MenuItem("Import Miracles of the Solar Exalted...");
+        importMosePdfItem.setOnAction(e -> importMosePdf());
+
+        fileMenu.getItems().addAll(saveItem, saveAsItem, loadItem, new SeparatorMenuItem(), importPdfItem, importMosePdfItem);
         menuBar.getMenus().add(fileMenu);
 
         topContainer.getChildren().addAll(menuBar, createHeader());
@@ -1110,11 +1113,22 @@ public class BuilderUI extends BorderPane {
         File file = fileChooser.showOpenDialog(getScene().getWindow());
 
         if (file != null) {
-            showImportProgress(file);
+            showImportProgress(file, "", true, PdfExtractor.PdfSource.CORE);
         }
     }
 
-    private void showImportProgress(File pdfFile) {
+    private void importMosePdf() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select Miracles of the Solar Exalted PDF");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+        File file = fileChooser.showOpenDialog(getScene().getWindow());
+
+        if (file != null) {
+            showImportProgress(file, "-mose", false, PdfExtractor.PdfSource.MOSE);
+        }
+    }
+
+    private void showImportProgress(File pdfFile, String suffix, boolean extractKeywords, PdfExtractor.PdfSource source) {
         Stage progressStage = new Stage();
         progressStage.initModality(Modality.WINDOW_MODAL);
         progressStage.initOwner(getScene().getWindow());
@@ -1138,7 +1152,7 @@ public class BuilderUI extends BorderPane {
             @Override
             protected Void call() throws Exception {
                 PdfExtractor extractor = new PdfExtractor();
-                extractor.extractAll(pdfFile, progress -> {
+                extractor.extractAll(pdfFile, suffix, extractKeywords, source, progress -> {
                     Platform.runLater(() -> progressBar.setProgress(progress));
                 });
                 return null;

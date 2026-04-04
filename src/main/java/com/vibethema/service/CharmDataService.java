@@ -30,27 +30,30 @@ public class CharmDataService {
 
     public List<Charm> loadCharmsForAbility(String ability) {
         List<Charm> allCharms = new ArrayList<>();
-        String filename = ability.toLowerCase().replace(" ", "-") + ".json";
-        String customFilename = ability.toLowerCase().replace(" ", "-") + "-custom.json";
+        String baseName = ability.toLowerCase().replace(" ", "-");
         
-        Path userPath = getUserCharmsPath().resolve(filename);
-        Path maPath = getUserMartialArtsPath().resolve(filename);
-        Path customPath = getUserCharmsPath().resolve(customFilename);
-
-        // 1. Load standard charms (user-imported or martial arts)
-        if (Files.exists(userPath)) {
-            loadFromFile(userPath, allCharms);
-        } else if (Files.exists(maPath)) {
-            loadFromFile(maPath, allCharms);
-        }
+        // 1. Scan for all matching files in User Charms and Martial Arts directories
+        scanAndLoadMatchingFiles(getUserCharmsPath(), baseName, allCharms);
+        scanAndLoadMatchingFiles(getUserMartialArtsPath(), baseName, allCharms);
         
-        // Ensure standard charms have IDs
+        // Ensure standard charms have IDs (migration helper)
         assignMigrationIds(allCharms, ability);
 
-        // 2. Load custom charms
-        loadFromFile(customPath, allCharms);
-
         return allCharms;
+    }
+
+    private void scanAndLoadMatchingFiles(Path dir, String baseName, List<Charm> allCharms) {
+        if (!Files.exists(dir)) return;
+        try (java.util.stream.Stream<Path> stream = Files.list(dir)) {
+            stream.filter(p -> {
+                String fileName = p.getFileName().toString();
+                // Match baseName.json or baseName-something.json
+                return fileName.equals(baseName + ".json") || 
+                       (fileName.startsWith(baseName + "-") && fileName.endsWith(".json"));
+            }).forEach(p -> loadFromFile(p, allCharms));
+        } catch (IOException e) {
+            System.err.println("Error scanning directory: " + dir + " - " + e.getMessage());
+        }
     }
 
     @SuppressWarnings("unused")

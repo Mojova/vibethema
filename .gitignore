@@ -2,3 +2,4 @@ target
 data_source
 .DS_Store
 src/main/resources/charms_backup
+*.pdf
