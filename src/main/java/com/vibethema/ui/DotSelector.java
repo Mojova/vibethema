@@ -23,6 +23,8 @@ public class DotSelector extends HBox {
         
         setSpacing(4);
         setAlignment(Pos.CENTER_LEFT);
+        setFocusTraversable(true);
+        getStyleClass().add("dot-selector");
         
         for (int i = 0; i < maxDots; i++) {
             Circle dot = new Circle(6); // Radius 6

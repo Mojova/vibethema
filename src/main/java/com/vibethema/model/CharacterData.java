@@ -176,6 +176,7 @@ public class CharacterData {
     public BooleanProperty dirtyProperty() { return dirty; }
     public boolean isDirty() { return dirty.get(); }
     public void setDirty(boolean dirty) { this.dirty.set(dirty); }
+    public boolean isImporting() { return isImporting; }
 
     public StringProperty nameProperty() { return name; }
     public ObjectProperty<Caste> casteProperty() { return caste; }
@@ -422,7 +423,7 @@ public class CharacterData {
     public CharacterSaveState exportState() {
         CharacterSaveState state = new CharacterSaveState();
         state.name = this.name.get();
-        state.caste = caste.get();
+        state.caste = caste.get() != null ? caste.get().name() : Caste.NONE.name();
         state.supernalAbility = supernalAbility.get();
         state.essence = essence.get();
         state.willpower = willpower.get();
@@ -507,7 +508,15 @@ public class CharacterData {
         isImporting = true;
         try {
             this.name.set(state.name != null ? state.name : "");
-            caste.set(state.caste != null ? state.caste : Caste.NONE);
+            if (state.caste != null) {
+                try {
+                    caste.set(Caste.valueOf(state.caste.trim().toUpperCase()));
+                } catch (Exception e) {
+                    caste.set(Caste.NONE);
+                }
+            } else {
+                caste.set(Caste.NONE);
+            }
             supernalAbility.set(state.supernalAbility != null ? state.supernalAbility : "");
             essence.set(state.essence);
             willpower.set(state.willpower);

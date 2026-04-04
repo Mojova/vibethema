@@ -1,7 +1,6 @@
 package com.vibethema.ui;
 
 import com.vibethema.service.CharmDataService;
-import com.vibethema.service.PdfExtractor;
 import com.vibethema.service.EquipmentDataService;
 import com.vibethema.model.Armor;
 import com.vibethema.model.Hearthstone;
@@ -19,6 +18,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.Parent;
 import javafx.scene.text.Text;
 import javafx.scene.shape.CubicCurve;
 import javafx.stage.FileChooser;
@@ -28,7 +28,6 @@ import javafx.stage.Stage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCombination;
-import javafx.concurrent.Task;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.FileReader;
@@ -143,6 +142,42 @@ public class BuilderUI extends BorderPane {
         updateFooter();
 
         data.dirtyProperty().addListener((obs, oldV, newV) -> updateWindowTitle());
+        
+        sceneProperty().addListener((obs, oldV, newV) -> {
+            if (newV != null) {
+                setupGlobalShortcuts(newV);
+            }
+        });
+    }
+
+    private void setupGlobalShortcuts(javafx.scene.Scene scene) {
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            // General Ctrl+Tab cycling (all platforms)
+            if (event.isControlDown() && event.getCode() == KeyCode.TAB) {
+                cycleTab(event.isShiftDown() ? -1 : 1);
+                event.consume();
+            } 
+            // Mac-style Cmd+Option+Arrows
+            else if (event.isShortcutDown() && event.isAltDown()) {
+                if (event.getCode() == KeyCode.RIGHT) {
+                    cycleTab(1);
+                    event.consume();
+                } else if (event.getCode() == KeyCode.LEFT) {
+                    cycleTab(-1);
+                    event.consume();
+                }
+            }
+            // Win/Linux style Shortcut+PgUp/PgDn
+            else if (event.isShortcutDown()) {
+                if (event.getCode() == KeyCode.PAGE_DOWN) {
+                    cycleTab(1);
+                    event.consume();
+                } else if (event.getCode() == KeyCode.PAGE_UP) {
+                    cycleTab(-1);
+                    event.consume();
+                }
+            }
+        });
     }
 
     private VBox createTopSection() {
@@ -176,23 +211,23 @@ public class BuilderUI extends BorderPane {
         
         MenuItem statsTabItem = new MenuItem("Stats");
         statsTabItem.setAccelerator(KeyCombination.keyCombination("Shortcut+1"));
-        statsTabItem.setOnAction(e -> mainTabPane.getSelectionModel().select(0));
+        statsTabItem.setOnAction(e -> selectAndFocusTab(0));
         
         MenuItem meritsTabItem = new MenuItem("Merits");
         meritsTabItem.setAccelerator(KeyCombination.keyCombination("Shortcut+2"));
-        meritsTabItem.setOnAction(e -> mainTabPane.getSelectionModel().select(1));
+        meritsTabItem.setOnAction(e -> selectAndFocusTab(1));
         
         MenuItem equipmentTabItem = new MenuItem("Equipment");
         equipmentTabItem.setAccelerator(KeyCombination.keyCombination("Shortcut+3"));
-        equipmentTabItem.setOnAction(e -> mainTabPane.getSelectionModel().select(2));
+        equipmentTabItem.setOnAction(e -> selectAndFocusTab(2));
         
         MenuItem charmsTabItem = new MenuItem("Charms");
         charmsTabItem.setAccelerator(KeyCombination.keyCombination("Shortcut+4"));
-        charmsTabItem.setOnAction(e -> mainTabPane.getSelectionModel().select(3));
+        charmsTabItem.setOnAction(e -> selectAndFocusTab(3));
         
         MenuItem martialArtsTabItem = new MenuItem("Martial Arts");
         martialArtsTabItem.setAccelerator(KeyCombination.keyCombination("Shortcut+5"));
-        martialArtsTabItem.setOnAction(e -> mainTabPane.getSelectionModel().select(4));
+        martialArtsTabItem.setOnAction(e -> selectAndFocusTab(4));
 
         MenuItem nextTabItem = new MenuItem("Next Tab");
         nextTabItem.setAccelerator(KeyCombination.keyCombination("Shortcut+Shift+]"));
@@ -297,7 +332,7 @@ public class BuilderUI extends BorderPane {
 
         ComboBox<CharacterData.Caste> casteBox = new ComboBox<>();
         casteBox.getItems().addAll(CharacterData.Caste.values());
-        casteBox.setValue(CharacterData.Caste.NONE);
+        casteBox.setValue(data.casteProperty().get());
         data.casteProperty().bindBidirectional(casteBox.valueProperty());
 
         ComboBox<String> supernalDropdown = new ComboBox<>();
@@ -393,7 +428,7 @@ public class BuilderUI extends BorderPane {
         }
         data.willpowerProperty().addListener((obs, oldV, newV) -> updateFooter());
         data.casteProperty().addListener((obs, oldV, newV) -> {
-            if (oldV != newV) {
+            if (oldV != newV && !data.isImporting()) {
                 for (String abil : CharacterData.ABILITIES) {
                     data.getCasteAbility(abil).set(false);
                 }
@@ -461,34 +496,6 @@ public class BuilderUI extends BorderPane {
             ca.ratingProperty().addListener((obs, ov, nv) -> updateFooter());
         }
 
-        // Global Tab Navigation Shortcuts
-        mainTabPane.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            // General Ctrl+Tab cycling (all platforms)
-            if (event.isControlDown() && event.getCode() == KeyCode.TAB) {
-                cycleTab(event.isShiftDown() ? -1 : 1);
-                event.consume();
-            } 
-            // Mac-style Cmd+Option+Arrows
-            else if (event.isShortcutDown() && event.isAltDown()) {
-                if (event.getCode() == KeyCode.RIGHT) {
-                    cycleTab(1);
-                    event.consume();
-                } else if (event.getCode() == KeyCode.LEFT) {
-                    cycleTab(-1);
-                    event.consume();
-                }
-            }
-            // Win/Linux style Shortcut+PgUp/PgDn
-            else if (event.isShortcutDown()) {
-                if (event.getCode() == KeyCode.PAGE_DOWN) {
-                    cycleTab(1);
-                    event.consume();
-                } else if (event.getCode() == KeyCode.PAGE_UP) {
-                    cycleTab(-1);
-                    event.consume();
-                }
-            }
-        });
     }
 
     private void updateFooter() {
@@ -595,7 +602,7 @@ public class BuilderUI extends BorderPane {
         content.getStyleClass().add("content-area");
         content.setPadding(new Insets(20));
 
-        VBox advantagesSection = createAdvantagesSection();
+        VBox basicAdvSection = createBasicAdvantagesSection();
 
         VBox attributesSection = new VBox(10);
         Label attrTitle = new Label("Attributes");
@@ -637,8 +644,8 @@ public class BuilderUI extends BorderPane {
         }
         updateCounts.run();
 
-        int row = 0;
-        int col = 0;
+        int rowCount = 0;
+        int colCount = 0;
         for (String ability : CharacterData.ABILITIES) {
             if ("Craft".equals(ability) || "Martial Arts".equals(ability))
                 continue;
@@ -728,11 +735,11 @@ public class BuilderUI extends BorderPane {
             DotSelector selector = new DotSelector(data.getAbility(ability), 0);
             rowBox.getChildren().addAll(casteBox, favoredBox, abLabel, selector);
 
-            abilGrid.add(rowBox, col, row);
-            row++;
-            if (row >= 13) {
-                row = 0;
-                col++;
+            abilGrid.add(rowBox, colCount, rowCount);
+            rowCount++;
+            if (rowCount >= 13) {
+                rowCount = 0;
+                colCount++;
             }
         }
         abilitiesSection.getChildren().addAll(abilTitle, abilGrid);
@@ -747,7 +754,10 @@ public class BuilderUI extends BorderPane {
         HBox abilAndSide = new HBox(30);
         abilAndSide.getChildren().addAll(abilitiesSection, sideStuff);
 
-        content.getChildren().addAll(advantagesSection, attributesSection, abilAndSide);
+        HBox statsRow = new HBox(40);
+        statsRow.getChildren().addAll(createHealthSection(), createCombatStatsSection(), createSocialStatsSection());
+
+        content.getChildren().addAll(basicAdvSection, attributesSection, abilAndSide, new Separator(), statsRow, createAttackPoolsSection());
         return content;
     }
 
@@ -1048,8 +1058,8 @@ public class BuilderUI extends BorderPane {
         return section;
     }
 
-    private VBox createAdvantagesSection() {
-        VBox advantagesSection = new VBox(15);
+    private VBox createBasicAdvantagesSection() {
+        VBox section = new VBox(15);
         Label advTitle = new Label("Advantages");
         advTitle.getStyleClass().add("section-title");
 
@@ -1087,7 +1097,11 @@ public class BuilderUI extends BorderPane {
         motesBox.getChildren().addAll(motesLabel, personalLabel, peripheralLabel);
 
         topRow.getChildren().addAll(wpBox, essBox, motesBox);
+        section.getChildren().addAll(advTitle, topRow);
+        return section;
+    }
 
+    private VBox createHealthSection() {
         VBox healthBox = new VBox(5);
         Label healthLabel = new Label("Health Levels");
         healthLabel.getStyleClass().add("subsection-title");
@@ -1119,7 +1133,10 @@ public class BuilderUI extends BorderPane {
         updateHealth.run();
 
         healthBox.getChildren().addAll(healthLabel, trackBoxes);
+        return healthBox;
+    }
 
+    private VBox createCombatStatsSection() {
         VBox combatBox = new VBox(5);
         Label combatLabel = new Label("Combat Statistics");
         combatLabel.getStyleClass().add("subsection-title");
@@ -1155,8 +1172,6 @@ public class BuilderUI extends BorderPane {
         
         dodgeBox.getChildren().addAll(dodgeBaseLabel, dodgeBonusLabel);
 
-        // No more double-click
-
         Runnable updateDodge = () -> {
             int dex = data.getAttribute("Dexterity").get();
             int dodge = data.getAbility("Dodge").get();
@@ -1183,12 +1198,7 @@ public class BuilderUI extends BorderPane {
         
         statsList.getChildren().addAll(naturalSoakVal, armorSoakVal, totalSoakVal, hardnessVal, dodgeBox);
         combatBox.getChildren().addAll(combatLabel, statsList);
-
-        HBox statsRow = new HBox(40);
-        statsRow.getChildren().addAll(healthBox, combatBox, createSocialStatsSection());
-
-        advantagesSection.getChildren().addAll(advTitle, topRow, statsRow, createAttackPoolsSection());
-        return advantagesSection;
+        return combatBox;
     }
 
     private VBox createSocialStatsSection() {
@@ -1502,7 +1512,43 @@ public class BuilderUI extends BorderPane {
         if (count == 0) return;
         int current = mainTabPane.getSelectionModel().getSelectedIndex();
         int next = (current + direction + count) % count;
-        mainTabPane.getSelectionModel().select(next);
+        selectAndFocusTab(next);
+    }
+
+    private void selectAndFocusTab(int index) {
+        if (mainTabPane == null || index < 0 || index >= mainTabPane.getTabs().size()) return;
+        Tab tab = mainTabPane.getTabs().get(index);
+        mainTabPane.getSelectionModel().select(tab);
+        focusFirstInTab(tab);
+    }
+
+    private void focusFirstInTab(Tab tab) {
+        if (tab == null || tab.getContent() == null) return;
+        javafx.scene.Node content = tab.getContent();
+        if (content instanceof ScrollPane sp) {
+            content = sp.getContent();
+        }
+        
+        javafx.scene.Node first = findFirstFocusable(content);
+        if (first != null) {
+            Platform.runLater(first::requestFocus);
+        }
+    }
+
+    private javafx.scene.Node findFirstFocusable(javafx.scene.Node node) {
+        if (node instanceof Control c && !c.isDisabled() && c.isFocusTraversable() && c.isVisible()) {
+            return c;
+        }
+        if (node instanceof DotSelector && !node.isDisabled() && node.isVisible()) {
+            return node;
+        }
+        if (node instanceof Parent p) {
+            for (javafx.scene.Node child : p.getChildrenUnmodifiable()) {
+                javafx.scene.Node f = findFirstFocusable(child);
+                if (f != null) return f;
+            }
+        }
+        return null;
     }
 
     private void jumpToCharmAbility(String abilityName) {
@@ -1534,74 +1580,11 @@ public class BuilderUI extends BorderPane {
     }
 
     private void importPdf() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Select Exalted Core 3e PDF");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
-        File file = fileChooser.showOpenDialog(getScene().getWindow());
-
-        if (file != null) {
-            showImportProgress(file, "", true, PdfExtractor.PdfSource.CORE);
-        }
+        PdfImportHelper.importCorePdf(getScene().getWindow(), this::refreshCharms);
     }
 
     private void importMosePdf() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Select Miracles of the Solar Exalted PDF");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
-        File file = fileChooser.showOpenDialog(getScene().getWindow());
-
-        if (file != null) {
-            showImportProgress(file, "-mose", false, PdfExtractor.PdfSource.MOSE);
-        }
-    }
-
-    private void showImportProgress(File pdfFile, String suffix, boolean extractKeywords, PdfExtractor.PdfSource source) {
-        Stage progressStage = new Stage();
-        progressStage.initModality(Modality.WINDOW_MODAL);
-        progressStage.initOwner(getScene().getWindow());
-        progressStage.setTitle("Importing PDF...");
-
-        VBox layout = new VBox(15);
-        layout.setPadding(new Insets(20));
-        layout.setAlignment(Pos.CENTER);
-        layout.setStyle("-fx-background-color: #1e1e1e;");
-
-        Label label = new Label("Extracting data from PDF...\nThis may take a minute.");
-        label.setStyle("-fx-text-fill: #f9f6e6; -fx-text-alignment: center;");
-        ProgressBar progressBar = new ProgressBar(0);
-        progressBar.setPrefWidth(300);
-
-        layout.getChildren().addAll(label, progressBar);
-        progressStage.setScene(new javafx.scene.Scene(layout));
-        progressStage.show();
-
-        Task<Void> task = new Task<>() {
-            @Override
-            protected Void call() throws Exception {
-                PdfExtractor extractor = new PdfExtractor();
-                extractor.extractAll(pdfFile, suffix, extractKeywords, source, progress -> {
-                    Platform.runLater(() -> progressBar.setProgress(progress));
-                });
-                return null;
-            }
-        };
-
-        task.setOnSucceeded(e -> {
-            progressStage.close();
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Import complete! Charms and keywords have been updated.", ButtonType.OK);
-            alert.showAndWait();
-            refreshCharms();
-        });
-
-        task.setOnFailed(e -> {
-            progressStage.close();
-            Throwable ex = task.getException();
-            ex.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Import failed: " + ex.getMessage(), ButtonType.OK);
-            alert.showAndWait();
-        });
-
-        new Thread(task).start();
+        PdfImportHelper.importMosePdf(getScene().getWindow(), this::refreshCharms);
     }
 
     private void refreshCharms() {

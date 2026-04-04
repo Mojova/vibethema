@@ -41,17 +41,22 @@ public class StartScreen extends StackPane {
 
         Button newBtn = new Button("Create New Character");
         newBtn.getStyleClass().add("start-button");
-        newBtn.setPrefWidth(280); // Fixed width for equality
+        newBtn.setPrefWidth(280);
         newBtn.setOnAction(e -> startNewCharacter());
 
         Button loadBtn = new Button("Load Existing Character");
         loadBtn.getStyleClass().add("start-button-secondary");
-        loadBtn.setPrefWidth(280); // Fixed width for equality
+        loadBtn.setPrefWidth(280);
         loadBtn.setOnAction(e -> loadCharacter());
+
+        Button importBtn = new Button("Import Core PDF");
+        importBtn.getStyleClass().add("start-button-secondary");
+        importBtn.setPrefWidth(280);
+        importBtn.setOnAction(e -> PdfImportHelper.importCorePdf(getScene().getWindow(), null));
 
         buttonBox.getChildren().addAll(newBtn, loadBtn);
 
-        card.getChildren().addAll(title, subtitle, spacer, buttonBox);
+        card.getChildren().addAll(title, subtitle, spacer, buttonBox, importBtn);
         getChildren().add(card);
     }
 

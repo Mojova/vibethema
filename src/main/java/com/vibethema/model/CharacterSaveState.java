@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class CharacterSaveState {
     public String name;
-    public CharacterData.Caste caste;
+    public String caste;
     public String supernalAbility;
     public int essence, willpower;
     public Map<String, Integer> attributes;
