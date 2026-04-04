@@ -1,68 +1,65 @@
-# Vibethema Character Builder
+# Vibethema
 
-**Vibethema** is a dedicated character creation and rules engine built specifically for **Exalted 3rd Edition**. It acts as a comprehensive, real-time JavaFX desktop application capable of digitizing core creation constraints alongside an incredibly robust, dynamically generated visual Directed Acyclic Graph (DAG) charting Charm trees and abilities.
-
----
+Vibethema is a JavaFX-based character builder for Exalted 3rd Edition. It provides tools for character creation, rule validation, and data persistence.
 
 ## Features
 
-- **Automated Rule Validation**: Effortlessly track and enforce Character Generation limits based heavily on the Exalted 3e rulebook (Favored and Caste counts, Supernal logic constraints, bonus point pools).
-- **Auto-Allocating Masteries**: Setting abilities as Favored dynamically bumps scores natively. Selecting a Supernal ability structurally bypasses Essence limitations on Charms when rendering the tree!
-- **Visual Charms Web**: Automatically reads raw JSON files defining the game's Charms and plots them across an interactive graphical "web", structurally arranging prerequisites hierarchically. Clicking on Charms outlines precise mechanics, keywords, and durations alongside immediate eligibility feedback for purchase.
-- **Save & Load Persistence**: Easily export comprehensive character data natively to `.vbtm` (Vibethema) disk files. Boot up anytime to pick exactly back up where you left off. 
+- **Character Statistics**: Management of Attributes, Abilities, Merits, and Specialties with real-time Bonus Point (BP) calculations.
+- **Charm Management**:
+    - Interactive visual rendering of charm trees.
+    - Automated prerequisite checking.
+    - Support for standard and custom charms.
+- **Sorcery System**:
+    - Shaping Ritual management.
+    - Spell database with support for Terrestrial, Celestial, and Solar circles.
+    - Automated eligibility checking based on purchased sorcery charms.
+- **Equipment and Evocations**:
+    - Automated weapon stat calculation (Accuracy, Damage, Defense, Overwhelming).
+    - Tracking for Armor and Other Equipment.
+    - Evocation support linked to specific artifacts in the character's inventory.
+- **Data Extraction**: Run-time extraction of charms and equipment data from the Exalted 3rd Edition Core PDF using Apache PDFBox.
+- **Persistence**: 
+    - Character files saved in `.vbtm` (JSON) format.
+    - User-defined data (custom charms, spells, keywords) stored in `~/.vibethema/`.
 
----
+## Technology Stack
 
-## Requirements
+- **Language**: Java 25
+- **UI Framework**: JavaFX
+- **Build System**: Maven
+- **Serialization**: GSON
+- **PDF Processing**: Apache PDFBox
 
-To run or deeply modify the platform, assure your local environment holds:
-- **Java Development Kit (JDK) 25** or higher.
-- **Maven** (3.4.0+ is thoroughly recommended) for structurally hooking the dependency chain (Gson, JavaFX UI platforms, etc).
+## Getting Started
 
----
+### Prerequisites
 
-## Installation & Running
+- Java Development Kit (JDK) 25 or higher.
+- Maven 3.8.1 or higher.
 
-1. **Clone the repository**:
-   ```bash
-   git clone <repository_url>
-   cd exalted
-   ```
+### Building and Running
 
-
-2. Extract charms
-
-Charm data is not included in the repository for copyright reasons, so you need to extract it from your own Exalted 3e Core rulebook. Splat books are not supported. You need to have pdftotext installed.
-
+To run the application in development mode:
 ```bash
-python3 scripts/extract_charms.py <path_to_pdf>
+mvn clean javafx:run
 ```
 
+To build a native application bundle (macOS):
+```bash
+./scripts/build_app.sh
+```
 
-3. **Run the Application**:
-   Vibethema natively relies on Maven plugins to run its JavaFX runtime smoothly across environments (especially bridging complex UI modules seamlessly on distinct macOS, Linux, or Windows setups). 
-   Simply execute the following target at the root directory:
-   ```bash
-   mvn clean javafx:run
-   ```
+### PDF Extraction
 
-4. **Packaging a Standalone JAR (Optional)**:
-   If you wish to compile an independent payload usable outside explicit Maven contexts:
-   ```bash
-   mvn clean compile shade:shade
-   ```
-   *Note: Native OS deployments generally require modular pathways configured correctly in Maven if not using `javafx:run` directly.*
+The application does not distribute copyrighted charm or equipment data. To populate the database, use the in-app PDF import feature to extract data from a legitimate copy of the Exalted 3e Core rulebook. Extracted data is cached in `~/.vibethema/`.
 
----
+## Project Structure
 
-## File System Navigation
+- `src/main/java/com/vibethema/model/`: Core data entities and business logic (e.g., `CharacterData`, `Charm`, `Weapon`).
+- `src/main/java/com/vibethema/ui/`: UI components and tab-based views (e.g., `EquipmentTab`, `SorceryTab`, `CharmTreeComponent`).
+- `src/main/java/com/vibethema/service/`: Backend services for data loading, PDF extraction, and persistence.
+- `src/main/resources/`: Application styles (CSS), icons, and configuration.
 
-If delving deeply into the source code, trace paths fundamentally through `src/main/` natively:
-- **`java/com/vibethema/model/`**: Houses the strict data backbone and OS serialization DTOs (`CharacterData.java`, `Charm.java`, `CharacterSaveState.java`) dictating raw numerical states and rule processing.
-- **`java/com/vibethema/ui/`**: Houses the expansive UI logic and JavaFX pane/property bindings dynamically visualizing data pools (`BuilderUI.java`, `DotSelector.java`).
-- **`resources/charms/`**: Contains raw immutable data-payload arrays directly formulating the Charm Web (`archery.json`, etc). Adding a new JSON payload here immediately exposes those Charms natively!
+## Legal
 
----
-
-## Acknowledgments
-All inherent game mechanics, rule frameworks, Exalted concepts, and terminology are fully owned by Onyx Path Publishing and White Wolf. This platform serves exclusively as an interactive desktop tracking layer.
+All game mechanics, terminology, and settings are the property of Onyx Path Publishing and White Wolf. This application is a third-party tool for character management.
