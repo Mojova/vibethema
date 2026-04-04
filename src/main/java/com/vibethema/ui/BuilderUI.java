@@ -3180,7 +3180,14 @@ public class BuilderUI extends BorderPane {
             delBtn.setOnAction(e -> data.getOtherEquipment().remove(o));
 
             HBox.setHgrow(details, Priority.ALWAYS);
-            row.getChildren().addAll(details, editBtn, delBtn);
+
+            Button evocationBtn = new Button("✨ Evocations");
+            evocationBtn.getStyleClass().add("action-btn-small");
+            evocationBtn.setOnAction(e -> showEvocationsDialog(o.getId(), o.getName()));
+            evocationBtn.setVisible(o.isArtifact());
+            evocationBtn.setManaged(o.isArtifact());
+
+            row.getChildren().addAll(details, editBtn, evocationBtn, delBtn);
             otherEquipmentListContainer.getChildren().add(row);
         }
     }
@@ -3250,11 +3257,17 @@ public class BuilderUI extends BorderPane {
         descField.setPromptText("Notes, weight, or special rules...");
         descField.setWrapText(true);
         descField.setPrefRowCount(4);
+        
+        CheckBox artifactCb = new CheckBox("Mark as Artifact");
+        artifactCb.getStyleClass().add("caste-checkbox");
+        artifactCb.setSelected(existing != null && existing.isArtifact());
 
         grid.add(new Label("Name:"), 0, 0);
         grid.add(nameField, 1, 0);
         grid.add(new Label("Description:"), 0, 1);
         grid.add(descField, 1, 1);
+        grid.add(new Label("Artifact:"), 0, 2);
+        grid.add(artifactCb, 1, 2);
 
         dialog.getDialogPane().setContent(grid);
         Platform.runLater(nameField::requestFocus);
@@ -3264,6 +3277,7 @@ public class BuilderUI extends BorderPane {
                 OtherEquipment o = (existing != null) ? existing : new OtherEquipment(nameField.getText(), descField.getText());
                 o.setName(nameField.getText());
                 o.setDescription(descField.getText());
+                o.setArtifact(artifactCb.isSelected());
                 return o;
             }
             return null;

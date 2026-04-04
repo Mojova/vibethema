@@ -29,6 +29,8 @@ public class Evocation extends Charm {
         int effectiveEssence = data.essenceProperty().get();
         if (effectiveEssence < getMinEssence()) return false;
         
+        if (!data.isArtifactPossessed(artifactId)) return false;
+        
         List<String> prereqs = getPrerequisites();
         if (prereqs != null) {
             for (String reqId : prereqs) {

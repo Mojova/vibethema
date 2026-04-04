@@ -82,6 +82,7 @@ public class CharacterSaveState {
         public String id;
         public String name;
         public String description;
+        public boolean isArtifact;
     }
 
     public static class IntimacyData {

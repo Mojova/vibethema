@@ -22,6 +22,7 @@ A JavaFX-based character creator for Exalted 3rd Edition. The application focuse
     - `MartialArtsStyle`: style name/rating/status (Caste/Favored).
     - `Intimacy`: name/type (Principle/Tie)/intensity (Minor/Major/Defining).
     - `Weapon`: name/range/type/category/tags/stats.
+    - `OtherEquipment`: name/description/artifact status.
     - `Charm`/`PurchasedCharm`: metadata vs. instance data.
     - **Stackable Charms**: Supported via the `Stackable` keyword. The UI allows multiple purchases up to a defined limit (e.g., Resistance rating for Ox-Body), and stepwise refunds via `removeOneCharm()`.
     - **Reactive Updates**: Relies on listeners attached in `setupListeners()` to refresh the footer and other dynamic elements when model properties change.
@@ -60,6 +61,7 @@ A JavaFX-based character creator for Exalted 3rd Edition. The application focuse
 7. **Keyword Format**: Charm keywords are stored as a `List<String>` in the model and a JSON array in the database. Empty keywords (e.g. from a "None" value in PDF) are represented by an empty array `[]`.
 8. **Data Versioning**: All charm collections (standard and custom JSON) include a `version` field (currently `0.1.0`) to track data format compatibility. This field is required by the schema.
 9. **Weapon Stat Calculation**: Weapon stats are automatically updated via properties and listeners in `Weapon.java`. Accuracy/Defense apply primarily to `CLOSE` range, while `ARCHERY`/`THROWN` populate 5 range-specific bonuses. Artifacts add a fixed +5 Attunement.
+10. **Evocation Eligibility**: Evocations are only purchaseable if the character possesses the corresponding artifact in their equipment list (Weapons, Armors, or Other Equipment). The `artifactId` of the evocation must match the unique ID of the equipment item.
 
 ## File Map
 - `src/main/java/com/vibethema/Main.java`: App Launcher.
@@ -76,3 +78,4 @@ A JavaFX-based character creator for Exalted 3rd Edition. The application focuse
 1. **Commits**: Always commit changes after finishing a logical task or a specific user request. Use descriptive commit messages.
 2. **Compile**: Always compile the binary after finishing a logical task or a specific user request with scripts/build_app.sh
 3. **Update this file**: Update this file when the architecture or logic changes.
+4. **No backwards compatibility**: Updates to the model and JSON serialization and deserialization should be done with the assumption that the user will be using the latest version of the application. This means that we do not need to worry about backwards compatibility with older versions of the application. Ask the user to reimport the PDFs if the JSON format changes.

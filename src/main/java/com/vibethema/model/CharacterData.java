@@ -179,6 +179,18 @@ public class CharacterData {
         });
         weapons.addListener((javafx.collections.ListChangeListener<? super Weapon>) c -> markDirty());
         intimacies.addListener((javafx.collections.ListChangeListener<? super Intimacy>) c -> markDirty());
+        otherEquipment.addListener((javafx.collections.ListChangeListener<? super OtherEquipment>) c -> {
+            markDirty();
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    for (OtherEquipment oe : c.getAddedSubList()) {
+                        oe.nameProperty().addListener((obs, ov, nv) -> markDirty());
+                        oe.descriptionProperty().addListener((obs, ov, nv) -> markDirty());
+                        oe.artifactProperty().addListener((obs, ov, nv) -> markDirty());
+                    }
+                }
+            }
+        });
         
         merits.add(new Merit("", 1));
         specialties.add(new Specialty("", ""));
@@ -292,6 +304,14 @@ public class CharacterData {
         totalHardness.set(armorHardnessVal);
     }
     
+    public boolean isArtifactPossessed(String artifactId) {
+        if (artifactId == null || artifactId.isEmpty()) return false;
+        for (Weapon w : weapons) if (w.getId().equals(artifactId) && w.getType() == Weapon.WeaponType.ARTIFACT) return true;
+        for (Armor a : armors) if (a.getId().equals(artifactId) && a.getType() == Armor.ArmorType.ARTIFACT) return true;
+        for (OtherEquipment oe : otherEquipment) if (oe.getId().equals(artifactId) && oe.isArtifact()) return true;
+        return false;
+    }
+
     public boolean hasCharm(String id) {
         if (id == null) return false;
         return unlockedCharms.stream().anyMatch(c -> c.id().equals(id));
@@ -521,6 +541,7 @@ public class CharacterData {
         for (OtherEquipment o : otherEquipment) {
             CharacterSaveState.OtherEquipmentData od = new CharacterSaveState.OtherEquipmentData();
             od.id = o.getId(); od.name = o.getName(); od.description = o.getDescription();
+            od.isArtifact = o.isArtifact();
             state.otherEquipment.add(od);
         }
         state.intimacies = new ArrayList<>();
@@ -633,6 +654,14 @@ public class CharacterData {
             if (state.hearthstones != null) {
                 for (CharacterSaveState.HearthstoneData hd : state.hearthstones) {
                     hearthstones.add(new Hearthstone(hd.id, hd.name, hd.description));
+                }
+            }
+            otherEquipment.clear();
+            if (state.otherEquipment != null) {
+                for (CharacterSaveState.OtherEquipmentData od : state.otherEquipment) {
+                    OtherEquipment oe = new OtherEquipment(od.id, od.name, od.description);
+                    oe.setArtifact(od.isArtifact);
+                    otherEquipment.add(oe);
                 }
             }
             intimacies.clear();
