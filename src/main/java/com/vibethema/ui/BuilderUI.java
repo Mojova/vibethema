@@ -1063,10 +1063,80 @@ public class BuilderUI extends BorderPane {
         combatBox.getChildren().addAll(combatLabel, statsList);
 
         HBox statsRow = new HBox(40);
-        statsRow.getChildren().addAll(healthBox, combatBox);
+        statsRow.getChildren().addAll(healthBox, combatBox, createAttackPoolsSection());
 
         advantagesSection.getChildren().addAll(advTitle, topRow, statsRow);
         return advantagesSection;
+    }
+
+    private VBox createAttackPoolsSection() {
+        VBox section = new VBox(5);
+        Label title = new Label("Attack Pools");
+        title.getStyleClass().add("subsection-title");
+        
+        GridPane grid = new GridPane();
+        grid.setHgap(20);
+        grid.setVgap(8);
+        grid.getStyleClass().add("merit-row-container");
+        grid.setPadding(new Insets(10));
+        
+        String[] headers = {"Weapon", "Withering", "Decisive", "Damage", "Defense"};
+        for (int i = 0; i < headers.length; i++) {
+            Label hl = new Label(headers[i]);
+            hl.getStyleClass().add("sidebar-stat-header");
+            grid.add(hl, i, 0);
+        }
+
+        Runnable refresh = () -> {
+            grid.getChildren().removeIf(node -> GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node) > 0);
+            int row = 1;
+            int dex = data.getAttribute("Dexterity").get();
+            int str = data.getAttribute("Strength").get();
+            
+            for (Weapon w : data.getWeapons()) {
+                String abilityName = "Melee";
+                if (w.getTags().contains("Archery")) abilityName = "Archery";
+                else if (w.getTags().contains("Brawl")) abilityName = "Brawl";
+                
+                int abil = data.getAbilityRating(abilityName);
+                int spec = (w.getSpecialtyId() != null && !w.getSpecialtyId().isEmpty()) ? 1 : 0;
+                
+                int withering = dex + abil + spec + w.getAccuracy();
+                int decisive = dex + abil + spec;
+                int damage = str + w.getDamage();
+                int defensePool = dex + abil + spec;
+                int defense = (int) Math.ceil(defensePool / 2.0) + w.getDefense();
+                
+                grid.add(new Label(w.getName()), 0, row);
+                grid.add(new Label(String.valueOf(withering)), 1, row);
+                grid.add(new Label(String.valueOf(decisive)), 2, row);
+                grid.add(new Label(String.valueOf(damage)), 3, row);
+                grid.add(new Label(String.valueOf(defense)), 4, row);
+                
+                row++;
+            }
+            
+            for (javafx.scene.Node n : grid.getChildren()) {
+                if (n instanceof Label l && GridPane.getRowIndex(n) != null && GridPane.getRowIndex(n) > 0) {
+                    l.getStyleClass().add("merit-name");
+                }
+            }
+        };
+
+        // Listeners for all dependencies
+        data.getAttribute("Dexterity").addListener((obs, old, nv) -> refresh.run());
+        data.getAttribute("Strength").addListener((obs, old, nv) -> refresh.run());
+        data.getAbility("Melee").addListener((obs, old, nv) -> refresh.run());
+        data.getAbility("Archery").addListener((obs, old, nv) -> refresh.run());
+        data.getAbility("Brawl").addListener((obs, old, nv) -> refresh.run());
+        data.getWeapons().addListener((javafx.collections.ListChangeListener<? super Weapon>) c -> refresh.run());
+        data.getSpecialties().addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> refresh.run());
+        data.getMartialArtsStyles().addListener((javafx.collections.ListChangeListener<? super MartialArtsStyle>) c -> refresh.run());
+        
+        refresh.run();
+        
+        section.getChildren().addAll(title, grid);
+        return section;
     }
 
     private HBox createHealthLevel(String label, int count) {
@@ -2183,10 +2253,10 @@ public class BuilderUI extends BorderPane {
         grid.add(typeCombo, 1, 2);
         grid.add(new Label("Category:"), 0, 3);
         grid.add(categoryCombo, 1, 3);
-        grid.add(new Label("Specialty:"), 0, 4);
-        grid.add(specialtyCombo, 1, 4);
-        grid.add(new Label("Tags:"), 0, 5);
-        grid.add(tagsList, 1, 5);
+        grid.add(new Label("Tags:"), 0, 4);
+        grid.add(tagsList, 1, 4);
+        grid.add(new Label("Specialty:"), 0, 5);
+        grid.add(specialtyCombo, 1, 5);
 
         dialog.getDialogPane().setContent(grid);
         Platform.runLater(nameField::requestFocus);
