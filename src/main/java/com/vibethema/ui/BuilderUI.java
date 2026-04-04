@@ -25,6 +25,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.scene.Cursor;
 import javafx.stage.Stage;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCombination;
 import javafx.concurrent.Task;
 import java.io.File;
@@ -169,7 +171,44 @@ public class BuilderUI extends BorderPane {
         importMosePdfItem.setOnAction(e -> importMosePdf());
 
         fileMenu.getItems().addAll(saveItem, saveAsItem, loadItem, new SeparatorMenuItem(), importPdfItem, importMosePdfItem);
-        menuBar.getMenus().add(fileMenu);
+        
+        Menu viewMenu = new Menu("View");
+        
+        MenuItem statsTabItem = new MenuItem("Stats");
+        statsTabItem.setAccelerator(KeyCombination.keyCombination("Shortcut+1"));
+        statsTabItem.setOnAction(e -> mainTabPane.getSelectionModel().select(0));
+        
+        MenuItem meritsTabItem = new MenuItem("Merits");
+        meritsTabItem.setAccelerator(KeyCombination.keyCombination("Shortcut+2"));
+        meritsTabItem.setOnAction(e -> mainTabPane.getSelectionModel().select(1));
+        
+        MenuItem equipmentTabItem = new MenuItem("Equipment");
+        equipmentTabItem.setAccelerator(KeyCombination.keyCombination("Shortcut+3"));
+        equipmentTabItem.setOnAction(e -> mainTabPane.getSelectionModel().select(2));
+        
+        MenuItem charmsTabItem = new MenuItem("Charms");
+        charmsTabItem.setAccelerator(KeyCombination.keyCombination("Shortcut+4"));
+        charmsTabItem.setOnAction(e -> mainTabPane.getSelectionModel().select(3));
+        
+        MenuItem martialArtsTabItem = new MenuItem("Martial Arts");
+        martialArtsTabItem.setAccelerator(KeyCombination.keyCombination("Shortcut+5"));
+        martialArtsTabItem.setOnAction(e -> mainTabPane.getSelectionModel().select(4));
+
+        MenuItem nextTabItem = new MenuItem("Next Tab");
+        nextTabItem.setAccelerator(KeyCombination.keyCombination("Shortcut+Shift+]"));
+        nextTabItem.setOnAction(e -> cycleTab(1));
+
+        MenuItem prevTabItem = new MenuItem("Previous Tab");
+        prevTabItem.setAccelerator(KeyCombination.keyCombination("Shortcut+Shift+["));
+        prevTabItem.setOnAction(e -> cycleTab(-1));
+
+        viewMenu.getItems().addAll(
+            statsTabItem, meritsTabItem, equipmentTabItem, charmsTabItem, martialArtsTabItem,
+            new SeparatorMenuItem(),
+            nextTabItem, prevTabItem
+        );
+
+        menuBar.getMenus().addAll(fileMenu, viewMenu);
 
         topContainer.getChildren().addAll(menuBar, createHeader());
         return topContainer;
@@ -422,6 +461,34 @@ public class BuilderUI extends BorderPane {
             ca.ratingProperty().addListener((obs, ov, nv) -> updateFooter());
         }
 
+        // Global Tab Navigation Shortcuts
+        mainTabPane.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            // General Ctrl+Tab cycling (all platforms)
+            if (event.isControlDown() && event.getCode() == KeyCode.TAB) {
+                cycleTab(event.isShiftDown() ? -1 : 1);
+                event.consume();
+            } 
+            // Mac-style Cmd+Option+Arrows
+            else if (event.isShortcutDown() && event.isAltDown()) {
+                if (event.getCode() == KeyCode.RIGHT) {
+                    cycleTab(1);
+                    event.consume();
+                } else if (event.getCode() == KeyCode.LEFT) {
+                    cycleTab(-1);
+                    event.consume();
+                }
+            }
+            // Win/Linux style Shortcut+PgUp/PgDn
+            else if (event.isShortcutDown()) {
+                if (event.getCode() == KeyCode.PAGE_DOWN) {
+                    cycleTab(1);
+                    event.consume();
+                } else if (event.getCode() == KeyCode.PAGE_UP) {
+                    cycleTab(-1);
+                    event.consume();
+                }
+            }
+        });
     }
 
     private void updateFooter() {
@@ -1428,6 +1495,15 @@ public class BuilderUI extends BorderPane {
         return charmsView;
     }
 
+
+    private void cycleTab(int direction) {
+        if (mainTabPane == null) return;
+        int count = mainTabPane.getTabs().size();
+        if (count == 0) return;
+        int current = mainTabPane.getSelectionModel().getSelectedIndex();
+        int next = (current + direction + count) % count;
+        mainTabPane.getSelectionModel().select(next);
+    }
 
     private void jumpToCharmAbility(String abilityName) {
         if (mainTabPane == null) return;
