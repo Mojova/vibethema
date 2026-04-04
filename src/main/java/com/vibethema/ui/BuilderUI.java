@@ -1059,8 +1059,17 @@ public class BuilderUI extends BorderPane {
         hardnessVal.textProperty().bind(Bindings.concat("Hardness: ", data.totalHardnessProperty().asString()));
         hardnessVal.getStyleClass().add("merit-name");
 
-        Label dodgeDefVal = new Label();
-        dodgeDefVal.getStyleClass().add("merit-name");
+        HBox dodgeBox = new HBox(0);
+        dodgeBox.setAlignment(Pos.CENTER_LEFT);
+        Label dodgeBaseLabel = new Label();
+        dodgeBaseLabel.getStyleClass().add("merit-name");
+        Label dodgeBonusLabel = new Label();
+        dodgeBonusLabel.getStyleClass().add("merit-name");
+        dodgeBonusLabel.setStyle("-fx-text-fill: #3498db; -fx-font-weight: bold;");
+        Tooltip dodgeTooltip = new Tooltip("If dodge specialty applies");
+        
+        dodgeBox.getChildren().addAll(dodgeBaseLabel, dodgeBonusLabel);
+
         Runnable updateDodge = () -> {
             int dex = data.getAttribute("Dexterity").get();
             int dodge = data.getAbility("Dodge").get();
@@ -1071,16 +1080,21 @@ public class BuilderUI extends BorderPane {
             boolean hasDodgeSpec = data.getSpecialties().stream()
                     .anyMatch(s -> "Dodge".equals(s.getAbility()) && s.getName() != null && !s.getName().trim().isEmpty());
             
-            String text = "Dodge Defense: " + base;
-            if (hasDodgeSpec) text += " + " + bonus;
-            dodgeDefVal.setText(text);
+            dodgeBaseLabel.setText("Dodge Defense: " + base);
+            if (hasDodgeSpec) {
+                dodgeBonusLabel.setText(" + " + bonus);
+                Tooltip.install(dodgeBonusLabel, dodgeTooltip);
+            } else {
+                dodgeBonusLabel.setText("");
+                Tooltip.uninstall(dodgeBonusLabel, dodgeTooltip);
+            }
         };
         data.getAttribute("Dexterity").addListener((obs, oldVal, newVal) -> updateDodge.run());
         data.getAbility("Dodge").addListener((obs, oldVal, newVal) -> updateDodge.run());
         data.getSpecialties().addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> updateDodge.run());
         updateDodge.run();
         
-        statsList.getChildren().addAll(naturalSoakVal, armorSoakVal, totalSoakVal, hardnessVal, dodgeDefVal);
+        statsList.getChildren().addAll(naturalSoakVal, armorSoakVal, totalSoakVal, hardnessVal, dodgeBox);
         combatBox.getChildren().addAll(combatLabel, statsList);
 
         HBox statsRow = new HBox(40);

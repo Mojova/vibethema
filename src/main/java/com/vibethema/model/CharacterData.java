@@ -45,7 +45,8 @@ public class CharacterData {
     
     private final ObservableList<PurchasedCharm> unlockedCharms = FXCollections.observableArrayList();
     private final ObservableList<Merit> merits = FXCollections.observableArrayList();
-    private final ObservableList<Specialty> specialties = FXCollections.observableArrayList();
+    private final ObservableList<Specialty> specialties = FXCollections.observableArrayList(s -> 
+        new javafx.beans.Observable[] { s.nameProperty(), s.abilityProperty() });
     private final ObservableList<CraftAbility> crafts = FXCollections.observableArrayList();
     private final ObservableList<MartialArtsStyle> martialArtsStyles = FXCollections.observableArrayList();
     private final ObservableList<Weapon> weapons = FXCollections.observableArrayList();
