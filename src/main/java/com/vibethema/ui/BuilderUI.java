@@ -1356,8 +1356,41 @@ public class BuilderUI extends BorderPane {
         data.getAbility("Dodge").addListener((obs, oldVal, newVal) -> updateEvasion.run());
         data.getSpecialties().addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> updateEvasion.run());
         updateEvasion.run();
+
+        HBox joinBattleBox = new HBox(0);
+        joinBattleBox.setAlignment(Pos.CENTER_LEFT);
+        Label joinBattleLabel = new Label();
+        joinBattleLabel.getStyleClass().add("merit-name");
+        Label joinBattleBonusLabel = new Label();
+        joinBattleBonusLabel.getStyleClass().add("merit-name");
+        joinBattleBonusLabel.setStyle("-fx-text-fill: #3498db; -fx-font-weight: bold;");
+        Tooltip awarenessTooltip = new Tooltip("If awareness specialty applies");
+
+        joinBattleBox.getChildren().addAll(joinBattleLabel, joinBattleBonusLabel);
+
+        Runnable updateJoinBattle = () -> {
+            int wits = data.getAttribute("Wits").get();
+            int awareness = data.getAbility("Awareness").get();
+            int base = wits + awareness;
+            
+            boolean hasAwarenessSpec = data.getSpecialties().stream()
+                    .anyMatch(s -> "Awareness".equals(s.getAbility()) && s.getName() != null && !s.getName().trim().isEmpty());
+            
+            joinBattleLabel.setText("Join Battle: " + base);
+            if (hasAwarenessSpec) {
+                joinBattleBonusLabel.setText(" + 1");
+                Tooltip.install(joinBattleBonusLabel, awarenessTooltip);
+            } else {
+                joinBattleBonusLabel.setText("");
+                Tooltip.uninstall(joinBattleBonusLabel, awarenessTooltip);
+            }
+        };
+        data.getAttribute("Wits").addListener((obs, oldVal, newVal) -> updateJoinBattle.run());
+        data.getAbility("Awareness").addListener((obs, oldVal, newVal) -> updateJoinBattle.run());
+        data.getSpecialties().addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> updateJoinBattle.run());
+        updateJoinBattle.run();
         
-        statsList.getChildren().addAll(naturalSoakVal, armorSoakVal, totalSoakVal, hardnessVal, dodgeBox);
+        statsList.getChildren().addAll(naturalSoakVal, armorSoakVal, totalSoakVal, hardnessVal, dodgeBox, joinBattleBox);
         combatBox.getChildren().addAll(combatLabel, statsList);
         return combatBox;
     }
