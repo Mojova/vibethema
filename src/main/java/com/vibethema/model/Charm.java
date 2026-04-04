@@ -1,6 +1,7 @@
 package com.vibethema.model;
 
 import java.util.List;
+import java.util.UUID;
 
 public class Charm {
     private String id;
@@ -22,7 +23,9 @@ public class Charm {
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
-    public Charm() {}
+    public Charm() {
+        this.id = UUID.randomUUID().toString();
+    }
 
     public String getName() { return name; }
     public String getAbility() { return ability; }

@@ -2030,7 +2030,11 @@ public class BuilderUI extends BorderPane {
 
             if (loaded != null) {
                 currentCharms.addAll(loaded);
-                for (Charm c : loaded) globalCharmNameMap.put(c.getId(), c.getName());
+                for (Charm c : loaded) {
+                    if (c.getId() != null && c.getName() != null) {
+                        globalCharmNameMap.put(c.getId(), c.getName());
+                    }
+                }
             }
 
             currentRatingProperty = "Evocation".equals(filterType) ? null : data.getAbilityProperty(selection);
