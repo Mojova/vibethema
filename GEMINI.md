@@ -21,11 +21,14 @@ A JavaFX-based character creator for Exalted 3rd Edition. The application focuse
     - `MartialArtsStyle`: style name/rating/status (Caste/Favored).
     - `Weapon`: name/range/type/category/tags/stats.
     - `Charm`/`PurchasedCharm`: metadata vs. instance data.
+    - **Stackable Charms**: Supported via the `Stackable` keyword. The UI allows multiple purchases up to a defined limit (e.g., Resistance rating for Ox-Body), and stepwise refunds via `removeOneCharm()`.
     - **Reactive Updates**: Relies on listeners attached in `setupListeners()` to refresh the footer and other dynamic elements when model properties change.
 
 ### Service Layer (`com.vibethema.service`)
 - **`CharmDataService`**: Manages charm loading from resources and local storage.
     - Merges core data with user-defined charms from `[ability]-custom.json`.
+- **`PdfExtractor`**: Handles run-time extraction of data from the Exalted 3e Core PDF.
+    - Extracts equipment tags (melee, thrown, archery, armor) into `~/.vibethema/equipment_tags.json`.
 - **`PdfExtractor`**: Handles run-time extraction of data from the Exalted 3e Core PDF using Apache PDFBox.
 - **`DotSelector`**: A custom UI component for rating attributes and abilities (0-5 dots).
 
