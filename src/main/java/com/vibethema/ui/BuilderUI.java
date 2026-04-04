@@ -1496,7 +1496,7 @@ public class BuilderUI extends BorderPane {
         grid.getStyleClass().add("merit-row-container");
         grid.setPadding(new Insets(10));
         
-        String[] headers = {"Weapon", "Withering", "Decisive", "Damage", "Defense"};
+        String[] headers = {"Weapon", "Withering", "Decisive", "Damage", "Parry"};
         for (int i = 0; i < headers.length; i++) {
             Label hl = new Label(headers[i]);
             hl.getStyleClass().add("sidebar-stat-header");
@@ -1534,14 +1534,14 @@ public class BuilderUI extends BorderPane {
                 
                 int decisive = dex + abil + spec;
                 int damage = str + w.getDamage();
-                int defensePool = dex + abil + spec;
-                int defense = (int) Math.ceil(defensePool / 2.0) + w.getDefense();
+                int parryPool = dex + abil + spec;
+                int parry = (int) Math.ceil(parryPool / 2.0) + w.getDefense();
                 
                 grid.add(new Label(w.getName()), 0, row);
                 grid.add(new Label(witheringStr), 1, row);
                 grid.add(new Label(String.valueOf(decisive)), 2, row);
                 grid.add(new Label(String.valueOf(damage)), 3, row);
-                grid.add(new Label(String.valueOf(defense)), 4, row);
+                grid.add(new Label(String.valueOf(parry)), 4, row);
                 
                 row++;
             }
