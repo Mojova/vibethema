@@ -583,7 +583,7 @@ public class BuilderUI extends BorderPane {
                 boolean notInCasteList = c == null || c == CharacterData.Caste.NONE
                         || !CharacterData.CASTE_OPTIONS.get(c).contains(ability);
                 boolean atLimit = casteCount.get() >= 5 && !data.getCasteAbility(ability).get();
-                return notInCasteList || atLimit;
+                return (notInCasteList || atLimit) && !data.getCasteAbility(ability).get();
             }, data.casteProperty(), casteCount, data.getCasteAbility(ability)));
 
             CheckBox favoredBox = new CheckBox("F");
@@ -594,7 +594,7 @@ public class BuilderUI extends BorderPane {
                     return true; // Synced with Brawl
                 boolean isCaste = data.getCasteAbility(ability).get();
                 boolean atLimit = favoredCount.get() >= 5 && !data.getFavoredAbility(ability).get();
-                return isCaste || atLimit;
+                return (isCaste || atLimit) && !data.getFavoredAbility(ability).get();
             }, data.getCasteAbility(ability), favoredCount, data.getFavoredAbility(ability)));
 
             data.getCasteAbility(ability).addListener((obs, oldV, newV) -> {
@@ -853,7 +853,7 @@ public class BuilderUI extends BorderPane {
             boolean notInCasteList = c == null || c == CharacterData.Caste.NONE
                     || !CharacterData.CASTE_OPTIONS.get(c).contains("Craft");
             boolean atLimit = casteCount.get() >= 5 && !data.getCasteAbility("Craft").get();
-            return notInCasteList || atLimit;
+            return (notInCasteList || atLimit) && !data.getCasteAbility("Craft").get();
         }, data.casteProperty(), casteCount, data.getCasteAbility("Craft")));
 
         CheckBox favoredBox = new CheckBox("F");
@@ -862,7 +862,7 @@ public class BuilderUI extends BorderPane {
         favoredBox.disableProperty().bind(Bindings.createBooleanBinding(() -> {
             boolean isCaste = data.getCasteAbility("Craft").get();
             boolean atLimit = favoredCount.get() >= 5 && !data.getFavoredAbility("Craft").get();
-            return isCaste || atLimit;
+            return (isCaste || atLimit) && !data.getFavoredAbility("Craft").get();
         }, data.getCasteAbility("Craft"), favoredCount, data.getFavoredAbility("Craft")));
 
         data.getCasteAbility("Craft").addListener((obs, oldV, newV) -> {
