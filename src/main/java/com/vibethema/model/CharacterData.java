@@ -164,6 +164,7 @@ public class CharacterData {
         
         merits.add(new Merit("", 1));
         specialties.add(new Specialty("", ""));
+        updateCombatStats();
         dirty.set(false);
     }
 
