@@ -18,6 +18,7 @@ public class Charm {
     private String fullText;
     private String rawData;
     private boolean potentiallyProblematicImport;
+    private String category; // "solar", "martialArts", "evocation"
     private transient boolean isCustom;
 
     public String getId() { return id; }
@@ -39,6 +40,8 @@ public class Charm {
     public String getDuration() { return duration; }
     public String getFullText() { return fullText; }
     public String getRawData() { return rawData; }
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
 
     public void setName(String name) { this.name = name; }
     public void setAbility(String ability) { this.ability = ability; }
@@ -82,7 +85,7 @@ public class Charm {
         }
         
         if (effectiveEssence < minEssence) return false;
-        if (data.getAbilityRating(ability) < minAbility) return false;
+        if (!"evocation".equalsIgnoreCase(category) && data.getAbilityRating(ability) < minAbility) return false;
         
         if (prerequisites != null) {
             for (String reqId : prerequisites) {

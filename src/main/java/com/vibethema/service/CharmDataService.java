@@ -77,6 +77,19 @@ public class CharmDataService {
         }
     }
 
+    public static class EvocationCollection {
+        public String artifactId;
+        public String artifactName;
+        public List<Charm> evocations = new ArrayList<>();
+
+        public EvocationCollection() {}
+        public EvocationCollection(String artifactId, String artifactName, List<Charm> charms) {
+            this.artifactId = artifactId;
+            this.artifactName = artifactName;
+            this.evocations = charms;
+        }
+    }
+
     public void exportSchema() throws IOException {
         Path charmsDir = getUserCharmsPath();
         if (!Files.exists(charmsDir)) Files.createDirectories(charmsDir);
@@ -185,13 +198,31 @@ public class CharmDataService {
         }
     }
 
-    public List<Charm> loadEvocations(String artifactId) {
-        List<Charm> charms = new ArrayList<>();
+    public EvocationCollection loadEvocations(String artifactId) {
         Path filePath = getUserEvocationsPath().resolve(artifactId + ".json");
         if (Files.exists(filePath)) {
-            loadFromFile(filePath, charms);
+            try (Reader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
+                // Try reading as new EvocationCollection format
+                EvocationCollection collection = gson.fromJson(reader, EvocationCollection.class);
+                // If it has artifactName, it's the new format
+                if (collection != null && collection.evocations != null && collection.artifactName != null) {
+                    return collection;
+                }
+            } catch (IOException e) {
+                System.err.println("Error loading evocations (new format): " + e.getMessage());
+            }
+
+            // Fallback: Try reading as old CharmListWrapper format
+            try (Reader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
+                CharmListWrapper wrapper = gson.fromJson(reader, CharmListWrapper.class);
+                if (wrapper != null && wrapper.charms != null) {
+                    return new EvocationCollection(artifactId, wrapper.ability, wrapper.charms);
+                }
+            } catch (IOException e) {
+                System.err.println("Error loading evocations (old format): " + e.getMessage());
+            }
         }
-        return charms;
+        return new EvocationCollection(artifactId, "Artifact (" + (artifactId.length() > 8 ? artifactId.substring(0, 8) : artifactId) + ")", new ArrayList<>());
     }
 
     public void saveEvocation(String artifactId, String artifactName, Charm charm) throws IOException {
@@ -200,7 +231,10 @@ public class CharmDataService {
             Files.createDirectories(filePath.getParent());
         }
 
-        List<Charm> charms = loadEvocations(artifactId);
+        EvocationCollection collection = loadEvocations(artifactId);
+        collection.artifactName = artifactName; // Ensure name is current
+        
+        List<Charm> charms = collection.evocations;
         boolean found = false;
         for (int i = 0; i < charms.size(); i++) {
             if (charms.get(i).getId().equals(charm.getId())) {
@@ -213,7 +247,7 @@ public class CharmDataService {
 
         Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
         try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
-            prettyGson.toJson(new CharmListWrapper(artifactName, "evocation", charms), writer);
+            prettyGson.toJson(collection, writer);
         }
     }
 
@@ -221,15 +255,12 @@ public class CharmDataService {
         Path filePath = getUserEvocationsPath().resolve(artifactId + ".json");
         if (!Files.exists(filePath)) return;
 
-        List<Charm> charms = loadEvocations(artifactId);
-        charms.removeIf(c -> c.getId().equals(charm.getId()));
+        EvocationCollection collection = loadEvocations(artifactId);
+        collection.evocations.removeIf(c -> c.getId().equals(charm.getId()));
 
         Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
         try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
-            // Need the artifact name for the wrapper. We can extract it from the existing file or pass it.
-            // Let's reload everything to be safe.
-            String artifactName = charm.getAbility(); 
-            prettyGson.toJson(new CharmListWrapper(artifactName, "evocation", charms), writer);
+            prettyGson.toJson(collection, writer);
         }
     }
 

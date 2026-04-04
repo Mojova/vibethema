@@ -1928,7 +1928,7 @@ public class BuilderUI extends BorderPane {
                 controls.getChildren().addAll(comboLabel, filterCombo);
             }
             
-            Button createCharmBtn = new Button("Create New Charm");
+            Button createCharmBtn = new Button("Evocation".equals(filterType) ? "Create New Evocation" : "Create New Charm");
             createCharmBtn.getStyleClass().add("action-btn");
             String contextName = filterCombo != null ? filterCombo.getValue() : artifactId;
             createCharmBtn.setOnAction(e -> showCreateCharmDialog(contextName, filterType));
@@ -2023,9 +2023,16 @@ public class BuilderUI extends BorderPane {
 
             List<Charm> loaded;
             if ("Evocation".equals(filterType)) {
-                loaded = dataService.loadEvocations(selection);
+                CharmDataService.EvocationCollection collection = dataService.loadEvocations(selection);
+                if (collection != null) {
+                    loaded = collection.evocations;
+                    titleLabel.setText("Evocations of " + collection.artifactName + " (" + loaded.size() + ")");
+                } else {
+                    loaded = new ArrayList<>();
+                }
             } else {
                 loaded = dataService.loadCharmsForAbility(selection);
+                titleLabel.setText(selection + " Charms Web (" + loaded.size() + ")");
             }
 
             if (loaded != null) {
@@ -2047,9 +2054,8 @@ public class BuilderUI extends BorderPane {
             }
 
             drawCharmWeb(currentCharms, selection);
-            titleLabel.setText(selection + " Charms Web (" + currentCharms.size() + ")");
 
-            detailTitle.setText("No Charm Selected");
+            detailTitle.setText("No " + ("Evocation".equals(filterType) ? "Evocation" : "Charm") + " Selected");
             detailReqs.setText("");
             costLabel.setText("");
             typeLabel.setText("");
@@ -2129,7 +2135,12 @@ public class BuilderUI extends BorderPane {
                     nameLbl.getStyleClass().add("charm-node-title");
                     nameLbl.setWrapText(true);
 
-                    Label reqLbl = new Label(c.getAbility() + " " + c.getMinAbility() + ", Ess " + c.getMinEssence());
+                    Label reqLbl;
+                    if ("Evocation".equals(filterType)) {
+                        reqLbl = new Label("Ess " + c.getMinEssence());
+                    } else {
+                        reqLbl = new Label(c.getAbility() + " " + c.getMinAbility() + ", Ess " + c.getMinEssence());
+                    }
                     reqLbl.getStyleClass().add("charm-node-reqs");
 
                     box.getChildren().addAll(nameLbl, reqLbl);
@@ -2159,8 +2170,13 @@ public class BuilderUI extends BorderPane {
                         }
                         String prereqStr = prereqNames.isEmpty() ? "None" : String.join(", ", prereqNames);
                         
-                        String baseReqs = "Mins: " + c.getAbility() + " " + c.getMinAbility() + ", Ess: "
-                                + c.getMinEssence() + "\nPrereqs: " + prereqStr;
+                        String baseReqs;
+                        if ("Evocation".equals(filterType)) {
+                            baseReqs = "Mins: Ess " + c.getMinEssence() + "\nPrereqs: " + prereqStr;
+                        } else {
+                            baseReqs = "Mins: " + c.getAbility() + " " + c.getMinAbility() + ", Ess: "
+                                    + c.getMinEssence() + "\nPrereqs: " + prereqStr;
+                        }
                         if (c.isPotentiallyProblematicImport()) {
                             baseReqs = "⚠️ WARNING: Problematic Import\n" + baseReqs;
                         }
@@ -2211,7 +2227,8 @@ public class BuilderUI extends BorderPane {
                 String selectedName = detailTitle.getText();
                 Charm c = charms.stream().filter(ch -> ch.getName().equals(selectedName)).findFirst().orElse(null);
                 if (c != null && c.isCustom()) {
-                    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete the custom charm '" + c.getName() + "'?", ButtonType.YES, ButtonType.NO);
+                    String term = "Evocation".equals(filterType) ? "evocation" : "charm";
+                    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete the custom " + term + " '" + c.getName() + "'?", ButtonType.YES, ButtonType.NO);
                     confirm.showAndWait().ifPresent(response -> {
                         if (response == ButtonType.YES) {
                             try {
@@ -2259,6 +2276,7 @@ public class BuilderUI extends BorderPane {
             deleteCustomBtn.setVisible(c.isCustom());
             deleteCustomBtn.setManaged(c.isCustom());
 
+            String term = "Evocation".equals(filterType) ? "Evocation" : "Charm";
             if (stackable) {
                 int limit = isOxBody ? data.getAbility("Resistance").get() : 10; // Default limit for other stackable
                 toggleBtn.setText("Purchase (" + count + "/" + limit + ")");
@@ -2266,14 +2284,15 @@ public class BuilderUI extends BorderPane {
                 toggleBtn.setStyle("-fx-base: #d4af37;");
                 refundBtn.setVisible(count > 0);
                 refundBtn.setManaged(count > 0);
+                refundBtn.setText("Refund " + term);
             } else if (data.hasCharm(c.getId())) {
-                toggleBtn.setText("Refund Charm");
+                toggleBtn.setText("Refund " + term);
                 toggleBtn.setDisable(false);
                 toggleBtn.setStyle("-fx-base: #a03030;");
                 refundBtn.setVisible(false);
                 refundBtn.setManaged(false);
             } else if (c.isEligible(data)) {
-                toggleBtn.setText("Purchase Charm");
+                toggleBtn.setText("Purchase " + term);
                 toggleBtn.setDisable(false);
                 toggleBtn.setStyle("-fx-base: #d4af37;");
                 refundBtn.setVisible(false);
@@ -2285,6 +2304,8 @@ public class BuilderUI extends BorderPane {
                 refundBtn.setVisible(false);
                 refundBtn.setManaged(false);
             }
+            
+            deleteCustomBtn.setText("Delete Custom " + term);
         }
 
         public void updateWebNodeStyles() {
@@ -2386,7 +2407,8 @@ public class BuilderUI extends BorderPane {
         Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(getScene().getWindow());
-        dialog.setTitle("Create Custom Charm");
+        String term = "Evocation".equals(filterType) ? "Evocation" : "Charm";
+        dialog.setTitle("Create Custom " + term);
 
         VBox root = new VBox(20);
         root.setPadding(new Insets(20));
@@ -2398,11 +2420,10 @@ public class BuilderUI extends BorderPane {
         grid.setVgap(12);
 
         TextField nameField = new TextField();
-        nameField.setPromptText("Charm Name");
+        nameField.setPromptText(term + " Name");
         
         ComboBox<String> abCombo = new ComboBox<>();
         if ("Martial Arts Style".equals(filterType)) {
-            // Only add Martial Arts styles for the MA tab context
             for (MartialArtsStyle mas : data.getMartialArtsStyles()) {
                 if (mas.getStyleName() != null && !mas.getStyleName().isEmpty() && !abCombo.getItems().contains(mas.getStyleName())) {
                     abCombo.getItems().add(mas.getStyleName());
@@ -2412,12 +2433,11 @@ public class BuilderUI extends BorderPane {
             abCombo.getItems().add(defaultAbility);
             abCombo.setDisable(true);
         } else {
-            // Regular abilities for the standard Charms tab
             abCombo.getItems().addAll(CharacterData.ABILITIES);
         }
         abCombo.setValue(defaultAbility != null ? defaultAbility : "Archery");
 
-        Spinner<Integer> minAb = new Spinner<>(0, 5, 1);
+        Spinner<Integer> minAb = new Spinner<>(0, 5, 0);
         Spinner<Integer> minEss = new Spinner<>(1, 5, 1);
         
         TextField costField = new TextField();
@@ -2433,7 +2453,7 @@ public class BuilderUI extends BorderPane {
         durationField.setPromptText("e.g. Instant");
 
         TextArea descArea = new TextArea();
-        descArea.setPromptText("Full Charm Description...");
+        descArea.setPromptText("Full " + term + " Description...");
         descArea.setPrefRowCount(5);
         descArea.setWrapText(true);
 
@@ -2446,7 +2466,8 @@ public class BuilderUI extends BorderPane {
             String selectedAb = abCombo.getValue();
             List<Charm> charms;
             if ("Evocation".equals(filterType)) {
-                charms = dataService.loadEvocations(selectedAb);
+                CharmDataService.EvocationCollection col = dataService.loadEvocations(selectedAb);
+                charms = col != null ? col.evocations : new ArrayList<>();
             } else {
                 charms = dataService.loadCharmsForAbility(selectedAb);
             }
@@ -2457,15 +2478,34 @@ public class BuilderUI extends BorderPane {
         abCombo.valueProperty().addListener((obs, oldV, newV) -> updatePrereqs.run());
         updatePrereqs.run();
 
-        grid.add(new Label("Name:"), 0, 0); grid.add(nameField, 1, 0);
-        grid.add(new Label("Ability:"), 0, 1); grid.add(abCombo, 1, 1);
-        grid.add(new Label("Min Ability:"), 0, 2); grid.add(minAb, 1, 2);
-        grid.add(new Label("Min Essence:"), 0, 3); grid.add(minEss, 1, 3);
-        grid.add(new Label("Cost:"), 0, 4); grid.add(costField, 1, 4);
-        grid.add(new Label("Type:"), 0, 5); grid.add(typeField, 1, 5);
-        grid.add(new Label("Keywords:"), 0, 6); grid.add(keywordsField, 1, 6);
-        grid.add(new Label("Duration:"), 0, 7); grid.add(durationField, 1, 7);
-        grid.add(new Label("Prerequisites:"), 2, 0); grid.add(prereqList, 2, 1, 1, 7);
+        Label abLabel = new Label("Ability:");
+        Label minAbLabel = new Label("Min Ability:");
+        
+        if ("Evocation".equals(filterType)) {
+            abLabel.setVisible(false); abLabel.setManaged(false);
+            abCombo.setVisible(false); abCombo.setManaged(false);
+            minAbLabel.setVisible(false); minAbLabel.setManaged(false);
+            minAb.setVisible(false); minAb.setManaged(false);
+        }
+
+        grid.add(new Label("Name:"), 0, 0);
+        grid.add(nameField, 1, 0);
+        grid.add(abLabel, 0, 1);
+        grid.add(abCombo, 1, 1);
+        grid.add(minAbLabel, 0, 2);
+        grid.add(minAb, 1, 2);
+        grid.add(new Label("Min Essence:"), 0, 3);
+        grid.add(minEss, 1, 3);
+        grid.add(new Label("Cost:"), 0, 4);
+        grid.add(costField, 1, 4);
+        grid.add(new Label("Type:"), 0, 5);
+        grid.add(typeField, 1, 5);
+        grid.add(new Label("Duration:"), 0, 6);
+        grid.add(durationField, 1, 6);
+        grid.add(new Label("Keywords:"), 0, 7);
+        grid.add(keywordsField, 1, 7);
+        grid.add(new Label("Prerequisites:"), 2, 0);
+        grid.add(prereqList, 2, 1, 1, 7);
 
         VBox descBox = new VBox(5, new Label("Description:"), descArea);
         
@@ -2474,12 +2514,12 @@ public class BuilderUI extends BorderPane {
         }
         ((Label)descBox.getChildren().get(0)).setStyle("-fx-text-fill: #f9f6e6;");
 
-        Button saveBtn = new Button("Save Charm");
+        Button saveBtn = new Button("Save " + term);
         saveBtn.getStyleClass().add("action-btn");
         saveBtn.setMaxWidth(Double.MAX_VALUE);
         saveBtn.setOnAction(e -> {
             if (nameField.getText().isEmpty()) {
-                new Alert(Alert.AlertType.ERROR, "Charm name cannot be empty.").showAndWait();
+                new Alert(Alert.AlertType.ERROR, term + " name cannot be empty.").showAndWait();
                 return;
             }
             
@@ -2490,6 +2530,9 @@ public class BuilderUI extends BorderPane {
             nc.setMinEssence(minEss.getValue());
             nc.setCost(costField.getText());
             nc.setType(typeField.getText());
+            nc.setDuration(durationField.getText());
+            nc.setFullText(descArea.getText());
+            nc.setCategory("Evocation".equals(filterType) ? "evocation" : "solar");
             
             List<String> kwList = new ArrayList<>();
             if (!keywordsField.getText().trim().isEmpty()) {
@@ -2499,37 +2542,29 @@ public class BuilderUI extends BorderPane {
                 }
             }
             nc.setKeywords(kwList);
-            nc.setDuration(durationField.getText());
-            nc.setFullText(descArea.getText());
+            
             List<String> selectedIds = prereqList.getSelectionModel().getSelectedItems().stream()
                 .map(nameToId::get)
                 .collect(Collectors.toList());
             nc.setPrerequisites(selectedIds);
             nc.setCustom(true);
 
-            if ("Evocation".equals(filterType)) {
-                try {
+            try {
+                if ("Evocation".equals(filterType)) {
                     dataService.saveEvocation(defaultAbility, defaultAbility, nc);
-                    data.setDirty(true);
-                    refreshCharms();
-                    dialog.close();
-                } catch (IOException ex) {
-                    new Alert(Alert.AlertType.ERROR, "Error saving evocation: " + ex.getMessage()).showAndWait();
-                }
-            } else {
-                try {
+                } else {
                     dataService.saveCharm(nc);
-                    data.setDirty(true);
-                    refreshCharms();
-                    dialog.close();
-                } catch (IOException ex) {
-                    new Alert(Alert.AlertType.ERROR, "Failed to save custom charm: " + ex.getMessage()).showAndWait();
                 }
+                data.setDirty(true);
+                refreshCharms();
+                dialog.close();
+            } catch (IOException ex) {
+                new Alert(Alert.AlertType.ERROR, "Error saving " + term + ": " + ex.getMessage()).showAndWait();
             }
         });
 
         root.getChildren().addAll(grid, descBox, saveBtn);
-        javafx.scene.Scene scene = new javafx.scene.Scene(root);
+        Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
         dialog.setScene(scene);
         dialog.show();
