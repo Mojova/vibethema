@@ -50,6 +50,8 @@ public class CharacterData {
     private final ObservableList<MartialArtsStyle> martialArtsStyles = FXCollections.observableArrayList();
     private final ObservableList<Weapon> weapons = FXCollections.observableArrayList();
     private final ObservableList<Armor> armors = FXCollections.observableArrayList();
+    private final ObservableList<Hearthstone> hearthstones = FXCollections.observableArrayList();
+    private final ObservableList<OtherEquipment> otherEquipment = FXCollections.observableArrayList();
 
 
     private BooleanProperty dirty = new SimpleBooleanProperty(false);
@@ -227,6 +229,8 @@ public class CharacterData {
     public ObservableList<MartialArtsStyle> getMartialArtsStyles() { return martialArtsStyles; }
     public ObservableList<Weapon> getWeapons() { return weapons; }
     public ObservableList<Armor> getArmors() { return armors; }
+    public ObservableList<Hearthstone> getHearthstones() { return hearthstones; }
+    public ObservableList<OtherEquipment> getOtherEquipment() { return otherEquipment; }
     
     public boolean hasCharm(String id) {
         if (id == null) return false;
@@ -440,6 +444,18 @@ public class CharacterData {
             ad.mobilityPenalty = a.getMobilityPenalty(); ad.attunement = a.getAttunement();
             state.armors.add(ad);
         }
+        state.hearthstones = new ArrayList<>();
+        for (Hearthstone h : hearthstones) {
+            CharacterSaveState.HearthstoneData hd = new CharacterSaveState.HearthstoneData();
+            hd.id = h.getId(); hd.name = h.getName(); hd.description = h.getDescription();
+            state.hearthstones.add(hd);
+        }
+        state.otherEquipment = new ArrayList<>();
+        for (OtherEquipment o : otherEquipment) {
+            CharacterSaveState.OtherEquipmentData od = new CharacterSaveState.OtherEquipmentData();
+            od.id = o.getId(); od.name = o.getName(); od.description = o.getDescription();
+            state.otherEquipment.add(od);
+        }
         return state;
     }
 
@@ -523,6 +539,18 @@ public class CharacterData {
                     if (ad.tags != null) a.getTags().setAll(ad.tags);
                     a.setEquipped(ad.equipped);
                     armors.add(a);
+                }
+            }
+            hearthstones.clear();
+            if (state.hearthstones != null) {
+                for (CharacterSaveState.HearthstoneData hd : state.hearthstones) {
+                    hearthstones.add(new Hearthstone(hd.id, hd.name, hd.description));
+                }
+            }
+            otherEquipment.clear();
+            if (state.otherEquipment != null) {
+                for (CharacterSaveState.OtherEquipmentData od : state.otherEquipment) {
+                    otherEquipment.add(new OtherEquipment(od.id, od.name, od.description));
                 }
             }
             dirty.set(false);

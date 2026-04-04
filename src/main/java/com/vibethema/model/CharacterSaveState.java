@@ -21,6 +21,8 @@ public class CharacterSaveState {
     public List<MartialArtsData> martialArts = new ArrayList<>();
     public List<WeaponData> weapons = new ArrayList<>();
     public List<ArmorData> armors = new ArrayList<>();
+    public List<HearthstoneData> hearthstones = new ArrayList<>();
+    public List<OtherEquipmentData> otherEquipment = new ArrayList<>();
     
     public static class SpecialtyData {
         public String name;
@@ -63,5 +65,17 @@ public class CharacterSaveState {
         public boolean equipped;
         
         public int soak, hardness, mobilityPenalty, attunement;
+    }
+
+    public static class HearthstoneData {
+        public String id;
+        public String name;
+        public String description;
+    }
+
+    public static class OtherEquipmentData {
+        public String id;
+        public String name;
+        public String description;
     }
 }
