@@ -25,6 +25,7 @@ public class Spell {
     private final ObservableList<String> keywords = FXCollections.observableArrayList();
     private final StringProperty duration = new SimpleStringProperty("");
     private final StringProperty description = new SimpleStringProperty("");
+    private boolean custom = false;
 
     public Spell() {}
 
@@ -67,4 +68,7 @@ public class Spell {
     public StringProperty descriptionProperty() { return description; }
     public String getDescription() { return description.get(); }
     public void setDescription(String description) { this.description.set(description); }
+
+    public boolean isCustom() { return custom; }
+    public void setCustom(boolean custom) { this.custom = custom; }
 }

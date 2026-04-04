@@ -397,23 +397,134 @@ public class CharmDataService {
     }
 
     public List<Spell> loadSpells(String circle) {
+        List<Spell> result = new ArrayList<>();
+        
+        // 1. Load standard circle spells
         String filename = circle.toLowerCase() + ".json";
-        Path path = getUserSpellsPath().resolve(filename);
+        loadSpellsFromFile(getUserSpellsPath().resolve(filename), result, false);
+        
+        // 2. Load custom circle spells
+        String customFilename = "custom-" + circle.toLowerCase() + ".json";
+        loadSpellsFromFile(getUserSpellsPath().resolve(customFilename), result, true);
+        
+        return result;
+    }
+
+    private void loadSpellsFromFile(Path path, List<Spell> result, boolean isCustom) {
         if (Files.exists(path)) {
             try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
                 SpellListWrapper wrapper = gson.fromJson(reader, SpellListWrapper.class);
                 if (wrapper != null && wrapper.spells != null) {
-                    List<Spell> result = new ArrayList<>();
                     for (CharacterSaveState.SpellData sd : wrapper.spells) {
-                        result.add(new Spell(sd.id, sd.name, sd.circle, sd.cost, sd.keywords, sd.duration, sd.description));
+                        Spell s = new Spell(sd.id, sd.name, sd.circle, sd.cost, sd.keywords, sd.duration, sd.description);
+                        s.setCustom(isCustom);
+                        result.add(s);
                     }
-                    return result;
                 }
             } catch (IOException e) {
-                System.err.println("Error loading spells: " + path + " - " + e.getMessage());
+                System.err.println("Error loading spells from: " + path + " - " + e.getMessage());
             }
         }
-        return new ArrayList<>();
+    }
+
+    public void saveCustomSpell(Spell spell) throws IOException {
+        String circle = spell.getCircle();
+        String filename = "custom-" + circle.toLowerCase() + ".json";
+        Path targetPath = getUserSpellsPath().resolve(filename);
+
+        if (!Files.exists(targetPath.getParent())) {
+            Files.createDirectories(targetPath.getParent());
+        }
+
+        // Load existing
+        List<Spell> existing = loadSpells(circle);
+        existing.removeIf(s -> !s.isCustom()); // We only want to save custom ones to this file
+
+        // Replace or add
+        boolean found = false;
+        for (int i = 0; i < existing.size(); i++) {
+            if (existing.get(i).getId().equals(spell.getId())) {
+                existing.set(i, spell);
+                found = true;
+                break;
+            }
+        }
+        if (!found) existing.add(spell);
+
+        // Convert back to SpellData for serialization
+        List<CharacterSaveState.SpellData> dataList = new ArrayList<>();
+        for (Spell s : existing) {
+            CharacterSaveState.SpellData sd = new CharacterSaveState.SpellData();
+            sd.id = s.getId();
+            sd.name = s.getName();
+            sd.circle = s.getCircle();
+            sd.cost = s.getCost();
+            sd.keywords = new ArrayList<>(s.getKeywords());
+            sd.duration = s.getDuration();
+            sd.description = s.getDescription();
+            dataList.add(sd);
+        }
+
+        SpellListWrapper wrapper = new SpellListWrapper();
+        wrapper.version = "0.1.0";
+        wrapper.circle = circle;
+        wrapper.spells = dataList;
+
+        Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
+        try (Writer writer = Files.newBufferedWriter(targetPath, StandardCharsets.UTF_8)) {
+            prettyGson.toJson(wrapper, writer);
+        }
+    }
+
+    public void deleteCustomSpell(Spell spell) throws IOException {
+        String circle = spell.getCircle();
+        String filename = "custom-" + circle.toLowerCase() + ".json";
+        Path targetPath = getUserSpellsPath().resolve(filename);
+
+        if (!Files.exists(targetPath)) return;
+
+        List<Spell> existing = loadSpells(circle);
+        existing.removeIf(s -> !s.isCustom());
+        existing.removeIf(s -> s.getId().equals(spell.getId()));
+
+        List<CharacterSaveState.SpellData> dataList = new ArrayList<>();
+        for (Spell s : existing) {
+            CharacterSaveState.SpellData sd = new CharacterSaveState.SpellData();
+            sd.id = s.getId();
+            sd.name = s.getName();
+            sd.circle = s.getCircle();
+            sd.cost = s.getCost();
+            sd.keywords = new ArrayList<>(s.getKeywords());
+            sd.duration = s.getDuration();
+            sd.description = s.getDescription();
+            dataList.add(sd);
+        }
+
+        SpellListWrapper wrapper = new SpellListWrapper();
+        wrapper.version = "0.1.0";
+        wrapper.circle = circle;
+        wrapper.spells = dataList;
+
+        Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
+        try (Writer writer = Files.newBufferedWriter(targetPath, StandardCharsets.UTF_8)) {
+            prettyGson.toJson(wrapper, writer);
+        }
+    }
+
+    public void saveCustomKeyword(String name) throws IOException {
+        List<Keyword> keywords = loadKeywords();
+        boolean exists = keywords.stream().anyMatch(k -> k.getName().equalsIgnoreCase(name));
+        if (!exists) {
+            Keyword nk = new Keyword();
+            nk.setName(name);
+            nk.setDescription("User-defined keyword.");
+            keywords.add(nk);
+            
+            Path userPath = getUserCharmsPath().resolve("keywords.json");
+            try (Writer writer = Files.newBufferedWriter(userPath, StandardCharsets.UTF_8)) {
+                new GsonBuilder().setPrettyPrinting().create().toJson(keywords, writer);
+            }
+        }
     }
 
 }
