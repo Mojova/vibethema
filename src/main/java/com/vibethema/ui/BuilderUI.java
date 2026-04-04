@@ -922,14 +922,19 @@ public class BuilderUI extends BorderPane {
 
         data.getMartialArtsStyles().addListener(
                 (javafx.collections.ListChangeListener<? super MartialArtsStyle>) c -> {
-                    refreshStyles.run();
-                    // Listeners for individual style names
+                    boolean structuralChange = false;
                     while (c.next()) {
+                        if (c.wasAdded() || c.wasRemoved() || c.wasPermutated()) {
+                            structuralChange = true;
+                        }
                         if (c.wasAdded()) {
                             for (MartialArtsStyle mas : c.getAddedSubList()) {
                                 mas.styleNameProperty().addListener((obs, ov, nv) -> refreshStylePicker.run());
                             }
                         }
+                    }
+                    if (structuralChange) {
+                        refreshStyles.run();
                     }
                 });
         for (MartialArtsStyle mas : data.getMartialArtsStyles()) {
@@ -1158,8 +1163,16 @@ public class BuilderUI extends BorderPane {
             }
         };
 
-        data.getCrafts()
-                .addListener((javafx.collections.ListChangeListener<? super CraftAbility>) c -> refreshCrafts.run());
+        data.getCrafts().addListener((javafx.collections.ListChangeListener<? super CraftAbility>) c -> {
+            boolean needsRefresh = false;
+            while (c.next()) {
+                if (c.wasAdded() || c.wasRemoved() || c.wasPermutated()) {
+                    needsRefresh = true;
+                    break;
+                }
+            }
+            if (needsRefresh) refreshCrafts.run();
+        });
         refreshCrafts.run();
 
         Button addBtn = new Button("+ Add Craft Ability");
@@ -1207,8 +1220,16 @@ public class BuilderUI extends BorderPane {
             }
         };
 
-        data.getSpecialties()
-                .addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> refreshSpecs.run());
+        data.getSpecialties().addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> {
+            boolean needsRefresh = false;
+            while (c.next()) {
+                if (c.wasAdded() || c.wasRemoved() || c.wasPermutated()) {
+                    needsRefresh = true;
+                    break;
+                }
+            }
+            if (needsRefresh) refreshSpecs.run();
+        });
         refreshSpecs.run();
 
         Button addBtn = new Button("+ Add Specialty");
@@ -1703,8 +1724,16 @@ public class BuilderUI extends BorderPane {
             }
         };
 
-        data.getMerits()
-                .addListener((javafx.collections.ListChangeListener.Change<? extends Merit> c) -> refreshMerits.run());
+        data.getMerits().addListener((javafx.collections.ListChangeListener<? super Merit>) c -> {
+            boolean needsRefresh = false;
+            while (c.next()) {
+                if (c.wasAdded() || c.wasRemoved() || c.wasPermutated()) {
+                    needsRefresh = true;
+                    break;
+                }
+            }
+            if (needsRefresh) refreshMerits.run();
+        });
         refreshMerits.run();
 
         Button addBtn = new Button("+ Add New Merit");
