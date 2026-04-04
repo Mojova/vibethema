@@ -1043,15 +1043,23 @@ public class BuilderUI extends BorderPane {
         statsList.getStyleClass().add("merit-row-container");
         statsList.setPadding(new Insets(5, 10, 5, 10));
         
-        Label soakVal = new Label();
-        soakVal.textProperty().bind(Bindings.concat("Soak: ", data.totalSoakProperty().asString()));
-        soakVal.getStyleClass().add("merit-name");
+        Label naturalSoakVal = new Label();
+        naturalSoakVal.textProperty().bind(Bindings.concat("Natural Soak: ", data.naturalSoakProperty().asString()));
+        naturalSoakVal.getStyleClass().add("merit-name");
+        
+        Label armorSoakVal = new Label();
+        armorSoakVal.textProperty().bind(Bindings.concat("Armor Soak: +", data.armorSoakProperty().asString()));
+        armorSoakVal.getStyleClass().add("merit-name");
+        
+        Label totalSoakVal = new Label();
+        totalSoakVal.textProperty().bind(Bindings.concat("Total Soak: ", data.totalSoakProperty().asString()));
+        totalSoakVal.setStyle("-fx-font-weight: bold; -fx-text-fill: #3498db; -fx-font-size: 1.1em;");
         
         Label hardnessVal = new Label();
         hardnessVal.textProperty().bind(Bindings.concat("Hardness: ", data.totalHardnessProperty().asString()));
         hardnessVal.getStyleClass().add("merit-name");
         
-        statsList.getChildren().addAll(soakVal, hardnessVal);
+        statsList.getChildren().addAll(naturalSoakVal, armorSoakVal, totalSoakVal, hardnessVal);
         combatBox.getChildren().addAll(combatLabel, statsList);
 
         HBox statsRow = new HBox(40);

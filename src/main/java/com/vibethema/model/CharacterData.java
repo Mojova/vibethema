@@ -53,6 +53,8 @@ public class CharacterData {
     private final ObservableList<Hearthstone> hearthstones = FXCollections.observableArrayList();
     private final ObservableList<OtherEquipment> otherEquipment = FXCollections.observableArrayList();
 
+    private final IntegerProperty naturalSoak = new SimpleIntegerProperty(0);
+    private final IntegerProperty armorSoak = new SimpleIntegerProperty(0);
     private final IntegerProperty totalSoak = new SimpleIntegerProperty(0);
     private final IntegerProperty totalHardness = new SimpleIntegerProperty(0);
 
@@ -239,22 +241,26 @@ public class CharacterData {
     public ObservableList<Hearthstone> getHearthstones() { return hearthstones; }
     public ObservableList<OtherEquipment> getOtherEquipment() { return otherEquipment; }
     
+    public IntegerProperty naturalSoakProperty() { return naturalSoak; }
+    public IntegerProperty armorSoakProperty() { return armorSoak; }
     public IntegerProperty totalSoakProperty() { return totalSoak; }
     public IntegerProperty totalHardnessProperty() { return totalHardness; }
     
     public void updateCombatStats() {
         int stamina = attributes.get("Stamina").get();
-        int armorSoak = 0;
-        int armorHardness = 0;
+        int armorSoakVal = 0;
+        int armorHardnessVal = 0;
         for (Armor a : armors) {
             if (a.isEquipped()) {
-                armorSoak = a.getSoak();
-                armorHardness = a.getHardness();
+                armorSoakVal = a.getSoak();
+                armorHardnessVal = a.getHardness();
                 break;
             }
         }
-        totalSoak.set(stamina + armorSoak);
-        totalHardness.set(armorHardness);
+        naturalSoak.set(stamina);
+        armorSoak.set(armorSoakVal);
+        totalSoak.set(stamina + armorSoakVal);
+        totalHardness.set(armorHardnessVal);
     }
     
     public boolean hasCharm(String id) {
