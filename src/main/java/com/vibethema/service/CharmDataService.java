@@ -251,6 +251,18 @@ public class CharmDataService {
         }
     }
 
+    public void updateEvocationCollectionName(String artifactId, String artifactName) throws IOException {
+        Path filePath = getUserEvocationsPath().resolve(artifactId + ".json");
+        if (Files.exists(filePath)) {
+            EvocationCollection collection = loadEvocations(artifactId);
+            collection.artifactName = artifactName;
+            Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
+            try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
+                prettyGson.toJson(collection, writer);
+            }
+        }
+    }
+
     public void deleteEvocation(String artifactId, Charm charm) throws IOException {
         Path filePath = getUserEvocationsPath().resolve(artifactId + ".json");
         if (!Files.exists(filePath)) return;

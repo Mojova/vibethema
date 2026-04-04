@@ -1875,6 +1875,7 @@ public class BuilderUI extends BorderPane {
         private final ComboBox<String> filterCombo;
         private final String filterType; // "Ability", "Martial Arts Style", or "Evocation"
         private final String artifactId; // Only used for "Evocation" mode
+        private final String artifactName; // Only used for "Evocation" mode
         private Pane charmCanvas = new Pane();
         private Map<String, VBox> charmNodeMap = new HashMap<>();
         private List<Charm> currentCharms = new ArrayList<>();
@@ -1903,9 +1904,14 @@ public class BuilderUI extends BorderPane {
         }
 
         public CharmTreeComponent(ComboBox<String> filterCombo, String filterType, String artifactId) {
+            this(filterCombo, filterType, artifactId, null);
+        }
+
+        public CharmTreeComponent(ComboBox<String> filterCombo, String filterType, String artifactId, String artifactName) {
             this.filterCombo = filterCombo;
             this.filterType = filterType;
             this.artifactId = artifactId;
+            this.artifactName = artifactName;
             getStyleClass().add("charms-split-pane");
 
             setupUI();
@@ -1930,8 +1936,9 @@ public class BuilderUI extends BorderPane {
             
             Button createCharmBtn = new Button("Evocation".equals(filterType) ? "Create New Evocation" : "Create New Charm");
             createCharmBtn.getStyleClass().add("action-btn");
-            String contextName = filterCombo != null ? filterCombo.getValue() : artifactId;
-            createCharmBtn.setOnAction(e -> showCreateCharmDialog(contextName, filterType, this::refresh));
+            String contextId = filterCombo != null ? filterCombo.getValue() : artifactId;
+            String contextName = "Evocation".equals(filterType) ? artifactName : contextId;
+            createCharmBtn.setOnAction(e -> showCreateCharmDialog(contextId, contextName, filterType, this::refresh));
 
             controls.getChildren().add(createCharmBtn);
 
@@ -2026,7 +2033,8 @@ public class BuilderUI extends BorderPane {
                 CharmDataService.EvocationCollection collection = dataService.loadEvocations(selection);
                 if (collection != null) {
                     loaded = collection.evocations;
-                    titleLabel.setText("Evocations of " + collection.artifactName + " (" + loaded.size() + ")");
+                    String displayName = (artifactName != null) ? artifactName : collection.artifactName;
+                    titleLabel.setText("Evocations of " + displayName + " (" + loaded.size() + ")");
                 } else {
                     loaded = new ArrayList<>();
                 }
@@ -2190,7 +2198,8 @@ public class BuilderUI extends BorderPane {
                         toggleBtn.setVisible(true);
                         editBtn.setVisible(true);
                         editBtn.setManaged(true);
-                        editBtn.setOnAction(ev -> showEditCharmDialog(c, filterType, this::refresh));
+                        String contextName = "Evocation".equals(filterType) ? artifactName : filterCombo.getValue();
+                        editBtn.setOnAction(ev -> showEditCharmDialog(c, contextName, filterType, this::refresh));
                         updateSidebarButton(c);
 
                         if (e.getClickCount() == 2) {
@@ -2393,7 +2402,7 @@ public class BuilderUI extends BorderPane {
         dialog.initOwner(getScene().getWindow());
         dialog.setTitle("Evocations: " + name);
 
-        CharmTreeComponent tree = new CharmTreeComponent(null, "Evocation", id);
+        CharmTreeComponent tree = new CharmTreeComponent(null, "Evocation", id, name);
         
         VBox root = new VBox(tree);
         VBox.setVgrow(tree, Priority.ALWAYS);
@@ -2403,7 +2412,7 @@ public class BuilderUI extends BorderPane {
         dialog.show();
     }
 
-    private void showCreateCharmDialog(String defaultAbility, String filterType, Runnable onSave) {
+    private void showCreateCharmDialog(String contextId, String contextName, String filterType, Runnable onSave) {
         Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(getScene().getWindow());
@@ -2430,12 +2439,12 @@ public class BuilderUI extends BorderPane {
                 }
             }
         } else if ("Evocation".equals(filterType)) {
-            abCombo.getItems().add(defaultAbility);
+            abCombo.getItems().add(contextName);
             abCombo.setDisable(true);
         } else {
             abCombo.getItems().addAll(CharacterData.ABILITIES);
         }
-        abCombo.setValue(defaultAbility != null ? defaultAbility : "Archery");
+        abCombo.setValue(contextName != null ? contextName : "Archery");
 
         Spinner<Integer> minAb = new Spinner<>(0, 5, 0);
         Spinner<Integer> minEss = new Spinner<>(1, 5, 1);
@@ -2551,7 +2560,7 @@ public class BuilderUI extends BorderPane {
 
             try {
                 if ("Evocation".equals(filterType)) {
-                    dataService.saveEvocation(defaultAbility, defaultAbility, nc);
+                    dataService.saveEvocation(contextId, contextName, nc);
                 } else {
                     dataService.saveCharm(nc);
                 }
@@ -2571,7 +2580,7 @@ public class BuilderUI extends BorderPane {
         dialog.show();
     }
 
-    private void showEditCharmDialog(Charm charm, String filterType, Runnable onSave) {
+    private void showEditCharmDialog(Charm charm, String contextName, String filterType, Runnable onSave) {
         Dialog<ButtonType> dialog = new Dialog<>();
         String term = "Evocation".equals(filterType) || "evocation".equals(charm.getCategory()) ? "Evocation" : "Charm";
         dialog.setTitle("Edit " + term + ": " + charm.getName());
@@ -2704,7 +2713,7 @@ public class BuilderUI extends BorderPane {
                 
                 try {
                     if ("evocation".equals(charm.getCategory())) {
-                        dataService.saveEvocation(charm.getAbility(), charm.getAbility(), charm);
+                        dataService.saveEvocation(charm.getAbility(), contextName, charm);
                     } else {
                         dataService.saveCharm(charm);
                     }
@@ -2925,6 +2934,13 @@ public class BuilderUI extends BorderPane {
             if (existing == null) {
                 data.getWeapons().add(weapon);
             } else {
+                if (weapon.getType() == Weapon.WeaponType.ARTIFACT) {
+                    try {
+                        dataService.updateEvocationCollectionName(weapon.getId(), weapon.getName());
+                    } catch (IOException ex) {
+                        System.err.println("Failed to update evocation name: " + ex.getMessage());
+                    }
+                }
                 refreshWeaponsList();
                 data.setDirty(true);
             }
@@ -3090,6 +3106,13 @@ public class BuilderUI extends BorderPane {
             if (existing == null) {
                 data.getArmors().add(armor);
             } else {
+                if (armor.getType() == Armor.ArmorType.ARTIFACT) {
+                    try {
+                        dataService.updateEvocationCollectionName(armor.getId(), armor.getName());
+                    } catch (IOException ex) {
+                        System.err.println("Failed to update evocation name: " + ex.getMessage());
+                    }
+                }
                 refreshArmorList();
                 data.setDirty(true);
             }
