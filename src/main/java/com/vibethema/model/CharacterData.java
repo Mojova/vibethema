@@ -112,6 +112,16 @@ public class CharacterData {
                 }
             }
         });
+
+        // Default weapon for new characters if tags exist
+        if (java.nio.file.Files.exists(com.vibethema.service.EquipmentDataService.getEquipmentTagsPath())) {
+            Weapon unarmed = new Weapon("Unarmed");
+            unarmed.setRange(Weapon.WeaponRange.CLOSE);
+            unarmed.setType(Weapon.WeaponType.MORTAL);
+            unarmed.setCategory(Weapon.WeaponCategory.LIGHT);
+            unarmed.getTags().addAll(java.util.Arrays.asList("Bashing", "Brawl", "Grappling", "Natural"));
+            weapons.add(unarmed);
+        }
         
         getCasteAbility("Craft").addListener((obs, old, nv) -> {
             for (CraftAbility ca : crafts) ca.setCaste(nv);
