@@ -458,10 +458,15 @@ public class PdfExtractor {
             String desc = cleanDescription(matcher.group(2).trim());
             
             // Further clean descriptions that might have run into headers or page footers
-            String[] stopWords = {"MELEE WEAPON TAGS", "RANGED WEAPON TAGS", "AMMUNITION TAGS", "EX3", "CHAPTER", "T H E  G R A N D  P A N O P L Y"};
+            String[] stopWords = {
+                "Dual Wielding", "Thrown weaPonS", "arChery weaPonS", 
+                "Special Materials", "mundane armor", "Mortal Armor", 
+                "Donning & Removing Armor", "Light Armor", "Medium Armor", "Heavy Armor",
+                "EX3", "CHAPTER", "T H E  G R A N D  P A N O P L Y"
+            };
             for (String stop : stopWords) {
                 if (desc.contains(stop)) {
-                    desc = desc.split(stop)[0].trim();
+                    desc = desc.split(Pattern.quote(stop))[0].trim();
                 }
             }
 
