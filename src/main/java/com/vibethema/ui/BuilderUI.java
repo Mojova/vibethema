@@ -1035,7 +1035,29 @@ public class BuilderUI extends BorderPane {
 
         healthBox.getChildren().addAll(healthLabel, trackBoxes);
 
-        advantagesSection.getChildren().addAll(advTitle, topRow, healthBox);
+        VBox combatBox = new VBox(5);
+        Label combatLabel = new Label("Combat Statistics");
+        combatLabel.getStyleClass().add("subsection-title");
+        
+        VBox statsList = new VBox(5);
+        statsList.getStyleClass().add("merit-row-container");
+        statsList.setPadding(new Insets(5, 10, 5, 10));
+        
+        Label soakVal = new Label();
+        soakVal.textProperty().bind(Bindings.concat("Soak: ", data.totalSoakProperty().asString()));
+        soakVal.getStyleClass().add("merit-name");
+        
+        Label hardnessVal = new Label();
+        hardnessVal.textProperty().bind(Bindings.concat("Hardness: ", data.totalHardnessProperty().asString()));
+        hardnessVal.getStyleClass().add("merit-name");
+        
+        statsList.getChildren().addAll(soakVal, hardnessVal);
+        combatBox.getChildren().addAll(combatLabel, statsList);
+
+        HBox statsRow = new HBox(40);
+        statsRow.getChildren().addAll(healthBox, combatBox);
+
+        advantagesSection.getChildren().addAll(advTitle, topRow, statsRow);
         return advantagesSection;
     }
 

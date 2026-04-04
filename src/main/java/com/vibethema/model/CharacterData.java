@@ -53,6 +53,9 @@ public class CharacterData {
     private final ObservableList<Hearthstone> hearthstones = FXCollections.observableArrayList();
     private final ObservableList<OtherEquipment> otherEquipment = FXCollections.observableArrayList();
 
+    private final IntegerProperty totalSoak = new SimpleIntegerProperty(0);
+    private final IntegerProperty totalHardness = new SimpleIntegerProperty(0);
+
 
     private BooleanProperty dirty = new SimpleBooleanProperty(false);
     private boolean isImporting = false;
@@ -109,11 +112,15 @@ public class CharacterData {
                                     if (other != a) other.setEquipped(false);
                                 }
                             }
+                            updateCombatStats();
                         });
                     }
                 }
             }
+            updateCombatStats();
         });
+
+        attributes.get("Stamina").addListener((obs, oldV, newV) -> updateCombatStats());
 
         // Default weapon for new characters if tags exist
         if (java.nio.file.Files.exists(com.vibethema.service.EquipmentDataService.getEquipmentTagsPath())) {
@@ -231,6 +238,24 @@ public class CharacterData {
     public ObservableList<Armor> getArmors() { return armors; }
     public ObservableList<Hearthstone> getHearthstones() { return hearthstones; }
     public ObservableList<OtherEquipment> getOtherEquipment() { return otherEquipment; }
+    
+    public IntegerProperty totalSoakProperty() { return totalSoak; }
+    public IntegerProperty totalHardnessProperty() { return totalHardness; }
+    
+    public void updateCombatStats() {
+        int stamina = attributes.get("Stamina").get();
+        int armorSoak = 0;
+        int armorHardness = 0;
+        for (Armor a : armors) {
+            if (a.isEquipped()) {
+                armorSoak = a.getSoak();
+                armorHardness = a.getHardness();
+                break;
+            }
+        }
+        totalSoak.set(stamina + armorSoak);
+        totalHardness.set(armorHardness);
+    }
     
     public boolean hasCharm(String id) {
         if (id == null) return false;
