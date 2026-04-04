@@ -640,8 +640,10 @@ public class BuilderUI extends BorderPane {
         int abils = data.getAbilityTotal();
         int bp = data.getBonusPointsSpent();
 
-        long casteCount = CharacterData.ABILITIES.stream().filter(a -> data.getCasteAbility(a).get()).count();
-        long favoredCount = CharacterData.ABILITIES.stream().filter(a -> data.getFavoredAbility(a).get()).count();
+        long casteCount = CharacterData.ABILITIES.stream()
+                .filter(a -> !"Martial Arts".equals(a) && data.getCasteAbility(a).get()).count();
+        long favoredCount = CharacterData.ABILITIES.stream()
+                .filter(a -> !"Martial Arts".equals(a) && data.getFavoredAbility(a).get()).count();
         int charmsCount = data.getTotalCharmPoolUsage();
 
         physicalLabel.setText("Phys: " + phys);
@@ -770,6 +772,7 @@ public class BuilderUI extends BorderPane {
             int c = 0;
             int f = 0;
             for (String abil : CharacterData.ABILITIES) {
+                if ("Martial Arts".equals(abil)) continue;
                 if (data.getCasteAbility(abil).get())
                     c++;
                 if (data.getFavoredAbility(abil).get())
@@ -2887,7 +2890,9 @@ public class BuilderUI extends BorderPane {
         abCombo.setValue(contextName != null ? contextName : "Archery");
 
         Spinner<Integer> minAb = new Spinner<>(0, 5, 0);
+        minAb.setEditable(true);
         Spinner<Integer> minEss = new Spinner<>(1, 5, 1);
+        minEss.setEditable(true);
         
         TextField costField = new TextField();
         costField.setPromptText("e.g. 5m");
