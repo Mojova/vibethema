@@ -1058,8 +1058,22 @@ public class BuilderUI extends BorderPane {
         Label hardnessVal = new Label();
         hardnessVal.textProperty().bind(Bindings.concat("Hardness: ", data.totalHardnessProperty().asString()));
         hardnessVal.getStyleClass().add("merit-name");
+
+        Label dodgeDefVal = new Label();
+        dodgeDefVal.getStyleClass().add("merit-name");
+        Runnable updateDodge = () -> {
+            int dex = data.getAttribute("Dexterity").get();
+            int dodge = data.getAbility("Dodge").get();
+            int base = (int) Math.ceil((dex + dodge) / 2.0);
+            int total = (int) Math.ceil((dex + dodge + 1) / 2.0);
+            int bonus = total - base;
+            dodgeDefVal.setText("Dodge Defense: " + base + " + " + bonus);
+        };
+        data.getAttribute("Dexterity").addListener((obs, oldVal, newVal) -> updateDodge.run());
+        data.getAbility("Dodge").addListener((obs, oldVal, newVal) -> updateDodge.run());
+        updateDodge.run();
         
-        statsList.getChildren().addAll(naturalSoakVal, armorSoakVal, totalSoakVal, hardnessVal);
+        statsList.getChildren().addAll(naturalSoakVal, armorSoakVal, totalSoakVal, hardnessVal, dodgeDefVal);
         combatBox.getChildren().addAll(combatLabel, statsList);
 
         HBox statsRow = new HBox(40);
