@@ -1007,7 +1007,7 @@ public class BuilderUI extends BorderPane {
         Label healthLabel = new Label("Health Levels");
         healthLabel.getStyleClass().add("subsection-title");
 
-        HBox trackBoxes = new HBox(15);
+        VBox trackBoxes = new VBox(8);
         trackBoxes.setAlignment(Pos.CENTER_LEFT);
 
         Runnable updateHealth = () -> {
@@ -1193,6 +1193,7 @@ public class BuilderUI extends BorderPane {
         box.setAlignment(Pos.CENTER_LEFT);
         Label l = new Label(label);
         l.getStyleClass().add("label");
+        l.setPrefWidth(40);
         box.getChildren().add(l);
         for (int i = 0; i < count; i++) {
             StackPane pane = new StackPane();
