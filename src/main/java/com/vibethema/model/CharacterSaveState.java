@@ -25,6 +25,7 @@ public class CharacterSaveState {
     public List<OtherEquipmentData> otherEquipment = new ArrayList<>();
     
     public static class SpecialtyData {
+        public String id;
         public String name;
         public String ability;
     }
@@ -51,6 +52,7 @@ public class CharacterSaveState {
         public Weapon.WeaponType type;
         public Weapon.WeaponCategory category;
         public List<String> tags = new ArrayList<>();
+        public String specialtyId;
         
         public int accuracy, damage, defense, overwhelming, attunement;
         public int closeRangeBonus, shortRangeBonus, mediumRangeBonus, longRangeBonus, extremeRangeBonus;

@@ -47,6 +47,7 @@ public class Weapon {
     private final ObjectProperty<WeaponType> type = new SimpleObjectProperty<>(WeaponType.MORTAL);
     private final ObjectProperty<WeaponCategory> category = new SimpleObjectProperty<>(WeaponCategory.MEDIUM);
     private final ObservableList<String> tags = FXCollections.observableArrayList();
+    private final StringProperty specialtyId = new SimpleStringProperty("");
 
     // Stats
     private final IntegerProperty accuracy = new SimpleIntegerProperty(0);
@@ -210,4 +211,8 @@ public class Weapon {
     public void setCategory(WeaponCategory category) { this.category.set(category); }
 
     public ObservableList<String> getTags() { return tags; }
+
+    public StringProperty specialtyIdProperty() { return specialtyId; }
+    public String getSpecialtyId() { return specialtyId.get(); }
+    public void setSpecialtyId(String id) { this.specialtyId.set(id); }
 }

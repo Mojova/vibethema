@@ -2021,6 +2021,12 @@ public class BuilderUI extends BorderPane {
 
             VBox details = new VBox(5);
             Label nameLabel = new Label(w.getName());
+            if (w.getSpecialtyId() != null && !w.getSpecialtyId().isEmpty()) {
+                Specialty s = data.getSpecialtyById(w.getSpecialtyId());
+                if (s != null) {
+                    nameLabel.setText(w.getName() + " (" + s.getName() + ")");
+                }
+            }
             nameLabel.getStyleClass().add("merit-name");
             
             String statsStr = String.format("Accuracy: %+d | Damage: %d | Defense: %+d | Overwhelming: %d", 
@@ -2085,7 +2091,39 @@ public class BuilderUI extends BorderPane {
         tagsList.setPrefHeight(150);
         javafx.collections.ObservableList<EquipmentDataService.Tag> selectedTags = javafx.collections.FXCollections.observableArrayList();
         
+        ComboBox<Specialty> specialtyCombo = new ComboBox<>();
+        specialtyCombo.setPromptText("Select Specialty");
+        specialtyCombo.setConverter(new javafx.util.StringConverter<Specialty>() {
+            @Override public String toString(Specialty s) { return (s == null) ? "None" : s.getName(); }
+            @Override public Specialty fromString(String string) { return null; }
+        });
+
+        Runnable updateSpecs = () -> {
+            Specialty current = specialtyCombo.getValue();
+            javafx.collections.ObservableList<Specialty> options = javafx.collections.FXCollections.observableArrayList();
+            options.add(null);
+            
+            boolean melee = selectedTags.stream().anyMatch(t -> t.getName().equalsIgnoreCase("Melee"));
+            boolean archery = selectedTags.stream().anyMatch(t -> t.getName().equalsIgnoreCase("Archery"));
+            boolean brawl = selectedTags.stream().anyMatch(t -> t.getName().equalsIgnoreCase("Brawl"));
+            
+            for (Specialty s : data.getSpecialties()) {
+                String abil = s.getAbility();
+                if (melee && "Melee".equals(abil)) options.add(s);
+                else if (archery && "Archery".equals(abil)) options.add(s);
+                else if (brawl && ("Brawl".equals(abil) || data.isMartialArtsStyle(abil))) options.add(s);
+            }
+            specialtyCombo.setItems(options);
+            if (options.contains(current)) specialtyCombo.setValue(current);
+            else specialtyCombo.setValue(null);
+        };
+
+        selectedTags.addListener((javafx.collections.ListChangeListener<? super EquipmentDataService.Tag>) c -> updateSpecs.run());
+
         if (existing != null) {
+            if (existing.getSpecialtyId() != null) {
+                specialtyCombo.setValue(data.getSpecialtyById(existing.getSpecialtyId()));
+            }
             String cat = existing.getRange() == Weapon.WeaponRange.CLOSE ? "melee" : 
                          (existing.getRange() == Weapon.WeaponRange.THROWN ? "thrown" : "archery");
             List<EquipmentDataService.Tag> availableTags = equipmentService.getTagsForCategory(cat);
@@ -2095,6 +2133,7 @@ public class BuilderUI extends BorderPane {
                 }
             }
         }
+        updateSpecs.run();
 
         tagsList.setCellFactory(lv -> new ListCell<>() {
             private final CheckBox cb = new CheckBox();
@@ -2122,20 +2161,19 @@ public class BuilderUI extends BorderPane {
             }
         });
 
-        Runnable updateTags = () -> {
-            tagsList.getItems().setAll(equipmentService.getTagsForCategory(
-                rangeCombo.getValue() == Weapon.WeaponRange.CLOSE ? "melee" : 
-                (rangeCombo.getValue() == Weapon.WeaponRange.THROWN ? "thrown" : "archery")
-            ));
+        Runnable updateTagsList = () -> {
+            String cat = rangeCombo.getValue() == Weapon.WeaponRange.CLOSE ? "melee" : 
+                         (rangeCombo.getValue() == Weapon.WeaponRange.THROWN ? "thrown" : "archery");
+            List<EquipmentDataService.Tag> available = equipmentService.getTagsForCategory(cat);
+            tagsList.getItems().setAll(available);
+            tagsList.refresh();
         };
 
         rangeCombo.setOnAction(e -> {
-            updateTags.run();
-            // Clear selections that aren't in the new range, but this is debatable. 
-            // Better to just clear all selected if range changes.
             selectedTags.clear();
+            updateTagsList.run();
         });
-        updateTags.run();
+        updateTagsList.run();
 
         grid.add(new Label("Name:"), 0, 0);
         grid.add(nameField, 1, 0);
@@ -2145,21 +2183,24 @@ public class BuilderUI extends BorderPane {
         grid.add(typeCombo, 1, 2);
         grid.add(new Label("Category:"), 0, 3);
         grid.add(categoryCombo, 1, 3);
-        grid.add(new Label("Tags:"), 0, 4);
-        grid.add(tagsList, 1, 4);
+        grid.add(new Label("Specialty:"), 0, 4);
+        grid.add(specialtyCombo, 1, 4);
+        grid.add(new Label("Tags:"), 0, 5);
+        grid.add(tagsList, 1, 5);
 
         dialog.getDialogPane().setContent(grid);
         Platform.runLater(nameField::requestFocus);
 
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == saveBtnType) {
-                Weapon w = (existing != null) ? existing : new Weapon(nameField.getText());
-                w.setName(nameField.getText());
-                w.setRange(rangeCombo.getValue());
-                w.setType(typeCombo.getValue());
-                w.setCategory(categoryCombo.getValue());
-                w.getTags().setAll(selectedTags.stream().map(EquipmentDataService.Tag::getName).collect(java.util.stream.Collectors.toList()));
-                return w;
+                Weapon nw = (existing != null) ? existing : new Weapon(nameField.getText());
+                nw.setName(nameField.getText());
+                nw.setRange(rangeCombo.getValue());
+                nw.setType(typeCombo.getValue());
+                nw.setCategory(categoryCombo.getValue());
+                nw.getTags().setAll(selectedTags.stream().map(EquipmentDataService.Tag::getName).collect(java.util.stream.Collectors.toList()));
+                nw.setSpecialtyId(specialtyCombo.getValue() == null ? "" : specialtyCombo.getValue().getId());
+                return nw;
             }
             return null;
         });

@@ -51,4 +51,11 @@ public class EquipmentDataService {
         Map<String, List<Tag>> allTags = loadEquipmentTags();
         return allTags.getOrDefault(category.toLowerCase(), new ArrayList<>());
     }
+
+    public List<Tag> getAllTags() {
+        Map<String, List<Tag>> allTags = loadEquipmentTags();
+        List<Tag> flat = new ArrayList<>();
+        allTags.values().forEach(flat::addAll);
+        return flat;
+    }
 }

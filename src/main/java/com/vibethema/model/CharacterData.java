@@ -235,6 +235,11 @@ public class CharacterData {
     public ObservableList<PurchasedCharm> getUnlockedCharms() { return unlockedCharms; }
     public ObservableList<Merit> getMerits() { return merits; }
     public ObservableList<Specialty> getSpecialties() { return specialties; }
+    
+    public Specialty getSpecialtyById(String id) {
+        if (id == null || id.isEmpty()) return null;
+        return specialties.stream().filter(s -> s.getId().equals(id)).findFirst().orElse(null);
+    }
     public ObservableList<CraftAbility> getCrafts() { return crafts; }
     public ObservableList<MartialArtsStyle> getMartialArtsStyles() { return martialArtsStyles; }
     public ObservableList<Weapon> getWeapons() { return weapons; }
@@ -434,7 +439,9 @@ public class CharacterData {
         state.specialties = new ArrayList<>();
         for (Specialty s : specialties) {
             CharacterSaveState.SpecialtyData sd = new CharacterSaveState.SpecialtyData();
-            sd.name = s.getName(); sd.ability = s.getAbility();
+            sd.id = s.getId();
+            sd.name = s.getName();
+            sd.ability = s.getAbility();
             state.specialties.add(sd);
         }
         state.crafts = new ArrayList<>();
@@ -454,10 +461,13 @@ public class CharacterData {
         state.weapons = new ArrayList<>();
         for (Weapon w : weapons) {
             CharacterSaveState.WeaponData wd = new CharacterSaveState.WeaponData();
-            wd.id = w.getId(); wd.name = w.getName();
-            wd.range = w.getRange(); wd.type = w.getType();
+            wd.id = w.getId();
+            wd.name = w.getName();
+            wd.range = w.getRange();
+            wd.type = w.getType();
             wd.category = w.getCategory();
             wd.tags = new ArrayList<>(w.getTags());
+            wd.specialtyId = w.getSpecialtyId();
             wd.accuracy = w.getAccuracy(); wd.damage = w.getDamage();
             wd.defense = w.getDefense(); wd.overwhelming = w.getOverwhelming();
             wd.attunement = w.getAttunement();
@@ -526,7 +536,11 @@ public class CharacterData {
             if (state.merits != null) for (Map.Entry<String, Integer> e : state.merits.entrySet()) merits.add(new Merit(e.getKey(), e.getValue()));
             if (merits.isEmpty()) merits.add(new Merit("", 1));
             specialties.clear();
-            if (state.specialties != null) for (CharacterSaveState.SpecialtyData sd : state.specialties) specialties.add(new Specialty(sd.name, sd.ability));
+            if (state.specialties != null) {
+                for (CharacterSaveState.SpecialtyData sd : state.specialties) {
+                    specialties.add(new Specialty(sd.id, sd.name, sd.ability));
+                }
+            }
             if (specialties.isEmpty()) specialties.add(new Specialty("", ""));
             crafts.clear();
             if (state.crafts != null) {
@@ -556,9 +570,8 @@ public class CharacterData {
                     String id = wd.id;
                     if (id == null || id.isEmpty()) id = java.util.UUID.randomUUID().toString();
                     Weapon w = new Weapon(id, wd.name, wd.range, wd.type, wd.category);
-                    if (wd.tags != null) w.getTags().setAll(wd.tags);
-                    // Stats are automatically calculated by the constructor/listeners, but we can set them explicitly if we allow manual overrides later.
-                    // For now, since they are automatic, we just ensure the meta-data (range, type, category) is correct.
+                    if (wd.tags != null) w.getTags().addAll(wd.tags);
+                    w.setSpecialtyId(wd.specialtyId);
                     weapons.add(w);
                 }
             }
