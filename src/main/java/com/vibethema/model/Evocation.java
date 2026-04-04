@@ -3,7 +3,7 @@ package com.vibethema.model;
 import java.util.List;
 
 public class Evocation extends Charm {
-    private String artifactId;
+    private transient String artifactId;
 
     public Evocation() {
         super();

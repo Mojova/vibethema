@@ -218,6 +218,9 @@ public class CharmDataService {
                 EvocationCollection collection = gson.fromJson(reader, EvocationCollection.class);
                 // If it has artifactName, it's the new format
                 if (collection != null && collection.evocations != null && collection.artifactName != null) {
+                    for (Charm c : collection.evocations) {
+                        if (c instanceof Evocation e) e.setArtifactId(collection.artifactId);
+                    }
                     return collection;
                 }
             } catch (IOException e) {
@@ -310,6 +313,9 @@ public class CharmDataService {
         try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             CharmListWrapper wrapper = gson.fromJson(reader, CharmListWrapper.class);
             if (wrapper != null && wrapper.charms != null) {
+                for (Charm c : wrapper.charms) {
+                    if (c instanceof SolarCharm sc) sc.setAbility(wrapper.ability);
+                }
                 allCharms.addAll(wrapper.charms);
                 return true;
             }

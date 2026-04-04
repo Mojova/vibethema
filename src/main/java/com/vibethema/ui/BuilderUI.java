@@ -2536,7 +2536,7 @@ public class BuilderUI extends BorderPane {
             
             Charm nc = "Evocation".equals(filterType) ? new Evocation() : new SolarCharm();
             nc.setName(nameField.getText());
-            nc.setAbility(abCombo.getValue());
+            nc.setAbility("Evocation".equals(filterType) ? contextId : abCombo.getValue());
             nc.setMinAbility(minAb.getValue());
             nc.setMinEssence(minEss.getValue());
             nc.setCost(costField.getText());

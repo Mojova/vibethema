@@ -3,7 +3,7 @@ package com.vibethema.model;
 import java.util.List;
 
 public class SolarCharm extends Charm {
-    private String ability;
+    private transient String ability;
     private int minAbility;
 
     public SolarCharm() {
