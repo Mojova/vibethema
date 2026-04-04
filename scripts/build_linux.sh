@@ -30,9 +30,6 @@ jpackage \
   --icon "$ICON_SOURCE" \
   --name "Vibethema" \
   --dest target/dist \
-  --linux-shortcut \
-  --linux-menu-group "Utility" \
-  --file-associations src/main/resources/vbtm.properties \
   --verbose
 
 echo "Build complete. Check target/dist/Vibethema for the native app image."

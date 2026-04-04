@@ -30,7 +30,6 @@ jpackage `
   --icon $ICO_TARGET `
   --name "Vibethema" `
   --dest target/dist `
-  --file-associations src/main/resources/vbtm.properties `
   --verbose
 
 Write-Host "Build complete. Check target/dist/Vibethema for the native executable."
