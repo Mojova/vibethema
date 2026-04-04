@@ -2,11 +2,13 @@ package com.vibethema.ui;
 
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.PdfExtractor;
+import com.vibethema.service.EquipmentDataService;
 import com.vibethema.model.CharacterData;
 import com.vibethema.model.Charm;
 import com.vibethema.model.MartialArtsStyle;
 import com.vibethema.model.PurchasedCharm;
 import com.vibethema.model.Specialty;
+import com.vibethema.model.Weapon;
 import com.google.gson.Gson;
 import javafx.beans.binding.Bindings;
 import javafx.application.Platform;
@@ -53,6 +55,7 @@ public class BuilderUI extends BorderPane {
 
     private Map<String, String> keywordDefs = new HashMap<>();
     private CharmDataService dataService;
+    private EquipmentDataService equipmentService = new EquipmentDataService();
     private List<CharmTreeComponent> charmTrees = new java.util.ArrayList<>();
 
     public BuilderUI(CharacterData data) {
@@ -432,6 +435,51 @@ public class BuilderUI extends BorderPane {
         content.setPadding(new Insets(20));
 
         VBox weaponsSection = createEquipmentSection("Weapons");
+        VBox weaponsList = new VBox(10);
+        weaponsList.getStyleClass().add("merit-row-container"); // reuse style
+
+        Runnable refreshWeapons = () -> {
+            weaponsList.getChildren().clear();
+            for (Weapon w : data.getWeapons()) {
+                HBox row = new HBox(15);
+                row.getStyleClass().add("merit-row");
+                row.setAlignment(Pos.CENTER_LEFT);
+
+                VBox details = new VBox(5);
+                Label nameLabel = new Label(w.getName());
+                nameLabel.getStyleClass().add("merit-name");
+                
+                String statsStr = String.format("Acc: %+d | Dmg: %d | Def: %+d | Over: %d", 
+                    w.getAccuracy(), w.getDamage(), w.getDefense(), w.getOverwhelming());
+                if (w.getAttunement() > 0) statsStr += " | Attune: " + w.getAttunement();
+                
+                Label statsLabel = new Label(statsStr);
+                statsLabel.setStyle("-fx-font-size: 0.9em; -fx-text-fill: #aaa;");
+                
+                Label tagsLabel = new Label("Tags: " + String.join(", ", w.getTags()));
+                tagsLabel.setStyle("-fx-font-style: italic; -fx-font-size: 0.85em; -fx-text-fill: #888;");
+
+                details.getChildren().addAll(nameLabel, statsLabel, tagsLabel);
+                
+                Button delBtn = new Button("🗑");
+                delBtn.getStyleClass().add("remove-btn");
+                delBtn.setOnAction(e -> data.getWeapons().remove(w));
+
+                HBox.setHgrow(details, Priority.ALWAYS);
+                row.getChildren().addAll(details, delBtn);
+                weaponsList.getChildren().add(row);
+            }
+        };
+
+        data.getWeapons().addListener((javafx.collections.ListChangeListener.Change<? extends Weapon> c) -> refreshWeapons.run());
+        refreshWeapons.run();
+
+        Button addWeaponBtn = new Button("+ Add Weapon");
+        addWeaponBtn.getStyleClass().add("add-btn");
+        addWeaponBtn.setOnAction(e -> showAddWeaponDialog());
+
+        weaponsSection.getChildren().addAll(weaponsList, addWeaponBtn);
+
         VBox armorSection = createEquipmentSection("Armor");
         VBox hearthstonesSection = createEquipmentSection("Hearthstones");
         VBox otherSection = createEquipmentSection("Other");
@@ -1909,5 +1957,86 @@ public class BuilderUI extends BorderPane {
         });
 
         dialog.showAndWait().ifPresent(r -> refreshCharms());
+    }
+
+    private void showAddWeaponDialog() {
+        Dialog<Weapon> dialog = new Dialog<>();
+        dialog.setTitle("Add New Weapon");
+        dialog.setHeaderText("Create a new weapon and select its properties.");
+
+        ButtonType addBtnType = new ButtonType("Add", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(addBtnType, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField nameField = new TextField();
+        nameField.setPromptText("Weapon Name");
+        
+        ComboBox<Weapon.WeaponRange> rangeCombo = new ComboBox<>(javafx.collections.FXCollections.observableArrayList(Weapon.WeaponRange.values()));
+        rangeCombo.setValue(Weapon.WeaponRange.CLOSE);
+
+        ComboBox<Weapon.WeaponType> typeCombo = new ComboBox<>(javafx.collections.FXCollections.observableArrayList(Weapon.WeaponType.values()));
+        typeCombo.setValue(Weapon.WeaponType.MORTAL);
+
+        ComboBox<Weapon.WeaponCategory> categoryCombo = new ComboBox<>(javafx.collections.FXCollections.observableArrayList(Weapon.WeaponCategory.values()));
+        categoryCombo.setValue(Weapon.WeaponCategory.MEDIUM);
+
+        FlowPane tagsFlow = new FlowPane(5, 5);
+        tagsFlow.setPrefWrapLength(300);
+        
+        Map<String, CheckBox> tagCheckboxes = new HashMap<>();
+        
+        Runnable updateTags = () -> {
+            tagsFlow.getChildren().clear();
+            tagCheckboxes.clear();
+            String cat = rangeCombo.getValue() == Weapon.WeaponRange.CLOSE ? "melee" : 
+                         (rangeCombo.getValue() == Weapon.WeaponRange.THROWN ? "thrown" : "archery");
+            
+            List<EquipmentDataService.Tag> availableTags = equipmentService.getTagsForCategory(cat);
+            for (EquipmentDataService.Tag t : availableTags) {
+                CheckBox cb = new CheckBox(t.getName());
+                cb.setTooltip(new Tooltip(t.getDescription()));
+                tagCheckboxes.put(t.getName(), cb);
+                tagsFlow.getChildren().add(cb);
+            }
+        };
+
+        rangeCombo.setOnAction(e -> updateTags.run());
+        updateTags.run();
+
+        grid.add(new Label("Name:"), 0, 0);
+        grid.add(nameField, 1, 0);
+        grid.add(new Label("Range:"), 0, 1);
+        grid.add(rangeCombo, 1, 1);
+        grid.add(new Label("Type:"), 0, 2);
+        grid.add(typeCombo, 1, 2);
+        grid.add(new Label("Category:"), 0, 3);
+        grid.add(categoryCombo, 1, 3);
+        grid.add(new Label("Tags:"), 0, 4);
+        grid.add(tagsFlow, 1, 4);
+
+        dialog.getDialogPane().setContent(grid);
+        Platform.runLater(nameField::requestFocus);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == addBtnType) {
+                Weapon w = new Weapon(nameField.getText());
+                w.setRange(rangeCombo.getValue());
+                w.setType(typeCombo.getValue());
+                w.setCategory(categoryCombo.getValue());
+                for (Map.Entry<String, CheckBox> entry : tagCheckboxes.entrySet()) {
+                    if (entry.getValue().isSelected()) {
+                        w.getTags().add(entry.getKey());
+                    }
+                }
+                return w;
+            }
+            return null;
+        });
+
+        dialog.showAndWait().ifPresent(weapon -> data.getWeapons().add(weapon));
     }
 }
