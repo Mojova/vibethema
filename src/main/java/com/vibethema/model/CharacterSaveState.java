@@ -29,6 +29,8 @@ public class CharacterSaveState {
     
     public List<ShapingRitualData> shapingRituals = new ArrayList<>();
     
+    public List<SpellData> spells = new ArrayList<>();
+    
     public static class SpecialtyData {
         public String id;
         public String name;
@@ -98,6 +100,16 @@ public class CharacterSaveState {
     public static class ShapingRitualData {
         public String id;
         public String name;
+        public String description;
+    }
+
+    public static class SpellData {
+        public String id;
+        public String name;
+        public String circle;
+        public String cost;
+        public List<String> keywords;
+        public String duration;
         public String description;
     }
 }

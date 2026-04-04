@@ -59,6 +59,8 @@ public class CharacterData {
         new javafx.beans.Observable[] { i.nameProperty(), i.intensityProperty(), i.descriptionProperty() });
     private final ObservableList<ShapingRitual> shapingRituals = FXCollections.observableArrayList(r ->
         new javafx.beans.Observable[] { r.nameProperty(), r.descriptionProperty() });
+    private final ObservableList<Spell> spells = FXCollections.observableArrayList(s ->
+        new javafx.beans.Observable[] { s.nameProperty(), s.descriptionProperty(), s.circleProperty() });
 
     private final IntegerProperty naturalSoak = new SimpleIntegerProperty(0);
     private final IntegerProperty armorSoak = new SimpleIntegerProperty(0);
@@ -204,6 +206,21 @@ public class CharacterData {
                 }
             }
         });
+        spells.addListener((javafx.collections.ListChangeListener<? super Spell>) c -> {
+            markDirty();
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    for (Spell s : c.getAddedSubList()) {
+                        s.nameProperty().addListener((obs, ov, nv) -> markDirty());
+                        s.descriptionProperty().addListener((obs, ov, nv) -> markDirty());
+                        s.circleProperty().addListener((obs, ov, nv) -> markDirty());
+                        s.costProperty().addListener((obs, ov, nv) -> markDirty());
+                        s.durationProperty().addListener((obs, ov, nv) -> markDirty());
+                        s.getKeywords().addListener((javafx.collections.ListChangeListener<? super String>) kc -> markDirty());
+                    }
+                }
+            }
+        });
         
         merits.add(new Merit("", 1));
         specialties.add(new Specialty("", ""));
@@ -295,6 +312,7 @@ public class CharacterData {
     public ObservableList<OtherEquipment> getOtherEquipment() { return otherEquipment; }
     public ObservableList<Intimacy> getIntimacies() { return intimacies; }
     public ObservableList<ShapingRitual> getShapingRituals() { return shapingRituals; }
+    public ObservableList<Spell> getSpells() { return spells; }
     
     public IntegerProperty naturalSoakProperty() { return naturalSoak; }
     public IntegerProperty armorSoakProperty() { return armorSoak; }
@@ -572,6 +590,14 @@ public class CharacterData {
             rd.id = r.getId(); rd.name = r.getName(); rd.description = r.getDescription();
             state.shapingRituals.add(rd);
         }
+        state.spells = new ArrayList<>();
+        for (Spell s : spells) {
+            CharacterSaveState.SpellData sd = new CharacterSaveState.SpellData();
+            sd.id = s.getId(); sd.name = s.getName(); sd.circle = s.getCircle();
+            sd.cost = s.getCost(); sd.keywords = new ArrayList<>(s.getKeywords());
+            sd.duration = s.getDuration(); sd.description = s.getDescription();
+            state.spells.add(sd);
+        }
         return state;
     }
 
@@ -696,6 +722,12 @@ public class CharacterData {
             if (state.shapingRituals != null) {
                 for (CharacterSaveState.ShapingRitualData rd : state.shapingRituals) {
                     shapingRituals.add(new ShapingRitual(rd.id, rd.name, rd.description));
+                }
+            }
+            spells.clear();
+            if (state.spells != null) {
+                for (CharacterSaveState.SpellData sd : state.spells) {
+                    spells.add(new Spell(sd.id, sd.name, sd.circle, sd.cost, sd.keywords, sd.duration, sd.description));
                 }
             }
             dirty.set(false);
