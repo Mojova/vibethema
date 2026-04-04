@@ -48,6 +48,7 @@ public class CharacterData {
     private final ObservableList<Specialty> specialties = FXCollections.observableArrayList();
     private final ObservableList<CraftAbility> crafts = FXCollections.observableArrayList();
     private final ObservableList<MartialArtsStyle> martialArtsStyles = FXCollections.observableArrayList();
+    private final ObservableList<Weapon> weapons = FXCollections.observableArrayList();
 
     private BooleanProperty dirty = new SimpleBooleanProperty(false);
     private boolean isImporting = false;
@@ -120,6 +121,7 @@ public class CharacterData {
         specialties.addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> markDirty());
         crafts.addListener((javafx.collections.ListChangeListener<? super CraftAbility>) c -> markDirty());
         martialArtsStyles.addListener((javafx.collections.ListChangeListener<? super MartialArtsStyle>) c -> markDirty());
+        weapons.addListener((javafx.collections.ListChangeListener<? super Weapon>) c -> markDirty());
         
         merits.add(new Merit("", 1));
         specialties.add(new Specialty("", ""));
@@ -195,6 +197,7 @@ public class CharacterData {
     public ObservableList<Specialty> getSpecialties() { return specialties; }
     public ObservableList<CraftAbility> getCrafts() { return crafts; }
     public ObservableList<MartialArtsStyle> getMartialArtsStyles() { return martialArtsStyles; }
+    public ObservableList<Weapon> getWeapons() { return weapons; }
     
     public boolean hasCharm(String id) {
         if (id == null) return false;
@@ -372,6 +375,15 @@ public class CharacterData {
             md.isCaste = mas.isCaste(); md.isFavored = mas.isFavored();
             state.martialArts.add(md);
         }
+        state.weapons = new ArrayList<>();
+        for (Weapon w : weapons) {
+            CharacterSaveState.WeaponData wd = new CharacterSaveState.WeaponData();
+            wd.id = w.getId(); wd.name = w.getName();
+            wd.range = w.getRange(); wd.type = w.getType();
+            wd.category = w.getCategory();
+            wd.tags = new ArrayList<>(w.getTags());
+            state.weapons.add(wd);
+        }
         return state;
     }
 
@@ -433,6 +445,16 @@ public class CharacterData {
             for (MartialArtsStyle mas : martialArtsStyles) {
                 mas.setCaste(getCasteAbility("Brawl").get());
                 mas.setFavored(getFavoredAbility("Brawl").get());
+            }
+            weapons.clear();
+            if (state.weapons != null) {
+                for (CharacterSaveState.WeaponData wd : state.weapons) {
+                    String id = wd.id;
+                    if (id == null || id.isEmpty()) id = java.util.UUID.randomUUID().toString();
+                    Weapon w = new Weapon(id, wd.name, wd.range, wd.type, wd.category);
+                    if (wd.tags != null) w.getTags().setAll(wd.tags);
+                    weapons.add(w);
+                }
             }
             dirty.set(false);
         } finally { isImporting = false; }

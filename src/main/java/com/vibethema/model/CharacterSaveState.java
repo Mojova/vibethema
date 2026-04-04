@@ -19,6 +19,7 @@ public class CharacterSaveState {
     public List<SpecialtyData> specialties = new ArrayList<>();
     public List<CraftData> crafts = new ArrayList<>();
     public List<MartialArtsData> martialArts = new ArrayList<>();
+    public List<WeaponData> weapons = new ArrayList<>();
     
     public static class SpecialtyData {
         public String name;
@@ -38,5 +39,14 @@ public class CharacterSaveState {
         public int rating;
         public boolean isCaste;
         public boolean isFavored;
+    }
+
+    public static class WeaponData {
+        public String id;
+        public String name;
+        public Weapon.WeaponRange range;
+        public Weapon.WeaponType type;
+        public Weapon.WeaponCategory category;
+        public List<String> tags = new ArrayList<>();
     }
 }
