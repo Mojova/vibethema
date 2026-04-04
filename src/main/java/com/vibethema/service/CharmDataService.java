@@ -12,7 +12,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CharmDataService {
     private static final String APP_DIR = ".vibethema";
@@ -61,12 +60,14 @@ public class CharmDataService {
         private String $schema = "./charm-schema.json";
         private String version = "0.1.0";
         private String ability;
+        private String type;
         private String exalt = "solar";
         private List<Charm> charms = new ArrayList<>();
 
         public CharmListWrapper() {}
-        public CharmListWrapper(String ability, List<Charm> charms) {
+        public CharmListWrapper(String ability, String type, List<Charm> charms) {
             this.ability = ability;
+            this.type = type;
             this.charms = charms;
         }
     }
@@ -132,10 +133,16 @@ public class CharmDataService {
         }
         if (!found) charms.add(charm);
 
+        // Determine the type for the wrapper
+        String typeAttr = "solarAbility";
+        if (targetPath.startsWith(getUserMartialArtsPath()) || ability.equalsIgnoreCase("Martial Arts")) {
+            typeAttr = "martialArts";
+        }
+
         // Save back pretty-printed with wrapper
         Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
         try (Writer writer = Files.newBufferedWriter(targetPath, StandardCharsets.UTF_8)) {
-            prettyGson.toJson(new CharmListWrapper(ability, charms), writer);
+            prettyGson.toJson(new CharmListWrapper(ability, typeAttr, charms), writer);
         }
         exportSchema(); // Ensure schema is present for the user
     }
@@ -159,9 +166,16 @@ public class CharmDataService {
 
         if (existing != null) {
             existing.removeIf(c -> c.getId().equals(charm.getId()));
+            
+            // Determine the type for the wrapper
+            String typeAttr = "solarAbility";
+            if (filePath.startsWith(getUserMartialArtsPath()) || ability.equalsIgnoreCase("Martial Arts")) {
+                typeAttr = "martialArts";
+            }
+
             Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
             try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
-                prettyGson.toJson(new CharmListWrapper(ability, existing), writer);
+                prettyGson.toJson(new CharmListWrapper(ability, typeAttr, existing), writer);
             }
         }
     }
@@ -200,37 +214,33 @@ public class CharmDataService {
     public List<String> getAvailableMartialArtsStyles() {
         java.util.Set<String> styles = new java.util.TreeSet<>();
         
-        // Scan Resources (limited by getResourceAsStream - hard to "scan" jars easily without libraries)
-        // We already added the core ones above.
-        
         // Scan User Directories
         scanDirectoryForStyles(getUserCharmsPath(), styles);
         scanDirectoryForStyles(getUserMartialArtsPath(), styles);
         
-        // Standard abilities to filter out
-        java.util.Set<String> standard = java.util.Set.of(
-            "archery", "brawl", "martial-arts", "melee", "thrown", "war",
-            "dodge", "integrity", "performance", "presence", "resistance", "survival",
-            "craft", "investigation", "lore", "occult", "medicine",
-            "athletics", "awareness", "larceny", "stealth", "socialize",
-            "bureaucracy", "linguistics", "ride", "sail"
-        );
-        
-        return styles.stream()
-                .filter(s -> !standard.contains(s.toLowerCase().replace(" ", "-")))
-                .collect(Collectors.toList());
+        return new ArrayList<>(styles);
     }
 
     private void scanDirectoryForStyles(Path dir, java.util.Set<String> styles) {
-        if (Files.exists(dir)) {
-            try (java.util.stream.Stream<Path> stream = Files.list(dir)) {
-                stream.filter(p -> p.toString().endsWith(".json") && !p.toString().endsWith("-custom.json") && !p.toString().endsWith("keywords.json"))
-                      .map(p -> p.getFileName().toString().replace(".json", ""))
-                      .map(this::toTitleCase)
-                      .forEach(styles::add);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if (!Files.exists(dir)) return;
+        try (java.util.stream.Stream<Path> stream = Files.list(dir)) {
+            stream.filter(p -> p.toString().endsWith(".json") && 
+                             !p.toString().endsWith("-custom.json") && 
+                             !p.toString().endsWith("keywords.json") &&
+                             !p.toString().endsWith("charm-schema.json"))
+                  .forEach(p -> {
+                      try (Reader reader = Files.newBufferedReader(p, StandardCharsets.UTF_8)) {
+                          CharmListWrapper wrapper = gson.fromJson(reader, CharmListWrapper.class);
+                          if (wrapper != null && "martialArts".equals(wrapper.type)) {
+                              styles.add(wrapper.ability);
+                          }
+                      } catch (Exception e) {
+                          // Skip invalid/unreadable JSON or missing type fields
+                          System.err.println("Skipping non-martialArts style file: " + p + " - " + e.getMessage());
+                      }
+                  });
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -257,20 +267,4 @@ public class CharmDataService {
         }
     }
 
-    private String toTitleCase(String input) {
-        StringBuilder sb = new StringBuilder();
-        boolean nextTitleCase = true;
-        for (char c : input.replace("-", " ").toCharArray()) {
-            if (Character.isSpaceChar(c)) {
-                nextTitleCase = true;
-            } else if (nextTitleCase) {
-                c = Character.toTitleCase(c);
-                nextTitleCase = false;
-            } else {
-                c = Character.toLowerCase(c);
-            }
-            sb.append(c);
-        }
-        return sb.toString();
-    }
 }

@@ -1763,6 +1763,8 @@ public class BuilderUI extends BorderPane {
             refundBtn.setManaged(false);
             deleteCustomBtn.setVisible(false);
             deleteCustomBtn.setManaged(false);
+            editBtn.setVisible(false);
+            editBtn.setManaged(false);
         }
 
         private void drawCharmWeb(List<Charm> charms, String ability) {

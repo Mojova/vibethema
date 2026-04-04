@@ -333,6 +333,7 @@ public class PdfExtractor {
                 wrapper.put("$schema", "./charm-schema.json");
                 wrapper.put("version", "0.1.0");
                 wrapper.put("ability", entry.getKey());
+                wrapper.put("type", entry.getKey().equalsIgnoreCase("Martial Arts") ? "martialArts" : "solarAbility");
                 wrapper.put("exalt", "solar");
                 wrapper.put("charms", entry.getValue());
                 gson.toJson(wrapper, writer);
@@ -354,6 +355,7 @@ public class PdfExtractor {
                 wrapper.put("$schema", "./charm-schema.json");
                 wrapper.put("version", "0.1.0");
                 wrapper.put("ability", entry.getKey());
+                wrapper.put("type", "martialArts");
                 wrapper.put("exalt", "solar");
                 wrapper.put("charms", entry.getValue());
                 gson.toJson(wrapper, writer);
