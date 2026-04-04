@@ -58,8 +58,22 @@ public class BuilderUI extends BorderPane {
     private CharmDataService dataService;
     private EquipmentDataService equipmentService = new EquipmentDataService();
     private List<CharmTreeComponent> charmTrees = new java.util.ArrayList<>();
+    private Map<String, String> tagDescriptions = new java.util.HashMap<>();
     private VBox weaponsListContainer;
     private VBox armorListContainer;
+
+    private void loadTagDescriptions() {
+        Map<String, List<EquipmentDataService.Tag>> allTags = equipmentService.loadEquipmentTags();
+        if (allTags != null) {
+            for (List<EquipmentDataService.Tag> list : allTags.values()) {
+                if (list != null) {
+                    for (EquipmentDataService.Tag t : list) {
+                        tagDescriptions.put(t.getName(), t.getDescription());
+                    }
+                }
+            }
+        }
+    }
 
     public BuilderUI(CharacterData data) {
         this(data, null);
@@ -69,6 +83,7 @@ public class BuilderUI extends BorderPane {
         this.data = data;
         this.currentFile = currentFile;
         this.dataService = new CharmDataService();
+        loadTagDescriptions();
         getStyleClass().add("main-pane");
         loadKeywords();
 
@@ -1960,10 +1975,16 @@ public class BuilderUI extends BorderPane {
             Label statsLabel = new Label(statsStr);
             statsLabel.setStyle("-fx-font-size: 0.9em; -fx-text-fill: #aaa;");
             
-            Label tagsLabel = new Label("Tags: " + String.join(", ", w.getTags()));
-            tagsLabel.setStyle("-fx-font-style: italic; -fx-font-size: 0.85em; -fx-text-fill: #888;");
+            FlowPane tagsPane = new FlowPane(5, 5);
+            tagsPane.getChildren().add(new Label("Tags: "));
+            for (String tagName : w.getTags()) {
+                Label tl = new Label(tagName);
+                tl.setStyle("-fx-font-style: italic; -fx-font-size: 0.85em; -fx-text-fill: #3498db; -fx-cursor: hand;");
+                tl.setTooltip(new Tooltip(tagDescriptions.getOrDefault(tagName, "No description available")));
+                tagsPane.getChildren().add(tl);
+            }
 
-            details.getChildren().addAll(nameLabel, statsLabel, tagsLabel);
+            details.getChildren().addAll(nameLabel, statsLabel, tagsPane);
             
             Button editBtn = new Button("✏️");
             editBtn.getStyleClass().add("edit-btn");
@@ -2121,10 +2142,16 @@ public class BuilderUI extends BorderPane {
             Label statsLabel = new Label(statsStr);
             statsLabel.setStyle("-fx-font-size: 0.9em; -fx-text-fill: #aaa;");
             
-            Label tagsLabel = new Label("Tags: " + String.join(", ", a.getTags()));
-            tagsLabel.setStyle("-fx-font-style: italic; -fx-font-size: 0.85em; -fx-text-fill: #888;");
+            FlowPane tagsPane = new FlowPane(5, 5);
+            tagsPane.getChildren().add(new Label("Tags: "));
+            for (String tagName : a.getTags()) {
+                Label tl = new Label(tagName);
+                tl.setStyle("-fx-font-style: italic; -fx-font-size: 0.85em; -fx-text-fill: #3498db; -fx-cursor: hand;");
+                tl.setTooltip(new Tooltip(tagDescriptions.getOrDefault(tagName, "No description available")));
+                tagsPane.getChildren().add(tl);
+            }
 
-            details.getChildren().addAll(nameLabel, statsLabel, tagsLabel);
+            details.getChildren().addAll(nameLabel, statsLabel, tagsPane);
             
             Button editBtn = new Button("✏️");
             editBtn.getStyleClass().add("edit-btn");
