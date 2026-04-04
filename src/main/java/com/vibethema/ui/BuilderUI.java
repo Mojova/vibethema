@@ -1067,10 +1067,17 @@ public class BuilderUI extends BorderPane {
             int base = (int) Math.ceil((dex + dodge) / 2.0);
             int total = (int) Math.ceil((dex + dodge + 1) / 2.0);
             int bonus = total - base;
-            dodgeDefVal.setText("Dodge Defense: " + base + " + " + bonus);
+            
+            boolean hasDodgeSpec = data.getSpecialties().stream()
+                    .anyMatch(s -> "Dodge".equals(s.getAbility()) && s.getName() != null && !s.getName().trim().isEmpty());
+            
+            String text = "Dodge Defense: " + base;
+            if (hasDodgeSpec) text += " + " + bonus;
+            dodgeDefVal.setText(text);
         };
         data.getAttribute("Dexterity").addListener((obs, oldVal, newVal) -> updateDodge.run());
         data.getAbility("Dodge").addListener((obs, oldVal, newVal) -> updateDodge.run());
+        data.getSpecialties().addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> updateDodge.run());
         updateDodge.run();
         
         statsList.getChildren().addAll(naturalSoakVal, armorSoakVal, totalSoakVal, hardnessVal, dodgeDefVal);
