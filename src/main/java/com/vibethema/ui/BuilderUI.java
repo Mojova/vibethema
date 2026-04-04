@@ -4,6 +4,8 @@ import com.vibethema.service.CharmDataService;
 import com.vibethema.service.PdfExtractor;
 import com.vibethema.service.EquipmentDataService;
 import com.vibethema.model.Armor;
+import com.vibethema.model.Hearthstone;
+import com.vibethema.model.OtherEquipment;
 import com.vibethema.model.CharacterData;
 import com.vibethema.model.Charm;
 import com.vibethema.model.MartialArtsStyle;
@@ -61,6 +63,8 @@ public class BuilderUI extends BorderPane {
     private Map<String, String> tagDescriptions = new java.util.HashMap<>();
     private VBox weaponsListContainer;
     private VBox armorListContainer;
+    private VBox hearthstoneListContainer;
+    private VBox otherEquipmentListContainer;
 
     private void loadTagDescriptions() {
         Map<String, List<EquipmentDataService.Tag>> allTags = equipmentService.loadEquipmentTags();
@@ -464,10 +468,10 @@ public class BuilderUI extends BorderPane {
         addWeaponBtn.setOnAction(e -> showWeaponDialog(null));
 
         weaponsSection.getChildren().addAll(weaponsListContainer, addWeaponBtn);
-
+        
         VBox armorSection = createEquipmentSection("Armor");
         armorListContainer = new VBox(10);
-        armorListContainer.getStyleClass().add("merit-row-container"); // reuse style
+        armorListContainer.getStyleClass().add("merit-row-container");
         
         data.getArmors().addListener((javafx.collections.ListChangeListener.Change<? extends Armor> c) -> refreshArmorList());
         refreshArmorList();
@@ -477,9 +481,30 @@ public class BuilderUI extends BorderPane {
         addArmorBtn.setOnAction(e -> showArmorDialog(null));
 
         armorSection.getChildren().addAll(armorListContainer, addArmorBtn);
-
+        
         VBox hearthstonesSection = createEquipmentSection("Hearthstones");
-        VBox otherSection = createEquipmentSection("Other");
+        hearthstoneListContainer = new VBox(10);
+        hearthstoneListContainer.getStyleClass().add("merit-row-container");
+        
+        data.getHearthstones().addListener((javafx.collections.ListChangeListener.Change<? extends Hearthstone> c) -> refreshHearthstoneList());
+        refreshHearthstoneList();
+        
+        Button addHearthstoneBtn = new Button("+ Add Hearthstone");
+        addHearthstoneBtn.getStyleClass().add("add-btn");
+        addHearthstoneBtn.setOnAction(e -> showHearthstoneDialog(null));
+        hearthstonesSection.getChildren().addAll(hearthstoneListContainer, addHearthstoneBtn);
+
+        VBox otherSection = createEquipmentSection("Other Equipment");
+        otherEquipmentListContainer = new VBox(10);
+        otherEquipmentListContainer.getStyleClass().add("merit-row-container");
+        
+        data.getOtherEquipment().addListener((javafx.collections.ListChangeListener.Change<? extends OtherEquipment> c) -> refreshOtherEquipmentList());
+        refreshOtherEquipmentList();
+        
+        Button addOtherBtn = new Button("+ Add Equipment");
+        addOtherBtn.getStyleClass().add("add-btn");
+        addOtherBtn.setOnAction(e -> showOtherEquipmentDialog(null));
+        otherSection.getChildren().addAll(otherEquipmentListContainer, addOtherBtn);
 
         content.getChildren().addAll(weaponsSection, armorSection, hearthstonesSection, otherSection);
         return content;
@@ -2272,6 +2297,164 @@ public class BuilderUI extends BorderPane {
                 data.getArmors().add(armor);
             } else {
                 refreshArmorList();
+                data.setDirty(true);
+            }
+        });
+    }
+
+    private void refreshHearthstoneList() {
+        if (hearthstoneListContainer == null) return;
+        hearthstoneListContainer.getChildren().clear();
+        for (Hearthstone h : data.getHearthstones()) {
+            HBox row = new HBox(15);
+            row.getStyleClass().add("merit-row");
+            row.setAlignment(Pos.CENTER_LEFT);
+
+            VBox details = new VBox(5);
+            Label nameLabel = new Label(h.getName());
+            nameLabel.getStyleClass().add("merit-name");
+            Label descLabel = new Label(h.getDescription());
+            descLabel.setStyle("-fx-font-size: 0.9em; -fx-text-fill: #aaa;");
+            descLabel.setWrapText(true);
+
+            details.getChildren().addAll(nameLabel, descLabel);
+            
+            Button editBtn = new Button("✏️");
+            editBtn.getStyleClass().add("edit-btn");
+            editBtn.setStyle("-fx-base: #cea212;");
+            editBtn.setOnAction(e -> showHearthstoneDialog(h));
+
+            Button delBtn = new Button("🗑");
+            delBtn.getStyleClass().add("remove-btn");
+            delBtn.setOnAction(e -> data.getHearthstones().remove(h));
+
+            HBox.setHgrow(details, Priority.ALWAYS);
+            row.getChildren().addAll(details, editBtn, delBtn);
+            hearthstoneListContainer.getChildren().add(row);
+        }
+    }
+
+    private void refreshOtherEquipmentList() {
+        if (otherEquipmentListContainer == null) return;
+        otherEquipmentListContainer.getChildren().clear();
+        for (OtherEquipment o : data.getOtherEquipment()) {
+            HBox row = new HBox(15);
+            row.getStyleClass().add("merit-row");
+            row.setAlignment(Pos.CENTER_LEFT);
+
+            VBox details = new VBox(5);
+            Label nameLabel = new Label(o.getName());
+            nameLabel.getStyleClass().add("merit-name");
+            Label descLabel = new Label(o.getDescription());
+            descLabel.setStyle("-fx-font-size: 0.9em; -fx-text-fill: #aaa;");
+            descLabel.setWrapText(true);
+
+            details.getChildren().addAll(nameLabel, descLabel);
+            
+            Button editBtn = new Button("✏️");
+            editBtn.getStyleClass().add("edit-btn");
+            editBtn.setStyle("-fx-base: #cea212;");
+            editBtn.setOnAction(e -> showOtherEquipmentDialog(o));
+
+            Button delBtn = new Button("🗑");
+            delBtn.getStyleClass().add("remove-btn");
+            delBtn.setOnAction(e -> data.getOtherEquipment().remove(o));
+
+            HBox.setHgrow(details, Priority.ALWAYS);
+            row.getChildren().addAll(details, editBtn, delBtn);
+            otherEquipmentListContainer.getChildren().add(row);
+        }
+    }
+
+    private void showHearthstoneDialog(Hearthstone existing) {
+        Dialog<Hearthstone> dialog = new Dialog<>();
+        dialog.setTitle(existing == null ? "Add Hearthstone" : "Edit Hearthstone");
+        dialog.setHeaderText(existing == null ? "Enter hearthstone details." : "Update: " + existing.getName());
+
+        ButtonType saveBtnType = new ButtonType(existing == null ? "Add" : "Save", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveBtnType, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10); grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField nameField = new TextField(existing == null ? "" : existing.getName());
+        nameField.setPromptText("Grave-Stone of the Sun");
+        TextArea descField = new TextArea(existing == null ? "" : existing.getDescription());
+        descField.setPromptText("Description of its effects...");
+        descField.setWrapText(true);
+        descField.setPrefRowCount(4);
+
+        grid.add(new Label("Name:"), 0, 0);
+        grid.add(nameField, 1, 0);
+        grid.add(new Label("Description:"), 0, 1);
+        grid.add(descField, 1, 1);
+
+        dialog.getDialogPane().setContent(grid);
+        Platform.runLater(nameField::requestFocus);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == saveBtnType) {
+                Hearthstone h = (existing != null) ? existing : new Hearthstone(nameField.getText(), descField.getText());
+                h.setName(nameField.getText());
+                h.setDescription(descField.getText());
+                return h;
+            }
+            return null;
+        });
+
+        dialog.showAndWait().ifPresent(h -> {
+            if (existing == null) {
+                data.getHearthstones().add(h);
+            } else {
+                refreshHearthstoneList();
+                data.setDirty(true);
+            }
+        });
+    }
+
+    private void showOtherEquipmentDialog(OtherEquipment existing) {
+        Dialog<OtherEquipment> dialog = new Dialog<>();
+        dialog.setTitle(existing == null ? "Add Equipment" : "Edit Equipment");
+        dialog.setHeaderText(existing == null ? "Enter equipment details." : "Update: " + existing.getName());
+
+        ButtonType saveBtnType = new ButtonType(existing == null ? "Add" : "Save", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveBtnType, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10); grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField nameField = new TextField(existing == null ? "" : existing.getName());
+        nameField.setPromptText("Finely-crafted jade component");
+        TextArea descField = new TextArea(existing == null ? "" : existing.getDescription());
+        descField.setPromptText("Notes, weight, or special rules...");
+        descField.setWrapText(true);
+        descField.setPrefRowCount(4);
+
+        grid.add(new Label("Name:"), 0, 0);
+        grid.add(nameField, 1, 0);
+        grid.add(new Label("Description:"), 0, 1);
+        grid.add(descField, 1, 1);
+
+        dialog.getDialogPane().setContent(grid);
+        Platform.runLater(nameField::requestFocus);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == saveBtnType) {
+                OtherEquipment o = (existing != null) ? existing : new OtherEquipment(nameField.getText(), descField.getText());
+                o.setName(nameField.getText());
+                o.setDescription(descField.getText());
+                return o;
+            }
+            return null;
+        });
+
+        dialog.showAndWait().ifPresent(o -> {
+            if (existing == null) {
+                data.getOtherEquipment().add(o);
+            } else {
+                refreshOtherEquipmentList();
                 data.setDirty(true);
             }
         });
