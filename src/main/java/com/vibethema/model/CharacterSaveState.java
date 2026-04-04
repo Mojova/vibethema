@@ -10,6 +10,8 @@ public class CharacterSaveState {
     public String caste;
     public String supernalAbility;
     public int essence, willpower;
+    public String limitTrigger;
+    public int limit;
     public Map<String, Integer> attributes;
     public Map<String, Integer> abilities;
     public List<String> casteAbilities;

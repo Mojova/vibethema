@@ -33,10 +33,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.function.Function;
 import java.io.IOException;
 import com.vibethema.model.CharacterSaveState;
 import com.google.gson.GsonBuilder;
@@ -839,7 +841,7 @@ public class BuilderUI extends BorderPane {
         abilAndSide.getChildren().addAll(abilitiesSection, sideStuff);
 
         HBox statsRow = new HBox(40);
-        statsRow.getChildren().addAll(createHealthSection(), createCombatStatsSection(), createSocialStatsSection());
+        statsRow.getChildren().addAll(createHealthSection(), createCombatStatsSection(), createSocialStatsSection(), createGreatCurseSection());
 
         content.getChildren().addAll(basicAdvSection, attributesSection, abilAndSide, new Separator(), statsRow, createAttackPoolsSection());
         return content;
@@ -997,7 +999,7 @@ public class BuilderUI extends BorderPane {
         charmTrees.add(maCharmTree);
         
         VBox fullLayout = new VBox(0);
-        fullLayout.getChildren().addAll(content, maCharmTree);
+        fullLayout.getChildren().addAll(content, maCharmTree, createPurchasedCharmsSummary(true));
         VBox.setVgrow(maCharmTree, Priority.ALWAYS);
 
         ScrollPane scrollPane = new ScrollPane(fullLayout);
@@ -1357,6 +1359,37 @@ public class BuilderUI extends BorderPane {
         return combatBox;
     }
 
+    private VBox createGreatCurseSection() {
+        VBox section = new VBox(10);
+        Label title = new Label("Great Curse");
+        title.getStyleClass().add("section-title");
+
+        VBox content = new VBox(8);
+        content.getStyleClass().add("social-stats-container"); // Reuse style
+        content.setPadding(new Insets(10));
+
+        Label triggerLabel = new Label("Limit Trigger:");
+        triggerLabel.getStyleClass().add("sidebar-stat-header");
+        
+        TextArea triggerArea = new TextArea();
+        triggerArea.setPromptText("Enter your Limit Trigger...");
+        triggerArea.setPrefRowCount(2);
+        triggerArea.setWrapText(true);
+        triggerArea.textProperty().bindBidirectional(data.limitTriggerProperty());
+        triggerArea.getStyleClass().add("text-area-custom");
+
+        HBox limitBox = new HBox(10);
+        limitBox.setAlignment(Pos.CENTER_LEFT);
+        Label lLabel = new Label("Limit:");
+        lLabel.getStyleClass().add("sidebar-stat-header");
+        DotSelector limitSelector = new DotSelector(data.limitProperty(), 0, 10);
+        limitBox.getChildren().addAll(lLabel, limitSelector);
+
+        content.getChildren().addAll(triggerLabel, triggerArea, limitBox);
+        section.getChildren().addAll(title, content);
+        return section;
+    }
+
     private VBox createSocialStatsSection() {
         VBox section = new VBox(5);
         Label title = new Label("Social Statistics");
@@ -1658,7 +1691,82 @@ public class BuilderUI extends BorderPane {
         
         CharmTreeComponent charmsView = new CharmTreeComponent(charmsAbilityCombo, "Ability");
         charmTrees.add(charmsView);
-        return charmsView;
+        
+        VBox layout = new VBox(0);
+        layout.getChildren().addAll(charmsView, createPurchasedCharmsSummary(false));
+        VBox.setVgrow(charmsView, Priority.ALWAYS);
+        
+        return layout;
+    }
+
+    private VBox createPurchasedCharmsSummary(boolean martialArtsMode) {
+        VBox summary = new VBox(10);
+        summary.getStyleClass().add("purchased-charms-summary");
+        summary.setPadding(new Insets(15));
+        summary.setStyle("-fx-background-color: #1a1a1a; -fx-border-color: #333; -fx-border-width: 1 0 0 0;");
+
+        Label title = new Label("Purchased Charms Summary");
+        title.getStyleClass().add("subsection-title");
+        summary.getChildren().add(title);
+
+        FlowPane flow = new FlowPane(15, 10);
+        summary.getChildren().add(flow);
+
+        Runnable refreshSummary = () -> {
+            flow.getChildren().clear();
+            
+            // Filter by mode (Solar vs Martial Arts)
+            List<com.vibethema.model.PurchasedCharm> filtered = data.getUnlockedCharms().stream()
+                .filter(pc -> data.isMartialArtsStyle(pc.ability()) == martialArtsMode)
+                .collect(Collectors.toList());
+
+            // Group by Ability
+            Map<String, List<com.vibethema.model.PurchasedCharm>> groupedByAbility = filtered.stream()
+                .collect(Collectors.groupingBy(com.vibethema.model.PurchasedCharm::ability));
+
+            List<String> sortedAbilities = new ArrayList<>(groupedByAbility.keySet());
+            Collections.sort(sortedAbilities);
+
+            for (String ability : sortedAbilities) {
+                VBox groupContainer = new VBox(5);
+                Label abLabel = new Label(ability.toUpperCase());
+                abLabel.getStyleClass().add("sidebar-stat-header");
+                abLabel.setStyle("-fx-text-fill: #d4af37; -fx-font-size: 11px;");
+                groupContainer.getChildren().add(abLabel);
+
+                // Group by Charm within the ability to consolidate stackables
+                Map<com.vibethema.model.PurchasedCharm, Long> counts = groupedByAbility.get(ability).stream()
+                    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+                List<com.vibethema.model.PurchasedCharm> uniqueCharms = new ArrayList<>(counts.keySet());
+                uniqueCharms.sort((a, b) -> a.name().compareTo(b.name()));
+
+                for (com.vibethema.model.PurchasedCharm pc : uniqueCharms) {
+                    long count = counts.get(pc);
+                    String displayName = pc.name();
+                    if (count > 1) displayName += " (x" + count + ")";
+                    
+                    Label charmLabel = new Label(displayName);
+                    charmLabel.getStyleClass().add("charm-summary-item");
+                    charmLabel.setStyle("-fx-text-fill: #f9f6e6; -fx-cursor: hand;");
+                    
+                    charmLabel.setOnMouseClicked(e -> {
+                        if (e.getClickCount() == 2) {
+                            jumpToCharm(pc.id(), pc.ability());
+                        }
+                    });
+                    
+                    Tooltip.install(charmLabel, new Tooltip("Double-click to view charm in tree"));
+                    groupContainer.getChildren().add(charmLabel);
+                }
+                flow.getChildren().add(groupContainer);
+            }
+        };
+
+        data.getUnlockedCharms().addListener((javafx.collections.ListChangeListener<? super com.vibethema.model.PurchasedCharm>) c -> refreshSummary.run());
+        refreshSummary.run();
+
+        return summary;
     }
 
 
@@ -1723,6 +1831,17 @@ public class BuilderUI extends BorderPane {
             if (charmsTab != null && charmsAbilityCombo != null) {
                 mainTabPane.getSelectionModel().select(charmsTab);
                 charmsAbilityCombo.setValue(abilityName);
+            }
+        }
+    }
+
+    private void jumpToCharm(String charmId, String ability) {
+        jumpToCharmAbility(ability);
+        for (CharmTreeComponent tree : charmTrees) {
+            // Find the tree that is currently active for this ability/style
+            if (ability.equals(tree.getCurrentFilterValue())) {
+                tree.selectCharm(charmId);
+                break;
             }
         }
     }
@@ -2205,6 +2324,20 @@ public class BuilderUI extends BorderPane {
                     kwFlow.getChildren().add(comma);
                 }
             }
+        }
+
+        public void selectCharm(String charmId) {
+            VBox node = charmNodeMap.get(charmId);
+            if (node != null) {
+                // Simulate a click
+                javafx.application.Platform.runLater(() -> {
+                    node.fireEvent(new javafx.scene.input.MouseEvent(javafx.scene.input.MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, javafx.scene.input.MouseButton.PRIMARY, 1, false, false, false, false, true, false, false, true, false, false, null));
+                });
+            }
+        }
+
+        public String getCurrentFilterValue() {
+            return filterCombo.getValue();
         }
     }
 

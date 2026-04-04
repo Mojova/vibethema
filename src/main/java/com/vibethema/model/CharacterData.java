@@ -42,6 +42,8 @@ public class CharacterData {
     
     private IntegerProperty essence = new SimpleIntegerProperty(1);
     private IntegerProperty willpower = new SimpleIntegerProperty(5);
+    private StringProperty limitTrigger = new SimpleStringProperty("");
+    private IntegerProperty limit = new SimpleIntegerProperty(0);
     
     private final ObservableList<PurchasedCharm> unlockedCharms = FXCollections.observableArrayList();
     private final ObservableList<Merit> merits = FXCollections.observableArrayList();
@@ -158,6 +160,8 @@ public class CharacterData {
         supernalAbility.addListener((obs, oldV, newV) -> markDirty());
         essence.addListener((obs, oldV, newV) -> markDirty());
         willpower.addListener((obs, oldV, newV) -> markDirty());
+        limitTrigger.addListener((obs, oldV, newV) -> markDirty());
+        limit.addListener((obs, oldV, newV) -> markDirty());
 
         merits.addListener((javafx.collections.ListChangeListener.Change<? extends Merit> c) -> markDirty());
         specialties.addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> markDirty());
@@ -201,6 +205,9 @@ public class CharacterData {
     
     public IntegerProperty essenceProperty() { return essence; }
     public IntegerProperty willpowerProperty() { return willpower; }
+    
+    public StringProperty limitTriggerProperty() { return limitTrigger; }
+    public IntegerProperty limitProperty() { return limit; }
 
     public int getAbilityRating(String name) {
         if (name == null) return 0;
@@ -441,6 +448,8 @@ public class CharacterData {
         state.supernalAbility = supernalAbility.get();
         state.essence = essence.get();
         state.willpower = willpower.get();
+        state.limitTrigger = limitTrigger.get();
+        state.limit = limit.get();
         state.attributes = new HashMap<>();
         for (String attr : ATTRIBUTES) state.attributes.put(attr, attributes.get(attr).get());
         state.abilities = new HashMap<>();
@@ -542,6 +551,8 @@ public class CharacterData {
             supernalAbility.set(state.supernalAbility != null ? state.supernalAbility : "");
             essence.set(state.essence);
             willpower.set(state.willpower);
+            limitTrigger.set(state.limitTrigger != null ? state.limitTrigger : "");
+            limit.set(state.limit);
             if (state.attributes != null) {
                 for (String attr : ATTRIBUTES) if (state.attributes.containsKey(attr)) attributes.get(attr).set(state.attributes.get(attr));
             }
