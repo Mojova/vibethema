@@ -3,4 +3,4 @@ data_source
 .DS_Store
 src/main/resources/charms_backup
 *.pdf
-weapon_tags.json
+equipment_tags.json

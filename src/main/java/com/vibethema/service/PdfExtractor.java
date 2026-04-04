@@ -468,6 +468,7 @@ public class PdfExtractor {
                 "Special Materials", "mundane armor", "Mortal Armor", 
                 "Donning & Removing Armor", "Light Armor", "Medium Armor", "Heavy Armor",
                 "Soak:", "Mobility Penalty:", "Hardness:",
+                "Artifacts", "Artifact Weapons",
                 "EX3", "CHAPTER", "T H E  G R A N D  P A N O P L Y"
             };
             for (String stop : stopWords) {
