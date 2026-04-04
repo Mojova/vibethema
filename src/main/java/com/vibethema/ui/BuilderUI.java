@@ -1095,20 +1095,34 @@ public class BuilderUI extends BorderPane {
             
             for (Weapon w : data.getWeapons()) {
                 String abilityName = "Melee";
-                if (w.getTags().contains("Archery")) abilityName = "Archery";
+                if (w.getRange() == Weapon.WeaponRange.ARCHERY) abilityName = "Archery";
+                else if (w.getRange() == Weapon.WeaponRange.THROWN) abilityName = "Thrown";
                 else if (w.getTags().contains("Brawl")) abilityName = "Brawl";
                 
                 int abil = data.getAbilityRating(abilityName);
                 int spec = (w.getSpecialtyId() != null && !w.getSpecialtyId().isEmpty()) ? 1 : 0;
                 
-                int withering = dex + abil + spec + w.getAccuracy();
+                String witheringStr;
+                if (w.getRange() == Weapon.WeaponRange.CLOSE) {
+                    int withering = dex + abil + spec + w.getAccuracy();
+                    witheringStr = String.valueOf(withering);
+                } else {
+                    int base = dex + abil + spec;
+                    witheringStr = String.format("C:%d | S:%d | M:%d | L:%d | E:%d",
+                            base + w.getCloseRangeBonus(),
+                            base + w.getShortRangeBonus(),
+                            base + w.getMediumRangeBonus(),
+                            base + w.getLongRangeBonus(),
+                            base + w.getExtremeRangeBonus());
+                }
+                
                 int decisive = dex + abil + spec;
                 int damage = str + w.getDamage();
                 int defensePool = dex + abil + spec;
                 int defense = (int) Math.ceil(defensePool / 2.0) + w.getDefense();
                 
                 grid.add(new Label(w.getName()), 0, row);
-                grid.add(new Label(String.valueOf(withering)), 1, row);
+                grid.add(new Label(witheringStr), 1, row);
                 grid.add(new Label(String.valueOf(decisive)), 2, row);
                 grid.add(new Label(String.valueOf(damage)), 3, row);
                 grid.add(new Label(String.valueOf(defense)), 4, row);
