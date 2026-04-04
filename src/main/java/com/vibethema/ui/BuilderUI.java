@@ -23,6 +23,7 @@ import javafx.scene.text.Text;
 import javafx.scene.shape.CubicCurve;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
+import javafx.scene.Cursor;
 import javafx.stage.Stage;
 import javafx.scene.input.KeyCombination;
 import javafx.concurrent.Task;
@@ -67,7 +68,9 @@ public class BuilderUI extends BorderPane {
     private VBox otherEquipmentListContainer;
     private TabPane mainTabPane;
     private Tab charmsTab;
+    private Tab martialArtsTab;
     private ComboBox<String> charmsAbilityCombo;
+    private ComboBox<String> stylePicker;
 
     private void loadTagDescriptions() {
         Map<String, List<EquipmentDataService.Tag>> allTags = equipmentService.loadEquipmentTags();
@@ -124,7 +127,7 @@ public class BuilderUI extends BorderPane {
         charmsTab.setClosable(false);
         charmsTab.setContent(createCharmsContent());
 
-        Tab martialArtsTab = new Tab("Martial Arts");
+        martialArtsTab = new Tab("Martial Arts");
         martialArtsTab.setClosable(false);
         martialArtsTab.setContent(createMartialArtsContent());
 
@@ -613,6 +616,10 @@ public class BuilderUI extends BorderPane {
 
             Label abLabel = new Label(ability);
             abLabel.setPrefWidth(95);
+            abLabel.setCursor(Cursor.HAND);
+            abLabel.setOnMouseClicked(e -> {
+                if (e.getClickCount() == 2) jumpToCharmAbility(ability);
+            });
             if ("Martial Arts".equals(ability)) {
                 Tooltip.install(abLabel, new Tooltip("Caste/Favored status linked to Brawl."));
             }
@@ -696,7 +703,7 @@ public class BuilderUI extends BorderPane {
 
         VBox styleList = new VBox(8);
 
-        ComboBox<String> stylePicker = new ComboBox<>();
+        stylePicker = new ComboBox<>();
         stylePicker.setPromptText("Select Style to View Charms");
         stylePicker.setPrefWidth(220);
 
@@ -727,6 +734,10 @@ public class BuilderUI extends BorderPane {
                 Label nameLabel = new Label(mas.getStyleName());
                 nameLabel.getStyleClass().add("label");
                 nameLabel.setPrefWidth(180);
+                nameLabel.setCursor(Cursor.HAND);
+                nameLabel.setOnMouseClicked(e -> {
+                    if (e.getClickCount() == 2) jumpToCharmAbility(mas.getStyleName());
+                });
 
                 DotSelector selector = new DotSelector(mas.ratingProperty(), 0, 5);
 
@@ -890,6 +901,11 @@ public class BuilderUI extends BorderPane {
                 expertiseField.textProperty().bindBidirectional(ca.expertiseProperty());
                 expertiseField.setPrefWidth(180);
 
+                Button jumpBtn = new Button("🔍");
+                jumpBtn.getStyleClass().add("action-btn-small");
+                jumpBtn.setTooltip(new Tooltip("Jump to Craft Charms"));
+                jumpBtn.setOnAction(e -> jumpToCharmAbility("Craft"));
+
                 DotSelector selector = new DotSelector(ca.ratingProperty(), 0, 5);
 
                 Region spacer = new Region();
@@ -899,7 +915,7 @@ public class BuilderUI extends BorderPane {
                 removeBtn.getStyleClass().add("remove-btn");
                 removeBtn.setOnAction(e -> data.getCrafts().remove(ca));
 
-                row.getChildren().addAll(expertiseField, spacer, selector, removeBtn);
+                row.getChildren().addAll(expertiseField, jumpBtn, spacer, selector, removeBtn);
                 craftList.getChildren().add(row);
             }
         };
@@ -1412,6 +1428,26 @@ public class BuilderUI extends BorderPane {
         return charmsView;
     }
 
+
+    private void jumpToCharmAbility(String abilityName) {
+        if (mainTabPane == null) return;
+        
+        if (data.isMartialArtsStyle(abilityName)) {
+            if (martialArtsTab != null && stylePicker != null) {
+                mainTabPane.getSelectionModel().select(martialArtsTab);
+                stylePicker.setValue(abilityName);
+            }
+        } else if ("Martial Arts".equals(abilityName)) {
+            if (martialArtsTab != null) {
+                mainTabPane.getSelectionModel().select(martialArtsTab);
+            }
+        } else {
+            if (charmsTab != null && charmsAbilityCombo != null) {
+                mainTabPane.getSelectionModel().select(charmsTab);
+                charmsAbilityCombo.setValue(abilityName);
+            }
+        }
+    }
 
     private void loadKeywords() {
         if (dataService == null) return;
