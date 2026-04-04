@@ -49,6 +49,8 @@ public class CharacterData {
     private final ObservableList<CraftAbility> crafts = FXCollections.observableArrayList();
     private final ObservableList<MartialArtsStyle> martialArtsStyles = FXCollections.observableArrayList();
     private final ObservableList<Weapon> weapons = FXCollections.observableArrayList();
+    private final ObservableList<Armor> armors = FXCollections.observableArrayList();
+
 
     private BooleanProperty dirty = new SimpleBooleanProperty(false);
     private boolean isImporting = false;
@@ -94,6 +96,22 @@ public class CharacterData {
             favoredAbilities.put(ability, new SimpleBooleanProperty(false));
             favoredAbilities.get(ability).addListener((obs, oldV, newV) -> markDirty());
         }
+
+        armors.addListener((javafx.collections.ListChangeListener.Change<? extends Armor> c) -> {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    for (Armor a : c.getAddedSubList()) {
+                        a.equippedProperty().addListener((obs, old, nv) -> {
+                            if (nv && !isImporting) {
+                                for (Armor other : armors) {
+                                    if (other != a) other.setEquipped(false);
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
         
         getCasteAbility("Craft").addListener((obs, old, nv) -> {
             for (CraftAbility ca : crafts) ca.setCaste(nv);
@@ -198,6 +216,7 @@ public class CharacterData {
     public ObservableList<CraftAbility> getCrafts() { return crafts; }
     public ObservableList<MartialArtsStyle> getMartialArtsStyles() { return martialArtsStyles; }
     public ObservableList<Weapon> getWeapons() { return weapons; }
+    public ObservableList<Armor> getArmors() { return armors; }
     
     public boolean hasCharm(String id) {
         if (id == null) return false;
@@ -398,8 +417,18 @@ public class CharacterData {
             wd.attunement = w.getAttunement();
             wd.closeRangeBonus = w.getCloseRangeBonus(); wd.shortRangeBonus = w.getShortRangeBonus();
             wd.mediumRangeBonus = w.getMediumRangeBonus(); wd.longRangeBonus = w.getLongRangeBonus();
-            wd.extremeRangeBonus = w.getExtremeRangeBonus();
             state.weapons.add(wd);
+        }
+        state.armors = new ArrayList<>();
+        for (Armor a : armors) {
+            CharacterSaveState.ArmorData ad = new CharacterSaveState.ArmorData();
+            ad.id = a.getId(); ad.name = a.getName();
+            ad.type = a.getType(); ad.weight = a.getWeight();
+            ad.tags = new ArrayList<>(a.getTags());
+            ad.equipped = a.isEquipped();
+            ad.soak = a.getSoak(); ad.hardness = a.getHardness();
+            ad.mobilityPenalty = a.getMobilityPenalty(); ad.attunement = a.getAttunement();
+            state.armors.add(ad);
         }
         return state;
     }
@@ -473,6 +502,17 @@ public class CharacterData {
                     // Stats are automatically calculated by the constructor/listeners, but we can set them explicitly if we allow manual overrides later.
                     // For now, since they are automatic, we just ensure the meta-data (range, type, category) is correct.
                     weapons.add(w);
+                }
+            }
+            armors.clear();
+            if (state.armors != null) {
+                for (CharacterSaveState.ArmorData ad : state.armors) {
+                    String id = ad.id;
+                    if (id == null || id.isEmpty()) id = java.util.UUID.randomUUID().toString();
+                    Armor a = new Armor(id, ad.name, ad.type, ad.weight);
+                    if (ad.tags != null) a.getTags().setAll(ad.tags);
+                    a.setEquipped(ad.equipped);
+                    armors.add(a);
                 }
             }
             dirty.set(false);

@@ -20,6 +20,7 @@ public class CharacterSaveState {
     public List<CraftData> crafts = new ArrayList<>();
     public List<MartialArtsData> martialArts = new ArrayList<>();
     public List<WeaponData> weapons = new ArrayList<>();
+    public List<ArmorData> armors = new ArrayList<>();
     
     public static class SpecialtyData {
         public String name;
@@ -51,5 +52,16 @@ public class CharacterSaveState {
         
         public int accuracy, damage, defense, overwhelming, attunement;
         public int closeRangeBonus, shortRangeBonus, mediumRangeBonus, longRangeBonus, extremeRangeBonus;
+    }
+
+    public static class ArmorData {
+        public String id;
+        public String name;
+        public Armor.ArmorType type;
+        public Armor.ArmorWeight weight;
+        public List<String> tags = new ArrayList<>();
+        public boolean equipped;
+        
+        public int soak, hardness, mobilityPenalty, attunement;
     }
 }
