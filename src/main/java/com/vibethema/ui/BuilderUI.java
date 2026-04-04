@@ -1931,7 +1931,7 @@ public class BuilderUI extends BorderPane {
             Button createCharmBtn = new Button("Evocation".equals(filterType) ? "Create New Evocation" : "Create New Charm");
             createCharmBtn.getStyleClass().add("action-btn");
             String contextName = filterCombo != null ? filterCombo.getValue() : artifactId;
-            createCharmBtn.setOnAction(e -> showCreateCharmDialog(contextName, filterType));
+            createCharmBtn.setOnAction(e -> showCreateCharmDialog(contextName, filterType, this::refresh));
 
             controls.getChildren().add(createCharmBtn);
 
@@ -2190,7 +2190,7 @@ public class BuilderUI extends BorderPane {
                         toggleBtn.setVisible(true);
                         editBtn.setVisible(true);
                         editBtn.setManaged(true);
-                        editBtn.setOnAction(ev -> showEditCharmDialog(c));
+                        editBtn.setOnAction(ev -> showEditCharmDialog(c, filterType, this::refresh));
                         updateSidebarButton(c);
 
                         if (e.getClickCount() == 2) {
@@ -2403,7 +2403,7 @@ public class BuilderUI extends BorderPane {
         dialog.show();
     }
 
-    private void showCreateCharmDialog(String defaultAbility, String filterType) {
+    private void showCreateCharmDialog(String defaultAbility, String filterType, Runnable onSave) {
         Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(getScene().getWindow());
@@ -2556,6 +2556,7 @@ public class BuilderUI extends BorderPane {
                     dataService.saveCharm(nc);
                 }
                 data.setDirty(true);
+                if (onSave != null) onSave.run();
                 refreshCharms();
                 dialog.close();
             } catch (IOException ex) {
@@ -2570,9 +2571,10 @@ public class BuilderUI extends BorderPane {
         dialog.show();
     }
 
-    private void showEditCharmDialog(Charm charm) {
+    private void showEditCharmDialog(Charm charm, String filterType, Runnable onSave) {
         Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle("Edit Charm: " + charm.getName());
+        String term = "Evocation".equals(filterType) || "evocation".equals(charm.getCategory()) ? "Evocation" : "Charm";
+        dialog.setTitle("Edit " + term + ": " + charm.getName());
         dialog.setHeaderText("Modify charm details and prerequisites.");
         DialogPane dialogPane = dialog.getDialogPane();
         dialogPane.getStyleClass().add("dialog-pane-custom");
@@ -2618,7 +2620,13 @@ public class BuilderUI extends BorderPane {
         Map<String, String> idToNameLocal = new HashMap<>(); // For initial selection
         Runnable updatePrereqs = () -> {
             String selectedAb = abCombo.getValue();
-            List<Charm> charms = dataService.loadCharmsForAbility(selectedAb);
+            List<Charm> charms;
+            if ("Evocation".equals(filterType) || "evocation".equals(charm.getCategory())) {
+                CharmDataService.EvocationCollection col = dataService.loadEvocations(selectedAb);
+                charms = col != null ? col.evocations : new ArrayList<>();
+            } else {
+                charms = dataService.loadCharmsForAbility(selectedAb);
+            }
             nameToId.clear();
             for (Charm c : charms) {
                 if (!c.getId().equals(charm.getId())) { // Don't allow self-prerequisite
@@ -2695,11 +2703,16 @@ public class BuilderUI extends BorderPane {
                 charm.setPrerequisites(selectedIds);
                 
                 try {
-                    dataService.saveCharm(charm);
+                    if ("evocation".equals(charm.getCategory())) {
+                        dataService.saveEvocation(charm.getAbility(), charm.getAbility(), charm);
+                    } else {
+                        dataService.saveCharm(charm);
+                    }
                     data.setDirty(true);
+                    if (onSave != null) onSave.run();
                     return bt;
                 } catch (IOException ex) {
-                    new Alert(Alert.AlertType.ERROR, "Failed to save charm: " + ex.getMessage()).showAndWait();
+                    new Alert(Alert.AlertType.ERROR, "Failed to save " + term.toLowerCase() + ": " + ex.getMessage()).showAndWait();
                 }
             }
             return null;
