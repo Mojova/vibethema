@@ -57,6 +57,7 @@ public class BuilderUI extends BorderPane {
     private CharmDataService dataService;
     private EquipmentDataService equipmentService = new EquipmentDataService();
     private List<CharmTreeComponent> charmTrees = new java.util.ArrayList<>();
+    private VBox weaponsListContainer;
 
     public BuilderUI(CharacterData data) {
         this(data, null);
@@ -435,50 +436,17 @@ public class BuilderUI extends BorderPane {
         content.setPadding(new Insets(20));
 
         VBox weaponsSection = createEquipmentSection("Weapons");
-        VBox weaponsList = new VBox(10);
-        weaponsList.getStyleClass().add("merit-row-container"); // reuse style
+        weaponsListContainer = new VBox(10);
+        weaponsListContainer.getStyleClass().add("merit-row-container"); // reuse style
 
-        Runnable refreshWeapons = () -> {
-            weaponsList.getChildren().clear();
-            for (Weapon w : data.getWeapons()) {
-                HBox row = new HBox(15);
-                row.getStyleClass().add("merit-row");
-                row.setAlignment(Pos.CENTER_LEFT);
-
-                VBox details = new VBox(5);
-                Label nameLabel = new Label(w.getName());
-                nameLabel.getStyleClass().add("merit-name");
-                
-                String statsStr = String.format("Accuracy: %+d | Damage: %d | Defense: %+d | Overwhelming: %d", 
-                    w.getAccuracy(), w.getDamage(), w.getDefense(), w.getOverwhelming());
-                if (w.getAttunement() > 0) statsStr += " | Attunement: " + w.getAttunement();
-                
-                Label statsLabel = new Label(statsStr);
-                statsLabel.setStyle("-fx-font-size: 0.9em; -fx-text-fill: #aaa;");
-                
-                Label tagsLabel = new Label("Tags: " + String.join(", ", w.getTags()));
-                tagsLabel.setStyle("-fx-font-style: italic; -fx-font-size: 0.85em; -fx-text-fill: #888;");
-
-                details.getChildren().addAll(nameLabel, statsLabel, tagsLabel);
-                
-                Button delBtn = new Button("🗑");
-                delBtn.getStyleClass().add("remove-btn");
-                delBtn.setOnAction(e -> data.getWeapons().remove(w));
-
-                HBox.setHgrow(details, Priority.ALWAYS);
-                row.getChildren().addAll(details, delBtn);
-                weaponsList.getChildren().add(row);
-            }
-        };
-
-        data.getWeapons().addListener((javafx.collections.ListChangeListener.Change<? extends Weapon> c) -> refreshWeapons.run());
-        refreshWeapons.run();
+        data.getWeapons().addListener((javafx.collections.ListChangeListener.Change<? extends Weapon> c) -> refreshWeaponsList());
+        refreshWeaponsList();
 
         Button addWeaponBtn = new Button("+ Add Weapon");
         addWeaponBtn.getStyleClass().add("add-btn");
-        addWeaponBtn.setOnAction(e -> showAddWeaponDialog());
+        addWeaponBtn.setOnAction(e -> showWeaponDialog(null));
 
-        weaponsSection.getChildren().addAll(weaponsList, addWeaponBtn);
+        weaponsSection.getChildren().addAll(weaponsListContainer, addWeaponBtn);
 
         VBox armorSection = createEquipmentSection("Armor");
         VBox hearthstonesSection = createEquipmentSection("Hearthstones");
@@ -1959,34 +1927,84 @@ public class BuilderUI extends BorderPane {
         dialog.showAndWait().ifPresent(r -> refreshCharms());
     }
 
-    private void showAddWeaponDialog() {
-        Dialog<Weapon> dialog = new Dialog<>();
-        dialog.setTitle("Add New Weapon");
-        dialog.setHeaderText("Create a new weapon and select its properties.");
+    private void refreshWeaponsList() {
+        if (weaponsListContainer == null) return;
+        weaponsListContainer.getChildren().clear();
+        for (Weapon w : data.getWeapons()) {
+            HBox row = new HBox(15);
+            row.getStyleClass().add("merit-row");
+            row.setAlignment(Pos.CENTER_LEFT);
 
-        ButtonType addBtnType = new ButtonType("Add", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(addBtnType, ButtonType.CANCEL);
+            VBox details = new VBox(5);
+            Label nameLabel = new Label(w.getName());
+            nameLabel.getStyleClass().add("merit-name");
+            
+            String statsStr = String.format("Accuracy: %+d | Damage: %d | Defense: %+d | Overwhelming: %d", 
+                w.getAccuracy(), w.getDamage(), w.getDefense(), w.getOverwhelming());
+            if (w.getAttunement() > 0) statsStr += " | Attunement: " + w.getAttunement();
+            
+            Label statsLabel = new Label(statsStr);
+            statsLabel.setStyle("-fx-font-size: 0.9em; -fx-text-fill: #aaa;");
+            
+            Label tagsLabel = new Label("Tags: " + String.join(", ", w.getTags()));
+            tagsLabel.setStyle("-fx-font-style: italic; -fx-font-size: 0.85em; -fx-text-fill: #888;");
+
+            details.getChildren().addAll(nameLabel, statsLabel, tagsLabel);
+            
+            Button editBtn = new Button("✏️");
+            editBtn.getStyleClass().add("edit-btn");
+            editBtn.setStyle("-fx-base: #cea212;");
+            editBtn.setOnAction(e -> showWeaponDialog(w));
+
+            Button delBtn = new Button("🗑");
+            delBtn.getStyleClass().add("remove-btn");
+            delBtn.setOnAction(e -> data.getWeapons().remove(w));
+
+            HBox.setHgrow(details, Priority.ALWAYS);
+            row.getChildren().addAll(details, editBtn, delBtn);
+            weaponsListContainer.getChildren().add(row);
+        }
+    }
+
+    private void showWeaponDialog(Weapon existing) {
+        Dialog<Weapon> dialog = new Dialog<>();
+        dialog.setTitle(existing == null ? "Add New Weapon" : "Edit Weapon");
+        dialog.setHeaderText(existing == null ? "Create a new weapon." : "Update details for: " + existing.getName());
+
+        ButtonType saveBtnType = new ButtonType(existing == null ? "Add" : "Save", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveBtnType, ButtonType.CANCEL);
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(20, 150, 10, 10));
 
-        TextField nameField = new TextField();
+        TextField nameField = new TextField(existing == null ? "" : existing.getName());
         nameField.setPromptText("Weapon Name");
         
         ComboBox<Weapon.WeaponRange> rangeCombo = new ComboBox<>(javafx.collections.FXCollections.observableArrayList(Weapon.WeaponRange.values()));
-        rangeCombo.setValue(Weapon.WeaponRange.CLOSE);
+        rangeCombo.setValue(existing == null ? Weapon.WeaponRange.CLOSE : existing.getRange());
 
         ComboBox<Weapon.WeaponType> typeCombo = new ComboBox<>(javafx.collections.FXCollections.observableArrayList(Weapon.WeaponType.values()));
-        typeCombo.setValue(Weapon.WeaponType.MORTAL);
+        typeCombo.setValue(existing == null ? Weapon.WeaponType.MORTAL : existing.getType());
 
         ComboBox<Weapon.WeaponCategory> categoryCombo = new ComboBox<>(javafx.collections.FXCollections.observableArrayList(Weapon.WeaponCategory.values()));
-        categoryCombo.setValue(Weapon.WeaponCategory.MEDIUM);
+        categoryCombo.setValue(existing == null ? Weapon.WeaponCategory.MEDIUM : existing.getCategory());
 
         ListView<EquipmentDataService.Tag> tagsList = new ListView<>();
         tagsList.setPrefHeight(150);
         javafx.collections.ObservableList<EquipmentDataService.Tag> selectedTags = javafx.collections.FXCollections.observableArrayList();
+        
+        if (existing != null) {
+            String cat = existing.getRange() == Weapon.WeaponRange.CLOSE ? "melee" : 
+                         (existing.getRange() == Weapon.WeaponRange.THROWN ? "thrown" : "archery");
+            List<EquipmentDataService.Tag> availableTags = equipmentService.getTagsForCategory(cat);
+            for (EquipmentDataService.Tag t : availableTags) {
+                if (existing.getTags().contains(t.getName())) {
+                    selectedTags.add(t);
+                }
+            }
+        }
 
         tagsList.setCellFactory(lv -> new ListCell<>() {
             private final CheckBox cb = new CheckBox();
@@ -1999,12 +2017,14 @@ public class BuilderUI extends BorderPane {
                 } else {
                     cb.setText(item.getName());
                     cb.setTooltip(new Tooltip(item.getDescription()));
-                    cb.setSelected(selectedTags.contains(item));
+                    cb.setSelected(selectedTags.stream().anyMatch(st -> st.getName().equals(item.getName())));
                     cb.setOnAction(e -> {
                         if (cb.isSelected()) {
-                            if (!selectedTags.contains(item)) selectedTags.add(item);
+                            if (selectedTags.stream().noneMatch(st -> st.getName().equals(item.getName()))) {
+                                selectedTags.add(item);
+                            }
                         } else {
-                            selectedTags.remove(item);
+                            selectedTags.removeIf(st -> st.getName().equals(item.getName()));
                         }
                     });
                     setGraphic(cb);
@@ -2013,14 +2033,18 @@ public class BuilderUI extends BorderPane {
         });
 
         Runnable updateTags = () -> {
-            selectedTags.clear();
-            String cat = rangeCombo.getValue() == Weapon.WeaponRange.CLOSE ? "melee" : 
-                         (rangeCombo.getValue() == Weapon.WeaponRange.THROWN ? "thrown" : "archery");
-            
-            tagsList.getItems().setAll(equipmentService.getTagsForCategory(cat));
+            tagsList.getItems().setAll(equipmentService.getTagsForCategory(
+                rangeCombo.getValue() == Weapon.WeaponRange.CLOSE ? "melee" : 
+                (rangeCombo.getValue() == Weapon.WeaponRange.THROWN ? "thrown" : "archery")
+            ));
         };
 
-        rangeCombo.setOnAction(e -> updateTags.run());
+        rangeCombo.setOnAction(e -> {
+            updateTags.run();
+            // Clear selections that aren't in the new range, but this is debatable. 
+            // Better to just clear all selected if range changes.
+            selectedTags.clear();
+        });
         updateTags.run();
 
         grid.add(new Label("Name:"), 0, 0);
@@ -2038,19 +2062,25 @@ public class BuilderUI extends BorderPane {
         Platform.runLater(nameField::requestFocus);
 
         dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == addBtnType) {
-                Weapon w = new Weapon(nameField.getText());
+            if (dialogButton == saveBtnType) {
+                Weapon w = (existing != null) ? existing : new Weapon(nameField.getText());
+                w.setName(nameField.getText());
                 w.setRange(rangeCombo.getValue());
                 w.setType(typeCombo.getValue());
                 w.setCategory(categoryCombo.getValue());
-                for (EquipmentDataService.Tag t : selectedTags) {
-                    w.getTags().add(t.getName());
-                }
+                w.getTags().setAll(selectedTags.stream().map(EquipmentDataService.Tag::getName).collect(java.util.stream.Collectors.toList()));
                 return w;
             }
             return null;
         });
 
-        dialog.showAndWait().ifPresent(weapon -> data.getWeapons().add(weapon));
+        dialog.showAndWait().ifPresent(weapon -> {
+            if (existing == null) {
+                data.getWeapons().add(weapon);
+            } else {
+                refreshWeaponsList();
+                data.setDirty(true);
+            }
+        });
     }
 }
