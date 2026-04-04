@@ -4,8 +4,6 @@ import com.vibethema.model.CharacterData;
 import com.vibethema.model.Charm;
 import com.vibethema.model.PurchasedCharm;
 import com.vibethema.service.CharmDataService;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -13,9 +11,6 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.CubicCurve;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.function.Function;
 
 /**
  * A standalone UI component that renders a charm web and details sidebar.
