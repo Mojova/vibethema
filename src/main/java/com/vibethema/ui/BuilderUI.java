@@ -3,6 +3,7 @@ package com.vibethema.ui;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.PdfExtractor;
 import com.vibethema.service.EquipmentDataService;
+import com.vibethema.model.Armor;
 import com.vibethema.model.CharacterData;
 import com.vibethema.model.Charm;
 import com.vibethema.model.MartialArtsStyle;
@@ -58,6 +59,7 @@ public class BuilderUI extends BorderPane {
     private EquipmentDataService equipmentService = new EquipmentDataService();
     private List<CharmTreeComponent> charmTrees = new java.util.ArrayList<>();
     private VBox weaponsListContainer;
+    private VBox armorListContainer;
 
     public BuilderUI(CharacterData data) {
         this(data, null);
@@ -449,6 +451,18 @@ public class BuilderUI extends BorderPane {
         weaponsSection.getChildren().addAll(weaponsListContainer, addWeaponBtn);
 
         VBox armorSection = createEquipmentSection("Armor");
+        armorListContainer = new VBox(10);
+        armorListContainer.getStyleClass().add("merit-row-container"); // reuse style
+        
+        data.getArmors().addListener((javafx.collections.ListChangeListener.Change<? extends Armor> c) -> refreshArmorList());
+        refreshArmorList();
+
+        Button addArmorBtn = new Button("+ Add Armor");
+        addArmorBtn.getStyleClass().add("add-btn");
+        addArmorBtn.setOnAction(e -> showArmorDialog(null));
+
+        armorSection.getChildren().addAll(armorListContainer, addArmorBtn);
+
         VBox hearthstonesSection = createEquipmentSection("Hearthstones");
         VBox otherSection = createEquipmentSection("Other");
 
@@ -2079,6 +2093,158 @@ public class BuilderUI extends BorderPane {
                 data.getWeapons().add(weapon);
             } else {
                 refreshWeaponsList();
+                data.setDirty(true);
+            }
+        });
+    }
+
+    private void refreshArmorList() {
+        if (armorListContainer == null) return;
+        armorListContainer.getChildren().clear();
+        for (Armor a : data.getArmors()) {
+            HBox row = new HBox(15);
+            row.getStyleClass().add("merit-row");
+            row.setAlignment(Pos.CENTER_LEFT);
+
+            CheckBox equippedCb = new CheckBox();
+            equippedCb.setTooltip(new Tooltip("Equipped"));
+            equippedCb.selectedProperty().bindBidirectional(a.equippedProperty());
+
+            VBox details = new VBox(5);
+            Label nameLabel = new Label(a.getName());
+            nameLabel.getStyleClass().add("merit-name");
+            
+            String statsStr = String.format("Soak: +%d | Hardness: %d | Mobility Penalty: %d", 
+                a.getSoak(), a.getHardness(), a.getMobilityPenalty());
+            if (a.getAttunement() > 0) statsStr += " | Attunement: " + a.getAttunement();
+            
+            Label statsLabel = new Label(statsStr);
+            statsLabel.setStyle("-fx-font-size: 0.9em; -fx-text-fill: #aaa;");
+            
+            Label tagsLabel = new Label("Tags: " + String.join(", ", a.getTags()));
+            tagsLabel.setStyle("-fx-font-style: italic; -fx-font-size: 0.85em; -fx-text-fill: #888;");
+
+            details.getChildren().addAll(nameLabel, statsLabel, tagsLabel);
+            
+            Button editBtn = new Button("✏️");
+            editBtn.getStyleClass().add("edit-btn");
+            editBtn.setStyle("-fx-base: #cea212;");
+            editBtn.setOnAction(e -> showArmorDialog(a));
+
+            Button delBtn = new Button("🗑");
+            delBtn.getStyleClass().add("remove-btn");
+            delBtn.setOnAction(e -> data.getArmors().remove(a));
+
+            HBox.setHgrow(details, Priority.ALWAYS);
+            row.getChildren().addAll(equippedCb, details, editBtn, delBtn);
+            armorListContainer.getChildren().add(row);
+        }
+    }
+
+    private void showArmorDialog(Armor existing) {
+        Dialog<Armor> dialog = new Dialog<>();
+        dialog.setTitle(existing == null ? "Add New Armor" : "Edit Armor");
+        dialog.setHeaderText(existing == null ? "Create a new armor piece." : "Update details for: " + existing.getName());
+
+        ButtonType saveBtnType = new ButtonType(existing == null ? "Add" : "Save", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveBtnType, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10); grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField nameField = new TextField(existing == null ? "" : existing.getName());
+        nameField.setPromptText("Armor Name");
+        
+        ComboBox<Armor.ArmorType> typeCombo = new ComboBox<>(javafx.collections.FXCollections.observableArrayList(Armor.ArmorType.values()));
+        typeCombo.setValue(existing == null ? Armor.ArmorType.MORTAL : existing.getType());
+
+        ComboBox<Armor.ArmorWeight> weightCombo = new ComboBox<>(javafx.collections.FXCollections.observableArrayList(Armor.ArmorWeight.values()));
+        weightCombo.setValue(existing == null ? Armor.ArmorWeight.MEDIUM : existing.getWeight());
+
+        ListView<EquipmentDataService.Tag> tagsList = new ListView<>();
+        tagsList.setPrefHeight(150);
+        javafx.collections.ObservableList<EquipmentDataService.Tag> selectedTags = javafx.collections.FXCollections.observableArrayList();
+        
+        List<EquipmentDataService.Tag> availableTags = equipmentService.getTagsForCategory("armor");
+        tagsList.getItems().setAll(availableTags);
+
+        if (existing != null) {
+            for (EquipmentDataService.Tag t : availableTags) {
+                if (existing.getTags().contains(t.getName())) {
+                    selectedTags.add(t);
+                }
+            }
+        }
+
+        tagsList.setCellFactory(lv -> new ListCell<>() {
+            private final CheckBox cb = new CheckBox();
+            @Override
+            protected void updateItem(EquipmentDataService.Tag item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null); setText(null);
+                } else {
+                    cb.setText(item.getName());
+                    cb.setTooltip(new Tooltip(item.getDescription()));
+                    cb.setSelected(selectedTags.stream().anyMatch(st -> st.getName().equals(item.getName())));
+                    cb.setOnAction(e -> {
+                        if (cb.isSelected()) {
+                            if (selectedTags.stream().noneMatch(st -> st.getName().equals(item.getName()))) {
+                                selectedTags.add(item);
+                            }
+                        } else {
+                            selectedTags.removeIf(st -> st.getName().equals(item.getName()));
+                        }
+                    });
+                    setGraphic(cb);
+                }
+            }
+        });
+
+        Label statsPreview = new Label();
+        statsPreview.setStyle("-fx-font-weight: bold; -fx-text-fill: #3498db;");
+        
+        Runnable updatePreview = () -> {
+            Armor preview = new Armor("", "", typeCombo.getValue(), weightCombo.getValue());
+            statsPreview.setText(String.format("Soak: +%d | Hardness: %d | Mob: %d", 
+                preview.getSoak(), preview.getHardness(), preview.getMobilityPenalty()));
+        };
+        typeCombo.setOnAction(e -> updatePreview.run());
+        weightCombo.setOnAction(e -> updatePreview.run());
+        updatePreview.run();
+
+        grid.add(new Label("Name:"), 0, 0);
+        grid.add(nameField, 1, 0);
+        grid.add(new Label("Type:"), 0, 1);
+        grid.add(typeCombo, 1, 1);
+        grid.add(new Label("Weight:"), 0, 2);
+        grid.add(weightCombo, 1, 2);
+        grid.add(new Label("Stats Preview:"), 0, 3);
+        grid.add(statsPreview, 1, 3);
+        grid.add(new Label("Tags:"), 0, 4);
+        grid.add(tagsList, 1, 4);
+
+        dialog.getDialogPane().setContent(grid);
+        Platform.runLater(nameField::requestFocus);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == saveBtnType) {
+                Armor a = (existing != null) ? existing : new Armor(nameField.getText());
+                a.setName(nameField.getText());
+                a.setType(typeCombo.getValue());
+                a.setWeight(weightCombo.getValue());
+                a.getTags().setAll(selectedTags.stream().map(EquipmentDataService.Tag::getName).collect(java.util.stream.Collectors.toList()));
+                return a;
+            }
+            return null;
+        });
+
+        dialog.showAndWait().ifPresent(armor -> {
+            if (existing == null) {
+                data.getArmors().add(armor);
+            } else {
+                refreshArmorList();
                 data.setDirty(true);
             }
         });
