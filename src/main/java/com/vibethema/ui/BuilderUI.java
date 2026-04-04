@@ -449,9 +449,9 @@ public class BuilderUI extends BorderPane {
                 Label nameLabel = new Label(w.getName());
                 nameLabel.getStyleClass().add("merit-name");
                 
-                String statsStr = String.format("Acc: %+d | Dmg: %d | Def: %+d | Over: %d", 
+                String statsStr = String.format("Accuracy: %+d | Damage: %d | Defense: %+d | Overwhelming: %d", 
                     w.getAccuracy(), w.getDamage(), w.getDefense(), w.getOverwhelming());
-                if (w.getAttunement() > 0) statsStr += " | Attune: " + w.getAttunement();
+                if (w.getAttunement() > 0) statsStr += " | Attunement: " + w.getAttunement();
                 
                 Label statsLabel = new Label(statsStr);
                 statsLabel.setStyle("-fx-font-size: 0.9em; -fx-text-fill: #aaa;");
@@ -1984,24 +1984,40 @@ public class BuilderUI extends BorderPane {
         ComboBox<Weapon.WeaponCategory> categoryCombo = new ComboBox<>(javafx.collections.FXCollections.observableArrayList(Weapon.WeaponCategory.values()));
         categoryCombo.setValue(Weapon.WeaponCategory.MEDIUM);
 
-        FlowPane tagsFlow = new FlowPane(5, 5);
-        tagsFlow.setPrefWrapLength(300);
-        
-        Map<String, CheckBox> tagCheckboxes = new HashMap<>();
-        
+        ListView<EquipmentDataService.Tag> tagsList = new ListView<>();
+        tagsList.setPrefHeight(150);
+        javafx.collections.ObservableList<EquipmentDataService.Tag> selectedTags = javafx.collections.FXCollections.observableArrayList();
+
+        tagsList.setCellFactory(lv -> new ListCell<>() {
+            private final CheckBox cb = new CheckBox();
+            @Override
+            protected void updateItem(EquipmentDataService.Tag item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    cb.setText(item.getName());
+                    cb.setTooltip(new Tooltip(item.getDescription()));
+                    cb.setSelected(selectedTags.contains(item));
+                    cb.setOnAction(e -> {
+                        if (cb.isSelected()) {
+                            if (!selectedTags.contains(item)) selectedTags.add(item);
+                        } else {
+                            selectedTags.remove(item);
+                        }
+                    });
+                    setGraphic(cb);
+                }
+            }
+        });
+
         Runnable updateTags = () -> {
-            tagsFlow.getChildren().clear();
-            tagCheckboxes.clear();
+            selectedTags.clear();
             String cat = rangeCombo.getValue() == Weapon.WeaponRange.CLOSE ? "melee" : 
                          (rangeCombo.getValue() == Weapon.WeaponRange.THROWN ? "thrown" : "archery");
             
-            List<EquipmentDataService.Tag> availableTags = equipmentService.getTagsForCategory(cat);
-            for (EquipmentDataService.Tag t : availableTags) {
-                CheckBox cb = new CheckBox(t.getName());
-                cb.setTooltip(new Tooltip(t.getDescription()));
-                tagCheckboxes.put(t.getName(), cb);
-                tagsFlow.getChildren().add(cb);
-            }
+            tagsList.getItems().setAll(equipmentService.getTagsForCategory(cat));
         };
 
         rangeCombo.setOnAction(e -> updateTags.run());
@@ -2016,7 +2032,7 @@ public class BuilderUI extends BorderPane {
         grid.add(new Label("Category:"), 0, 3);
         grid.add(categoryCombo, 1, 3);
         grid.add(new Label("Tags:"), 0, 4);
-        grid.add(tagsFlow, 1, 4);
+        grid.add(tagsList, 1, 4);
 
         dialog.getDialogPane().setContent(grid);
         Platform.runLater(nameField::requestFocus);
@@ -2027,10 +2043,8 @@ public class BuilderUI extends BorderPane {
                 w.setRange(rangeCombo.getValue());
                 w.setType(typeCombo.getValue());
                 w.setCategory(categoryCombo.getValue());
-                for (Map.Entry<String, CheckBox> entry : tagCheckboxes.entrySet()) {
-                    if (entry.getValue().isSelected()) {
-                        w.getTags().add(entry.getKey());
-                    }
+                for (EquipmentDataService.Tag t : selectedTags) {
+                    w.getTags().add(t.getName());
                 }
                 return w;
             }
