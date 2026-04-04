@@ -62,6 +62,12 @@ public class PdfExtractor {
                 String keywordText = stripper.getText(document);
                 extractAndSaveKeywords(keywordText);
             }
+
+            // Extract Weapon Tags - Only for Core
+            if (source == PdfSource.CORE) {
+                if (progressCallback != null) progressCallback.accept(0.85);
+                extractAndSaveWeaponTags(document, stripper);
+            }
             
             if (progressCallback != null) progressCallback.accept(1.0);
         }
@@ -411,6 +417,72 @@ public class PdfExtractor {
         try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
             gson.toJson(outputKeywords, writer);
         }
+    }
+
+    private void extractAndSaveWeaponTags(PDDocument document, PDFTextStripper stripper) throws IOException {
+        Map<String, List<Map<String, String>>> output = new LinkedHashMap<>();
+
+        // Melee Tags: p. 585-587
+        stripper.setStartPage(585);
+        stripper.setEndPage(587);
+        output.put("melee", parseTags(findTagDefinitions(stripper.getText(document)), "melee"));
+
+        // Thrown Tags: p. 588-589
+        stripper.setStartPage(588);
+        stripper.setEndPage(589);
+        output.put("thrown", parseTags(findTagDefinitions(stripper.getText(document)), "thrown"));
+
+        // Archery & Ammunition Tags: p. 591-592
+        stripper.setStartPage(591);
+        stripper.setEndPage(592);
+        output.put("archery", parseTags(findTagDefinitions(stripper.getText(document)), "archery"));
+
+        Path outDir = CharmDataService.getUserCharmsPath();
+        Path filePath = outDir.resolve("weapon_tags.json");
+        try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
+            gson.toJson(output, writer);
+        }
+    }
+
+    private List<Map<String, String>> parseTags(String text, String category) {
+        List<Map<String, String>> list = new ArrayList<>();
+        // Updated regex: Names start with Uppercase at start of line, followed by alpha/space/dash, ending with colon.
+        // Description follows and ends at the next Tag: or page junk.
+        Pattern tagPattern = Pattern.compile("(?m)^([A-Z][A-Za-z- ]+):[ \t]+(.*?)(?=\\r?\\n[A-Z][A-Za-z- ]+:\\s|\\r?\\nEX3|\\r?\\nC H A P T E R|\\z)", Pattern.DOTALL);
+        Matcher matcher = tagPattern.matcher(text);
+        
+        while (matcher.find()) {
+            String name = matcher.group(1).trim();
+            if (name.equalsIgnoreCase("Tags") || name.equalsIgnoreCase("Cost")) continue;
+            
+            String desc = cleanDescription(matcher.group(2).trim());
+            
+            // Further clean descriptions that might have run into headers or page footers
+            String[] stopWords = {"MELEE WEAPON TAGS", "RANGED WEAPON TAGS", "AMMUNITION TAGS", "EX3", "CHAPTER", "T H E  G R A N D  P A N O P L Y"};
+            for (String stop : stopWords) {
+                if (desc.contains(stop)) {
+                    desc = desc.split(stop)[0].trim();
+                }
+            }
+
+            Map<String, String> tag = new LinkedHashMap<>();
+            String id = java.util.UUID.nameUUIDFromBytes((category + "|" + name).getBytes()).toString();
+            tag.put("id", id);
+            tag.put("name", name);
+            tag.put("description", desc);
+            list.add(tag);
+        }
+        return list;
+    }
+
+    private String findTagDefinitions(String text) {
+        // Find the "Tags" header that is followed by definitions, not a weapon's tag list.
+        // In the PDF, weapon tag lists are usually "Tags: [List]" whereas the header is "Tags" alone.
+        int idx = text.lastIndexOf("\nTags\n");
+        if (idx == -1) idx = text.lastIndexOf("\r\nTags\r\n");
+        if (idx == -1) idx = text.indexOf("The following tags are available");
+        if (idx == -1) return text; // Fallback
+        return text.substring(idx);
     }
 
     private void addKeyword(List<Map<String, String>> list, String name, String rawDesc) {
