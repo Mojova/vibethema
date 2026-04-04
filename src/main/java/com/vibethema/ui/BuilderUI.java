@@ -65,6 +65,9 @@ public class BuilderUI extends BorderPane {
     private VBox armorListContainer;
     private VBox hearthstoneListContainer;
     private VBox otherEquipmentListContainer;
+    private TabPane mainTabPane;
+    private Tab charmsTab;
+    private ComboBox<String> charmsAbilityCombo;
 
     private void loadTagDescriptions() {
         Map<String, List<EquipmentDataService.Tag>> allTags = equipmentService.loadEquipmentTags();
@@ -93,9 +96,8 @@ public class BuilderUI extends BorderPane {
 
 
         setTop(createTopSection());
-
-        TabPane tabPane = new TabPane();
-        tabPane.getStyleClass().add("tab-pane");
+        mainTabPane = new TabPane();
+        mainTabPane.getStyleClass().add("tab-pane");
 
         Tab statsTab = new Tab("Stats");
         statsTab.setClosable(false);
@@ -118,7 +120,7 @@ public class BuilderUI extends BorderPane {
         equipmentScroll.getStyleClass().add("scroll-pane-custom");
         equipmentTab.setContent(equipmentScroll);
 
-        Tab charmsTab = new Tab("Charms");
+        charmsTab = new Tab("Charms");
         charmsTab.setClosable(false);
         charmsTab.setContent(createCharmsContent());
 
@@ -126,9 +128,9 @@ public class BuilderUI extends BorderPane {
         martialArtsTab.setClosable(false);
         martialArtsTab.setContent(createMartialArtsContent());
 
-        tabPane.getTabs().addAll(statsTab, meritsTab, equipmentTab, charmsTab, martialArtsTab);
+        mainTabPane.getTabs().addAll(statsTab, meritsTab, equipmentTab, charmsTab, martialArtsTab);
 
-        setCenter(tabPane);
+        setCenter(mainTabPane);
 
         setBottom(createFooter());
 
@@ -1070,6 +1072,8 @@ public class BuilderUI extends BorderPane {
         
         dodgeBox.getChildren().addAll(dodgeBaseLabel, dodgeBonusLabel);
 
+        // No more double-click
+
         Runnable updateDodge = () -> {
             int dex = data.getAttribute("Dexterity").get();
             int dodge = data.getAbility("Dodge").get();
@@ -1123,6 +1127,8 @@ public class BuilderUI extends BorderPane {
         resolveBonusLabel.setStyle("-fx-text-fill: #3498db; -fx-font-weight: bold;");
         Tooltip resolveTooltip = new Tooltip("If integrity specialty applies");
         resolveBox.getChildren().addAll(resolveBaseLabel, resolveBonusLabel);
+        
+        // No more double-click
 
         Runnable updateResolve = () -> {
             int wits = data.getAttribute("Wits").get();
@@ -1154,6 +1160,8 @@ public class BuilderUI extends BorderPane {
         guileBonusLabel.setStyle("-fx-text-fill: #3498db; -fx-font-weight: bold;");
         Tooltip guileTooltip = new Tooltip("If socialize specialty applies");
         guileBox.getChildren().addAll(guileBaseLabel, guileBonusLabel);
+        
+        // No more double-click
 
         Runnable updateGuile = () -> {
             int manipulation = data.getAttribute("Manipulation").get();
@@ -1391,18 +1399,19 @@ public class BuilderUI extends BorderPane {
     }
 
     private javafx.scene.Node createCharmsContent() {
-        ComboBox<String> abilityCombo = new ComboBox<>();
-        abilityCombo.getItems().addAll(
+        charmsAbilityCombo = new ComboBox<>();
+        charmsAbilityCombo.getItems().addAll(
             CharacterData.ABILITIES.stream()
                 .filter(a -> !a.equals("Martial Arts"))
                 .collect(Collectors.toList())
         );
-        abilityCombo.setValue("Archery");
+        charmsAbilityCombo.setValue("Archery");
         
-        CharmTreeComponent charmsView = new CharmTreeComponent(abilityCombo, "Ability");
+        CharmTreeComponent charmsView = new CharmTreeComponent(charmsAbilityCombo, "Ability");
         charmTrees.add(charmsView);
         return charmsView;
     }
+
 
     private void loadKeywords() {
         if (dataService == null) return;
