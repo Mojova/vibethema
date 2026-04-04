@@ -3,11 +3,9 @@ package com.vibethema.model;
 import java.util.List;
 import java.util.UUID;
 
-public class Charm {
+public abstract class Charm {
     private String id;
     private String name;
-    private String ability;
-    private int minAbility;
     private int minEssence;
     private List<String> prerequisites;
     
@@ -29,8 +27,6 @@ public class Charm {
     }
 
     public String getName() { return name; }
-    public String getAbility() { return ability; }
-    public int getMinAbility() { return minAbility; }
     public int getMinEssence() { return minEssence; }
     public List<String> getPrerequisites() { return prerequisites; }
     
@@ -44,8 +40,6 @@ public class Charm {
     public void setCategory(String category) { this.category = category; }
 
     public void setName(String name) { this.name = name; }
-    public void setAbility(String ability) { this.ability = ability; }
-    public void setMinAbility(int minAbility) { this.minAbility = minAbility; }
     public void setMinEssence(int minEssence) { this.minEssence = minEssence; }
     public void setPrerequisites(List<String> prerequisites) { this.prerequisites = prerequisites; }
     public void setCost(String cost) { this.cost = cost; }
@@ -61,37 +55,9 @@ public class Charm {
     public boolean isPotentiallyProblematicImport() { return potentiallyProblematicImport; }
     public void setPotentiallyProblematicImport(boolean value) { this.potentiallyProblematicImport = value; }
 
-    public boolean isEligible(CharacterData data) {
-        if (data == null) return false;
-        
-        int effectiveEssence = data.essenceProperty().get();
-        String supernal = data.supernalAbilityProperty().get();
-        
-        // Handle Supernal Ability
-        if (ability != null && !supernal.isEmpty()) {
-            boolean isSupernal = ability.equals(supernal);
-            // Supernal Martial Arts covers all styles
-            if (!isSupernal && "Martial Arts".equals(supernal) && data.isMartialArtsStyle(ability)) {
-                isSupernal = true;
-            }
-            // Supernal Craft covers all expertise types
-            if (!isSupernal && "Craft".equals(supernal) && data.isCraftExpertise(ability)) {
-                isSupernal = true;
-            }
-            
-            if (isSupernal) {
-                effectiveEssence = 5;
-            }
-        }
-        
-        if (effectiveEssence < minEssence) return false;
-        if (!"evocation".equalsIgnoreCase(category) && data.getAbilityRating(ability) < minAbility) return false;
-        
-        if (prerequisites != null) {
-            for (String reqId : prerequisites) {
-                if (!data.hasCharm(reqId)) return false;
-            }
-        }
-        return true;
-    }
+    public abstract boolean isEligible(CharacterData data);
+    public abstract String getAbility();
+    public abstract void setAbility(String ability);
+    public abstract int getMinAbility();
+    public abstract void setMinAbility(int minAbility);
 }

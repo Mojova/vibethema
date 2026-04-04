@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.vibethema.model.Charm;
+import com.vibethema.model.SolarCharm;
+import com.vibethema.model.Evocation;
 import com.vibethema.model.Keyword;
 
 import java.io.*;
@@ -18,7 +20,17 @@ public class CharmDataService {
     private static final String CHARMS_DIR = "charms";
     private static final String MA_DIR = "martial_arts";
     private static final String EVOCATIONS_DIR = "evocations";
-    private final Gson gson = new GsonBuilder().create();
+    private final Gson gson = new GsonBuilder()
+        .registerTypeAdapter(Charm.class, (com.google.gson.JsonDeserializer<Charm>) (json, typeOfT, context) -> {
+            com.google.gson.JsonObject obj = json.getAsJsonObject();
+            String category = obj.has("category") ? obj.get("category").getAsString() : "solar";
+            if ("evocation".equals(category)) {
+                return context.deserialize(json, Evocation.class);
+            } else {
+                return context.deserialize(json, SolarCharm.class);
+            }
+        })
+        .create();
 
     public static Path getUserCharmsPath() {
         return Paths.get(System.getProperty("user.home"), APP_DIR, CHARMS_DIR);

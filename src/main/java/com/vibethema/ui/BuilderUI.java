@@ -7,6 +7,8 @@ import com.vibethema.model.Hearthstone;
 import com.vibethema.model.OtherEquipment;
 import com.vibethema.model.CharacterData;
 import com.vibethema.model.Charm;
+import com.vibethema.model.SolarCharm;
+import com.vibethema.model.Evocation;
 import com.vibethema.model.Intimacy;
 import com.vibethema.model.MartialArtsStyle;
 import com.vibethema.model.PurchasedCharm;
@@ -2532,7 +2534,7 @@ public class BuilderUI extends BorderPane {
                 return;
             }
             
-            Charm nc = new Charm();
+            Charm nc = "Evocation".equals(filterType) ? new Evocation() : new SolarCharm();
             nc.setName(nameField.getText());
             nc.setAbility(abCombo.getValue());
             nc.setMinAbility(minAb.getValue());
