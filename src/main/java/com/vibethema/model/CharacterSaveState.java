@@ -23,6 +23,7 @@ public class CharacterSaveState {
     public List<ArmorData> armors = new ArrayList<>();
     public List<HearthstoneData> hearthstones = new ArrayList<>();
     public List<OtherEquipmentData> otherEquipment = new ArrayList<>();
+    public List<IntimacyData> intimacies = new ArrayList<>();
     
     public static class SpecialtyData {
         public String id;
@@ -78,6 +79,14 @@ public class CharacterSaveState {
     public static class OtherEquipmentData {
         public String id;
         public String name;
+        public String description;
+    }
+
+    public static class IntimacyData {
+        public String id;
+        public String name;
+        public Intimacy.Type type;
+        public Intimacy.Intensity intensity;
         public String description;
     }
 }

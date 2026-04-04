@@ -53,6 +53,8 @@ public class CharacterData {
     private final ObservableList<Armor> armors = FXCollections.observableArrayList();
     private final ObservableList<Hearthstone> hearthstones = FXCollections.observableArrayList();
     private final ObservableList<OtherEquipment> otherEquipment = FXCollections.observableArrayList();
+    private final ObservableList<Intimacy> intimacies = FXCollections.observableArrayList(i -> 
+        new javafx.beans.Observable[] { i.nameProperty(), i.intensityProperty(), i.descriptionProperty() });
 
     private final IntegerProperty naturalSoak = new SimpleIntegerProperty(0);
     private final IntegerProperty armorSoak = new SimpleIntegerProperty(0);
@@ -160,8 +162,19 @@ public class CharacterData {
         merits.addListener((javafx.collections.ListChangeListener.Change<? extends Merit> c) -> markDirty());
         specialties.addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> markDirty());
         crafts.addListener((javafx.collections.ListChangeListener<? super CraftAbility>) c -> markDirty());
-        martialArtsStyles.addListener((javafx.collections.ListChangeListener<? super MartialArtsStyle>) c -> markDirty());
+        martialArtsStyles.addListener((javafx.collections.ListChangeListener<? super MartialArtsStyle>) c -> {
+            markDirty();
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    for (MartialArtsStyle mas : c.getAddedSubList()) {
+                        mas.ratingProperty().addListener((obs, ov, nv) -> markDirty());
+                        mas.styleNameProperty().addListener((obs, ov, nv) -> markDirty());
+                    }
+                }
+            }
+        });
         weapons.addListener((javafx.collections.ListChangeListener<? super Weapon>) c -> markDirty());
+        intimacies.addListener((javafx.collections.ListChangeListener<? super Intimacy>) c -> markDirty());
         
         merits.add(new Merit("", 1));
         specialties.add(new Specialty("", ""));
@@ -248,6 +261,7 @@ public class CharacterData {
     public ObservableList<Armor> getArmors() { return armors; }
     public ObservableList<Hearthstone> getHearthstones() { return hearthstones; }
     public ObservableList<OtherEquipment> getOtherEquipment() { return otherEquipment; }
+    public ObservableList<Intimacy> getIntimacies() { return intimacies; }
     
     public IntegerProperty naturalSoakProperty() { return naturalSoak; }
     public IntegerProperty armorSoakProperty() { return armorSoak; }
@@ -318,9 +332,9 @@ public class CharacterData {
     
     public int getAbilityTotal() {
         int total = ABILITIES.stream().filter(abil -> !"Craft".equals(abil) && !"Martial Arts".equals(abil))
-                .mapToInt(ability -> abilities.get(ability).get()).sum();
-        for (CraftAbility ca : crafts) total += ca.getRating();
-        for (MartialArtsStyle mas : martialArtsStyles) total += mas.getRating();
+                .mapToInt(ability -> Math.min(3, abilities.get(ability).get())).sum();
+        for (CraftAbility ca : crafts) total += Math.min(3, ca.getRating());
+        for (MartialArtsStyle mas : martialArtsStyles) total += Math.min(3, mas.getRating());
         return total;
     }
     
@@ -500,6 +514,14 @@ public class CharacterData {
             od.id = o.getId(); od.name = o.getName(); od.description = o.getDescription();
             state.otherEquipment.add(od);
         }
+        state.intimacies = new ArrayList<>();
+        for (Intimacy i : intimacies) {
+            CharacterSaveState.IntimacyData idata = new CharacterSaveState.IntimacyData();
+            idata.id = i.getId(); idata.name = i.getName();
+            idata.type = i.getType(); idata.intensity = i.getIntensity();
+            idata.description = i.getDescription();
+            state.intimacies.add(idata);
+        }
         return state;
     }
 
@@ -602,10 +624,12 @@ public class CharacterData {
                     hearthstones.add(new Hearthstone(hd.id, hd.name, hd.description));
                 }
             }
-            otherEquipment.clear();
-            if (state.otherEquipment != null) {
-                for (CharacterSaveState.OtherEquipmentData od : state.otherEquipment) {
-                    otherEquipment.add(new OtherEquipment(od.id, od.name, od.description));
+            intimacies.clear();
+            if (state.intimacies != null) {
+                for (CharacterSaveState.IntimacyData idata : state.intimacies) {
+                    Intimacy i = new Intimacy(idata.id, idata.name, idata.type, idata.intensity);
+                    i.setDescription(idata.description);
+                    intimacies.add(i);
                 }
             }
             dirty.set(false);

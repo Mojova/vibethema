@@ -7,6 +7,7 @@ import com.vibethema.model.Hearthstone;
 import com.vibethema.model.OtherEquipment;
 import com.vibethema.model.CharacterData;
 import com.vibethema.model.Charm;
+import com.vibethema.model.Intimacy;
 import com.vibethema.model.MartialArtsStyle;
 import com.vibethema.model.PurchasedCharm;
 import com.vibethema.model.Specialty;
@@ -72,6 +73,8 @@ public class BuilderUI extends BorderPane {
     private Tab martialArtsTab;
     private ComboBox<String> charmsAbilityCombo;
     private ComboBox<String> stylePicker;
+    private VBox principlesListContainer;
+    private VBox tiesListContainer;
 
     private void loadTagDescriptions() {
         Map<String, List<EquipmentDataService.Tag>> allTags = equipmentService.loadEquipmentTags();
@@ -132,7 +135,11 @@ public class BuilderUI extends BorderPane {
         martialArtsTab.setClosable(false);
         martialArtsTab.setContent(createMartialArtsContent());
 
-        mainTabPane.getTabs().addAll(statsTab, meritsTab, equipmentTab, charmsTab, martialArtsTab);
+        Tab intimaciesTab = new Tab("Intimacies");
+        intimaciesTab.setClosable(false);
+        intimaciesTab.setContent(createIntimaciesContent());
+
+        mainTabPane.getTabs().addAll(statsTab, meritsTab, equipmentTab, charmsTab, martialArtsTab, intimaciesTab);
 
         setCenter(mainTabPane);
 
@@ -187,6 +194,16 @@ public class BuilderUI extends BorderPane {
 
         Menu fileMenu = new Menu("File");
 
+        MenuItem newItem = new MenuItem("New Character");
+        newItem.setAccelerator(KeyCombination.keyCombination("Shortcut+N"));
+        newItem.setOnAction(e -> {
+            if (confirmDiscardChanges()) {
+                data = new CharacterData();
+                currentFile = null;
+                getScene().setRoot(new BuilderUI(data));
+            }
+        });
+
         MenuItem saveItem = new MenuItem("Save");
         saveItem.setAccelerator(KeyCombination.keyCombination("Shortcut+S"));
         saveItem.setOnAction(e -> saveCharacter());
@@ -205,7 +222,15 @@ public class BuilderUI extends BorderPane {
         MenuItem importMosePdfItem = new MenuItem("Import Miracles of the Solar Exalted...");
         importMosePdfItem.setOnAction(e -> importMosePdf());
 
-        fileMenu.getItems().addAll(saveItem, saveAsItem, loadItem, new SeparatorMenuItem(), importPdfItem, importMosePdfItem);
+        MenuItem quitItem = new MenuItem("Quit");
+        quitItem.setAccelerator(KeyCombination.keyCombination("Shortcut+Q"));
+        quitItem.setOnAction(e -> {
+            if (confirmDiscardChanges()) {
+                Platform.exit();
+            }
+        });
+
+        fileMenu.getItems().addAll(newItem, new SeparatorMenuItem(), saveItem, saveAsItem, loadItem, new SeparatorMenuItem(), importPdfItem, importMosePdfItem, new SeparatorMenuItem(), quitItem);
         
         Menu viewMenu = new Menu("View");
         
@@ -229,6 +254,10 @@ public class BuilderUI extends BorderPane {
         martialArtsTabItem.setAccelerator(KeyCombination.keyCombination("Shortcut+5"));
         martialArtsTabItem.setOnAction(e -> selectAndFocusTab(4));
 
+        MenuItem intimaciesTabItem = new MenuItem("Intimacies");
+        intimaciesTabItem.setAccelerator(KeyCombination.keyCombination("Shortcut+6"));
+        intimaciesTabItem.setOnAction(e -> selectAndFocusTab(5));
+
         MenuItem nextTabItem = new MenuItem("Next Tab");
         nextTabItem.setAccelerator(KeyCombination.keyCombination("Shortcut+Shift+]"));
         nextTabItem.setOnAction(e -> cycleTab(1));
@@ -238,7 +267,7 @@ public class BuilderUI extends BorderPane {
         prevTabItem.setOnAction(e -> cycleTab(-1));
 
         viewMenu.getItems().addAll(
-            statsTabItem, meritsTabItem, equipmentTabItem, charmsTabItem, martialArtsTabItem,
+            statsTabItem, meritsTabItem, equipmentTabItem, charmsTabItem, martialArtsTabItem, intimaciesTabItem,
             new SeparatorMenuItem(),
             nextTabItem, prevTabItem
         );
@@ -285,6 +314,8 @@ public class BuilderUI extends BorderPane {
     }
 
     private void loadCharacter() {
+        if (!confirmDiscardChanges()) return;
+        
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Load Character");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Vibethema Save File", "*.vbtm"));
@@ -301,6 +332,32 @@ public class BuilderUI extends BorderPane {
                 ex.printStackTrace();
             }
         }
+    }
+
+    public boolean confirmDiscardChanges() {
+        if (!data.isDirty()) return true;
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Unsaved Changes");
+        alert.setHeaderText("Your character has unsaved changes.");
+        alert.setContentText("Would you like to save before continuing?");
+
+        ButtonType saveBtn = new ButtonType("Save");
+        ButtonType discardBtn = new ButtonType("Discard");
+        ButtonType cancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        alert.getButtonTypes().setAll(saveBtn, discardBtn, cancelBtn);
+
+        java.util.Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent()) {
+            if (result.get() == saveBtn) {
+                saveCharacter();
+                return !data.isDirty(); 
+            } else if (result.get() == discardBtn) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void updateWindowTitle() {
@@ -483,6 +540,17 @@ public class BuilderUI extends BorderPane {
             updateFooter();
         });
 
+        data.getMartialArtsStyles().addListener((javafx.collections.ListChangeListener<? super MartialArtsStyle>) c -> {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    for (MartialArtsStyle mas : c.getAddedSubList()) {
+                        mas.ratingProperty().addListener((obs, ov, nv) -> updateFooter());
+                    }
+                }
+            }
+            updateFooter();
+        });
+
         // Initial listeners
         for (Merit m : data.getMerits()) {
             m.ratingProperty().addListener((obs, ov, nv) -> updateFooter());
@@ -495,6 +563,22 @@ public class BuilderUI extends BorderPane {
             ca.expertiseProperty().addListener((obs, ov, nv) -> updateFooter());
             ca.ratingProperty().addListener((obs, ov, nv) -> updateFooter());
         }
+        for (MartialArtsStyle mas : data.getMartialArtsStyles()) {
+            mas.ratingProperty().addListener((obs, ov, nv) -> updateFooter());
+        }
+        
+        data.getIntimacies().addListener((javafx.collections.ListChangeListener<? super Intimacy>) c -> {
+            boolean structuralChange = false;
+            while (c.next()) {
+                if (c.wasAdded() || c.wasRemoved() || c.wasPermutated()) {
+                    structuralChange = true;
+                }
+            }
+            if (structuralChange) {
+                refreshIntimaciesList();
+            }
+            updateFooter();
+        });
 
     }
 
@@ -513,7 +597,7 @@ public class BuilderUI extends BorderPane {
         socialLabel.setText("Soc: " + soc);
         mentalLabel.setText("Ment: " + ment);
 
-        abilitiesLabel.setText("Abils: " + abils + "/28");
+        abilitiesLabel.setText("Abils: " + Math.min(28, abils) + "/28");
         charmsLabel.setText("Charms: " + charmsCount + "/15");
         meritsLabel.setText("Merits: " + data.getMeritTotal() + "/10");
         specialtiesLabel.setText("Specialties: " + data.getSpecialties().size() + "/4");
@@ -920,6 +1004,78 @@ public class BuilderUI extends BorderPane {
         scrollPane.setFitToWidth(true);
         scrollPane.getStyleClass().add("scroll-pane-custom");
         return scrollPane;
+    }
+
+    private ScrollPane createIntimaciesContent() {
+        VBox content = new VBox(25);
+        content.getStyleClass().add("content-area");
+        content.setPadding(new Insets(20));
+
+        VBox principlesSection = createEquipmentSection("Principles");
+        principlesListContainer = new VBox(10);
+        principlesListContainer.getStyleClass().add("merit-row-container");
+
+        Button addPrincipleBtn = new Button("+ Add Principle");
+        addPrincipleBtn.getStyleClass().add("add-btn");
+        addPrincipleBtn.setOnAction(e -> {
+            Intimacy i = new Intimacy(java.util.UUID.randomUUID().toString(), "New Principle", Intimacy.Type.PRINCIPLE, Intimacy.Intensity.MINOR);
+            data.getIntimacies().add(i);
+        });
+        principlesSection.getChildren().addAll(principlesListContainer, addPrincipleBtn);
+
+        VBox tiesSection = createEquipmentSection("Ties");
+        tiesListContainer = new VBox(10);
+        tiesListContainer.getStyleClass().add("merit-row-container");
+
+        Button addTieBtn = new Button("+ Add Tie");
+        addTieBtn.getStyleClass().add("add-btn");
+        addTieBtn.setOnAction(e -> {
+            Intimacy i = new Intimacy(java.util.UUID.randomUUID().toString(), "New Tie", Intimacy.Type.TIE, Intimacy.Intensity.MINOR);
+            data.getIntimacies().add(i);
+        });
+        tiesSection.getChildren().addAll(tiesListContainer, addTieBtn);
+
+        content.getChildren().addAll(principlesSection, tiesSection);
+        refreshIntimaciesList();
+
+        ScrollPane scrollPane = new ScrollPane(content);
+        scrollPane.setFitToWidth(true);
+        scrollPane.getStyleClass().add("scroll-pane-custom");
+        return scrollPane;
+    }
+
+    private void refreshIntimaciesList() {
+        if (principlesListContainer == null || tiesListContainer == null) return;
+        principlesListContainer.getChildren().clear();
+        tiesListContainer.getChildren().clear();
+
+        for (Intimacy i : data.getIntimacies()) {
+            HBox row = new HBox(15);
+            row.getStyleClass().add("merit-row");
+            row.setAlignment(Pos.CENTER_LEFT);
+
+            TextField nameField = new TextField(i.getName());
+            nameField.setPromptText(i.getType() == Intimacy.Type.PRINCIPLE ? "Belief statement..." : "Relationship...");
+            HBox.setHgrow(nameField, Priority.ALWAYS);
+            nameField.textProperty().addListener((obs, ov, nv) -> i.setName(nv));
+
+            ComboBox<Intimacy.Intensity> intensityBox = new ComboBox<>();
+            intensityBox.getItems().addAll(Intimacy.Intensity.values());
+            intensityBox.setValue(i.getIntensity());
+            intensityBox.valueProperty().addListener((obs, ov, nv) -> i.setIntensity(nv));
+
+            Button delBtn = new Button("🗑");
+            delBtn.getStyleClass().add("remove-btn");
+            delBtn.setOnAction(e -> data.getIntimacies().remove(i));
+
+            row.getChildren().addAll(nameField, intensityBox, delBtn);
+
+            if (i.getType() == Intimacy.Type.PRINCIPLE) {
+                principlesListContainer.getChildren().add(row);
+            } else {
+                tiesListContainer.getChildren().add(row);
+            }
+        }
     }
 
     private VBox createCraftsSection(javafx.beans.property.IntegerProperty casteCount,

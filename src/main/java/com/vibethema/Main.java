@@ -31,6 +31,11 @@ public class Main extends Application {
             primaryStage.setTitle("Vibethema");
             primaryStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("/icon.png")));
             primaryStage.setScene(scene);
+            primaryStage.setOnCloseRequest(e -> {
+                if (scene.getRoot() instanceof BuilderUI builder) {
+                    if (!builder.confirmDiscardChanges()) e.consume();
+                }
+            });
             primaryStage.show();
         }
     }
@@ -48,6 +53,13 @@ public class Main extends Application {
             stage.setTitle("Vibethema - " + file.getName());
             stage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("/icon.png")));
             stage.setScene(scene);
+            stage.setOnCloseRequest(e -> {
+                if (builder.confirmDiscardChanges()) {
+                    // Allowed to close
+                } else {
+                    e.consume();
+                }
+            });
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();

@@ -13,12 +13,14 @@ A JavaFX-based character creator for Exalted 3rd Edition. The application focuse
     - Centralized calculations for **Bonus Points**, **Mote Pools** (Personal/Peripheral), and **Health Levels** (based on Stamina/Resistance).
     - Tracks "Dirty" state for unsaved changes.
     - Handles **Charm Prerequisites** (checks highest Craft rating for Craft-based requirements).
+    - **Intimacies**: Managed in two sections (Principles and Ties). Tracked in a reactive `ObservableList<Intimacy>`.
 - **`CharacterSaveState`**: A DTO (Data Header Object) designed for GSON serialization. Use `exportState()` and `importState()` in `CharacterData` to bridge between the live model and this state.
 - **Specialized Entities**:
     - `Merit`: name/rating.
     - `Specialty`: name/ability link.
     - `CraftAbility`: expertise/rating/status (Caste/Favored).
     - `MartialArtsStyle`: style name/rating/status (Caste/Favored).
+    - `Intimacy`: name/type (Principle/Tie)/intensity (Minor/Major/Defining).
     - `Weapon`: name/range/type/category/tags/stats.
     - `Charm`/`PurchasedCharm`: metadata vs. instance data.
     - **Stackable Charms**: Supported via the `Stackable` keyword. The UI allows multiple purchases up to a defined limit (e.g., Resistance rating for Ox-Body), and stepwise refunds via `removeOneCharm()`.
@@ -41,7 +43,7 @@ A JavaFX-based character creator for Exalted 3rd Edition. The application focuse
 | Feature | Creation Rule | Scaling / BP Cost |
 | :--- | :--- | :--- |
 | **Attributes** | 8/6/4 distribution | N/A (Standard creator) |
-| **Abilities** | 28 dots | Above 28: 1 BP per dot (Note: Crafts and Martial Arts are separate) |
+| **Abilities** | 28 dots (Capped at 3 per ability in the 28-dot pool) | Over 28 total or over 3 in any ability: BP cost (1 or 2) |
 | **Merits** | 10 Free Dots | Above 10: 1 BP per dot |
 | **Specialties** | 4 Free Specialties | Above 4: 1 BP each |
 | **Charms** | 15 Start | Above 15: N/A in current implementation (Manual purchase logic) |
