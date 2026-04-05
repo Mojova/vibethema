@@ -55,6 +55,11 @@ public class CharacterData {
     private final ObservableList<Spell> spells = FXCollections.observableArrayList(s ->
         new javafx.beans.Observable[] { s.nameProperty(), s.descriptionProperty(), s.circleProperty() });
 
+    private final ObservableList<XpAward> xpAwards = FXCollections.observableArrayList(x ->
+        new javafx.beans.Observable[] { x.descriptionProperty(), x.amountProperty(), x.isSolarProperty() });
+    
+    private CharacterSaveState creationSnapshot = null;
+
     private final IntegerProperty naturalSoak = new SimpleIntegerProperty(0);
     private final IntegerProperty armorSoak = new SimpleIntegerProperty(0);
     private final IntegerProperty totalSoak = new SimpleIntegerProperty(0);
@@ -363,7 +368,17 @@ public class CharacterData {
     public ObservableList<Intimacy> getIntimacies() { return intimacies; }
     public ObservableList<ShapingRitual> getShapingRituals() { return shapingRituals; }
     public ObservableList<Spell> getSpells() { return spells; }
+
+    public ObservableList<XpAward> getXpAwards() { return xpAwards; }
     
+    public CharacterSaveState getCreationSnapshot() { return creationSnapshot; }
+    public void setCreationSnapshot(CharacterSaveState snapshot) { this.creationSnapshot = snapshot; markDirty(); }
+
+    public void removeMerit(Merit merit) {
+        merits.remove(merit);
+        markDirty();
+    }
+
     public IntegerProperty naturalSoakProperty() { return naturalSoak; }
     public IntegerProperty armorSoakProperty() { return armorSoak; }
     public IntegerProperty totalSoakProperty() { return totalSoak; }
@@ -587,6 +602,17 @@ public class CharacterData {
             sd.duration = s.getDuration(); sd.description = s.getDescription();
             state.spells.add(sd);
         }
+        
+        state.xpAwards = new ArrayList<>();
+        for (XpAward a : xpAwards) {
+            CharacterSaveState.XpAwardData xd = new CharacterSaveState.XpAwardData();
+            xd.id = a.getId(); xd.description = a.getDescription();
+            xd.amount = a.getAmount(); xd.isSolar = a.isSolar();
+            state.xpAwards.add(xd);
+        }
+        
+        state.creationSnapshot = this.creationSnapshot;
+        
         return state;
     }
 
@@ -742,6 +768,14 @@ public class CharacterData {
                     spells.add(new Spell(sd.id, sd.name, sd.circle, sd.cost, sd.keywords, sd.duration, sd.description));
                 }
             }
+            xpAwards.clear();
+            if (state.xpAwards != null) {
+                for (CharacterSaveState.XpAwardData xd : state.xpAwards) {
+                    xpAwards.add(new XpAward(xd.id, xd.description, xd.amount, xd.isSolar));
+                }
+            }
+            this.creationSnapshot = state.creationSnapshot;
+
             dirty.set(false);
         } finally { isImporting = false; }
     }

@@ -33,7 +33,10 @@ public class CharacterSaveState {
     public List<ShapingRitualData> shapingRituals = new ArrayList<>();
     
     public List<SpellData> spells = new ArrayList<>();
-    
+
+    public CharacterSaveState creationSnapshot;
+    public List<XpAwardData> xpAwards = new ArrayList<>();
+        
     public static class SpecialtyData {
         public String id;
         public String name;
@@ -115,4 +118,12 @@ public class CharacterSaveState {
         public String duration;
         public String description;
     }
+
+    public static class XpAwardData {
+        public String id;
+        public String description;
+        public int amount;
+        public boolean isSolar;
+    }
 }
+
