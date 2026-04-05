@@ -29,6 +29,7 @@ public class CreationRuleEngine {
         public int specialtiesSpent; // count 
         public int charmsSpent;      // count of charms/spells
         
+        public boolean allAttributePrioritiesSet;
         public boolean isReadyToFinalize;
     }
 
@@ -40,16 +41,31 @@ public class CreationRuleEngine {
         status.socialDots = getAttributeTotal(data, SystemData.SOCIAL_ATTRIBUTES);
         status.mentalDots = getAttributeTotal(data, SystemData.MENTAL_ATTRIBUTES);
         
-        int[][] permutations = {{8, 6, 4}, {8, 4, 6}, {6, 8, 4}, {6, 4, 8}, {4, 8, 6}, {4, 6, 8}};
-        int minAttrBP = Integer.MAX_VALUE;
-        for (int[] p : permutations) {
-            int cost = 0;
-            cost += Math.max(0, status.physicalDots - p[0]) * (p[0] == 4 ? 3 : 4);
-            cost += Math.max(0, status.socialDots - p[1]) * (p[1] == 4 ? 3 : 4);
-            cost += Math.max(0, status.mentalDots - p[2]) * (p[2] == 4 ? 3 : 4);
-            if (cost < minAttrBP) minAttrBP = cost;
+        AttributePriority physPri = data.getAttributePriority(Attribute.Category.PHYSICAL).get();
+        AttributePriority socPri = data.getAttributePriority(Attribute.Category.SOCIAL).get();
+        AttributePriority mentPri = data.getAttributePriority(Attribute.Category.MENTAL).get();
+
+        boolean allPrioritiesSet = (physPri != null && socPri != null && mentPri != null) &&
+                                  (physPri != socPri && physPri != mentPri && socPri != mentPri);
+
+        if (allPrioritiesSet) {
+            status.bonusPointsSpent += Math.max(0, status.physicalDots - physPri.getFreeDots()) * (physPri == AttributePriority.TERTIARY ? 3 : 4);
+            status.bonusPointsSpent += Math.max(0, status.socialDots - socPri.getFreeDots()) * (socPri == AttributePriority.TERTIARY ? 3 : 4);
+            status.bonusPointsSpent += Math.max(0, status.mentalDots - mentPri.getFreeDots()) * (mentPri == AttributePriority.TERTIARY ? 3 : 4);
+        } else {
+            // Fallback to auto-fit for BP calculation ONLY, but validation will prevent finalization
+            int[][] permutations = {{8, 6, 4}, {8, 4, 6}, {6, 8, 4}, {6, 4, 8}, {4, 8, 6}, {4, 6, 8}};
+            int minAttrBP = Integer.MAX_VALUE;
+            for (int[] p : permutations) {
+                int cost = 0;
+                cost += Math.max(0, status.physicalDots - p[0]) * (p[0] == 4 ? 3 : 4);
+                cost += Math.max(0, status.socialDots - p[1]) * (p[1] == 4 ? 3 : 4);
+                cost += Math.max(0, status.mentalDots - p[2]) * (p[2] == 4 ? 3 : 4);
+                if (cost < minAttrBP) minAttrBP = cost;
+            }
+            status.bonusPointsSpent += minAttrBP;
         }
-        status.bonusPointsSpent += minAttrBP;
+        status.allAttributePrioritiesSet = allPrioritiesSet;
 
         // 2. Abilities (28 dots, caps, BP)
         int mustBp = 0;
@@ -192,7 +208,8 @@ public class CreationRuleEngine {
             status.charmsSpent >= 15 &&
             status.bonusPointsSpent == 15 &&
             status.casteAbilities == 5 &&
-            status.favoredAbilities == 5;
+            status.favoredAbilities == 5 &&
+            status.allAttributePrioritiesSet;
 
         return status;
     }

@@ -100,6 +100,11 @@ public class FinalizationTest {
         data.getMerits().add(new Merit("M1", 10)); // Free
         data.getMerits().add(new Merit("M2", 15)); // 15 dots spent above 10 = 15 BP.
         
+        // 8. Attribute Priorities: Required for finalization
+        data.getAttributePriority(Attribute.Category.PHYSICAL).set(AttributePriority.PRIMARY);
+        data.getAttributePriority(Attribute.Category.SOCIAL).set(AttributePriority.SECONDARY);
+        data.getAttributePriority(Attribute.Category.MENTAL).set(AttributePriority.TERTIARY);
+        
         CreationStatus status = CreationRuleEngine.calculateStatus(data);
         assertEquals(15, status.bonusPointsSpent, "Should have 15 BP spent");
         assertEquals(18, status.attributesSpent, "Should have 18 attribute dots above 1");
@@ -150,6 +155,11 @@ public class FinalizationTest {
         data.getFavoredAbility(Ability.SURVIVAL).set(true);
         data.getFavoredAbility(Ability.INVESTIGATION).set(true);
         data.getFavoredAbility(Ability.AWARENESS).set(true); // 5/5
+        
+        // 8. Attribute Priorities: Required for finalization
+        data.getAttributePriority(Attribute.Category.PHYSICAL).set(AttributePriority.PRIMARY);
+        data.getAttributePriority(Attribute.Category.SOCIAL).set(AttributePriority.SECONDARY);
+        data.getAttributePriority(Attribute.Category.MENTAL).set(AttributePriority.TERTIARY);
         
         // 0 BP spent. Not 15.
         CreationStatus status = CreationRuleEngine.calculateStatus(data);

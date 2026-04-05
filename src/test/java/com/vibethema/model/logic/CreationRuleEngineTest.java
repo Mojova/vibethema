@@ -120,4 +120,51 @@ public class CreationRuleEngineTest {
         status = CreationRuleEngine.calculateStatus(data);
         assertEquals(4, status.bonusPointsSpent);
     }
+
+    @Test
+    void testAttributePriorityManualSelection() {
+        // Physical: 4+4+4=12 dots (Total 9 dots above 1)
+        // Wait, 4+4+3=11 total. Dots above 1 are 3+3+2 = 8.
+        data.getAttribute(Attribute.STRENGTH).set(4);
+        data.getAttribute(Attribute.DEXTERITY).set(4);
+        data.getAttribute(Attribute.STAMINA).set(3);
+        
+        // Social: 3+3+3=9 dots (Total 6 dots above 1)
+        data.getAttribute(Attribute.CHARISMA).set(3);
+        data.getAttribute(Attribute.MANIPULATION).set(3);
+        data.getAttribute(Attribute.APPEARANCE).set(3);
+        
+        // Mental: 2+2+3=7 dots (Total 4 dots above 1)
+        data.getAttribute(Attribute.PERCEPTION).set(2);
+        data.getAttribute(Attribute.INTELLIGENCE).set(2);
+        data.getAttribute(Attribute.WITS).set(3);
+
+        // 1. No priority set -> BP should be 0 (auto-fit fallback)
+        CreationStatus status = CreationRuleEngine.calculateStatus(data);
+        assertEquals(0, status.bonusPointsSpent);
+        assertFalse(status.allAttributePrioritiesSet);
+        assertFalse(status.isReadyToFinalize);
+
+        // 2. Optimal priority set: Phys=Primary(8), Soc=Secondary(6), Ment=Tertiary(4)
+        data.getAttributePriority(Attribute.Category.PHYSICAL).set(AttributePriority.PRIMARY);
+        data.getAttributePriority(Attribute.Category.SOCIAL).set(AttributePriority.SECONDARY);
+        data.getAttributePriority(Attribute.Category.MENTAL).set(AttributePriority.TERTIARY);
+        
+        status = CreationRuleEngine.calculateStatus(data);
+        assertEquals(0, status.bonusPointsSpent);
+        assertTrue(status.allAttributePrioritiesSet);
+
+        // 3. Sub-optimal priority set: Phys=Tertiary(4), Soc=Secondary(6), Ment=Primary(8)
+        // Phys: 8 dots - 4 free = 4 extra. 4 * 3 BP = 12 BP. (Tertiary is 3 BP/dot above pool)
+        // Soc: 6 dots - 6 free = 0 extra.
+        // Ment: 4 dots - 8 free = 0 extra.
+        // Total = 12 BP.
+        data.getAttributePriority(Attribute.Category.PHYSICAL).set(AttributePriority.TERTIARY);
+        data.getAttributePriority(Attribute.Category.SOCIAL).set(AttributePriority.SECONDARY);
+        data.getAttributePriority(Attribute.Category.MENTAL).set(AttributePriority.PRIMARY);
+        
+        status = CreationRuleEngine.calculateStatus(data);
+        assertEquals(12, status.bonusPointsSpent);
+    }
 }
+

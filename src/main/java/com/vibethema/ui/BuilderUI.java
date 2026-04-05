@@ -55,6 +55,7 @@ public class BuilderUI extends BorderPane {
     private Label casteLabel = new Label();
     private Label favoredLabel = new Label();
     private Label bpLabel = new Label();
+    private Label attrLabel = new Label();
     private Label personalMotesLabel = new Label();
     private Label peripheralMotesLabel = new Label();
     private HBox healthBox = new HBox(5);
@@ -480,7 +481,7 @@ public class BuilderUI extends BorderPane {
         finalizeBtn.managedProperty().bind(finalizeBtn.visibleProperty());
         finalizeBtn.setOnAction(e -> handleFinalization());
 
-        row1.getChildren().addAll(casteLabel, favoredLabel, bpLabel, spacer, finalizeBtn);
+        row1.getChildren().addAll(casteLabel, favoredLabel, attrLabel, bpLabel, spacer, finalizeBtn);
 
         HBox row2 = new HBox(20);
         row2.setAlignment(Pos.CENTER_LEFT);
@@ -628,6 +629,7 @@ public class BuilderUI extends BorderPane {
 
         casteLabel.setText("Caste: " + data.casteAbilityCountProperty().get() + "/5");
         favoredLabel.setText("Favored: " + data.favoredAbilityCountProperty().get() + "/5");
+        attrLabel.setText(String.format("Attributes: %d/%d/%d", status.physicalDots, status.socialDots, status.mentalDots));
         
         personalMotesLabel.setText("Personal: " + status.personalMotes);
         peripheralMotesLabel.setText("Peripheral: " + status.peripheralMotes);
@@ -680,9 +682,9 @@ public class BuilderUI extends BorderPane {
 
         HBox attrColumns = new HBox(30);
         attrColumns.getChildren().addAll(
-                createAttributeColumn("Physical", SystemData.PHYSICAL_ATTRIBUTES),
-                createAttributeColumn("Social", SystemData.SOCIAL_ATTRIBUTES),
-                createAttributeColumn("Mental", SystemData.MENTAL_ATTRIBUTES));
+                createAttributeColumn("Physical", Attribute.Category.PHYSICAL, SystemData.PHYSICAL_ATTRIBUTES),
+                createAttributeColumn("Social", Attribute.Category.SOCIAL, SystemData.SOCIAL_ATTRIBUTES),
+                createAttributeColumn("Mental", Attribute.Category.MENTAL, SystemData.MENTAL_ATTRIBUTES));
         attributesSection.getChildren().addAll(attrTitle, attrColumns);
 
         VBox abilitiesSection = new VBox(10);
@@ -1586,12 +1588,30 @@ public class BuilderUI extends BorderPane {
         return box;
     }
 
-    private VBox createAttributeColumn(String title, List<Attribute> attrs) {
+    private VBox createAttributeColumn(String title, Attribute.Category category, List<Attribute> attrs) {
         VBox box = new VBox(8);
         box.getStyleClass().add("attribute-column");
+        
+        HBox headerRow = new HBox(10);
+        headerRow.setAlignment(Pos.CENTER_LEFT);
+        
         Label titleLabel = new Label(title);
         titleLabel.getStyleClass().add("subsection-title");
-        box.getChildren().add(titleLabel);
+        
+        ComboBox<AttributePriority> priorityBox = new ComboBox<>();
+        priorityBox.setPromptText("Priority");
+        priorityBox.getItems().setAll(AttributePriority.values());
+        priorityBox.setPrefWidth(120);
+        priorityBox.getStyleClass().add("priority-combo");
+        
+        // Bind bidirectional with handling for null/None
+        priorityBox.valueProperty().bindBidirectional(data.getAttributePriority(category));
+        
+        // Ensure footer updates when priority changes
+        data.getAttributePriority(category).addListener((obs, oldV, newV) -> updateFooter());
+
+        headerRow.getChildren().addAll(titleLabel, new Region() {{ HBox.setHgrow(this, Priority.ALWAYS); }}, priorityBox);
+        box.getChildren().add(headerRow);
 
         for (Attribute attr : attrs) {
             HBox row = new HBox(10);

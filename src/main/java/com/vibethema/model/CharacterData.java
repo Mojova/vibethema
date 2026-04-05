@@ -28,6 +28,8 @@ public class CharacterData {
     private ObservableMap<Ability, IntegerProperty> abilities = FXCollections.observableHashMap();
     private ObservableMap<Ability, BooleanProperty> casteAbilities = FXCollections.observableHashMap();
     private ObservableMap<Ability, BooleanProperty> favoredAbilities = FXCollections.observableHashMap();
+    private ObservableMap<Attribute.Category, ObjectProperty<AttributePriority>> attributePriorities = FXCollections.observableHashMap();
+    
     
     private IntegerProperty essence = new SimpleIntegerProperty(1);
     private IntegerProperty willpower = new SimpleIntegerProperty(5);
@@ -73,6 +75,21 @@ public class CharacterData {
         for (Attribute attr : SystemData.ATTRIBUTES) {
             attributes.put(attr, new SimpleIntegerProperty(1));
             attributes.get(attr).addListener((obs, oldV, newV) -> markDirty());
+        }
+        for (Attribute.Category cat : Attribute.Category.values()) {
+            ObjectProperty<AttributePriority> priority = new SimpleObjectProperty<>(null);
+            priority.addListener((obs, oldV, newV) -> {
+                if (newV != null && !isImporting) {
+                    // Collision handling: unset other categories with the same priority
+                    for (Map.Entry<Attribute.Category, ObjectProperty<AttributePriority>> entry : attributePriorities.entrySet()) {
+                        if (entry.getKey() != cat && entry.getValue().get() == newV) {
+                            entry.getValue().set(null);
+                        }
+                    }
+                }
+                markDirty();
+            });
+            attributePriorities.put(cat, priority);
         }
         for (Ability ability : SystemData.ABILITIES) {
             abilities.put(ability, new SimpleIntegerProperty(0));
@@ -253,6 +270,9 @@ public class CharacterData {
     public ObservableMap<Ability, IntegerProperty> getAbilities() { return abilities; }
     public BooleanProperty getCasteAbility(Ability name) { return casteAbilities.get(name); }
     public BooleanProperty getFavoredAbility(Ability name) { return favoredAbilities.get(name); }
+    public ObjectProperty<AttributePriority> getAttributePriority(Attribute.Category category) { return attributePriorities.get(category); }
+    public ObservableMap<Attribute.Category, ObjectProperty<AttributePriority>> getAttributePriorities() { return attributePriorities; }
+    
 
     public IntegerProperty casteAbilityCountProperty() { return casteAbilityCount; }
     public IntegerProperty favoredAbilityCountProperty() { return favoredAbilityCount; }
@@ -455,6 +475,12 @@ public class CharacterData {
         state.limit = limit.get();
         state.attributes = new HashMap<>();
         for (Attribute attr : SystemData.ATTRIBUTES) state.attributes.put(attr.getDisplayName(), attributes.get(attr).get());
+        state.attributePriorities = new HashMap<>();
+        for (Map.Entry<Attribute.Category, ObjectProperty<AttributePriority>> entry : attributePriorities.entrySet()) {
+            if (entry.getValue().get() != null) {
+                state.attributePriorities.put(entry.getKey().name(), entry.getValue().get().name());
+            }
+        }
         state.abilities = new HashMap<>();
         for (Ability abil : SystemData.ABILITIES) state.abilities.put(abil.getDisplayName(), abilities.get(abil).get());
         state.casteAbilities = new ArrayList<>();
@@ -580,6 +606,22 @@ public class CharacterData {
             limit.set(state.limit);
             if (state.attributes != null) {
                 for (Attribute attr : SystemData.ATTRIBUTES) if (state.attributes.containsKey(attr.getDisplayName())) attributes.get(attr).set(state.attributes.get(attr.getDisplayName()));
+            }
+            if (state.attributePriorities != null) {
+                for (Attribute.Category cat : Attribute.Category.values()) {
+                    String priorityName = state.attributePriorities.get(cat.name());
+                    if (priorityName != null) {
+                        try {
+                            attributePriorities.get(cat).set(AttributePriority.valueOf(priorityName));
+                        } catch (Exception e) {
+                            attributePriorities.get(cat).set(null);
+                        }
+                    } else {
+                        attributePriorities.get(cat).set(null);
+                    }
+                }
+            } else {
+                for (ObjectProperty<AttributePriority> p : attributePriorities.values()) p.set(null);
             }
             if (state.abilities != null) {
                 for (Ability abil : SystemData.ABILITIES) if (state.abilities.containsKey(abil.getDisplayName())) abilities.get(abil).set(state.abilities.get(abil.getDisplayName()));

@@ -14,6 +14,8 @@ public class CharacterSaveState {
     public String limitTrigger;
     public int limit;
     public Map<String, Integer> attributes;
+    public Map<String, String> attributePriorities;
+    
     public Map<String, Integer> abilities;
     public List<String> casteAbilities;
     public List<String> favoredAbilities;
