@@ -215,4 +215,37 @@ public class Weapon {
     public StringProperty specialtyIdProperty() { return specialtyId; }
     public String getSpecialtyId() { return specialtyId.get(); }
     public void setSpecialtyId(String id) { this.specialtyId.set(id); }
+
+    // --- Persistance Support (DTO) ---
+    public static class WeaponData {
+        public String id;
+        public String name;
+        public WeaponRange range;
+        public WeaponType type;
+        public WeaponCategory category;
+        public java.util.List<String> tags;
+    }
+
+    public WeaponData toData() {
+        WeaponData data = new WeaponData();
+        data.id = getId();
+        data.name = getName();
+        data.range = getRange();
+        data.type = getType();
+        data.category = getCategory();
+        data.tags = new java.util.ArrayList<>(getTags());
+        return data;
+    }
+
+    public static Weapon fromData(WeaponData data) {
+        if (data == null) return null;
+        Weapon w = new Weapon(data.id, data.name, data.range, data.type, data.category);
+        w.getTags().setAll(data.tags != null ? data.tags : java.util.Collections.emptyList());
+        return w;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

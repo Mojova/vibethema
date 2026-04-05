@@ -25,10 +25,12 @@ public class PdfImportHelper {
     }
 
     public static void importMosePdf(Window owner, Runnable onComplete) {
-        importPdf(owner, "Select Miracles of the Solar Exalted PDF", "-mose", false, PdfExtractor.PdfSource.MOSE, onComplete);
+        importPdf(owner, "Select Miracles of the Solar Exalted PDF", "-mose", false, PdfExtractor.PdfSource.MOSE,
+                onComplete);
     }
 
-    private static void importPdf(Window owner, String title, String suffix, boolean extractKeywords, PdfExtractor.PdfSource source, Runnable onComplete) {
+    private static void importPdf(Window owner, String title, String suffix, boolean extractKeywords,
+            PdfExtractor.PdfSource source, Runnable onComplete) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(title);
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
@@ -39,7 +41,8 @@ public class PdfImportHelper {
         }
     }
 
-    private static void showImportProgress(Window owner, File pdfFile, String suffix, boolean extractKeywords, PdfExtractor.PdfSource source, Runnable onComplete) {
+    private static void showImportProgress(Window owner, File pdfFile, String suffix, boolean extractKeywords,
+            PdfExtractor.PdfSource source, Runnable onComplete) {
         Stage progressStage = new Stage();
         progressStage.initModality(Modality.WINDOW_MODAL);
         progressStage.initOwner(owner);
@@ -72,7 +75,8 @@ public class PdfImportHelper {
 
         task.setOnSucceeded(e -> {
             progressStage.close();
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Import complete! Charms, spells, and keywords have been updated.", ButtonType.OK);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION,
+                    "Import complete! Charms, spells, and keywords have been updated.", ButtonType.OK);
             alert.showAndWait();
             if (onComplete != null) {
                 onComplete.run();

@@ -3,7 +3,6 @@ package com.vibethema.ui.equipment;
 import com.vibethema.model.Armor;
 import com.vibethema.model.Hearthstone;
 import com.vibethema.model.OtherEquipment;
-import com.vibethema.model.Specialty;
 import com.vibethema.model.Weapon;
 import com.vibethema.service.EquipmentDataService;
 import javafx.application.Platform;
@@ -15,7 +14,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Window;
-import javafx.util.StringConverter;
 
 import java.util.List;
 import java.util.Map;
@@ -27,7 +25,6 @@ public class DefaultEquipmentDialogService implements EquipmentDialogService {
     @Override
     public Optional<Weapon> showWeaponDialog(
             Weapon existing,
-            List<Specialty> availableSpecialties,
             EquipmentDataService equipmentService,
             Map<String, String> tagDescriptions,
             Window owner) {
@@ -60,40 +57,7 @@ public class DefaultEquipmentDialogService implements EquipmentDialogService {
         tagsList.setPrefHeight(150);
         ObservableList<EquipmentDataService.Tag> selectedTags = FXCollections.observableArrayList();
 
-        ComboBox<Specialty> specialtyCombo = new ComboBox<>();
-        specialtyCombo.setPromptText("Select Specialty");
-        specialtyCombo.setConverter(new StringConverter<Specialty>() {
-            @Override public String toString(Specialty s) { return (s == null) ? "None" : s.getName(); }
-            @Override public Specialty fromString(String string) { return null; }
-        });
-
-        Runnable updateSpecs = () -> {
-            Specialty current = specialtyCombo.getValue();
-            ObservableList<Specialty> options = FXCollections.observableArrayList();
-            options.add(null);
-
-            boolean melee = selectedTags.stream().anyMatch(t -> t.getName().equalsIgnoreCase("Melee"));
-            boolean archery = selectedTags.stream().anyMatch(t -> t.getName().equalsIgnoreCase("Archery"));
-            boolean brawl = selectedTags.stream().anyMatch(t -> t.getName().equalsIgnoreCase("Brawl"));
-
-            for (Specialty s : availableSpecialties) {
-                String abil = s.getAbility();
-                if (melee && "Melee".equals(abil)) options.add(s);
-                else if (archery && "Archery".equals(abil)) options.add(s);
-                else if (brawl && ("Brawl".equals(abil) || abil.contains("Martial Arts"))) options.add(s); // Note: Simple check for MA
-            }
-            specialtyCombo.setItems(options);
-            if (options.contains(current)) specialtyCombo.setValue(current);
-            else specialtyCombo.setValue(null);
-        };
-
-        selectedTags.addListener((ListChangeListener<? super EquipmentDataService.Tag>) c -> updateSpecs.run());
-
         if (existing != null) {
-            String specId = existing.getSpecialtyId();
-            if (specId != null && !specId.isEmpty()) {
-                specialtyCombo.setValue(availableSpecialties.stream().filter(s -> s.getId().equals(specId)).findFirst().orElse(null));
-            }
             String cat = existing.getRange() == Weapon.WeaponRange.CLOSE ? "melee" :
                     (existing.getRange() == Weapon.WeaponRange.THROWN ? "thrown" : "archery");
             List<EquipmentDataService.Tag> availableTags = equipmentService.getTagsForCategory(cat);
@@ -103,7 +67,6 @@ public class DefaultEquipmentDialogService implements EquipmentDialogService {
                 }
             }
         }
-        updateSpecs.run();
 
         tagsList.setCellFactory(lv -> new ListCell<>() {
             private final CheckBox cb = new CheckBox();
@@ -155,8 +118,6 @@ public class DefaultEquipmentDialogService implements EquipmentDialogService {
         grid.add(categoryCombo, 1, 3);
         grid.add(new Label("Tags:"), 0, 4);
         grid.add(tagsList, 1, 4);
-        grid.add(new Label("Specialty:"), 0, 5);
-        grid.add(specialtyCombo, 1, 5);
 
         dialog.getDialogPane().setContent(grid);
         Platform.runLater(nameField::requestFocus);
@@ -169,7 +130,6 @@ public class DefaultEquipmentDialogService implements EquipmentDialogService {
                 nw.setType(typeCombo.getValue());
                 nw.setCategory(categoryCombo.getValue());
                 nw.getTags().setAll(selectedTags.stream().map(EquipmentDataService.Tag::getName).collect(Collectors.toList()));
-                nw.setSpecialtyId(specialtyCombo.getValue() == null ? "" : specialtyCombo.getValue().getId());
                 return nw;
             }
             return null;

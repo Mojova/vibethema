@@ -3,7 +3,10 @@ package com.vibethema.ui.equipment;
 import com.vibethema.ui.util.UIUtils;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.util.StringConverter;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -58,9 +61,9 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         refreshWeaponsList();
 
         Button addWeaponBtn = new Button("+ Add Weapon");
-        addWeaponBtn.getStyleClass().add("add-btn");
-        addWeaponBtn.getStyleClass().add("action-btn");
-        addWeaponBtn.setOnAction(e -> showWeaponDialog(null));
+        addWeaponBtn.getStyleClass().addAll("add-btn", "action-btn");
+        addWeaponBtn.setOnAction(e -> showWeaponDatabaseDialog());
+
         weaponsSection.getChildren().addAll(weaponsListContainer, addWeaponBtn);
 
         // Armor Section
@@ -71,9 +74,9 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         refreshArmorList();
 
         Button addArmorBtn = new Button("+ Add Armor");
-        addArmorBtn.getStyleClass().add("add-btn");
-        addArmorBtn.getStyleClass().add("action-btn");
-        addArmorBtn.setOnAction(e -> showArmorDialog(null));
+        addArmorBtn.getStyleClass().addAll("add-btn", "action-btn");
+        addArmorBtn.setOnAction(e -> showArmorDatabaseDialog());
+
         armorSection.getChildren().addAll(armorListContainer, addArmorBtn);
 
         // Hearthstone Section
@@ -84,9 +87,9 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         refreshHearthstoneList();
 
         Button addHearthstoneBtn = new Button("+ Add Hearthstone");
-        addHearthstoneBtn.getStyleClass().add("add-btn");
-        addHearthstoneBtn.getStyleClass().add("action-btn");
-        addHearthstoneBtn.setOnAction(e -> showHearthstoneDialog(null));
+        addHearthstoneBtn.getStyleClass().addAll("add-btn", "action-btn");
+        addHearthstoneBtn.setOnAction(e -> showHearthstoneDatabaseDialog());
+
         hearthstonesSection.getChildren().addAll(hearthstoneListContainer, addHearthstoneBtn);
 
         // Other Equipment Section
@@ -97,9 +100,9 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         refreshOtherEquipmentList();
 
         Button addOtherBtn = new Button("+ Add Equipment");
-        addOtherBtn.getStyleClass().add("add-btn");
-        addOtherBtn.getStyleClass().add("action-btn");
-        addOtherBtn.setOnAction(e -> showOtherEquipmentDialog(null));
+        addOtherBtn.getStyleClass().addAll("add-btn", "action-btn");
+        addOtherBtn.setOnAction(e -> showOtherEquipmentDatabaseDialog());
+
         otherSection.getChildren().addAll(otherEquipmentListContainer, addOtherBtn);
 
         content.getChildren().addAll(weaponsSection, armorSection, hearthstonesSection, otherSection);
@@ -116,12 +119,6 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
 
             VBox details = new VBox(5);
             Label nameLabel = new Label(wvm.nameProperty().get());
-            if (wvm.getWeapon().getSpecialtyId() != null && !wvm.getWeapon().getSpecialtyId().isEmpty()) {
-                Specialty s = viewModel.getCharacterData().getSpecialtyById(wvm.getWeapon().getSpecialtyId());
-                if (s != null) {
-                    nameLabel.setText(wvm.nameProperty().get() + " (" + s.getName() + ")");
-                }
-            }
             nameLabel.getStyleClass().add("merit-name");
             
             String statsStr = String.format("Accuracy: %+d | Damage: %d | Defense: %+d | Overwhelming: %d", 
@@ -141,6 +138,40 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
             }
 
             details.getChildren().addAll(nameLabel, statsLabel, tagsPane);
+
+            ComboBox<Specialty> specialtyCombo = new ComboBox<>();
+            specialtyCombo.setPromptText("Specialty");
+            specialtyCombo.setPrefWidth(120);
+            specialtyCombo.setConverter(new StringConverter<Specialty>() {
+                @Override public String toString(Specialty s) { return s == null ? "None" : s.getName(); }
+                @Override public Specialty fromString(String string) { return null; }
+            });
+
+            ObservableList<Specialty> specOptions = FXCollections.observableArrayList();
+            specOptions.add(null);
+            
+            boolean melee = wvm.getWeapon().getTags().stream().anyMatch(t -> t.equalsIgnoreCase("Melee"));
+            boolean archery = wvm.getWeapon().getTags().stream().anyMatch(t -> t.equalsIgnoreCase("Archery"));
+            boolean brawl = wvm.getWeapon().getTags().stream().anyMatch(t -> t.equalsIgnoreCase("Brawl"));
+
+            for (Specialty s : viewModel.getCharacterData().getSpecialties()) {
+                if (s == null || s.getName().isEmpty()) continue;
+                String abil = s.getAbility();
+                if (melee && "Melee".equals(abil)) specOptions.add(s);
+                else if (archery && "Archery".equals(abil)) specOptions.add(s);
+                else if (brawl && ("Brawl".equals(abil) || (abil != null && abil.contains("Martial Arts")))) specOptions.add(s);
+            }
+            specialtyCombo.setItems(specOptions);
+            
+            String currentSpecId = wvm.getWeapon().getSpecialtyId();
+            if (currentSpecId != null && !currentSpecId.isEmpty()) {
+                specialtyCombo.setValue(viewModel.getCharacterData().getSpecialtyById(currentSpecId));
+            }
+
+            specialtyCombo.valueProperty().addListener((obs, ov, nv) -> {
+                wvm.getWeapon().setSpecialtyId(nv == null ? "" : nv.getId());
+                viewModel.markDirty();
+            });
             
             Button editBtn = new Button("✏️");
             editBtn.getStyleClass().add("edit-btn");
@@ -159,7 +190,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
             delBtn.setOnAction(e -> viewModel.removeWeapon(wvm.getWeapon()));
 
             HBox.setHgrow(details, Priority.ALWAYS);
-            row.getChildren().addAll(details, editBtn, evBtn, delBtn);
+            row.getChildren().addAll(details, specialtyCombo, editBtn, evBtn, delBtn);
             weaponsListContainer.getChildren().add(row);
         }
     }
@@ -167,7 +198,6 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
     private void showWeaponDialog(Weapon existing) {
         dialogService.showWeaponDialog(
             existing, 
-            viewModel.getCharacterData().getSpecialties(), 
             viewModel.getEquipmentService(), 
             viewModel.getTagDescriptions(),
             getScene().getWindow()
@@ -277,5 +307,72 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
     private void showOtherEquipmentDialog(OtherEquipment existing) {
         dialogService.showOtherEquipmentDialog(existing, getScene().getWindow())
                      .ifPresent(o -> viewModel.saveOtherEquipment(o, existing == null));
+    }
+
+    private void showWeaponDatabaseDialog() {
+        showGenericDatabaseDialog("Weapon", viewModel.getGlobalWeapons(), 
+            () -> showWeaponDialog(null), 
+            item -> viewModel.addWeaponFromDatabase((Weapon)item));
+    }
+
+    private void showArmorDatabaseDialog() {
+        showGenericDatabaseDialog("Armor", viewModel.getGlobalArmors(), 
+            () -> showArmorDialog(null), 
+            item -> viewModel.addArmorFromDatabase((Armor)item));
+    }
+
+    private void showHearthstoneDatabaseDialog() {
+        showGenericDatabaseDialog("Hearthstone", viewModel.getGlobalHearthstones(), 
+            () -> showHearthstoneDialog(null), 
+            item -> viewModel.addHearthstoneFromDatabase((Hearthstone)item));
+    }
+
+    private void showOtherEquipmentDatabaseDialog() {
+        showGenericDatabaseDialog("Equipment", viewModel.getGlobalOtherEquipment(), 
+            () -> showOtherEquipmentDialog(null), 
+            item -> viewModel.addOtherEquipmentFromDatabase((OtherEquipment)item));
+    }
+
+    private void showGenericDatabaseDialog(String type, java.util.Collection<?> items, Runnable onCreateNew, java.util.function.Consumer<Object> onSelect) {
+        de.saxsys.mvvmfx.ViewTuple<EquipmentDatabaseView, com.vibethema.viewmodel.equipment.EquipmentDatabaseViewModel> tuple = 
+            de.saxsys.mvvmfx.FluentViewLoader.javaView(EquipmentDatabaseView.class).load();
+        
+        EquipmentDatabaseView view = (EquipmentDatabaseView) tuple.getView();
+        com.vibethema.viewmodel.equipment.EquipmentDatabaseViewModel dbVm = tuple.getViewModel();
+        
+        dbVm.titleProperty().set("Equipment Database: " + type + "s");
+        dbVm.createNewTextProperty().set("+ Create New " + type);
+        dbVm.setItems(items);
+        
+        Dialog<Object> dialog = new Dialog<>();
+        dialog.setTitle(dbVm.titleProperty().get());
+        dialog.initOwner(getScene().getWindow());
+        dialog.getDialogPane().setContent(view);
+        dialog.getDialogPane().getStyleClass().add("dialog-pane-custom");
+        if (getScene() != null && getScene().getStylesheets() != null) {
+            dialog.getDialogPane().getStylesheets().addAll(getScene().getStylesheets());
+        }
+
+        // Handle "Create New" - it will close the selection dialog and open the creation dialog
+        dbVm.setCreateNewAction(() -> {
+            dialog.setResult(Boolean.FALSE);
+            dialog.close();
+            javafx.application.Platform.runLater(onCreateNew);
+        });
+
+        // Handle "Add Selected"
+        view.getAddSelectedBtn().setOnAction(e -> {
+            Object selected = dbVm.getSelectedItem();
+            if (selected != null) {
+                dialog.setResult(selected);
+                dialog.close();
+                javafx.application.Platform.runLater(() -> onSelect.accept(selected));
+            }
+        });
+
+        // Add standard Close button to the dialog pane
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+        
+        dialog.showAndWait();
     }
 }

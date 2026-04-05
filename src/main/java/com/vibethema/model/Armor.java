@@ -120,4 +120,35 @@ public class Armor {
 
     public IntegerProperty attunementProperty() { return attunement; }
     public int getAttunement() { return attunement.get(); }
+
+    // --- Persistence Support (DTO) ---
+    public static class ArmorData {
+        public String id;
+        public String name;
+        public ArmorType type;
+        public ArmorWeight weight;
+        public java.util.List<String> tags;
+    }
+
+    public ArmorData toData() {
+        ArmorData data = new ArmorData();
+        data.id = getId();
+        data.name = getName();
+        data.type = getType();
+        data.weight = getWeight();
+        data.tags = new java.util.ArrayList<>(getTags());
+        return data;
+    }
+
+    public static Armor fromData(ArmorData data) {
+        if (data == null) return null;
+        Armor a = new Armor(data.id, data.name, data.type, data.weight);
+        a.getTags().setAll(data.tags != null ? data.tags : java.util.Collections.emptyList());
+        return a;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

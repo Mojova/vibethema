@@ -26,6 +26,7 @@ public class WeaponRowViewModel implements ViewModel {
     public IntegerProperty defenseProperty() { return weapon.defenseProperty(); }
     public IntegerProperty overwhelmingProperty() { return weapon.overwhelmingProperty(); }
     public IntegerProperty attunementProperty() { return weapon.attunementProperty(); }
+    public StringProperty specialtyIdProperty() { return weapon.specialtyIdProperty(); }
     
     public boolean isArtifact() {
         return weapon.getType() == Weapon.WeaponType.ARTIFACT;

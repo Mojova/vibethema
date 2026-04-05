@@ -18,65 +18,67 @@ import java.util.concurrent.ConcurrentHashMap;
  * Extracted from BuilderUI to improve modularity.
  */
 public class CharmTreeComponent extends SplitPane {
-    
+
     public interface CharmTreeListener {
         void onCreateCharm(String contextId, String contextName, String filterType, Runnable onSave);
+
         void onEditCharm(Charm charm, String contextName, String filterType, Runnable onSave);
+
         void onRefreshAllRequested();
     }
 
     private static final Map<String, String> globalCharmNameMap = new ConcurrentHashMap<>();
-    
+
     private final CharacterData data;
     private final CharmDataService dataService;
     private final Map<String, String> keywordDefs;
     private final CharmTreeListener listener;
-    
+
     private final ComboBox<String> filterCombo;
     private final String filterType; // "Ability", "Martial Arts Style", or "Evocation"
     private final String artifactId; // Only used for "Evocation" mode
     private final String artifactName; // Only used for "Evocation" mode
-    
+
     private Pane charmCanvas = new Pane();
     private Map<String, VBox> charmNodeMap = new HashMap<>();
     private List<Charm> currentCharms = new ArrayList<>();
-    
+
     private Label titleLabel = new Label();
     private Label detailTitle = new Label("No Charm Selected");
     private Label detailReqs = new Label();
-    
+
     private Label costLabel = new Label();
     private Label typeLabel = new Label();
     private Label durationLabel = new Label();
     private FlowPane kwFlow = new FlowPane(3, 3);
     private Label descriptionLabel = new Label();
-    
+
     private Button toggleBtn = new Button("Purchase Charm");
     private Button refundBtn = new Button("Refund");
     private Button deleteCustomBtn = new Button("Delete Custom Charm");
     private Button editBtn = new Button("Edit Charm");
-    
+
     private Charm selectedCharm;
     private javafx.beans.property.IntegerProperty currentRatingProperty;
     private javafx.beans.value.ChangeListener<Number> ratingListener;
 
-    public CharmTreeComponent(CharacterData data, 
-                              CharmDataService dataService, 
-                              Map<String, String> keywordDefs,
-                              CharmTreeListener listener,
-                              ComboBox<String> filterCombo, 
-                              String filterType) {
+    public CharmTreeComponent(CharacterData data,
+            CharmDataService dataService,
+            Map<String, String> keywordDefs,
+            CharmTreeListener listener,
+            ComboBox<String> filterCombo,
+            String filterType) {
         this(data, dataService, keywordDefs, listener, filterCombo, filterType, null, null);
     }
 
-    public CharmTreeComponent(CharacterData data, 
-                              CharmDataService dataService, 
-                              Map<String, String> keywordDefs,
-                              CharmTreeListener listener,
-                              ComboBox<String> filterCombo, 
-                              String filterType, 
-                              String artifactId, 
-                              String artifactName) {
+    public CharmTreeComponent(CharacterData data,
+            CharmDataService dataService,
+            Map<String, String> keywordDefs,
+            CharmTreeListener listener,
+            ComboBox<String> filterCombo,
+            String filterType,
+            String artifactId,
+            String artifactName) {
         this.data = data;
         this.dataService = dataService;
         this.keywordDefs = keywordDefs;
@@ -85,7 +87,7 @@ public class CharmTreeComponent extends SplitPane {
         this.filterType = filterType;
         this.artifactId = artifactId;
         this.artifactName = artifactName;
-        
+
         getStyleClass().add("charms-split-pane");
 
         setupUI();
@@ -107,8 +109,9 @@ public class CharmTreeComponent extends SplitPane {
             comboLabel.getStyleClass().add("label");
             controls.getChildren().addAll(comboLabel, filterCombo);
         }
-        
-        Button createCharmBtn = new Button("Evocation".equals(filterType) ? "Create New Evocation" : "Create New Charm");
+
+        Button createCharmBtn = new Button(
+                "Evocation".equals(filterType) ? "Create New Evocation" : "Create New Charm");
         createCharmBtn.getStyleClass().add("action-btn");
         String contextId = filterCombo != null ? filterCombo.getValue() : artifactId;
         String contextName = "Evocation".equals(filterType) ? artifactName : contextId;
@@ -191,12 +194,13 @@ public class CharmTreeComponent extends SplitPane {
     }
 
     public void refresh() {
-        if (charmCanvas == null) return;
+        if (charmCanvas == null)
+            return;
         charmCanvas.getChildren().clear();
         charmNodeMap.clear();
         currentCharms.clear();
         selectedCharm = null;
-        
+
         if (ratingListener != null && currentRatingProperty != null) {
             currentRatingProperty.removeListener(ratingListener);
         }
@@ -235,7 +239,8 @@ public class CharmTreeComponent extends SplitPane {
         if (currentRatingProperty != null) {
             ratingListener = (obs, ov, nv) -> {
                 updateWebNodeStyles();
-                if (selectedCharm != null) updateSidebarButton(selectedCharm);
+                if (selectedCharm != null)
+                    updateSidebarButton(selectedCharm);
             };
             currentRatingProperty.addListener(ratingListener);
         }
@@ -261,7 +266,8 @@ public class CharmTreeComponent extends SplitPane {
     private void drawCharmWeb(List<Charm> charms, String ability) {
         // Mapping for display resolution (ID -> Name)
         Map<String, String> idToName = new HashMap<>();
-        for (Charm c : charms) idToName.put(c.getId(), c.getName());
+        for (Charm c : charms)
+            idToName.put(c.getId(), c.getName());
 
         // Topological Sort Logic - User IDs for depth calculation
         Map<String, Integer> charmDepth = new HashMap<>();
@@ -288,17 +294,21 @@ public class CharmTreeComponent extends SplitPane {
         for (Charm c : charms) {
             int depth = charmDepth.getOrDefault(c.getId(), 0);
             levels.computeIfAbsent(depth, k -> new ArrayList<>()).add(c);
-            if (depth > maxDepth) maxDepth = depth;
+            if (depth > maxDepth)
+                maxDepth = depth;
         }
 
-        double boxWidth = 220; double boxHeight = 70;
-        double gapX = 40; double gapY = 80;
+        double boxWidth = 220;
+        double boxHeight = 70;
+        double gapX = 40;
+        double gapY = 80;
 
         double maxRowWidth = 0;
         for (int d = 0; d <= maxDepth; d++) {
             List<Charm> rowCharms = levels.getOrDefault(d, new ArrayList<>());
             double rowWidth = rowCharms.size() * boxWidth + Math.max(0, rowCharms.size() - 1) * gapX;
-            if (rowWidth > maxRowWidth) maxRowWidth = rowWidth;
+            if (rowWidth > maxRowWidth)
+                maxRowWidth = rowWidth;
         }
 
         double virtualCanvasWidth = Math.max(800, maxRowWidth + 100);
@@ -332,7 +342,8 @@ public class CharmTreeComponent extends SplitPane {
 
                 box.getChildren().addAll(nameLbl, reqLbl);
                 if (c.isPotentiallyProblematicImport()) {
-                    Tooltip tt = new Tooltip("Warning: This charm may have incomplete data due to a problematic PDF import.");
+                    Tooltip tt = new Tooltip(
+                            "Warning: This charm may have incomplete data due to a problematic PDF import.");
                     tt.setWrapText(true);
                     tt.setMaxWidth(250);
                     Tooltip.install(box, tt);
@@ -346,17 +357,18 @@ public class CharmTreeComponent extends SplitPane {
                 box.setOnMouseClicked(e -> {
                     selectedCharm = c;
                     detailTitle.setText(c.getName());
-                    
+
                     List<String> prereqNames = new ArrayList<>();
                     if (c.getPrerequisites() != null) {
                         for (String rid : c.getPrerequisites()) {
                             String resolvedName = globalCharmNameMap.get(rid);
-                            if (resolvedName == null) resolvedName = idToName.getOrDefault(rid, rid);
+                            if (resolvedName == null)
+                                resolvedName = idToName.getOrDefault(rid, rid);
                             prereqNames.add(resolvedName);
                         }
                     }
                     String prereqStr = prereqNames.isEmpty() ? "None" : String.join(", ", prereqNames);
-                    
+
                     String baseReqs;
                     if ("Evocation".equals(filterType)) {
                         baseReqs = "Mins: Ess " + c.getMinEssence() + "\nPrereqs: " + prereqStr;
@@ -394,11 +406,14 @@ public class CharmTreeComponent extends SplitPane {
 
         toggleBtn.setOnAction(ev -> {
             if (selectedCharm != null) {
-                boolean stackable = selectedCharm.getKeywords() != null && selectedCharm.getKeywords().contains("Stackable");
+                boolean stackable = selectedCharm.getKeywords() != null
+                        && selectedCharm.getKeywords().contains("Stackable");
                 if (stackable) {
-                    data.addCharm(new PurchasedCharm(selectedCharm.getId(), selectedCharm.getName(), selectedCharm.getAbility()));
+                    data.addCharm(new PurchasedCharm(selectedCharm.getId(), selectedCharm.getName(),
+                            selectedCharm.getAbility()));
                 } else if (!data.hasCharm(selectedCharm.getId())) {
-                    data.addCharm(new PurchasedCharm(selectedCharm.getId(), selectedCharm.getName(), selectedCharm.getAbility()));
+                    data.addCharm(new PurchasedCharm(selectedCharm.getId(), selectedCharm.getName(),
+                            selectedCharm.getAbility()));
                 } else {
                     data.removeCharm(selectedCharm.getId());
                 }
@@ -420,7 +435,9 @@ public class CharmTreeComponent extends SplitPane {
             Charm c = currentCharms.stream().filter(ch -> ch.getName().equals(selectedName)).findFirst().orElse(null);
             if (c != null && c.isCustom()) {
                 String term = "Evocation".equals(filterType) ? "evocation" : "charm";
-                Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete the custom " + term + " '" + c.getName() + "'?", ButtonType.YES, ButtonType.NO);
+                Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                        "Are you sure you want to delete the custom " + term + " '" + c.getName() + "'?",
+                        ButtonType.YES, ButtonType.NO);
                 confirm.showAndWait().ifPresent(response -> {
                     if (response == ButtonType.YES) {
                         try {
@@ -449,7 +466,8 @@ public class CharmTreeComponent extends SplitPane {
                         double endX = targetBox.getLayoutX() + boxWidth / 2;
                         double endY = targetBox.getLayoutY();
 
-                        CubicCurve curve = new CubicCurve(startX, startY, startX, startY + gapY / 1.5, endX, endY - gapY / 1.5, endX, endY);
+                        CubicCurve curve = new CubicCurve(startX, startY, startX, startY + gapY / 1.5, endX,
+                                endY - gapY / 1.5, endX, endY);
                         curve.getStyleClass().add("charm-line");
                         charmCanvas.getChildren().add(curve);
                         curve.toBack();
@@ -500,7 +518,7 @@ public class CharmTreeComponent extends SplitPane {
             refundBtn.setVisible(false);
             refundBtn.setManaged(false);
         }
-        
+
         deleteCustomBtn.setText("Delete Custom " + term);
     }
 
@@ -518,13 +536,15 @@ public class CharmTreeComponent extends SplitPane {
                     box.getStyleClass().add("charm-node-ineligible");
                 }
                 if (c.isCustom()) {
-                    if (!box.getStyleClass().contains("charm-node-custom")) box.getStyleClass().add("charm-node-custom");
+                    if (!box.getStyleClass().contains("charm-node-custom"))
+                        box.getStyleClass().add("charm-node-custom");
                 } else {
                     box.getStyleClass().remove("charm-node-custom");
                 }
 
                 if (c.isPotentiallyProblematicImport()) {
-                    if (!box.getStyleClass().contains("charm-node-problematic")) box.getStyleClass().add("charm-node-problematic");
+                    if (!box.getStyleClass().contains("charm-node-problematic"))
+                        box.getStyleClass().add("charm-node-problematic");
                 } else {
                     box.getStyleClass().remove("charm-node-problematic");
                 }
@@ -571,7 +591,9 @@ public class CharmTreeComponent extends SplitPane {
         if (node != null) {
             // Simulate a click
             javafx.application.Platform.runLater(() -> {
-                node.fireEvent(new javafx.scene.input.MouseEvent(javafx.scene.input.MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, javafx.scene.input.MouseButton.PRIMARY, 1, false, false, false, false, true, false, false, true, false, false, null));
+                node.fireEvent(new javafx.scene.input.MouseEvent(javafx.scene.input.MouseEvent.MOUSE_CLICKED, 0, 0, 0,
+                        0, javafx.scene.input.MouseButton.PRIMARY, 1, false, false, false, false, true, false, false,
+                        true, false, false, null));
             });
         }
     }

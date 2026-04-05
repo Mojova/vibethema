@@ -193,7 +193,7 @@ public class XpModelTest {
         state.xpAwards.add(xd);
 
         CharacterData fresh = new CharacterData();
-        fresh.importState(state);
+        fresh.importState(state, new com.vibethema.service.EquipmentDataService());
 
         assertEquals(1, fresh.getXpAwards().size());
         XpAward loaded = fresh.getXpAwards().get(0);
@@ -225,7 +225,7 @@ public class XpModelTest {
         state.creationSnapshot = snapshot;
 
         CharacterData fresh = new CharacterData();
-        fresh.importState(state);
+        fresh.importState(state, new com.vibethema.service.EquipmentDataService());
 
         assertNotNull(fresh.getCreationSnapshot());
         assertEquals("SnapName", fresh.getCreationSnapshot().name);
@@ -239,7 +239,7 @@ public class XpModelTest {
         // Import a state with no awards
         CharacterSaveState state = new CharacterSaveState();
         state.xpAwards = null;
-        data.importState(state);
+        data.importState(state, new com.vibethema.service.EquipmentDataService());
 
         assertTrue(data.getXpAwards().isEmpty(), "Importing state without awards should clear existing awards");
     }

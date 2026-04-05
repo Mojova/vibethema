@@ -20,7 +20,6 @@ public interface EquipmentDialogService {
     
     Optional<Weapon> showWeaponDialog(
         Weapon existing, 
-        List<Specialty> availableSpecialties, 
         EquipmentDataService equipmentService, 
         Map<String, String> tagDescriptions,
         Window owner

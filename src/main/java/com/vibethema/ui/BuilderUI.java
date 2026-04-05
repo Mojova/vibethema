@@ -79,8 +79,7 @@ public class BuilderUI extends BorderPane {
     private ComboBox<String> stylePicker;
     private VBox principlesListContainer;
     private VBox tiesListContainer;
-    
-    
+
     private final CharmTreeComponent.CharmTreeListener charmTreeListener = new CharmTreeComponent.CharmTreeListener() {
         @Override
         public void onCreateCharm(String contextId, String contextName, String filterType, Runnable onSave) {
@@ -123,7 +122,6 @@ public class BuilderUI extends BorderPane {
         getStyleClass().add("main-pane");
         loadKeywords();
 
-
         setTop(createTopSection());
         mainTabPane = new TabPane();
         mainTabPane.getStyleClass().add("tab-pane");
@@ -164,14 +162,15 @@ public class BuilderUI extends BorderPane {
 
         experienceTab = new Tab("Experience");
         experienceTab.setClosable(false);
-        de.saxsys.mvvmfx.ViewTuple<ExperienceTab, ExperienceViewModel> expVt =
-            de.saxsys.mvvmfx.FluentViewLoader.javaView(ExperienceTab.class)
+        de.saxsys.mvvmfx.ViewTuple<ExperienceTab, ExperienceViewModel> expVt = de.saxsys.mvvmfx.FluentViewLoader
+                .javaView(ExperienceTab.class)
                 .viewModel(new ExperienceViewModel(data, this::updateFooter))
                 .codeBehind(new ExperienceTab())
                 .load();
         experienceTab.setContent(expVt.getView());
 
-        mainTabPane.getTabs().addAll(statsTab, meritsTab, equipmentTab, charmsTab, martialArtsTab, intimaciesTab, sorceryTab);
+        mainTabPane.getTabs().addAll(statsTab, meritsTab, equipmentTab, charmsTab, martialArtsTab, intimaciesTab,
+                sorceryTab);
 
         // Experience tab is only shown in Experienced mode; add/remove dynamically
         data.modeProperty().addListener((obs, oldMode, newMode) -> {
@@ -194,7 +193,7 @@ public class BuilderUI extends BorderPane {
         updateFooter();
 
         data.dirtyProperty().addListener((obs, oldV, newV) -> updateWindowTitle());
-        
+
         sceneProperty().addListener((obs, oldV, newV) -> {
             if (newV != null) {
                 setupGlobalShortcuts(newV);
@@ -208,7 +207,7 @@ public class BuilderUI extends BorderPane {
             if (event.isControlDown() && event.getCode() == KeyCode.TAB) {
                 cycleTab(event.isShiftDown() ? -1 : 1);
                 event.consume();
-            } 
+            }
             // Mac-style Cmd+Option+Arrows
             else if (event.isShortcutDown() && event.isAltDown()) {
                 if (event.getCode() == KeyCode.RIGHT) {
@@ -279,26 +278,28 @@ public class BuilderUI extends BorderPane {
         exportPdfItem.setAccelerator(KeyCombination.keyCombination("Shortcut+P"));
         exportPdfItem.setOnAction(e -> handleExportPdf());
 
-        fileMenu.getItems().addAll(newItem, new SeparatorMenuItem(), saveItem, saveAsItem, loadItem, new SeparatorMenuItem(), exportPdfItem, new SeparatorMenuItem(), importPdfItem, importMosePdfItem, new SeparatorMenuItem(), quitItem);
-        
+        fileMenu.getItems().addAll(newItem, new SeparatorMenuItem(), saveItem, saveAsItem, loadItem,
+                new SeparatorMenuItem(), exportPdfItem, new SeparatorMenuItem(), importPdfItem, importMosePdfItem,
+                new SeparatorMenuItem(), quitItem);
+
         Menu viewMenu = new Menu("View");
-        
+
         MenuItem statsTabItem = new MenuItem("Stats");
         statsTabItem.setAccelerator(KeyCombination.keyCombination("Shortcut+1"));
         statsTabItem.setOnAction(e -> selectAndFocusTab(0));
-        
+
         MenuItem meritsTabItem = new MenuItem("Merits");
         meritsTabItem.setAccelerator(KeyCombination.keyCombination("Shortcut+2"));
         meritsTabItem.setOnAction(e -> selectAndFocusTab(1));
-        
+
         MenuItem equipmentTabItem = new MenuItem("Equipment");
         equipmentTabItem.setAccelerator(KeyCombination.keyCombination("Shortcut+3"));
         equipmentTabItem.setOnAction(e -> selectAndFocusTab(2));
-        
+
         MenuItem charmsTabItem = new MenuItem("Charms");
         charmsTabItem.setAccelerator(KeyCombination.keyCombination("Shortcut+4"));
         charmsTabItem.setOnAction(e -> selectAndFocusTab(3));
-        
+
         MenuItem martialArtsTabItem = new MenuItem("Martial Arts");
         martialArtsTabItem.setAccelerator(KeyCombination.keyCombination("Shortcut+5"));
         martialArtsTabItem.setOnAction(e -> selectAndFocusTab(4));
@@ -320,10 +321,10 @@ public class BuilderUI extends BorderPane {
         prevTabItem.setOnAction(e -> cycleTab(-1));
 
         viewMenu.getItems().addAll(
-            statsTabItem, meritsTabItem, equipmentTabItem, charmsTabItem, martialArtsTabItem, intimaciesTabItem, sorceryTabItem,
-            new SeparatorMenuItem(),
-            nextTabItem, prevTabItem
-        );
+                statsTabItem, meritsTabItem, equipmentTabItem, charmsTabItem, martialArtsTabItem, intimaciesTabItem,
+                sorceryTabItem,
+                new SeparatorMenuItem(),
+                nextTabItem, prevTabItem);
 
         menuBar.getMenus().addAll(fileMenu, viewMenu);
 
@@ -367,8 +368,9 @@ public class BuilderUI extends BorderPane {
     }
 
     private void loadCharacter() {
-        if (!confirmDiscardChanges()) return;
-        
+        if (!confirmDiscardChanges())
+            return;
+
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Load Character");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Vibethema Save File", "*.vbtm"));
@@ -377,7 +379,7 @@ public class BuilderUI extends BorderPane {
             try (FileReader reader = new FileReader(file)) {
                 CharacterSaveState state = new Gson().fromJson(reader, CharacterSaveState.class);
                 if (state != null) {
-                    data.importState(state);
+                    data.importState(state, equipmentService);
                     currentFile = file;
                     updateWindowTitle();
                 }
@@ -388,7 +390,8 @@ public class BuilderUI extends BorderPane {
     }
 
     public boolean confirmDiscardChanges() {
-        if (!data.isDirty()) return true;
+        if (!data.isDirty())
+            return true;
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Unsaved Changes");
@@ -405,7 +408,7 @@ public class BuilderUI extends BorderPane {
         if (result.isPresent()) {
             if (result.get() == saveBtn) {
                 saveCharacter();
-                return !data.isDirty(); 
+                return !data.isDirty();
             } else if (result.get() == discardBtn) {
                 return true;
             }
@@ -464,10 +467,10 @@ public class BuilderUI extends BorderPane {
 
         HBox row1 = new HBox(20);
         row1.setAlignment(Pos.CENTER_LEFT);
-        
+
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
-        
+
         finalizeBtn.getStyleClass().add("action-btn");
         finalizeBtn.setStyle("-fx-background-color: #d4af37; -fx-text-fill: black; -fx-font-weight: bold;");
         finalizeBtn.visibleProperty().bind(data.modeProperty().isEqualTo(CharacterMode.CREATION));
@@ -475,7 +478,8 @@ public class BuilderUI extends BorderPane {
         finalizeBtn.setOnAction(e -> handleFinalization());
 
         // Creation-mode labels: hide in experienced mode
-        for (Label l : new Label[] {casteLabel, favoredLabel, attrLabel, abilitiesLabel, specialtiesLabel, charmsLabel, bpLabel}) {
+        for (Label l : new Label[] { casteLabel, favoredLabel, attrLabel, abilitiesLabel, specialtiesLabel, charmsLabel,
+                bpLabel }) {
             l.visibleProperty().bind(data.modeProperty().isEqualTo(CharacterMode.CREATION));
             l.managedProperty().bind(l.visibleProperty());
         }
@@ -483,12 +487,13 @@ public class BuilderUI extends BorderPane {
         // Experience-mode labels: hide in creation mode
         regularXpLabel.setStyle("-fx-text-fill: white;");
         solarXpLabel.setStyle("-fx-text-fill: #d4af37;");
-        for (Label l : new Label[] {regularXpLabel, solarXpLabel}) {
+        for (Label l : new Label[] { regularXpLabel, solarXpLabel }) {
             l.visibleProperty().bind(data.modeProperty().isEqualTo(CharacterMode.EXPERIENCED));
             l.managedProperty().bind(l.visibleProperty());
         }
 
-        row1.getChildren().addAll(casteLabel, favoredLabel, attrLabel, abilitiesLabel, specialtiesLabel, charmsLabel, bpLabel, regularXpLabel, solarXpLabel, spacer, finalizeBtn);
+        row1.getChildren().addAll(casteLabel, favoredLabel, attrLabel, abilitiesLabel, specialtiesLabel, charmsLabel,
+                bpLabel, regularXpLabel, solarXpLabel, spacer, finalizeBtn);
         footer.getChildren().add(row1);
         return footer;
     }
@@ -497,7 +502,8 @@ public class BuilderUI extends BorderPane {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Finalize Character");
         confirm.setHeaderText("Finalizing Character Creation");
-        confirm.setContentText("Once finalized, your Caste, Supernal, and Caste/Favored abilities cannot be changed. This is a one-way process.\n\nProceed to Experienced mode?");
+        confirm.setContentText(
+                "Once finalized, your Caste, Supernal, and Caste/Favored abilities cannot be changed. This is a one-way process.\n\nProceed to Experienced mode?");
 
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
@@ -601,7 +607,7 @@ public class BuilderUI extends BorderPane {
         for (MartialArtsStyle mas : data.getMartialArtsStyles()) {
             mas.ratingProperty().addListener((obs, ov, nv) -> updateFooter());
         }
-        
+
         data.getIntimacies().addListener((javafx.collections.ListChangeListener<? super Intimacy>) c -> {
             boolean structuralChange = false;
             while (c.next()) {
@@ -614,13 +620,14 @@ public class BuilderUI extends BorderPane {
             }
             updateFooter();
         });
-        
-        data.getShapingRituals().addListener((javafx.collections.ListChangeListener<? super ShapingRitual>) c -> updateFooter());
+
+        data.getShapingRituals()
+                .addListener((javafx.collections.ListChangeListener<? super ShapingRitual>) c -> updateFooter());
         data.getSpells().addListener((javafx.collections.ListChangeListener<? super Spell>) c -> updateFooter());
-        data.getUnlockedCharms().addListener((javafx.collections.ListChangeListener<? super PurchasedCharm>) c -> updateFooter());
+        data.getUnlockedCharms()
+                .addListener((javafx.collections.ListChangeListener<? super PurchasedCharm>) c -> updateFooter());
         data.getXpAwards().addListener((javafx.collections.ListChangeListener<? super XpAward>) c -> updateFooter());
     }
-
 
     private void updateFooter() {
         if (data.modeProperty().get() == CharacterMode.EXPERIENCED) {
@@ -633,37 +640,41 @@ public class BuilderUI extends BorderPane {
 
     private void updateCreationFooter() {
         CreationStatus status = CreationRuleEngine.calculateStatus(data);
-        
+
         bpLabel.setText("BP Spent: " + status.bonusPointsSpent + "/15");
-        bpLabel.setStyle(status.overBonusPoints ? "-fx-text-fill: red; -fx-font-weight: bold;" : "-fx-text-fill: white;");
+        bpLabel.setStyle(
+                status.overBonusPoints ? "-fx-text-fill: red; -fx-font-weight: bold;" : "-fx-text-fill: white;");
 
         casteLabel.setText("Caste: " + data.casteAbilityCountProperty().get() + "/5");
         favoredLabel.setText("Favored: " + data.favoredAbilityCountProperty().get() + "/5");
-        attrLabel.setText(String.format("Attributes: %d/%d/%d", status.physicalDots, status.socialDots, status.mentalDots));
+        attrLabel.setText(
+                String.format("Attributes: %d/%d/%d", status.physicalDots, status.socialDots, status.mentalDots));
         abilitiesLabel.setText("Abilities: " + status.abilitiesSpent + "/28");
         specialtiesLabel.setText("Specialties: " + status.specialtiesSpent + "/4");
         charmsLabel.setText("Charms: " + status.charmsSpent + "/15");
-        
+
         finalizeBtn.setDisable(!status.isReadyToFinalize);
         if (status.isReadyToFinalize) {
             finalizeBtn.setTooltip(new Tooltip("All creation points spent. Click to finalize."));
         } else {
-            finalizeBtn.setTooltip(new Tooltip("Check creation pools: Attributes (18), Abilities (28), Merits (10), Specialties (4), Charms (15), and 15 BP."));
+            finalizeBtn.setTooltip(new Tooltip(
+                    "Check creation pools: Attributes (18), Abilities (28), Merits (10), Specialties (4), Charms (15), and 15 BP."));
         }
     }
 
     private void updateExperiencedFooter() {
-        ExperienceRuleEngine.ExperienceStatus xpStatus = ExperienceRuleEngine.calculateStatus(data, data.getCreationSnapshot());
-        
+        ExperienceRuleEngine.ExperienceStatus xpStatus = ExperienceRuleEngine.calculateStatus(data,
+                data.getCreationSnapshot());
+
         regularXpLabel.setText("Regular XP: " + xpStatus.regularXpSpent + "/" + xpStatus.totalRegularXpAwarded);
-        regularXpLabel.setStyle(xpStatus.getRegularXpRemaining() < 0 
-            ? "-fx-text-fill: red; -fx-font-weight: bold;" 
-            : "-fx-text-fill: white;");
-        
+        regularXpLabel.setStyle(xpStatus.getRegularXpRemaining() < 0
+                ? "-fx-text-fill: red; -fx-font-weight: bold;"
+                : "-fx-text-fill: white;");
+
         solarXpLabel.setText("Solar XP: " + xpStatus.solarXpSpent + "/" + xpStatus.totalSolarXpAwarded);
-        solarXpLabel.setStyle(xpStatus.getSolarXpRemaining() < 0 
-            ? "-fx-text-fill: red; -fx-font-weight: bold;" 
-            : "-fx-text-fill: #d4af37;");
+        solarXpLabel.setStyle(xpStatus.getSolarXpRemaining() < 0
+                ? "-fx-text-fill: red; -fx-font-weight: bold;"
+                : "-fx-text-fill: #d4af37;");
     }
 
     private void updateAllWebNodeStyles() {
@@ -673,16 +684,15 @@ public class BuilderUI extends BorderPane {
     }
 
     private EquipmentTab createEquipmentContent() {
-        de.saxsys.mvvmfx.ViewTuple<EquipmentTab, com.vibethema.viewmodel.equipment.EquipmentViewModel> viewTuple = 
-            de.saxsys.mvvmfx.FluentViewLoader.javaView(EquipmentTab.class)
+        de.saxsys.mvvmfx.ViewTuple<EquipmentTab, com.vibethema.viewmodel.equipment.EquipmentViewModel> viewTuple = de.saxsys.mvvmfx.FluentViewLoader
+                .javaView(EquipmentTab.class)
                 .viewModel(new com.vibethema.viewmodel.equipment.EquipmentViewModel(
-                    data, equipmentService, dataService, tagDescriptions, this::updateFooter, this::showEvocationsDialog))
+                        data, equipmentService, dataService, tagDescriptions, this::updateFooter,
+                        this::showEvocationsDialog))
                 .codeBehind(new EquipmentTab(new DefaultEquipmentDialogService()))
                 .load();
         return (EquipmentTab) viewTuple.getView();
     }
-
-
 
     private VBox createContent() {
         VBox content = new VBox(20);
@@ -736,16 +746,20 @@ public class BuilderUI extends BorderPane {
         int rowCount = 0;
         int colCount = 0;
         for (Ability abil : SystemData.ABILITIES) {
-            if (Ability.CRAFT == abil || Ability.MARTIAL_ARTS == abil) continue;
-            
-            AbilitySelectionComponent abilityRow = new AbilitySelectionComponent(data, abil, data.getAbility(abil), data.getCasteAbility(abil), data.getFavoredAbility(abil));
+            if (Ability.CRAFT == abil || Ability.MARTIAL_ARTS == abil)
+                continue;
+
+            AbilitySelectionComponent abilityRow = new AbilitySelectionComponent(data, abil, data.getAbility(abil),
+                    data.getCasteAbility(abil), data.getFavoredAbility(abil));
             abilityRow.setOnNameClick(e -> {
-                if (e.getClickCount() == 2) jumpToCharmAbility(abil.getDisplayName());
+                if (e.getClickCount() == 2)
+                    jumpToCharmAbility(abil.getDisplayName());
             });
-            
+
             if (Ability.BRAWL == abil) {
                 abilityRow.getSelector().minDotsProperty().bind(Bindings.createIntegerBinding(() -> {
-                    if (!data.getFavoredAbility(Ability.BRAWL).get()) return 0;
+                    if (!data.getFavoredAbility(Ability.BRAWL).get())
+                        return 0;
                     return maTotalDots.get() > 0 ? 0 : 1;
                 }, data.getFavoredAbility(Ability.BRAWL), maTotalDots));
             }
@@ -770,9 +784,11 @@ public class BuilderUI extends BorderPane {
         abilAndSide.getChildren().addAll(abilitiesSection, sideStuff);
 
         HBox statsRow = new HBox(40);
-        statsRow.getChildren().addAll(createHealthSection(), createCombatStatsSection(), createSocialStatsSection(), createGreatCurseSection());
+        statsRow.getChildren().addAll(createHealthSection(), createCombatStatsSection(), createSocialStatsSection(),
+                createGreatCurseSection());
 
-        content.getChildren().addAll(basicAdvSection, attributesSection, abilAndSide, new Separator(), statsRow, createAttackPoolsSection());
+        content.getChildren().addAll(basicAdvSection, attributesSection, abilAndSide, new Separator(), statsRow,
+                createAttackPoolsSection());
         return content;
     }
 
@@ -802,7 +818,8 @@ public class BuilderUI extends BorderPane {
         Runnable refreshStylePicker = () -> {
             List<String> names = new java.util.ArrayList<>();
             for (MartialArtsStyle mas : data.getMartialArtsStyles()) {
-                if (mas.getStyleName() != null && !mas.getStyleName().isEmpty() && !names.contains(mas.getStyleName())) {
+                if (mas.getStyleName() != null && !mas.getStyleName().isEmpty()
+                        && !names.contains(mas.getStyleName())) {
                     names.add(mas.getStyleName());
                 }
             }
@@ -817,7 +834,7 @@ public class BuilderUI extends BorderPane {
 
         Runnable refreshStyles = () -> {
             styleList.getChildren().clear();
-            
+
             // To track total dots in all MA styles for minimum dots enforcement
             SimpleIntegerProperty maTotalDots = new SimpleIntegerProperty(0);
             Runnable updateMaTotal = () -> {
@@ -830,18 +847,22 @@ public class BuilderUI extends BorderPane {
             updateMaTotal.run();
 
             for (MartialArtsStyle mas : data.getMartialArtsStyles()) {
-                AbilitySelectionComponent styleRow = new AbilitySelectionComponent(data, mas.getStyleName(), mas.ratingProperty(), data.getCasteAbility(Ability.BRAWL), data.getFavoredAbility(Ability.BRAWL), Ability.BRAWL);
+                AbilitySelectionComponent styleRow = new AbilitySelectionComponent(data, mas.getStyleName(),
+                        mas.ratingProperty(), data.getCasteAbility(Ability.BRAWL),
+                        data.getFavoredAbility(Ability.BRAWL), Ability.BRAWL);
                 styleRow.setNameWidth(180);
                 styleRow.getStyleClass().add("merit-row");
                 styleRow.setPadding(new Insets(8));
-                
+
                 styleRow.setOnNameClick(e -> {
-                    if (e.getClickCount() == 2) jumpToCharmAbility(mas.getStyleName());
+                    if (e.getClickCount() == 2)
+                        jumpToCharmAbility(mas.getStyleName());
                 });
 
                 // If Brawl is favored, at least one dot across Brawl + MA must exist.
                 styleRow.getSelector().minDotsProperty().bind(Bindings.createIntegerBinding(() -> {
-                    if (!data.getFavoredAbility(Ability.BRAWL).get()) return 0;
+                    if (!data.getFavoredAbility(Ability.BRAWL).get())
+                        return 0;
                     int brawlDots = data.getAbility(Ability.BRAWL).get();
                     int otherMaDots = maTotalDots.get() - mas.getRating();
                     return (brawlDots == 0 && otherMaDots == 0) ? 1 : 0;
@@ -853,7 +874,7 @@ public class BuilderUI extends BorderPane {
                 Button removeBtn = new Button("✕");
                 removeBtn.getStyleClass().add("remove-btn");
                 removeBtn.setOnAction(e -> data.getMartialArtsStyles().remove(mas));
-                
+
                 styleRow.getChildren().addAll(spacer, removeBtn);
                 styleList.getChildren().add(styleRow);
             }
@@ -891,7 +912,8 @@ public class BuilderUI extends BorderPane {
             available.removeIf(current::contains);
 
             if (available.isEmpty()) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "No new styles found. Create a new one first!", ButtonType.OK);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, "No new styles found. Create a new one first!",
+                        ButtonType.OK);
                 alert.showAndWait();
                 return;
             }
@@ -920,7 +942,8 @@ public class BuilderUI extends BorderPane {
                         // Automatically add it if they created it
                         data.getMartialArtsStyles().add(new MartialArtsStyle(null, name.trim(), 0));
                     } catch (java.io.IOException ex) {
-                        new Alert(Alert.AlertType.ERROR, "Failed to create style: " + ex.getMessage(), ButtonType.OK).showAndWait();
+                        new Alert(Alert.AlertType.ERROR, "Failed to create style: " + ex.getMessage(), ButtonType.OK)
+                                .showAndWait();
                     }
                 }
             });
@@ -936,16 +959,17 @@ public class BuilderUI extends BorderPane {
 
         Label treeTitle = new Label("Style Charm Tree");
         treeTitle.getStyleClass().add("section-title");
-        
+
         HBox treeControls = new HBox(15);
         treeControls.setAlignment(Pos.CENTER_LEFT);
         treeControls.getChildren().addAll(new Label("Select Style:"), stylePicker);
-        
+
         content.getChildren().addAll(treeTitle, treeControls);
 
-        CharmTreeComponent maCharmTree = new CharmTreeComponent(data, dataService, keywordDefs, charmTreeListener, stylePicker, "Martial Arts Style");
+        CharmTreeComponent maCharmTree = new CharmTreeComponent(data, dataService, keywordDefs, charmTreeListener,
+                stylePicker, "Martial Arts Style");
         charmTrees.add(maCharmTree);
-        
+
         VBox fullLayout = new VBox(0);
         fullLayout.getChildren().addAll(content, maCharmTree, createPurchasedCharmsSummary(true));
         VBox.setVgrow(maCharmTree, Priority.ALWAYS);
@@ -968,7 +992,8 @@ public class BuilderUI extends BorderPane {
         Button addPrincipleBtn = new Button("+ Add Principle");
         addPrincipleBtn.getStyleClass().add("add-btn");
         addPrincipleBtn.setOnAction(e -> {
-            Intimacy i = new Intimacy(java.util.UUID.randomUUID().toString(), "New Principle", Intimacy.Type.PRINCIPLE, Intimacy.Intensity.MINOR);
+            Intimacy i = new Intimacy(java.util.UUID.randomUUID().toString(), "New Principle", Intimacy.Type.PRINCIPLE,
+                    Intimacy.Intensity.MINOR);
             data.getIntimacies().add(i);
         });
         principlesSection.getChildren().addAll(principlesListContainer, addPrincipleBtn);
@@ -980,7 +1005,8 @@ public class BuilderUI extends BorderPane {
         Button addTieBtn = new Button("+ Add Tie");
         addTieBtn.getStyleClass().add("add-btn");
         addTieBtn.setOnAction(e -> {
-            Intimacy i = new Intimacy(java.util.UUID.randomUUID().toString(), "New Tie", Intimacy.Type.TIE, Intimacy.Intensity.MINOR);
+            Intimacy i = new Intimacy(java.util.UUID.randomUUID().toString(), "New Tie", Intimacy.Type.TIE,
+                    Intimacy.Intensity.MINOR);
             data.getIntimacies().add(i);
         });
         tiesSection.getChildren().addAll(tiesListContainer, addTieBtn);
@@ -995,7 +1021,8 @@ public class BuilderUI extends BorderPane {
     }
 
     private void refreshIntimaciesList() {
-        if (principlesListContainer == null || tiesListContainer == null) return;
+        if (principlesListContainer == null || tiesListContainer == null)
+            return;
         principlesListContainer.getChildren().clear();
         tiesListContainer.getChildren().clear();
 
@@ -1040,7 +1067,9 @@ public class BuilderUI extends BorderPane {
         Label title = new Label("Crafts");
         title.getStyleClass().add("section-title");
 
-        AbilitySelectionComponent craftStatus = new AbilitySelectionComponent(data, Ability.CRAFT, new SimpleIntegerProperty(0), data.getCasteAbility(Ability.CRAFT), data.getFavoredAbility(Ability.CRAFT));
+        AbilitySelectionComponent craftStatus = new AbilitySelectionComponent(data, Ability.CRAFT,
+                new SimpleIntegerProperty(0), data.getCasteAbility(Ability.CRAFT),
+                data.getFavoredAbility(Ability.CRAFT));
         // Hide the dot selector for the header
         craftStatus.getSelector().setVisible(false);
         craftStatus.getSelector().setManaged(false);
@@ -1054,7 +1083,7 @@ public class BuilderUI extends BorderPane {
 
         Runnable refreshCrafts = () -> {
             craftList.getChildren().clear();
-            
+
             SimpleIntegerProperty craftTotalDots = new SimpleIntegerProperty(0);
             Runnable updateCraftTotal = () -> {
                 int total = data.getCrafts().stream().mapToInt(CraftAbility::getRating).sum();
@@ -1083,7 +1112,8 @@ public class BuilderUI extends BorderPane {
 
                 DotSelector selector = new DotSelector(ca.ratingProperty(), 0, 5);
                 selector.minDotsProperty().bind(Bindings.createIntegerBinding(() -> {
-                    if (!data.getFavoredAbility(Ability.CRAFT).get()) return 0;
+                    if (!data.getFavoredAbility(Ability.CRAFT).get())
+                        return 0;
                     int otherDots = craftTotalDots.get() - ca.getRating();
                     return otherDots > 0 ? 0 : 1;
                 }, data.getFavoredAbility(Ability.CRAFT), craftTotalDots));
@@ -1108,7 +1138,8 @@ public class BuilderUI extends BorderPane {
                     break;
                 }
             }
-            if (needsRefresh) refreshCrafts.run();
+            if (needsRefresh)
+                refreshCrafts.run();
         });
         refreshCrafts.run();
 
@@ -1141,7 +1172,8 @@ public class BuilderUI extends BorderPane {
                 nameField.setPrefWidth(200);
 
                 ComboBox<String> abilPicker = new ComboBox<>();
-                abilPicker.getItems().addAll(SystemData.ABILITIES.stream().map(Ability::getDisplayName).collect(Collectors.toList()));
+                abilPicker.getItems().addAll(
+                        SystemData.ABILITIES.stream().map(Ability::getDisplayName).collect(Collectors.toList()));
                 abilPicker.valueProperty().bindBidirectional(s.abilityProperty());
                 abilPicker.setPromptText("Select Ability");
 
@@ -1165,7 +1197,8 @@ public class BuilderUI extends BorderPane {
                     break;
                 }
             }
-            if (needsRefresh) refreshSpecs.run();
+            if (needsRefresh)
+                refreshSpecs.run();
         });
         refreshSpecs.run();
 
@@ -1261,23 +1294,23 @@ public class BuilderUI extends BorderPane {
         VBox combatBox = new VBox(5);
         Label combatLabel = new Label("Combat Statistics");
         combatLabel.getStyleClass().add("subsection-title");
-        
+
         VBox statsList = new VBox(5);
         statsList.getStyleClass().add("merit-row-container");
         statsList.setPadding(new Insets(5, 10, 5, 10));
-        
+
         Label naturalSoakVal = new Label();
         naturalSoakVal.textProperty().bind(Bindings.concat("Natural Soak: ", data.naturalSoakProperty().asString()));
         naturalSoakVal.getStyleClass().add("merit-name");
-        
+
         Label armorSoakVal = new Label();
         armorSoakVal.textProperty().bind(Bindings.concat("Armor Soak: +", data.armorSoakProperty().asString()));
         armorSoakVal.getStyleClass().add("merit-name");
-        
+
         Label totalSoakVal = new Label();
         totalSoakVal.textProperty().bind(Bindings.concat("Total Soak: ", data.totalSoakProperty().asString()));
         totalSoakVal.setStyle("-fx-font-weight: bold; -fx-text-fill: #3498db; -fx-font-size: 1.1em;");
-        
+
         Label hardnessVal = new Label();
         hardnessVal.textProperty().bind(Bindings.concat("Hardness: ", data.totalHardnessProperty().asString()));
         hardnessVal.getStyleClass().add("merit-name");
@@ -1290,7 +1323,7 @@ public class BuilderUI extends BorderPane {
         dodgeBonusLabel.getStyleClass().add("merit-name");
         dodgeBonusLabel.setStyle("-fx-text-fill: #3498db; -fx-font-weight: bold;");
         Tooltip dodgeTooltip = new Tooltip("If dodge specialty applies");
-        
+
         dodgeBox.getChildren().addAll(dodgeBaseLabel, dodgeBonusLabel);
 
         Runnable refreshEvasion = () -> {
@@ -1332,8 +1365,9 @@ public class BuilderUI extends BorderPane {
         data.joinBattleProperty().addListener((obs, old, nv) -> refreshJoinBattle.run());
         data.hasJoinBattleSpecialtyProperty().addListener((obs, old, nv) -> refreshJoinBattle.run());
         refreshJoinBattle.run();
-        
-        statsList.getChildren().addAll(naturalSoakVal, armorSoakVal, totalSoakVal, hardnessVal, dodgeBox, joinBattleBox);
+
+        statsList.getChildren().addAll(naturalSoakVal, armorSoakVal, totalSoakVal, hardnessVal, dodgeBox,
+                joinBattleBox);
         combatBox.getChildren().addAll(combatLabel, statsList);
         return combatBox;
     }
@@ -1349,7 +1383,7 @@ public class BuilderUI extends BorderPane {
 
         Label triggerLabel = new Label("Limit Trigger:");
         triggerLabel.getStyleClass().add("sidebar-stat-header");
-        
+
         TextArea triggerArea = new TextArea();
         triggerArea.setPromptText("Enter your Limit Trigger...");
         triggerArea.setPrefRowCount(2);
@@ -1373,11 +1407,11 @@ public class BuilderUI extends BorderPane {
         VBox section = new VBox(5);
         Label title = new Label("Social Statistics");
         title.getStyleClass().add("subsection-title");
-        
+
         VBox statsList = new VBox(5);
         statsList.getStyleClass().add("merit-row-container");
         statsList.setPadding(new Insets(5, 10, 5, 10));
-        
+
         // Resolve
         HBox resolveBox = new HBox(0);
         resolveBox.setAlignment(Pos.CENTER_LEFT);
@@ -1388,7 +1422,7 @@ public class BuilderUI extends BorderPane {
         resolveBonusLabel.setStyle("-fx-text-fill: #3498db; -fx-font-weight: bold;");
         Tooltip resolveTooltip = new Tooltip("If integrity specialty applies");
         resolveBox.getChildren().addAll(resolveBaseLabel, resolveBonusLabel);
-        
+
         // No more double-click
 
         Runnable refreshResolve = () -> {
@@ -1427,7 +1461,7 @@ public class BuilderUI extends BorderPane {
         data.resolveProperty().addListener((obs, old, nv) -> refreshResolve.run());
         data.resolveBonusProperty().addListener((obs, old, nv) -> refreshResolve.run());
         data.hasResolveSpecialtyProperty().addListener((obs, old, nv) -> refreshResolve.run());
-        
+
         data.guileProperty().addListener((obs, old, nv) -> refreshGuile.run());
         data.guileBonusProperty().addListener((obs, old, nv) -> refreshGuile.run());
         data.hasGuileSpecialtyProperty().addListener((obs, old, nv) -> refreshGuile.run());
@@ -1437,7 +1471,7 @@ public class BuilderUI extends BorderPane {
 
         refreshResolve.run();
         refreshGuile.run();
-        
+
         statsList.getChildren().addAll(resolveBox, guileBox);
         section.getChildren().addAll(title, statsList);
         return section;
@@ -1447,14 +1481,14 @@ public class BuilderUI extends BorderPane {
         VBox section = new VBox(5);
         Label title = new Label("Attack Pools");
         title.getStyleClass().add("subsection-title");
-        
+
         GridPane grid = new GridPane();
         grid.setHgap(20);
         grid.setVgap(8);
         grid.getStyleClass().add("merit-row-container");
         grid.setPadding(new Insets(10));
-        
-        String[] headers = {"Weapon", "Withering", "Decisive", "Damage", "Parry"};
+
+        String[] headers = { "Weapon", "Withering", "Decisive", "Damage", "Parry" };
         for (int i = 0; i < headers.length; i++) {
             Label hl = new Label(headers[i]);
             hl.getStyleClass().add("sidebar-stat-header");
@@ -1464,7 +1498,7 @@ public class BuilderUI extends BorderPane {
         Runnable refresh = () -> {
             grid.getChildren().removeIf(node -> GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node) > 0);
             int row = 1;
-            
+
             for (AttackPoolData apd : data.getAttackPools()) {
                 grid.add(new Label(apd.getWeaponName()), 0, row);
                 grid.add(new Label(apd.getWitheringPool()), 1, row);
@@ -1473,7 +1507,7 @@ public class BuilderUI extends BorderPane {
                 grid.add(new Label(String.valueOf(apd.getParry())), 4, row);
                 row++;
             }
-            
+
             for (javafx.scene.Node n : grid.getChildren()) {
                 if (n instanceof Label l && GridPane.getRowIndex(n) != null && GridPane.getRowIndex(n) > 0) {
                     l.getStyleClass().add("merit-name");
@@ -1481,10 +1515,11 @@ public class BuilderUI extends BorderPane {
             }
         };
 
-        data.getAttackPools().addListener((javafx.collections.ListChangeListener<? super AttackPoolData>) c -> refresh.run());
-        
+        data.getAttackPools()
+                .addListener((javafx.collections.ListChangeListener<? super AttackPoolData>) c -> refresh.run());
+
         refresh.run();
-        
+
         section.getChildren().addAll(title, grid);
         return section;
     }
@@ -1533,22 +1568,22 @@ public class BuilderUI extends BorderPane {
     private VBox createAttributeColumn(String title, Attribute.Category category, List<Attribute> attrs) {
         VBox box = new VBox(8);
         box.getStyleClass().add("attribute-column");
-        
+
         HBox headerRow = new HBox(10);
         headerRow.setAlignment(Pos.CENTER_LEFT);
-        
+
         Label titleLabel = new Label(title);
         titleLabel.getStyleClass().add("subsection-title");
-        
+
         ComboBox<AttributePriority> priorityBox = new ComboBox<>();
         priorityBox.setPromptText("Priority");
         priorityBox.getItems().setAll(AttributePriority.values());
         priorityBox.setPrefWidth(120);
         priorityBox.getStyleClass().add("priority-combo");
-        
+
         // Bind bidirectional with handling for null/None
         priorityBox.valueProperty().bindBidirectional(data.getAttributePriority(category));
-        
+
         // Ensure footer updates when priority changes
         data.getAttributePriority(category).addListener((obs, oldV, newV) -> updateFooter());
 
@@ -1566,9 +1601,12 @@ public class BuilderUI extends BorderPane {
         priorityLabel.visibleProperty().bind(data.modeProperty().isEqualTo(CharacterMode.EXPERIENCED));
         priorityLabel.managedProperty().bind(priorityLabel.visibleProperty());
 
-        headerRow.getChildren().addAll(titleLabel, new Region() {{ HBox.setHgrow(this, Priority.ALWAYS); }}, priorityBox, priorityLabel);
+        headerRow.getChildren().addAll(titleLabel, new Region() {
+            {
+                HBox.setHgrow(this, Priority.ALWAYS);
+            }
+        }, priorityBox, priorityLabel);
         box.getChildren().add(headerRow);
-
 
         for (Attribute attr : attrs) {
             HBox row = new HBox(10);
@@ -1631,7 +1669,8 @@ public class BuilderUI extends BorderPane {
                     break;
                 }
             }
-            if (needsRefresh) refreshMerits.run();
+            if (needsRefresh)
+                refreshMerits.run();
         });
         refreshMerits.run();
 
@@ -1647,20 +1686,20 @@ public class BuilderUI extends BorderPane {
     private javafx.scene.Node createCharmsContent() {
         charmsAbilityCombo = new ComboBox<>();
         charmsAbilityCombo.getItems().addAll(
-            SystemData.ABILITIES.stream()
-                .filter(a -> a != Ability.MARTIAL_ARTS)
-                .map(Ability::getDisplayName)
-                .collect(Collectors.toList())
-        );
+                SystemData.ABILITIES.stream()
+                        .filter(a -> a != Ability.MARTIAL_ARTS)
+                        .map(Ability::getDisplayName)
+                        .collect(Collectors.toList()));
         charmsAbilityCombo.setValue(Ability.ARCHERY.getDisplayName());
-        
-        CharmTreeComponent charmsView = new CharmTreeComponent(data, dataService, keywordDefs, charmTreeListener, charmsAbilityCombo, "Ability");
+
+        CharmTreeComponent charmsView = new CharmTreeComponent(data, dataService, keywordDefs, charmTreeListener,
+                charmsAbilityCombo, "Ability");
         charmTrees.add(charmsView);
-        
+
         VBox layout = new VBox(0);
         layout.getChildren().addAll(charmsView, createPurchasedCharmsSummary(false));
         VBox.setVgrow(charmsView, Priority.ALWAYS);
-        
+
         return layout;
     }
 
@@ -1679,29 +1718,31 @@ public class BuilderUI extends BorderPane {
 
         Runnable refreshSummary = () -> {
             flow.getChildren().clear();
-            
+
             // Filter by mode (Solar vs Martial Arts)
             List<com.vibethema.model.PurchasedCharm> filtered = data.getUnlockedCharms().stream()
-                .filter(pc -> data.isMartialArtsStyle(pc.ability()) == martialArtsMode)
-                .collect(Collectors.toList());
+                    .filter(pc -> data.isMartialArtsStyle(pc.ability()) == martialArtsMode)
+                    .collect(Collectors.toList());
 
-            // Group by Ability (keep as string key for grouping, or convert to Enum if preferred)
+            // Group by Ability (keep as string key for grouping, or convert to Enum if
+            // preferred)
             Map<String, List<com.vibethema.model.PurchasedCharm>> groupedByAbility = filtered.stream()
-                .collect(Collectors.groupingBy(com.vibethema.model.PurchasedCharm::ability));
+                    .collect(Collectors.groupingBy(com.vibethema.model.PurchasedCharm::ability));
 
             List<String> sortedAbilities = new ArrayList<>(groupedByAbility.keySet());
             Collections.sort(sortedAbilities);
 
             for (String ability : sortedAbilities) {
                 VBox groupContainer = new VBox(5);
-                Label abLabel = new Label(ability.toUpperCase());
+                String groupDisplay = data.getArtifactName(ability);
+                Label abLabel = new Label(groupDisplay.toUpperCase());
                 abLabel.getStyleClass().add("sidebar-stat-header");
                 abLabel.setStyle("-fx-text-fill: #d4af37; -fx-font-size: 11px;");
                 groupContainer.getChildren().add(abLabel);
 
                 // Group by Charm within the ability to consolidate stackables
                 Map<com.vibethema.model.PurchasedCharm, Long> counts = groupedByAbility.get(ability).stream()
-                    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+                        .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
                 List<com.vibethema.model.PurchasedCharm> uniqueCharms = new ArrayList<>(counts.keySet());
                 uniqueCharms.sort((a, b) -> a.name().compareTo(b.name()));
@@ -1709,18 +1750,19 @@ public class BuilderUI extends BorderPane {
                 for (com.vibethema.model.PurchasedCharm pc : uniqueCharms) {
                     long count = counts.get(pc);
                     String displayName = pc.name();
-                    if (count > 1) displayName += " (x" + count + ")";
-                    
+                    if (count > 1)
+                        displayName += " (x" + count + ")";
+
                     Label charmLabel = new Label(displayName);
                     charmLabel.getStyleClass().add("charm-summary-item");
                     charmLabel.setStyle("-fx-text-fill: #f9f6e6; -fx-cursor: hand;");
-                    
+
                     charmLabel.setOnMouseClicked(e -> {
                         if (e.getClickCount() == 2) {
                             jumpToCharm(pc.id(), pc.ability());
                         }
                     });
-                    
+
                     Tooltip.install(charmLabel, new Tooltip("Double-click to view charm in tree"));
                     groupContainer.getChildren().add(charmLabel);
                 }
@@ -1728,36 +1770,41 @@ public class BuilderUI extends BorderPane {
             }
         };
 
-        data.getUnlockedCharms().addListener((javafx.collections.ListChangeListener<? super com.vibethema.model.PurchasedCharm>) c -> refreshSummary.run());
+        data.getUnlockedCharms().addListener(
+                (javafx.collections.ListChangeListener<? super com.vibethema.model.PurchasedCharm>) c -> refreshSummary
+                        .run());
         refreshSummary.run();
 
         return summary;
     }
 
-
     private void cycleTab(int direction) {
-        if (mainTabPane == null) return;
+        if (mainTabPane == null)
+            return;
         int count = mainTabPane.getTabs().size();
-        if (count == 0) return;
+        if (count == 0)
+            return;
         int current = mainTabPane.getSelectionModel().getSelectedIndex();
         int next = (current + direction + count) % count;
         selectAndFocusTab(next);
     }
 
     private void selectAndFocusTab(int index) {
-        if (mainTabPane == null || index < 0 || index >= mainTabPane.getTabs().size()) return;
+        if (mainTabPane == null || index < 0 || index >= mainTabPane.getTabs().size())
+            return;
         Tab tab = mainTabPane.getTabs().get(index);
         mainTabPane.getSelectionModel().select(tab);
         focusFirstInTab(tab);
     }
 
     private void focusFirstInTab(Tab tab) {
-        if (tab == null || tab.getContent() == null) return;
+        if (tab == null || tab.getContent() == null)
+            return;
         javafx.scene.Node content = tab.getContent();
         if (content instanceof ScrollPane sp) {
             content = sp.getContent();
         }
-        
+
         javafx.scene.Node first = findFirstFocusable(content);
         if (first != null) {
             Platform.runLater(first::requestFocus);
@@ -1774,15 +1821,17 @@ public class BuilderUI extends BorderPane {
         if (node instanceof Parent p) {
             for (javafx.scene.Node child : p.getChildrenUnmodifiable()) {
                 javafx.scene.Node f = findFirstFocusable(child);
-                if (f != null) return f;
+                if (f != null)
+                    return f;
             }
         }
         return null;
     }
 
     private void jumpToCharmAbility(String abilityName) {
-        if (mainTabPane == null) return;
-        
+        if (mainTabPane == null)
+            return;
+
         if (data.isMartialArtsStyle(abilityName)) {
             if (martialArtsTab != null && stylePicker != null) {
                 mainTabPane.getSelectionModel().select(martialArtsTab);
@@ -1812,7 +1861,8 @@ public class BuilderUI extends BorderPane {
     }
 
     private void loadKeywords() {
-        if (dataService == null) return;
+        if (dataService == null)
+            return;
         List<Keyword> keywords = dataService.loadKeywords();
         for (Keyword kw : keywords) {
             keywordDefs.put(kw.getName(), kw.getDescription());
@@ -1834,16 +1884,15 @@ public class BuilderUI extends BorderPane {
         }
     }
 
-
-
     private void showEvocationsDialog(String id, String name) {
         Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(getScene().getWindow());
         dialog.setTitle("Evocations: " + name);
 
-        CharmTreeComponent tree = new CharmTreeComponent(data, dataService, keywordDefs, charmTreeListener, null, "Evocation", id, name);
-        
+        CharmTreeComponent tree = new CharmTreeComponent(data, dataService, keywordDefs, charmTreeListener, null,
+                "Evocation", id, name);
+
         VBox root = new VBox(tree);
         VBox.setVgrow(tree, Priority.ALWAYS);
         Scene scene = new Scene(root, 1000, 700);
@@ -1873,11 +1922,12 @@ public class BuilderUI extends BorderPane {
 
         TextField nameField = new TextField();
         nameField.setPromptText(term + " Name");
-        
+
         ComboBox<String> abCombo = new ComboBox<>();
         if ("Martial Arts Style".equals(filterType)) {
             for (MartialArtsStyle mas : data.getMartialArtsStyles()) {
-                if (mas.getStyleName() != null && !mas.getStyleName().isEmpty() && !abCombo.getItems().contains(mas.getStyleName())) {
+                if (mas.getStyleName() != null && !mas.getStyleName().isEmpty()
+                        && !abCombo.getItems().contains(mas.getStyleName())) {
                     abCombo.getItems().add(mas.getStyleName());
                 }
             }
@@ -1885,7 +1935,8 @@ public class BuilderUI extends BorderPane {
             abCombo.getItems().add(contextName);
             abCombo.setDisable(true);
         } else {
-            abCombo.getItems().addAll(SystemData.ABILITIES.stream().map(Ability::getDisplayName).collect(Collectors.toList()));
+            abCombo.getItems()
+                    .addAll(SystemData.ABILITIES.stream().map(Ability::getDisplayName).collect(Collectors.toList()));
         }
         abCombo.setValue(contextName != null ? contextName : Ability.ARCHERY.getDisplayName());
 
@@ -1893,25 +1944,26 @@ public class BuilderUI extends BorderPane {
         minAb.setEditable(true);
         Spinner<Integer> minEss = new Spinner<>(1, 5, 1);
         minEss.setEditable(true);
-        
+
         TextField costField = new TextField();
         costField.setPromptText("e.g. 5m");
-        
+
         TextField typeField = new TextField();
         typeField.setPromptText("e.g. Simple");
-        
+
         TextField durationField = new TextField();
         durationField.setPromptText("e.g. Instant");
-        
+
         ObservableList<String> selectedKeywords = FXCollections.observableArrayList();
         FlowPane kwDisplay = new FlowPane(5, 5);
         kwDisplay.setPrefWrapLength(300);
-        
+
         Runnable updateKwUI = () -> {
             kwDisplay.getChildren().clear();
             for (String kw : selectedKeywords) {
                 Label l = new Label(kw);
-                l.setStyle("-fx-background-color: #3d3d3d; -fx-padding: 2 8 2 8; -fx-background-radius: 10; -fx-text-fill: white; -fx-font-size: 0.9em;");
+                l.setStyle(
+                        "-fx-background-color: #3d3d3d; -fx-padding: 2 8 2 8; -fx-background-radius: 10; -fx-text-fill: white; -fx-font-size: 0.9em;");
                 kwDisplay.getChildren().add(l);
             }
             if (selectedKeywords.isEmpty()) {
@@ -1924,11 +1976,12 @@ public class BuilderUI extends BorderPane {
 
         Button selectKwBtn = new Button("Select Keywords...");
         selectKwBtn.getStyleClass().add("secondary-btn");
-        selectKwBtn.setOnAction(e -> UIUtils.showKeywordSelectionDialog(getScene().getWindow(), dataService, new ArrayList<>(selectedKeywords), result -> {
-            selectedKeywords.setAll(result);
-            updateKwUI.run();
-        }));
-        
+        selectKwBtn.setOnAction(e -> UIUtils.showKeywordSelectionDialog(getScene().getWindow(), dataService,
+                new ArrayList<>(selectedKeywords), result -> {
+                    selectedKeywords.setAll(result);
+                    updateKwUI.run();
+                }));
+
         VBox kwBox = new VBox(5, kwDisplay, selectKwBtn);
 
         TextArea descArea = new TextArea();
@@ -1951,7 +2004,8 @@ public class BuilderUI extends BorderPane {
                 charms = dataService.loadCharmsForAbility(selectedAb);
             }
             nameToId.clear();
-            for (Charm c : charms) nameToId.put(c.getName(), c.getId());
+            for (Charm c : charms)
+                nameToId.put(c.getName(), c.getId());
             prereqList.getItems().setAll(charms.stream().map(Charm::getName).collect(Collectors.toList()));
         };
         abCombo.valueProperty().addListener((obs, oldV, newV) -> updatePrereqs.run());
@@ -1959,12 +2013,16 @@ public class BuilderUI extends BorderPane {
 
         Label abLabel = new Label("Ability:");
         Label minAbLabel = new Label("Min Ability:");
-        
+
         if ("Evocation".equals(filterType)) {
-            abLabel.setVisible(false); abLabel.setManaged(false);
-            abCombo.setVisible(false); abCombo.setManaged(false);
-            minAbLabel.setVisible(false); minAbLabel.setManaged(false);
-            minAb.setVisible(false); minAb.setManaged(false);
+            abLabel.setVisible(false);
+            abLabel.setManaged(false);
+            abCombo.setVisible(false);
+            abCombo.setManaged(false);
+            minAbLabel.setVisible(false);
+            minAbLabel.setManaged(false);
+            minAb.setVisible(false);
+            minAb.setManaged(false);
         }
 
         grid.add(new Label("Name:"), 0, 0);
@@ -1987,11 +2045,12 @@ public class BuilderUI extends BorderPane {
         grid.add(prereqList, 2, 1, 1, 7);
 
         VBox descBox = new VBox(5, new Label("Description:"), descArea);
-        
+
         for (javafx.scene.Node n : grid.getChildren()) {
-            if (n instanceof Label l) l.setStyle("-fx-text-fill: #f9f6e6;");
+            if (n instanceof Label l)
+                l.setStyle("-fx-text-fill: #f9f6e6;");
         }
-        ((Label)descBox.getChildren().get(0)).setStyle("-fx-text-fill: #f9f6e6;");
+        ((Label) descBox.getChildren().get(0)).setStyle("-fx-text-fill: #f9f6e6;");
 
         Button saveBtn = new Button("Save " + term);
         saveBtn.getStyleClass().add("action-btn");
@@ -2001,7 +2060,7 @@ public class BuilderUI extends BorderPane {
                 new Alert(Alert.AlertType.ERROR, term + " name cannot be empty.").showAndWait();
                 return;
             }
-            
+
             Charm nc = "Evocation".equals(filterType) ? new Evocation() : new SolarCharm();
             nc.setName(nameField.getText());
             nc.setAbility("Evocation".equals(filterType) ? contextId : abCombo.getValue());
@@ -2012,12 +2071,12 @@ public class BuilderUI extends BorderPane {
             nc.setDuration(durationField.getText());
             nc.setFullText(descArea.getText());
             nc.setCategory("Evocation".equals(filterType) ? "evocation" : "solar");
-            
+
             nc.setKeywords(new ArrayList<>(selectedKeywords));
-            
+
             List<String> selectedIds = prereqList.getSelectionModel().getSelectedItems().stream()
-                .map(nameToId::get)
-                .collect(Collectors.toList());
+                    .map(nameToId::get)
+                    .collect(Collectors.toList());
             nc.setPrerequisites(selectedIds);
             nc.setCustom(true);
 
@@ -2028,7 +2087,8 @@ public class BuilderUI extends BorderPane {
                     dataService.saveCharm(nc);
                 }
                 data.setDirty(true);
-                if (onSave != null) onSave.run();
+                if (onSave != null)
+                    onSave.run();
                 refreshCharms();
                 dialog.close();
             } catch (IOException ex) {
@@ -2054,15 +2114,17 @@ public class BuilderUI extends BorderPane {
         dialogPane.setStyle("-fx-background-color: #1e1e1e;");
 
         GridPane grid = new GridPane();
-        grid.setHgap(15); grid.setVgap(10);
+        grid.setHgap(15);
+        grid.setVgap(10);
         grid.setPadding(new Insets(20));
 
         TextField nameField = new TextField(charm.getName());
         ComboBox<String> abCombo = new ComboBox<>();
-        abCombo.getItems().addAll(SystemData.ABILITIES.stream().map(Ability::getDisplayName).collect(Collectors.toList()));
+        abCombo.getItems()
+                .addAll(SystemData.ABILITIES.stream().map(Ability::getDisplayName).collect(Collectors.toList()));
         abCombo.getItems().addAll(dataService.getAvailableMartialArtsStyles());
         abCombo.setValue(charm.getAbility());
-        
+
         Spinner<Integer> minAb = new Spinner<>(0, 5, charm.getMinAbility());
         Spinner<Integer> minEss = new Spinner<>(1, 5, charm.getMinEssence());
         TextField costField = new TextField(charm.getCost());
@@ -2107,7 +2169,7 @@ public class BuilderUI extends BorderPane {
                 }
             }
             prereqList.getItems().setAll(nameToId.keySet().stream().sorted().collect(Collectors.toList()));
-            
+
             // Re-select existing prerequisites
             if (charm.getPrerequisites() != null) {
                 for (String rid : charm.getPrerequisites()) {
@@ -2121,25 +2183,37 @@ public class BuilderUI extends BorderPane {
         abCombo.valueProperty().addListener((obs, oldV, newV) -> updatePrereqs.run());
         updatePrereqs.run();
 
-        grid.add(new Label("Name:"), 0, 0); grid.add(nameField, 1, 0);
-        grid.add(new Label("Ability:"), 0, 1); grid.add(abCombo, 1, 1);
-        grid.add(new Label("Min Ability:"), 0, 2); grid.add(minAb, 1, 2);
-        grid.add(new Label("Min Essence:"), 0, 3); grid.add(minEss, 1, 3);
-        grid.add(new Label("Cost:"), 0, 4); grid.add(costField, 1, 4);
-        grid.add(new Label("Type:"), 0, 5); grid.add(typeField, 1, 5);
-        grid.add(new Label("Keywords:"), 0, 6); grid.add(keywordsField, 1, 6);
-        grid.add(new Label("Duration:"), 0, 7); grid.add(durationField, 1, 7);
+        grid.add(new Label("Name:"), 0, 0);
+        grid.add(nameField, 1, 0);
+        grid.add(new Label("Ability:"), 0, 1);
+        grid.add(abCombo, 1, 1);
+        grid.add(new Label("Min Ability:"), 0, 2);
+        grid.add(minAb, 1, 2);
+        grid.add(new Label("Min Essence:"), 0, 3);
+        grid.add(minEss, 1, 3);
+        grid.add(new Label("Cost:"), 0, 4);
+        grid.add(costField, 1, 4);
+        grid.add(new Label("Type:"), 0, 5);
+        grid.add(typeField, 1, 5);
+        grid.add(new Label("Keywords:"), 0, 6);
+        grid.add(keywordsField, 1, 6);
+        grid.add(new Label("Duration:"), 0, 7);
+        grid.add(durationField, 1, 7);
         grid.add(problemCheck, 1, 8);
-        grid.add(new Label("Prerequisites:"), 2, 0); grid.add(prereqList, 2, 1, 1, 8);
+        grid.add(new Label("Prerequisites:"), 2, 0);
+        grid.add(prereqList, 2, 1, 1, 8);
 
         VBox rightColumn = new VBox(10);
-        rightColumn.getChildren().addAll(new Label("Description:"), descArea, new Label("Raw Import Data (Read Only):"), rawDataArea);
-        
+        rightColumn.getChildren().addAll(new Label("Description:"), descArea, new Label("Raw Import Data (Read Only):"),
+                rawDataArea);
+
         for (javafx.scene.Node n : grid.getChildren()) {
-            if (n instanceof Label l) l.setStyle("-fx-text-fill: #f9f6e6; -fx-font-weight: bold;");
+            if (n instanceof Label l)
+                l.setStyle("-fx-text-fill: #f9f6e6; -fx-font-weight: bold;");
         }
         for (javafx.scene.Node n : rightColumn.getChildren()) {
-            if (n instanceof Label l) l.setStyle("-fx-text-fill: #f9f6e6; -fx-font-weight: bold;");
+            if (n instanceof Label l)
+                l.setStyle("-fx-text-fill: #f9f6e6; -fx-font-weight: bold;");
         }
 
         HBox mainContent = new HBox(20, grid, rightColumn);
@@ -2156,24 +2230,25 @@ public class BuilderUI extends BorderPane {
                 charm.setMinEssence(minEss.getValue());
                 charm.setCost(costField.getText());
                 charm.setType(typeField.getText());
-                
+
                 List<String> kwList = new ArrayList<>();
                 if (!keywordsField.getText().trim().isEmpty()) {
                     for (String kw : keywordsField.getText().split(",")) {
                         String t = kw.trim();
-                        if (!t.isEmpty() && !t.equalsIgnoreCase("None")) kwList.add(t);
+                        if (!t.isEmpty() && !t.equalsIgnoreCase("None"))
+                            kwList.add(t);
                     }
                 }
                 charm.setKeywords(kwList);
                 charm.setDuration(durationField.getText());
                 charm.setFullText(descArea.getText());
                 charm.setPotentiallyProblematicImport(problemCheck.isSelected());
-                
+
                 List<String> selectedIds = prereqList.getSelectionModel().getSelectedItems().stream()
-                    .map(nameToId::get)
-                    .collect(Collectors.toList());
+                        .map(nameToId::get)
+                        .collect(Collectors.toList());
                 charm.setPrerequisites(selectedIds);
-                
+
                 try {
                     if ("evocation".equals(charm.getCategory())) {
                         dataService.saveEvocation(charm.getAbility(), contextName, charm);
@@ -2181,10 +2256,12 @@ public class BuilderUI extends BorderPane {
                         dataService.saveCharm(charm);
                     }
                     data.setDirty(true);
-                    if (onSave != null) onSave.run();
+                    if (onSave != null)
+                        onSave.run();
                     return bt;
                 } catch (IOException ex) {
-                    new Alert(Alert.AlertType.ERROR, "Failed to save " + term.toLowerCase() + ": " + ex.getMessage()).showAndWait();
+                    new Alert(Alert.AlertType.ERROR, "Failed to save " + term.toLowerCase() + ": " + ex.getMessage())
+                            .showAndWait();
                 }
             }
             return null;

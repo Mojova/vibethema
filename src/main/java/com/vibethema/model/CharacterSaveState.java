@@ -24,10 +24,10 @@ public class CharacterSaveState {
     public List<SpecialtyData> specialties = new ArrayList<>();
     public List<CraftData> crafts = new ArrayList<>();
     public List<MartialArtsData> martialArts = new ArrayList<>();
-    public List<WeaponData> weapons = new ArrayList<>();
-    public List<ArmorData> armors = new ArrayList<>();
-    public List<HearthstoneData> hearthstones = new ArrayList<>();
-    public List<OtherEquipmentData> otherEquipment = new ArrayList<>();
+    public List<WeaponLink> weapons = new ArrayList<>();
+    public List<ArmorLink> armors = new ArrayList<>();
+    public List<String> hearthstones = new ArrayList<>();
+    public List<String> otherEquipment = new ArrayList<>();
     public List<IntimacyData> intimacies = new ArrayList<>();
     
     public List<ShapingRitualData> shapingRituals = new ArrayList<>();
@@ -37,6 +37,16 @@ public class CharacterSaveState {
     public CharacterSaveState creationSnapshot;
     public List<XpAwardData> xpAwards = new ArrayList<>();
         
+    public static class WeaponLink {
+        public String id;
+        public String specialtyId;
+    }
+
+    public static class ArmorLink {
+        public String id;
+        public boolean equipped;
+    }
+
     public static class SpecialtyData {
         public String id;
         public String name;
@@ -58,42 +68,6 @@ public class CharacterSaveState {
         public boolean isFavored;
     }
 
-    public static class WeaponData {
-        public String id;
-        public String name;
-        public Weapon.WeaponRange range;
-        public Weapon.WeaponType type;
-        public Weapon.WeaponCategory category;
-        public List<String> tags = new ArrayList<>();
-        public String specialtyId;
-        
-        public int accuracy, damage, defense, overwhelming, attunement;
-        public int closeRangeBonus, shortRangeBonus, mediumRangeBonus, longRangeBonus, extremeRangeBonus;
-    }
-
-    public static class ArmorData {
-        public String id;
-        public String name;
-        public Armor.ArmorType type;
-        public Armor.ArmorWeight weight;
-        public List<String> tags = new ArrayList<>();
-        public boolean equipped;
-        
-        public int soak, hardness, mobilityPenalty, attunement;
-    }
-
-    public static class HearthstoneData {
-        public String id;
-        public String name;
-        public String description;
-    }
-
-    public static class OtherEquipmentData {
-        public String id;
-        public String name;
-        public String description;
-        public boolean isArtifact;
-    }
 
     public static class IntimacyData {
         public String id;

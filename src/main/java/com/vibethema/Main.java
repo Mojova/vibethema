@@ -33,7 +33,8 @@ public class Main extends Application {
             primaryStage.setScene(scene);
             primaryStage.setOnCloseRequest(e -> {
                 if (scene.getRoot() instanceof BuilderUI builder) {
-                    if (!builder.confirmDiscardChanges()) e.consume();
+                    if (!builder.confirmDiscardChanges())
+                        e.consume();
                 }
             });
             primaryStage.show();
@@ -44,7 +45,7 @@ public class Main extends Application {
         try (FileReader reader = new FileReader(file)) {
             CharacterSaveState state = new Gson().fromJson(reader, CharacterSaveState.class);
             CharacterData data = new CharacterData();
-            data.importState(state);
+            data.importState(state, new com.vibethema.service.EquipmentDataService());
 
             BuilderUI builder = new BuilderUI(data, file);
             Scene scene = new Scene(builder, 1200, 800);

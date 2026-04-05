@@ -30,4 +30,29 @@ public class Hearthstone {
     public StringProperty descriptionProperty() { return description; }
     public String getDescription() { return description.get(); }
     public void setDescription(String v) { description.set(v); }
+
+    // --- Persistence Support (DTO) ---
+    public static class HearthstoneData {
+        public String id;
+        public String name;
+        public String description;
+    }
+
+    public HearthstoneData toData() {
+        HearthstoneData data = new HearthstoneData();
+        data.id = getId();
+        data.name = getName();
+        data.description = getDescription();
+        return data;
+    }
+
+    public static Hearthstone fromData(HearthstoneData data) {
+        if (data == null) return null;
+        return new Hearthstone(data.id, data.name, data.description);
+    }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

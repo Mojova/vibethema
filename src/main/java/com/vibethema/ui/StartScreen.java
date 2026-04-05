@@ -35,7 +35,6 @@ public class StartScreen extends StackPane {
         Region spacer = new Region();
         spacer.setPrefHeight(60);
 
-
         HBox buttonBox = new HBox(30);
         buttonBox.setAlignment(Pos.CENTER);
 
@@ -60,8 +59,6 @@ public class StartScreen extends StackPane {
         getChildren().add(card);
     }
 
-
-
     private void startNewCharacter() {
         CharacterData data = new CharacterData();
         BuilderUI builder = new BuilderUI(data);
@@ -72,14 +69,14 @@ public class StartScreen extends StackPane {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Load Character");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Vibethema Save File", "*.vbtm"));
-        
+
         File file = fileChooser.showOpenDialog(getScene().getWindow());
         if (file != null) {
             try (FileReader reader = new FileReader(file)) {
                 CharacterSaveState state = new Gson().fromJson(reader, CharacterSaveState.class);
                 if (state != null) {
                     CharacterData data = new CharacterData();
-                    data.importState(state);
+                    data.importState(state, new com.vibethema.service.EquipmentDataService());
                     BuilderUI builder = new BuilderUI(data, file);
                     getScene().setRoot(builder);
                 }
