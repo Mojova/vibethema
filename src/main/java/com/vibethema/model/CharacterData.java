@@ -245,9 +245,12 @@ public class CharacterData {
     public ObjectProperty<CharacterMode> modeProperty() { return mode; }
     public CharacterMode getMode() { return mode.get(); }
     public void setMode(CharacterMode mode) { this.mode.set(mode); }
+    public boolean isExperienced() { return mode.get() == CharacterMode.EXPERIENCED; }
     public StringProperty supernalAbilityProperty() { return supernalAbility; }
     public IntegerProperty getAttribute(Attribute name) { return attributes.get(name); }
+    public ObservableMap<Attribute, IntegerProperty> getAttributes() { return attributes; }
     public IntegerProperty getAbility(Ability name) { return abilities.get(name); }
+    public ObservableMap<Ability, IntegerProperty> getAbilities() { return abilities; }
     public BooleanProperty getCasteAbility(Ability name) { return casteAbilities.get(name); }
     public BooleanProperty getFavoredAbility(Ability name) { return favoredAbilities.get(name); }
 

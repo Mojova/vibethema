@@ -21,6 +21,15 @@ public class CreationRuleEngine {
         // Validation
         public boolean overBonusPoints;
         public int casteAbilities, favoredAbilities;
+
+        // Detailed pool usage
+        public int attributesSpent; // dots above 1
+        public int abilitiesSpent; // total dots
+        public int meritsSpent;    // total merit dots
+        public int specialtiesSpent; // count 
+        public int charmsSpent;      // count of charms/spells
+        
+        public boolean isReadyToFinalize;
     }
 
     public static CreationStatus calculateStatus(CharacterData data) {
@@ -154,6 +163,36 @@ public class CreationRuleEngine {
         status.overBonusPoints = status.bonusPointsSpent > 15;
         status.casteAbilities = data.casteAbilityCountProperty().get();
         status.favoredAbilities = data.favoredAbilityCountProperty().get();
+
+        // 7. Calculate "Spent" counts for each pool
+        status.attributesSpent = status.physicalDots + status.socialDots + status.mentalDots; // dots above 1
+        status.abilitiesSpent = data.getAbilities().values().stream().mapToInt(javafx.beans.property.IntegerProperty::get).sum();
+        for (CraftAbility ca : data.getCrafts()) status.abilitiesSpent += ca.getRating();
+        for (MartialArtsStyle mas : data.getMartialArtsStyles()) status.abilitiesSpent += mas.getRating();
+        
+        status.meritsSpent = status.meritDots;
+        status.specialtiesSpent = status.specialtyCount;
+        status.charmsSpent = data.getUnlockedCharms().size() + billableSpells;
+
+        // 8. Finalization Eligibility
+        // Requirements: 
+        // - At least 18 attribute dots above 1 (8/6/4)
+        // - At least 28 ability dots
+        // - At least 10 merit dots
+        // - At least 4 specialties
+        // - At least 15 charms/spells
+        // - Exactly 15 bonus points spent (strict interpretation of "all points spent")
+        // - Caste/Favored counts met (5/5)
+        
+        status.isReadyToFinalize = 
+            status.attributesSpent >= 18 &&
+            status.abilitiesSpent >= 28 &&
+            status.meritsSpent >= 10 &&
+            status.specialtiesSpent >= 4 &&
+            status.charmsSpent >= 15 &&
+            status.bonusPointsSpent == 15 &&
+            status.casteAbilities == 5 &&
+            status.favoredAbilities == 5;
 
         return status;
     }
