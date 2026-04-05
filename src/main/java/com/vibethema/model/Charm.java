@@ -18,6 +18,7 @@ public abstract class Charm {
     private boolean potentiallyProblematicImport;
     private String category; // "solar", "martialArts", "evocation"
     private transient boolean isCustom;
+    private String source = "Core";
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
@@ -54,6 +55,9 @@ public abstract class Charm {
 
     public boolean isPotentiallyProblematicImport() { return potentiallyProblematicImport; }
     public void setPotentiallyProblematicImport(boolean value) { this.potentiallyProblematicImport = value; }
+
+    public String getSource() { return source; }
+    public void setSource(String source) { this.source = source; }
 
     public abstract boolean isEligible(CharacterData data);
     public abstract String getAbility();

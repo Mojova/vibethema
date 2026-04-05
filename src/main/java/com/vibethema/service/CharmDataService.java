@@ -8,6 +8,7 @@ import com.vibethema.model.SolarCharm;
 import com.vibethema.model.Evocation;
 import com.vibethema.model.Keyword;
 import com.vibethema.model.Spell;
+import com.vibethema.model.PurchasedCharm;
 import com.vibethema.model.CharacterSaveState;
 
 import java.io.*;
@@ -227,32 +228,65 @@ public class CharmDataService {
 
     public EvocationCollection loadEvocations(String artifactId) {
         Path filePath = getUserEvocationsPath().resolve(artifactId + ".json");
+        EvocationCollection collection = null;
+
         if (Files.exists(filePath)) {
             try (Reader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
-                // Try reading as new EvocationCollection format
-                EvocationCollection collection = gson.fromJson(reader, EvocationCollection.class);
-                // If it has artifactName, it's the new format
-                if (collection != null && collection.evocations != null && collection.artifactName != null) {
-                    for (Charm c : collection.evocations) {
-                        if (c instanceof Evocation e) e.setArtifactId(collection.artifactId);
-                    }
-                    return collection;
+                // 1. Try new format
+                collection = gson.fromJson(reader, EvocationCollection.class);
+                // If it lacks artifactName, it might be the old format
+                if (collection != null && collection.artifactName == null) {
+                    collection = null; // Re-attempt with old format
                 }
             } catch (IOException e) {
                 System.err.println("Error loading evocations (new format): " + e.getMessage());
             }
 
-            // Fallback: Try reading as old CharmListWrapper format
-            try (Reader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
-                CharmListWrapper wrapper = gson.fromJson(reader, CharmListWrapper.class);
-                if (wrapper != null && wrapper.charms != null) {
-                    return new EvocationCollection(artifactId, wrapper.ability, wrapper.charms);
+            if (collection == null) {
+                try (Reader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
+                    // 2. Try old format (CharmListWrapper)
+                    CharmListWrapper wrapper = gson.fromJson(reader, CharmListWrapper.class);
+                    if (wrapper != null && wrapper.charms != null) {
+                        collection = new EvocationCollection(artifactId, wrapper.ability, wrapper.charms);
+                        for (Charm c : collection.evocations) {
+                            c.setSource("Core");
+                        }
+                    }
+                } catch (IOException e) {
+                    System.err.println("Error loading evocations (old format fallback): " + e.getMessage());
                 }
-            } catch (IOException e) {
-                System.err.println("Error loading evocations (old format): " + e.getMessage());
             }
         }
-        return new EvocationCollection(artifactId, "Artifact (" + (artifactId.length() > 8 ? artifactId.substring(0, 8) : artifactId) + ")", new ArrayList<>());
+
+        if (collection == null) {
+            collection = new EvocationCollection(artifactId, 
+                "Artifact (" + (artifactId.length() > 8 ? artifactId.substring(0, 8) : artifactId) + ")", 
+                new ArrayList<>());
+        }
+
+        // Final pass: ensure all evocations in the collection have their artifactId set
+        // (This field is transient in the model and not in JSON)
+        for (Charm c : collection.evocations) {
+            c.setAbility(artifactId);
+        }
+
+        return collection;
+    }
+
+    public Charm findCharmMetadata(PurchasedCharm pc) {
+        if (pc == null) return null;
+        List<Charm> possible = loadCharmsForAbility(pc.ability());
+        for (Charm c : possible) {
+            if (c.getId().equals(pc.id())) return c;
+        }
+        
+        // Fallback for Evocations - pc.ability() stores the artifact ID for these
+        EvocationCollection evocations = loadEvocations(pc.ability());
+        for (Charm c : evocations.evocations) {
+            if (c.getId().equals(pc.id())) return c;
+        }
+        
+        return null;
     }
 
     public void saveEvocation(String artifactId, String artifactName, Charm charm) throws IOException {
@@ -328,8 +362,14 @@ public class CharmDataService {
         try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             CharmListWrapper wrapper = gson.fromJson(reader, CharmListWrapper.class);
             if (wrapper != null && wrapper.charms != null) {
+                String fileName = path.getFileName().toString();
+                String source = "Core";
+                if (fileName.contains("-mose")) source = "MOSE";
+                else if (fileName.contains("-custom")) source = "custom";
+                
                 for (Charm c : wrapper.charms) {
                     if (c instanceof SolarCharm sc) sc.setAbility(wrapper.ability);
+                    c.setSource(source);
                 }
                 allCharms.addAll(wrapper.charms);
                 return true;

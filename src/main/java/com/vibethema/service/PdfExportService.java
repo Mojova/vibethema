@@ -6,11 +6,15 @@ import com.vibethema.model.AttackPoolData;
 import com.vibethema.model.Attribute;
 import com.vibethema.model.CharacterData;
 import com.vibethema.model.CraftAbility;
+import com.vibethema.model.Intimacy;
 import com.vibethema.model.MartialArtsStyle;
 import com.vibethema.model.Merit;
+import com.vibethema.model.OtherEquipment;
 import com.vibethema.model.Specialty;
-import com.vibethema.model.SystemData;
 import com.vibethema.model.Weapon;
+import com.vibethema.model.PurchasedCharm;
+import com.vibethema.model.Spell;
+import com.vibethema.model.Charm;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
@@ -20,10 +24,13 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class PdfExportService {
     private static final String TEMPLATE_PATH = "/interactive_sheet.pdf";
+    private final CharmDataService charmDataService = new CharmDataService();
 
     public void exportToPdf(CharacterData data, File outputFile) throws IOException {
         try (InputStream is = getClass().getResourceAsStream(TEMPLATE_PATH)) {
@@ -33,36 +40,37 @@ public class PdfExportService {
             try (PDDocument doc = Loader.loadPDF(is.readAllBytes())) {
                 PDAcroForm acroForm = doc.getDocumentCatalog().getAcroForm();
                 if (acroForm != null) {
-                    fillForm(data, acroForm);
+                    Set<String> filledFields = new HashSet<>();
+                    fillForm(data, acroForm, filledFields);
                 }
                 doc.save(outputFile);
             }
         }
     }
 
-    private void fillForm(CharacterData data, PDAcroForm acroForm) throws IOException {
+    private void fillForm(CharacterData data, PDAcroForm acroForm, Set<String> filled) throws IOException {
         // Identity
-        setField(acroForm, "name", data.nameProperty().get());
-        setField(acroForm, "caste", data.casteProperty().get() != null ? data.casteProperty().get().toString() : "");
-        setField(acroForm, "SA", data.supernalAbilityProperty().get());
+        setField(acroForm, "name", data.nameProperty().get(), filled);
+        setField(acroForm, "caste", data.casteProperty().get() != null ? data.casteProperty().get().toString() : "", filled);
+        setField(acroForm, "SA", data.supernalAbilityProperty().get(), filled);
 
         // 1. Physical Attributes (Column 1)
-        setDotRating(acroForm, "dot", data.getAttribute(Attribute.STRENGTH).get(), 1);
-        setDotRating(acroForm, "dot", data.getAttribute(Attribute.DEXTERITY).get(), 9);
-        setDotRating(acroForm, "dot", data.getAttribute(Attribute.STAMINA).get(), 17);
+        setDotRating(acroForm, "dot", data.getAttribute(Attribute.STRENGTH).get(), 1, filled);
+        setDotRating(acroForm, "dot", data.getAttribute(Attribute.DEXTERITY).get(), 9, filled);
+        setDotRating(acroForm, "dot", data.getAttribute(Attribute.STAMINA).get(), 17, filled);
 
         // 2. Social Attributes (Column 2 - Irregular indices)
         setIrregularDotRating(acroForm, new String[] { "dot6", "dot7", "dot8", "dot8a", "dot8az" },
-                data.getAttribute(Attribute.CHARISMA).get());
+                data.getAttribute(Attribute.CHARISMA).get(), filled);
         setIrregularDotRating(acroForm, new String[] { "dot14", "dot15", "dot16", "dot16a", "dot16az" },
-                data.getAttribute(Attribute.MANIPULATION).get());
+                data.getAttribute(Attribute.MANIPULATION).get(), filled);
         setIrregularDotRating(acroForm, new String[] { "dot22", "dot23", "dot24", "dot24a", "dot24az" },
-                data.getAttribute(Attribute.APPEARANCE).get());
+                data.getAttribute(Attribute.APPEARANCE).get(), filled);
 
         // 3. Mental Attributes (Column 3)
-        setDotRating(acroForm, "dot", data.getAttribute(Attribute.PERCEPTION).get(), 25);
-        setDotRating(acroForm, "dot", data.getAttribute(Attribute.INTELLIGENCE).get(), 33);
-        setDotRating(acroForm, "dot", data.getAttribute(Attribute.WITS).get(), 41);
+        setDotRating(acroForm, "dot", data.getAttribute(Attribute.PERCEPTION).get(), 25, filled);
+        setDotRating(acroForm, "dot", data.getAttribute(Attribute.INTELLIGENCE).get(), 33, filled);
+        setDotRating(acroForm, "dot", data.getAttribute(Attribute.WITS).get(), 41, filled);
 
         // 4. Specialties (Middle Column, merits1-9 - No dots)
         int specIndex = 1;
@@ -70,7 +78,7 @@ public class PdfExportService {
             if (s.getName() == null || s.getName().trim().isEmpty())
                 continue;
             String text = s.getAbility() + ": " + s.getName();
-            setField(acroForm, "merits" + specIndex, text);
+            setField(acroForm, "merits" + specIndex, text, filled);
             specIndex++;
             if (specIndex > 9)
                 break;
@@ -93,9 +101,9 @@ public class PdfExportService {
         for (Merit m : data.getMerits()) {
             if (m.getName() == null || m.getName().trim().isEmpty())
                 continue;
-            setField(acroForm, "merits" + (10 + meritSlot), m.getName());
+            setField(acroForm, "merits" + (10 + meritSlot), m.getName(), filled);
             if (meritSlot < meritDots.length) {
-                setIrregularDotRating(acroForm, meritDots[meritSlot], m.getRating());
+                setIrregularDotRating(acroForm, meritDots[meritSlot], m.getRating(), filled);
             }
             meritSlot++;
             if (meritSlot >= 9)
@@ -103,22 +111,31 @@ public class PdfExportService {
         }
 
         // 6. Core Trackers (Essence, Willpower, Limit)
-        setDotRating(acroForm, "essdot", data.essenceProperty().get(), 1);
-        setDotRating(acroForm, "willdot", data.willpowerProperty().get(), 1);
-        setTrackRating(acroForm, "check", data.limitProperty().get(), 11, 10);
-        setWrappedText(acroForm, "limitt", data.limitTriggerProperty().get(), 4, 45); // ~45 chars per line
+        setDotRating(acroForm, "essdot", data.essenceProperty().get(), 1, filled);
+        setDotRating(acroForm, "willdot", data.willpowerProperty().get(), 1, filled);
+        setTrackRating(acroForm, "check", data.limitProperty().get(), 11, 10, filled);
+        setWrappedText(acroForm, "limitt", data.limitTriggerProperty().get(), 4, 45, filled); // ~45 chars per line
 
         // 7. Weapons (8x7 grid)
-        fillWeapons(data, acroForm);
+        fillWeapons(data, acroForm, filled);
 
         // 8. Protection and Derived Stats (HD1-19)
-        fillProtection(data, acroForm);
+        fillProtection(data, acroForm, filled);
 
         // 9. Specialized Abilities (Craft & Martial Arts)
-        fillSpecializedAbilities(data, acroForm);
+        fillSpecializedAbilities(data, acroForm, filled);
 
         // 10. Health Section
-        fillHealth(data, acroForm);
+        fillHealth(data, acroForm, filled);
+
+        // 11. Intimacies
+        fillIntimacies(data, acroForm, filled);
+
+        // 12. Other Equipment
+        fillOtherEquipment(data, acroForm, filled);
+
+        // 13. Charms and Spells
+        fillCharms(data, acroForm, filled);
 
         // Abilities (Physical mapping to the 26 standard rows Ab1-26)
         String[][] abilityDots = {
@@ -154,27 +171,21 @@ public class PdfExportService {
         int rowIndex = 0;
         for (Ability ability : abilityList) {
             if (ability == Ability.CRAFT || ability == Ability.MARTIAL_ARTS) {
-                // Skips both because they are specialized (Craft) or separate (Martial Arts
-                // style mapping)
-                // However, we still increment rowIndex for both because they HAVE a row on the
-                // PDF (Row 6 and Row 13)
                 rowIndex++;
                 continue;
             }
 
-            // Map remaining standard abilities (Dot Tracks and Caste/Favored Checkboxes
-            // only)
             if (rowIndex < abilityDots.length) {
                 int rating = data.getAbilityRating(ability);
-                setTrackRating(acroForm, abilityDots[rowIndex], rating);
+                setTrackRating(acroForm, abilityDots[rowIndex], rating, filled);
                 setCheckbox(acroForm, "abcheck" + (rowIndex + 1),
-                        data.getCasteAbility(ability).get() || data.getFavoredAbility(ability).get());
+                        data.getCasteAbility(ability).get() || data.getFavoredAbility(ability).get(), filled);
             }
             rowIndex++;
         }
     }
 
-    private void fillSpecializedAbilities(CharacterData data, PDAcroForm form) throws IOException {
+    private void fillSpecializedAbilities(CharacterData data, PDAcroForm form, Set<String> filled) throws IOException {
         List<CraftAbility> crafts = data.getCrafts();
         List<MartialArtsStyle> styles = data.getMartialArtsStyles();
 
@@ -182,10 +193,10 @@ public class PdfExportService {
         // Row 6: Main Craft
         if (!crafts.isEmpty()) {
             CraftAbility main = crafts.get(0);
-            setField(form, "ablities6", main.getExpertise());
+            setField(form, "ablities6", main.getExpertise(), filled);
             String[] mainDots = { "dot65", "dot66", "dot67", "dot68", "dot69" };
-            setTrackRating(form, mainDots, main.getRating());
-            setCheckbox(form, "abcheck6", main.isCaste() || main.isFavored());
+            setTrackRating(form, mainDots, main.getRating(), filled);
+            setCheckbox(form, "abcheck6", main.isCaste() || main.isFavored(), filled);
         }
 
         // Row 13: Main Martial Arts
@@ -199,10 +210,10 @@ public class PdfExportService {
                     name = name.substring(0, 5) + ".";
                 }
             }
-            setField(form, "ablities13", name);
+            setField(form, "ablities13", name, filled);
             String[] styleDots = { "dot97", "dot98", "dot99", "dot100", "dot101" };
-            setTrackRating(form, styleDots, mainStyle.getRating());
-            setCheckbox(form, "abcheck13", mainStyle.isCaste() || mainStyle.isFavored());
+            setTrackRating(form, styleDots, mainStyle.getRating(), filled);
+            setCheckbox(form, "abcheck13", mainStyle.isCaste() || mainStyle.isFavored(), filled);
         }
 
         // 2. Additional Slots (verified starting at Ab27 through Ab32)
@@ -221,23 +232,23 @@ public class PdfExportService {
         // Surplus Crafts
         for (int i = 1; i < crafts.size() && addSlotIdx < addAbLabels.length; i++) {
             CraftAbility extra = crafts.get(i);
-            setField(form, addAbLabels[addSlotIdx], "Craft: " + extra.getExpertise());
-            setTrackRating(form, addAbDots[addSlotIdx], extra.getRating());
-            setCheckbox(form, "abcheck" + (27 + addSlotIdx), extra.isCaste() || extra.isFavored());
+            setField(form, addAbLabels[addSlotIdx], "Craft: " + extra.getExpertise(), filled);
+            setTrackRating(form, addAbDots[addSlotIdx], extra.getRating(), filled);
+            setCheckbox(form, "abcheck" + (27 + addSlotIdx), extra.isCaste() || extra.isFavored(), filled);
             addSlotIdx++;
         }
 
         // Martial Arts Styles
         for (int i = 1; i < styles.size() && addSlotIdx < addAbLabels.length; i++) {
             MartialArtsStyle extraStyle = styles.get(i);
-            setField(form, addAbLabels[addSlotIdx], "MA: " + extraStyle.getStyleName());
-            setTrackRating(form, addAbDots[addSlotIdx], extraStyle.getRating());
-            setCheckbox(form, "abcheck" + (27 + addSlotIdx), extraStyle.isCaste() || extraStyle.isFavored());
+            setField(form, addAbLabels[addSlotIdx], "MA: " + extraStyle.getStyleName(), filled);
+            setTrackRating(form, addAbDots[addSlotIdx], extraStyle.getRating(), filled);
+            setCheckbox(form, "abcheck" + (27 + addSlotIdx), extraStyle.isCaste() || extraStyle.isFavored(), filled);
             addSlotIdx++;
         }
     }
 
-    private void fillProtection(CharacterData data, PDAcroForm form) throws IOException {
+    private void fillProtection(CharacterData data, PDAcroForm form, Set<String> filled) throws IOException {
         // 1. Armor Slots (HD1-HD10)
         List<Armor> armors = data.getArmors();
         for (int i = 0; i < Math.min(2, armors.size()); i++) {
@@ -248,38 +259,38 @@ public class PdfExportService {
             int mobilityIdx = i + 7; // HD7, HD8
             int tagsIdx = i + 9; // HD9, HD10
 
-            setField(form, "HD" + nameIdx, a.getName());
-            setField(form, "HD" + soakIdx, String.valueOf(a.getSoak()));
-            setField(form, "HD" + hardnessIdx, String.valueOf(a.getHardness()));
-            setField(form, "HD" + mobilityIdx, String.valueOf(a.getMobilityPenalty()));
-            setField(form, "HD" + tagsIdx, String.join(", ", a.getTags()));
+            setField(form, "HD" + nameIdx, a.getName(), filled);
+            setField(form, "HD" + soakIdx, String.valueOf(a.getSoak()), filled);
+            setField(form, "HD" + hardnessIdx, String.valueOf(a.getHardness()), filled);
+            setField(form, "HD" + mobilityIdx, String.valueOf(a.getMobilityPenalty()), filled);
+            setField(form, "HD" + tagsIdx, String.join(", ", a.getTags()), filled);
         }
 
         // 2. Derived Stats (HD15-19)
-        setField(form, "HD15", String.valueOf(data.evasionProperty().get()));
-        setField(form, "HD16", String.valueOf(data.guileProperty().get()));
+        setField(form, "HD15", String.valueOf(data.evasionProperty().get()), filled);
+        setField(form, "HD16", String.valueOf(data.guileProperty().get()), filled);
 
         int dex = data.getAttribute(Attribute.DEXTERITY).get();
-        setField(form, "HD17", String.valueOf(dex + data.getAbilityRating(Ability.ATHLETICS)));
-        setField(form, "HD18", String.valueOf(dex + data.getAbilityRating(Ability.DODGE)));
-        setField(form, "HD19", String.valueOf(data.joinBattleProperty().get()));
+        setField(form, "HD17", String.valueOf(dex + data.getAbilityRating(Ability.ATHLETICS)), filled);
+        setField(form, "HD18", String.valueOf(dex + data.getAbilityRating(Ability.DODGE)), filled);
+        setField(form, "HD19", String.valueOf(data.joinBattleProperty().get()), filled);
 
         // 3. Final Protection Mapping
         int stamina = data.getAttribute(Attribute.STAMINA).get();
-        setField(form, "HD11", String.valueOf(stamina));
-        setField(form, "HD12", String.valueOf(data.totalSoakProperty().get()));
-        setField(form, "HD13", ""); // Parry - Leave empty
-        setField(form, "HD14", String.valueOf(data.resolveProperty().get()));
+        setField(form, "HD11", String.valueOf(stamina), filled);
+        setField(form, "HD12", String.valueOf(data.totalSoakProperty().get()), filled);
+        setField(form, "HD13", "", filled); // Parry - Leave empty
+        setField(form, "HD14", String.valueOf(data.resolveProperty().get()), filled);
 
         // Mote Pools (Below Essence Dots)
-        setField(form, "essence1", ""); // Leave current blank for player use
-        setField(form, "essence2", String.valueOf(data.getPersonalMotes()));
+        setField(form, "essence1", "", filled); // Leave current blank for player use
+        setField(form, "essence2", String.valueOf(data.getPersonalMotes()), filled);
 
-        setField(form, "essence3", ""); // Leave current blank for player use
-        setField(form, "essence4", String.valueOf(data.getPeripheralMotes()));
+        setField(form, "essence3", "", filled); // Leave current blank for player use
+        setField(form, "essence4", String.valueOf(data.getPeripheralMotes()), filled);
     }
 
-    private void fillWeapons(CharacterData data, PDAcroForm form) throws IOException {
+    private void fillWeapons(CharacterData data, PDAcroForm form, Set<String> filled) throws IOException {
         int rowCursor = 1;
         for (AttackPoolData apd : data.getAttackPools()) {
             Weapon w = apd.getWeapon();
@@ -291,51 +302,51 @@ public class PdfExportService {
                 break;
 
             // --- Row 1 ---
-            setField(form, "weapons" + rowCursor, w.getName());
+            setField(form, "weapons" + rowCursor, w.getName(), filled);
 
             // Accuracy Row 1
             if (!isRanged) {
-                setField(form, "weapons" + (rowCursor + 8), String.valueOf(w.getAccuracy()));
+                setField(form, "weapons" + (rowCursor + 8), String.valueOf(w.getAccuracy()), filled);
             } else {
                 setField(form, "weapons" + (rowCursor + 8),
-                        String.format("%d/%d", w.getCloseRangeBonus(), w.getShortRangeBonus()));
+                        String.format("%d/%d", w.getCloseRangeBonus(), w.getShortRangeBonus()), filled);
             }
 
             // Damage (always Row 1)
             boolean isBashing = tags.contains("Bashing");
-            setField(form, "weapons" + (rowCursor + 16), apd.getDamage() + (isBashing ? "B" : "L"));
+            setField(form, "weapons" + (rowCursor + 16), apd.getDamage() + (isBashing ? "B" : "L"), filled);
 
             // Defense Row 1
-            setField(form, "weapons" + (rowCursor + 24), String.valueOf(w.getDefense()));
+            setField(form, "weapons" + (rowCursor + 24), String.valueOf(w.getDefense()), filled);
 
             // Overwhelming Row 1
-            setField(form, "weapons" + (rowCursor + 32), String.valueOf(w.getOverwhelming()));
+            setField(form, "weapons" + (rowCursor + 32), String.valueOf(w.getOverwhelming()), filled);
 
             // Tags Row 1
-            setField(form, "weapons" + (rowCursor + 40), String.join(", ", tags.subList(0, Math.min(2, tags.size()))));
+            setField(form, "weapons" + (rowCursor + 40), String.join(", ", tags.subList(0, Math.min(2, tags.size()))), filled);
 
             // Dice Pool Row 1 (Decisive only)
-            setField(form, "weapons" + (rowCursor + 48), String.valueOf(apd.getDecisivePool()));
+            setField(form, "weapons" + (rowCursor + 48), String.valueOf(apd.getDecisivePool()), filled);
 
             // --- Row 2 ---
             if (rowsNeeded >= 2) {
                 int row2 = rowCursor + 1;
                 if (isRanged) {
                     setField(form, "weapons" + (row2 + 8),
-                            String.format("%d/%d", w.getMediumRangeBonus(), w.getLongRangeBonus()));
+                            String.format("%d/%d", w.getMediumRangeBonus(), w.getLongRangeBonus()), filled);
                 }
                 if (tags.size() > 2) {
                     setField(form, "weapons" + (row2 + 40),
-                            String.join(", ", tags.subList(2, Math.min(4, tags.size()))));
+                            String.join(", ", tags.subList(2, Math.min(4, tags.size()))), filled);
                 }
             }
 
             // --- Row 3 ---
             if (rowsNeeded == 3) {
                 int row3 = rowCursor + 2;
-                setField(form, "weapons" + (row3 + 8), String.valueOf(w.getExtremeRangeBonus()));
+                setField(form, "weapons" + (row3 + 8), String.valueOf(w.getExtremeRangeBonus()), filled);
                 if (tags.size() > 4) {
-                    setField(form, "weapons" + (row3 + 40), String.join(", ", tags.subList(4, tags.size())));
+                    setField(form, "weapons" + (row3 + 40), String.join(", ", tags.subList(4, tags.size())), filled);
                 }
             }
 
@@ -343,7 +354,7 @@ public class PdfExportService {
         }
     }
 
-    private void fillHealth(CharacterData data, PDAcroForm form) throws IOException {
+    private void fillHealth(CharacterData data, PDAcroForm form, Set<String> filled) throws IOException {
         List<String> levels = data.getHealthLevels();
         // Skip the first level as it's hardcoded as -0 on the PDF
         for (int i = 1; i < levels.size(); i++) {
@@ -356,26 +367,110 @@ public class PdfExportService {
                 label = level.replace("-", "");
             }
             if (i <= 31) {
-                setField(form, "hl" + i, label);
+                setField(form, "hl" + i, label, filled);
             }
         }
         // hbox fields are left empty as per user request
     }
 
-    private void setTrackRating(PDAcroForm form, String prefix, int rating, int startIndex, int count)
+    private void fillIntimacies(CharacterData data, PDAcroForm form, Set<String> filled) throws IOException {
+        List<Intimacy> items = data.getIntimacies();
+        for (int i = 0; i < Math.min(20, items.size()); i++) {
+            Intimacy intimacy = items.get(i);
+            int nameIdx, intensityIdx;
+            if (i < 10) {
+                nameIdx = i + 1;
+                intensityIdx = i + 11;
+            } else {
+                // i >= 10, so i=10 -> nameIdx=21, intensityIdx=31
+                nameIdx = i + 11;
+                intensityIdx = i + 21;
+            }
+
+            String typeStr = (intimacy.getType() == Intimacy.Type.PRINCIPLE) ? "Principle" : "Tie";
+            String title = typeStr + ": " + intimacy.getName();
+            setField(form, "intimacies" + nameIdx, title, filled);
+            
+            // Format intensity with normal casing (e.g. Major)
+            String intensityStr = intimacy.getIntensity().toString().toLowerCase();
+            intensityStr = intensityStr.substring(0, 1).toUpperCase() + intensityStr.substring(1);
+            setField(form, "intimacies" + intensityIdx, intensityStr, filled);
+        }
+    }
+
+    private void fillOtherEquipment(CharacterData data, PDAcroForm form, Set<String> filled) throws IOException {
+        int i = 1;
+        for (OtherEquipment equip : data.getOtherEquipment()) {
+            if (i > 10) break;
+            String text = equip.getName() + (equip.isArtifact() ? " (Artifact)" : "");
+            setField(form, "notes" + i, text, filled);
+            i++;
+        }
+    }
+
+    private void fillCharms(CharacterData data, PDAcroForm form, Set<String> filled) throws IOException {
+        List<PurchasedCharm> charms = data.getUnlockedCharms();
+        List<Spell> spells = data.getSpells();
+        
+        int slot = 1;
+        // Combine charms and spells
+        for (PurchasedCharm pc : charms) {
+            if (slot > 26) break;
+            Charm metadata = charmDataService.findCharmMetadata(pc);
+            if (metadata != null) {
+                fillCharmRow(form, slot, metadata.getName(), metadata.getCategory(), 
+                             metadata.getDuration(), metadata.getCost(), metadata.getSource(), filled);
+                slot++;
+            }
+        }
+        
+        for (Spell s : spells) {
+            if (slot > 26) break;
+            fillCharmRow(form, slot, s.getName(), "spell", s.getDuration(), s.getCost(), "Core", filled);
+            slot++;
+        }
+    }
+
+    private void fillCharmRow(PDAcroForm form, int slot, String name, String category, 
+                              String duration, String cost, String book, Set<String> filled) throws IOException {
+        // Name: 1-26
+        setField(form, "charms" + slot, name, filled);
+        
+        // Type: 34-59
+        String typeStr = category;
+        if ("martialArts".equalsIgnoreCase(category)) typeStr = "MA";
+        setField(form, "charms" + (slot + 33), typeStr, filled);
+        
+        // Duration: 67-92
+        setField(form, "charms" + (slot + 66), duration, filled);
+        
+        // Cost: 100-125
+        setField(form, "charms" + (slot + 99), cost, filled);
+        
+        // Book: 133-158
+        setField(form, "charms" + (slot + 132), book, filled);
+        
+        // Page: 167-192 (Leave blank/Clear debug)
+        setField(form, "charms" + (slot + 166), "", filled);
+        
+        // Effect: 201-226 (Leave blank/Clear debug)
+        setField(form, "charms" + (slot + 200), "", filled);
+    }
+
+    private void setTrackRating(PDAcroForm form, String prefix, int rating, int startIndex, int count, Set<String> filled)
             throws IOException {
         for (int i = 0; i < count; i++) {
-            setCheckbox(form, prefix + (startIndex + i), i < rating);
+            setCheckbox(form, prefix + (startIndex + i), i < rating, filled);
         }
     }
 
-    private void setTrackRating(PDAcroForm form, String[] dots, int rating) throws IOException {
+    private void setTrackRating(PDAcroForm form, String[] dots, int rating, Set<String> filled) throws IOException {
         for (int i = 0; i < dots.length; i++) {
-            setCheckbox(form, dots[i], i < rating);
+            setCheckbox(form, dots[i], i < rating, filled);
         }
     }
 
-    private void setWrappedText(PDAcroForm form, String prefix, String text, int maxLines, int charsPerLine)
+    private void setWrappedText(PDAcroForm form, String prefix, String text, int maxLines, int charsPerLine, Set<String> filled)
             throws IOException {
         if (text == null)
             return;
@@ -390,7 +485,7 @@ public class PdfExportService {
                 break;
 
             if (currentLine.length() + word.length() + 1 > charsPerLine) {
-                setField(form, prefix + lineIndex, currentLine.toString().trim());
+                setField(form, prefix + lineIndex, currentLine.toString().trim(), filled);
                 currentLine = new StringBuilder(word).append(" ");
                 lineIndex++;
             } else {
@@ -399,41 +494,46 @@ public class PdfExportService {
         }
 
         if (lineIndex <= maxLines && currentLine.length() > 0) {
-            setField(form, prefix + lineIndex, currentLine.toString().trim());
+            setField(form, prefix + lineIndex, currentLine.toString().trim(), filled);
         }
     }
 
-    private void setIrregularDotRating(PDAcroForm form, String[] fieldNames, int rating) throws IOException {
+    private void setIrregularDotRating(PDAcroForm form, String[] fieldNames, int rating, Set<String> filled) throws IOException {
         for (int i = 0; i < fieldNames.length; i++) {
             PDField field = form.getField(fieldNames[i]);
             if (field != null) {
                 field.setValue(i < rating ? "Yes" : "Off");
+                if (filled != null) filled.add(fieldNames[i]);
             }
         }
     }
 
-    private void setField(PDAcroForm acroForm, String fieldName, String value) throws IOException {
+    private void setField(PDAcroForm acroForm, String fieldName, String value, Set<String> filled) throws IOException {
         PDField field = acroForm.getField(fieldName);
         if (field != null) {
             field.setValue(value != null ? value : "");
+            if (filled != null) filled.add(fieldName);
         }
     }
 
-    private void setCheckbox(PDAcroForm acroForm, String fieldName, boolean value) throws IOException {
+    private void setCheckbox(PDAcroForm acroForm, String fieldName, boolean value, Set<String> filled) throws IOException {
         PDField field = acroForm.getField(fieldName);
         if (field instanceof PDCheckBox cb) {
             if (value)
                 cb.check();
             else
                 cb.unCheck();
+            if (filled != null) filled.add(fieldName);
         }
     }
 
-    private void setDotRating(PDAcroForm form, String baseName, int rating, int startIndex) throws IOException {
+    private void setDotRating(PDAcroForm form, String baseName, int rating, int startIndex, Set<String> filled) throws IOException {
         for (int i = 0; i < 5; i++) {
-            PDField field = form.getField(baseName + (startIndex + i));
+            String fieldName = baseName + (startIndex + i);
+            PDField field = form.getField(fieldName);
             if (field != null) {
                 field.setValue(i < rating ? "Yes" : "Off");
+                if (filled != null) filled.add(fieldName);
             }
         }
     }
