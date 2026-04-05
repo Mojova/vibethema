@@ -495,7 +495,8 @@ public class CharacterData {
         state.name = this.name.get();
         state.mode = this.mode.get() != null ? this.mode.get().name() : CharacterMode.CREATION.name();
         state.caste = caste.get() != null ? caste.get().name() : Caste.NONE.name();
-        state.supernalAbility = supernalAbility.get();
+        Ability supernalEnum = Ability.fromString(supernalAbility.get());
+        state.supernalAbility = supernalEnum != null ? supernalEnum.name() : "";
         state.essence = essence.get();
         state.willpower = willpower.get();
         state.limitTrigger = limitTrigger.get();
@@ -637,7 +638,16 @@ public class CharacterData {
             } else {
                 caste.set(Caste.NONE);
             }
-            supernalAbility.set(state.supernalAbility != null ? state.supernalAbility : "");
+            if (state.supernalAbility != null && !state.supernalAbility.isEmpty()) {
+                try {
+                    supernalAbility.set(Ability.valueOf(state.supernalAbility).getDisplayName());
+                } catch (IllegalArgumentException e) {
+                    // Legacy display-name format — try parsing directly
+                    supernalAbility.set(state.supernalAbility);
+                }
+            } else {
+                supernalAbility.set("");
+            }
             essence.set(state.essence);
             willpower.set(state.willpower);
             limitTrigger.set(state.limitTrigger != null ? state.limitTrigger : "");
