@@ -3,6 +3,7 @@ package com.vibethema.ui;
 import com.vibethema.model.*;
 import com.vibethema.model.logic.CreationRuleEngine;
 import com.vibethema.model.logic.CreationRuleEngine.CreationStatus;
+import com.vibethema.model.CharacterMode;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
 import com.vibethema.ui.charms.CharmTreeComponent;
@@ -57,6 +58,7 @@ public class BuilderUI extends BorderPane {
     private Label personalMotesLabel = new Label();
     private Label peripheralMotesLabel = new Label();
     private HBox healthBox = new HBox(5);
+    private Button finalizeBtn = new Button("Finalize Character");
 
     private Map<String, String> keywordDefs = new HashMap<>();
     private CharmDataService dataService;
@@ -468,7 +470,17 @@ public class BuilderUI extends BorderPane {
 
         HBox row1 = new HBox(20);
         row1.setAlignment(Pos.CENTER_LEFT);
-        row1.getChildren().addAll(casteLabel, favoredLabel, bpLabel);
+        
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        
+        finalizeBtn.getStyleClass().add("action-btn");
+        finalizeBtn.setStyle("-fx-background-color: #d4af37; -fx-text-fill: black; -fx-font-weight: bold;");
+        finalizeBtn.visibleProperty().bind(data.modeProperty().isEqualTo(CharacterMode.CREATION));
+        finalizeBtn.managedProperty().bind(finalizeBtn.visibleProperty());
+        finalizeBtn.setOnAction(e -> handleFinalization());
+
+        row1.getChildren().addAll(casteLabel, favoredLabel, bpLabel, spacer, finalizeBtn);
 
         HBox row2 = new HBox(20);
         row2.setAlignment(Pos.CENTER_LEFT);
@@ -480,6 +492,21 @@ public class BuilderUI extends BorderPane {
 
         footer.getChildren().addAll(row1, row2, row3);
         return footer;
+    }
+
+    private void handleFinalization() {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Finalize Character");
+        confirm.setHeaderText("Finalizing Character Creation");
+        confirm.setContentText("Once finalized, your Caste, Supernal, and Caste/Favored abilities cannot be changed. This is a one-way process.\n\nProceed to Experienced mode?");
+
+        confirm.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                data.setMode(CharacterMode.EXPERIENCED);
+                updateFooter();
+                saveCharacter();
+            }
+        });
     }
 
     private void setupListeners() {
@@ -605,6 +632,13 @@ public class BuilderUI extends BorderPane {
         personalMotesLabel.setText("Personal: " + status.personalMotes);
         peripheralMotesLabel.setText("Peripheral: " + status.peripheralMotes);
         
+        finalizeBtn.setDisable(!status.isReadyToFinalize);
+        if (status.isReadyToFinalize) {
+            finalizeBtn.setTooltip(new Tooltip("All creation points spent. Click to finalize."));
+        } else {
+            finalizeBtn.setTooltip(new Tooltip("Check creation pools: Attributes (18), Abilities (28), Merits (10), Specialties (4), Charms (15), and 15 BP."));
+        }
+        
         healthBox.getChildren().clear();
         for (String lv : status.healthLevels) {
             Label l = new Label(lv);
@@ -661,143 +695,45 @@ public class BuilderUI extends BorderPane {
 
         // Counters now managed in CharacterData
 
+        // MaTotalDots for Brawl min-dots logic
+        SimpleIntegerProperty maTotalDots = new SimpleIntegerProperty(0);
+        Runnable updateMaTotal = () -> {
+            int total = data.getMartialArtsStyles().stream().mapToInt(MartialArtsStyle::getRating).sum();
+            maTotalDots.set(total);
+        };
+        data.getMartialArtsStyles().addListener((javafx.collections.ListChangeListener<? super MartialArtsStyle>) c -> {
+            updateMaTotal.run();
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    for (MartialArtsStyle mas : c.getAddedSubList()) {
+                        mas.ratingProperty().addListener((obs, ov, nv) -> updateMaTotal.run());
+                    }
+                }
+            }
+        });
+        for (MartialArtsStyle mas : data.getMartialArtsStyles()) {
+            mas.ratingProperty().addListener((obs, ov, nv) -> updateMaTotal.run());
+        }
+        updateMaTotal.run();
+
         int rowCount = 0;
         int colCount = 0;
         for (Ability abil : SystemData.ABILITIES) {
-            if (Ability.CRAFT == abil || Ability.MARTIAL_ARTS == abil)
-                continue;
-            HBox rowBox = new HBox(6);
-            rowBox.setAlignment(Pos.CENTER_LEFT);
-
-            CheckBox casteBox = new CheckBox("C");
-            casteBox.getStyleClass().add("caste-checkbox");
-            casteBox.selectedProperty().bindBidirectional(data.getCasteAbility(abil));
-            casteBox.disableProperty().bind(Bindings.createBooleanBinding(() -> {
-                if (Ability.MARTIAL_ARTS == abil)
-                    return true; // Synced with Brawl
-                Caste c = data.casteProperty().get();
-                boolean notInCasteList = c == null || c == Caste.NONE
-                        || !SystemData.CASTE_OPTIONS.get(c).contains(abil);
-                boolean atLimit = data.casteAbilityCountProperty().get() >= 5 && !data.getCasteAbility(abil).get();
-                return (notInCasteList || atLimit) && !data.getCasteAbility(abil).get();
-            }, data.casteProperty(), data.casteAbilityCountProperty(), data.getCasteAbility(abil)));
-
-            CheckBox favoredBox = new CheckBox("F");
-            favoredBox.getStyleClass().add("favored-checkbox");
-            favoredBox.selectedProperty().bindBidirectional(data.getFavoredAbility(abil));
-            favoredBox.disableProperty().bind(Bindings.createBooleanBinding(() -> {
-                if (Ability.MARTIAL_ARTS == abil)
-                    return true; // Synced with Brawl
-                boolean isCaste = data.getCasteAbility(abil).get();
-                boolean atLimit = data.favoredAbilityCountProperty().get() >= 5 && !data.getFavoredAbility(abil).get();
-                return (isCaste || atLimit) && !data.getFavoredAbility(abil).get();
-            }, data.getCasteAbility(abil), data.favoredAbilityCountProperty(), data.getFavoredAbility(abil)));
-
-            data.getCasteAbility(abil).addListener((obs, oldV, newV) -> {
-                if (newV) {
-                    favoredBox.setSelected(false);
-                }
-            });
-
-            data.getFavoredAbility(abil).addListener((obs, oldV, newV) -> {
-                if (newV && data.getAbility(abil).get() == 0) {
-                    if (Ability.BRAWL == abil) {
-                        boolean maHasDots = data.getMartialArtsStyles().stream().anyMatch(s -> s.getRating() > 0);
-                        if (!maHasDots) data.getAbility(abil).set(1);
-                    } else if (Ability.CRAFT == abil) {
-                        if (data.getCrafts().isEmpty()) {
-                            CraftAbility ca = new CraftAbility("General", 1);
-                            ca.setCaste(data.getCasteAbility(Ability.CRAFT).get());
-                            ca.setFavored(true);
-                            data.getCrafts().add(ca);
-                        } else {
-                            boolean craftHasDots = data.getCrafts().stream().anyMatch(c -> c.getRating() > 0);
-                            if (!craftHasDots) data.getCrafts().get(0).ratingProperty().set(1);
-                        }
-                    } else {
-                        data.getAbility(abil).set(1);
-                    }
-                }
-            });
-
-            Label abLabel = new Label(abil.getDisplayName());
-            abLabel.setPrefWidth(95);
-            abLabel.setCursor(Cursor.HAND);
-            abLabel.setOnMouseClicked(e -> {
+            if (Ability.CRAFT == abil || Ability.MARTIAL_ARTS == abil) continue;
+            
+            AbilitySelectionComponent abilityRow = new AbilitySelectionComponent(data, abil, data.getAbility(abil), data.getCasteAbility(abil), data.getFavoredAbility(abil));
+            abilityRow.setOnNameClick(e -> {
                 if (e.getClickCount() == 2) jumpToCharmAbility(abil.getDisplayName());
             });
-            if (Ability.MARTIAL_ARTS == abil) {
-                Tooltip.install(abLabel, new Tooltip("Caste/Favored status linked to Brawl."));
-            }
-
-            data.casteProperty().addListener((obs, oldV, newV) -> {
-                boolean isOption = newV != null && newV != Caste.NONE
-                        && SystemData.CASTE_OPTIONS.get(newV).contains(abil);
-                if (isOption) {
-                    if (!abLabel.getStyleClass().contains("caste-option")) {
-                        abLabel.getStyleClass().add("caste-option");
-                    }
-                } else {
-                    abLabel.getStyleClass().remove("caste-option");
-                }
-            });
-
-            Runnable updateExcellency = () -> {
-                if (data.hasExcellency(abil)) {
-                    abLabel.setText(abil.getDisplayName() + " [E]");
-                    if (!abLabel.getStyleClass().contains("excellency-label")) {
-                        abLabel.getStyleClass().add("excellency-label");
-                    }
-                } else {
-                    abLabel.setText(abil.getDisplayName());
-                    abLabel.getStyleClass().remove("excellency-label");
-                }
-            };
-
-            data.getAbility(abil).addListener((obs, oldV, newV) -> updateExcellency.run());
-            data.getCasteAbility(abil).addListener((obs, oldV, newV) -> updateExcellency.run());
-            data.getFavoredAbility(abil).addListener((obs, oldV, newV) -> updateExcellency.run());
-            data.supernalAbilityProperty().addListener((obs, oldV, newV) -> updateExcellency.run());
-            data.getUnlockedCharms()
-                    .addListener((javafx.collections.ListChangeListener.Change<? extends PurchasedCharm> change) -> {
-                        updateExcellency.run();
-                    });
-            updateExcellency.run();
-
-            DotSelector selector = new DotSelector(data.getAbility(abil), 0);
+            
             if (Ability.BRAWL == abil) {
-                // To trigger re-evaluation on MA rating changes, we need to bind to the item properties too.
-                // A simpler way is to have a listener on MA styles that triggers a dummy property update or just re-binds.
-                SimpleIntegerProperty maTotalDots = new SimpleIntegerProperty(0);
-                Runnable updateMaTotal = () -> {
-                    int total = data.getMartialArtsStyles().stream().mapToInt(MartialArtsStyle::getRating).sum();
-                    maTotalDots.set(total);
-                };
-                data.getMartialArtsStyles().addListener((javafx.collections.ListChangeListener<? super MartialArtsStyle>) c -> {
-                    updateMaTotal.run();
-                    while (c.next()) {
-                        if (c.wasAdded()) {
-                            for (MartialArtsStyle mas : c.getAddedSubList()) {
-                                mas.ratingProperty().addListener((obs, ov, nv) -> updateMaTotal.run());
-                            }
-                        }
-                    }
-                });
-                for (MartialArtsStyle mas : data.getMartialArtsStyles()) {
-                    mas.ratingProperty().addListener((obs, ov, nv) -> updateMaTotal.run());
-                }
-                updateMaTotal.run();
-
-                selector.minDotsProperty().bind(Bindings.createIntegerBinding(() -> {
+                abilityRow.getSelector().minDotsProperty().bind(Bindings.createIntegerBinding(() -> {
                     if (!data.getFavoredAbility(Ability.BRAWL).get()) return 0;
                     return maTotalDots.get() > 0 ? 0 : 1;
                 }, data.getFavoredAbility(Ability.BRAWL), maTotalDots));
-            } else {
-                selector.minDotsProperty().bind(Bindings.when(data.getFavoredAbility(abil)).then(1).otherwise(0));
             }
-            rowBox.getChildren().addAll(casteBox, favoredBox, abLabel, selector);
 
-            abilGrid.add(rowBox, colCount, rowCount);
+            abilGrid.add(abilityRow, colCount, rowCount);
             rowCount++;
             if (rowCount >= 13) {
                 rowCount = 0;
@@ -877,23 +813,17 @@ public class BuilderUI extends BorderPane {
             updateMaTotal.run();
 
             for (MartialArtsStyle mas : data.getMartialArtsStyles()) {
-                HBox row = new HBox(12);
-                row.setAlignment(Pos.CENTER_LEFT);
-                row.getStyleClass().add("merit-row");
-                row.setPadding(new Insets(8));
-
-                Label nameLabel = new Label(mas.getStyleName());
-                nameLabel.getStyleClass().add("label");
-                nameLabel.setPrefWidth(180);
-                nameLabel.setCursor(Cursor.HAND);
-                nameLabel.setOnMouseClicked(e -> {
+                AbilitySelectionComponent styleRow = new AbilitySelectionComponent(data, mas.getStyleName(), mas.ratingProperty(), data.getCasteAbility(Ability.BRAWL), data.getFavoredAbility(Ability.BRAWL), Ability.BRAWL);
+                styleRow.setNameWidth(180);
+                styleRow.getStyleClass().add("merit-row");
+                styleRow.setPadding(new Insets(8));
+                
+                styleRow.setOnNameClick(e -> {
                     if (e.getClickCount() == 2) jumpToCharmAbility(mas.getStyleName());
                 });
 
-                DotSelector selector = new DotSelector(mas.ratingProperty(), 0, 5);
-                
                 // If Brawl is favored, at least one dot across Brawl + MA must exist.
-                selector.minDotsProperty().bind(Bindings.createIntegerBinding(() -> {
+                styleRow.getSelector().minDotsProperty().bind(Bindings.createIntegerBinding(() -> {
                     if (!data.getFavoredAbility(Ability.BRAWL).get()) return 0;
                     int brawlDots = data.getAbility(Ability.BRAWL).get();
                     int otherMaDots = maTotalDots.get() - mas.getRating();
@@ -906,9 +836,9 @@ public class BuilderUI extends BorderPane {
                 Button removeBtn = new Button("✕");
                 removeBtn.getStyleClass().add("remove-btn");
                 removeBtn.setOnAction(e -> data.getMartialArtsStyles().remove(mas));
-
-                row.getChildren().addAll(nameLabel, spacer, selector, removeBtn);
-                styleList.getChildren().add(row);
+                
+                styleRow.getChildren().addAll(spacer, removeBtn);
+                styleList.getChildren().add(styleRow);
             }
             refreshStylePicker.run();
         };
@@ -1093,37 +1023,15 @@ public class BuilderUI extends BorderPane {
         Label title = new Label("Crafts");
         title.getStyleClass().add("section-title");
 
-        // Add C/F checkboxes for the global Craft status
-        HBox statusBox = new HBox(6);
-        statusBox.setAlignment(Pos.CENTER_LEFT);
+        AbilitySelectionComponent craftStatus = new AbilitySelectionComponent(data, Ability.CRAFT, new SimpleIntegerProperty(0), data.getCasteAbility(Ability.CRAFT), data.getFavoredAbility(Ability.CRAFT));
+        // Hide the dot selector for the header
+        craftStatus.getSelector().setVisible(false);
+        craftStatus.getSelector().setManaged(false);
+        // Hide the name label (the "Crafts" title is already there)
+        craftStatus.getChildren().get(2).setVisible(false);
+        craftStatus.getChildren().get(2).setManaged(false);
 
-        CheckBox casteBox = new CheckBox("C");
-        casteBox.getStyleClass().add("caste-checkbox");
-        casteBox.selectedProperty().bindBidirectional(data.getCasteAbility(Ability.CRAFT));
-        casteBox.disableProperty().bind(Bindings.createBooleanBinding(() -> {
-            Caste c = data.casteProperty().get();
-            boolean notInCasteList = c == null || c == Caste.NONE
-                    || !SystemData.CASTE_OPTIONS.get(c).contains(Ability.CRAFT);
-            boolean atLimit = data.casteAbilityCountProperty().get() >= 5 && !data.getCasteAbility(Ability.CRAFT).get();
-            return (notInCasteList || atLimit) && !data.getCasteAbility(Ability.CRAFT).get();
-        }, data.casteProperty(), data.casteAbilityCountProperty(), data.getCasteAbility(Ability.CRAFT)));
-
-        CheckBox favoredBox = new CheckBox("F");
-        favoredBox.getStyleClass().add("favored-checkbox");
-        favoredBox.selectedProperty().bindBidirectional(data.getFavoredAbility(Ability.CRAFT));
-        favoredBox.disableProperty().bind(Bindings.createBooleanBinding(() -> {
-            boolean isCaste = data.getCasteAbility(Ability.CRAFT).get();
-            boolean atLimit = data.favoredAbilityCountProperty().get() >= 5 && !data.getFavoredAbility(Ability.CRAFT).get();
-            return (isCaste || atLimit) && !data.getFavoredAbility(Ability.CRAFT).get();
-        }, data.getCasteAbility(Ability.CRAFT), data.favoredAbilityCountProperty(), data.getFavoredAbility(Ability.CRAFT)));
-
-        data.getCasteAbility(Ability.CRAFT).addListener((obs, oldV, newV) -> {
-            if (newV)
-                favoredBox.setSelected(false);
-        });
-
-        statusBox.getChildren().addAll(casteBox, favoredBox);
-        titleRow.getChildren().addAll(title, statusBox);
+        titleRow.getChildren().addAll(title, craftStatus);
 
         VBox craftList = new VBox(8);
 

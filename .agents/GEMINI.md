@@ -78,7 +78,8 @@ A JavaFX-based character creator for Exalted 3rd Edition. The application focuse
 - `~/.vibethema/spells/`: User-specific storage for custom spells.
 
 ## AI Workflow
-1. **Commits**: Always commit changes after finishing a logical task or a specific user request. Use descriptive commit messages.
+1. **Unit tests**: Write unit tests for all non-UI code.
 2. **Compile**: Always compile the binary after finishing a logical task or a specific user request with scripts/build_app.sh
 3. **Update this file**: Update this file when the architecture or logic changes.
-4. **No backwards compatibility**: Updates to the model and JSON serialization and deserialization should be done with the assumption that the user will be using the latest version of the application. This means that we do not need to worry about backwards compatibility with older versions of the application. Ask the user to reimport the PDFs if the JSON format changes.
+4. **Commits**: Always commit changes after finishing a logical task or a specific user request. Use descriptive commit messages.
+5. **No backwards compatibility**: Updates to the model and JSON serialization and deserialization should be done with the assumption that the user will be using the latest version of the application. This means that we do not need to worry about backwards compatibility with older versions of the application. Ask the user to reimport the PDFs if the JSON format changes.
