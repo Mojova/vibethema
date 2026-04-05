@@ -77,10 +77,14 @@ public class CharacterData {
 
     private final IntegerProperty joinBattle = new SimpleIntegerProperty(0);
     private final BooleanProperty hasJoinBattleSpecialty = new SimpleBooleanProperty(false);
+    
+    private final ObservableList<String> validSupernalAbilities = FXCollections.observableArrayList();
 
     private final IntegerProperty casteAbilityCount = new SimpleIntegerProperty(0);
     private final IntegerProperty favoredAbilityCount = new SimpleIntegerProperty(0);
     private final BooleanProperty overBonusPointLimit = new SimpleBooleanProperty(false);
+    
+    private final ObservableList<AttackPoolData> attackPools = FXCollections.observableArrayList();
     
     private final BooleanProperty terrestrialSorceryAvailable = new SimpleBooleanProperty(false);
     private final BooleanProperty celestialSorceryAvailable = new SimpleBooleanProperty(false);
@@ -117,6 +121,7 @@ public class CharacterData {
             casteAbilities.put(ability, new SimpleBooleanProperty(false));
             casteAbilities.get(ability).addListener((obs, oldV, newV) -> {
                 updateCasteFavoredCounts();
+                updateValidSupernalAbilities();
                 markDirty();
             });
             favoredAbilities.put(ability, new SimpleBooleanProperty(false));
@@ -153,6 +158,14 @@ public class CharacterData {
         getAbilityProperty(Ability.INTEGRITY).addListener((obs, old, nv) -> updateDerivedStats());
         getAbilityProperty(Ability.SOCIALIZE).addListener((obs, old, nv) -> updateDerivedStats());
         getAbilityProperty(Ability.AWARENESS).addListener((obs, old, nv) -> updateDerivedStats());
+        
+        // Attack pool listeners
+        attributes.get(Attribute.DEXTERITY).addListener((obs, old, nv) -> updateAttackPools());
+        attributes.get(Attribute.STRENGTH).addListener((obs, old, nv) -> updateAttackPools());
+        getAbilityProperty(Ability.MELEE).addListener((obs, old, nv) -> updateAttackPools());
+        getAbilityProperty(Ability.ARCHERY).addListener((obs, old, nv) -> updateAttackPools());
+        getAbilityProperty(Ability.BRAWL).addListener((obs, old, nv) -> updateAttackPools());
+        getAbilityProperty(Ability.THROWN).addListener((obs, old, nv) -> updateAttackPools());
 
         // Default weapon for new characters if tags exist
         if (java.nio.file.Files.exists(com.vibethema.service.EquipmentDataService.getEquipmentTagsPath())) {
@@ -194,6 +207,7 @@ public class CharacterData {
         specialties.addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> {
             markDirty();
             updateDerivedStats();
+            updateAttackPools();
         });
         crafts.addListener((javafx.collections.ListChangeListener<? super CraftAbility>) c -> markDirty());
         martialArtsStyles.addListener((javafx.collections.ListChangeListener<? super MartialArtsStyle>) c -> {
@@ -207,7 +221,10 @@ public class CharacterData {
                 }
             }
         });
-        weapons.addListener((javafx.collections.ListChangeListener<? super Weapon>) c -> markDirty());
+        weapons.addListener((javafx.collections.ListChangeListener<? super Weapon>) c -> {
+            markDirty();
+            updateAttackPools();
+        });
         intimacies.addListener((javafx.collections.ListChangeListener<? super Intimacy>) c -> markDirty());
         otherEquipment.addListener((javafx.collections.ListChangeListener<? super OtherEquipment>) c -> {
             markDirty();
@@ -257,6 +274,8 @@ public class CharacterData {
         specialties.add(new Specialty("", ""));
         updateCombatStats();
         updateDerivedStats();
+        updateValidSupernalAbilities();
+        updateAttackPools();
         updateSorceryAvailability();
         updateCasteFavoredCounts();
         dirty.set(false);
@@ -322,6 +341,10 @@ public class CharacterData {
     public BooleanProperty terrestrialSorceryAvailableProperty() { return terrestrialSorceryAvailable; }
     public BooleanProperty celestialSorceryAvailableProperty() { return celestialSorceryAvailable; }
     public BooleanProperty solarSorceryAvailableProperty() { return solarSorceryAvailable; }
+    
+    public ObservableList<AttackPoolData> getAttackPools() { return attackPools; }
+    
+    public ObservableList<String> getValidSupernalAbilities() { return validSupernalAbilities; }
     
     public IntegerProperty essenceProperty() { return essence; }
     public IntegerProperty willpowerProperty() { return willpower; }
@@ -474,6 +497,59 @@ public class CharacterData {
         hasResolveSpecialty.set(resolveSpec);
         hasGuileSpecialty.set(guileSpec);
         hasJoinBattleSpecialty.set(joinBattleSpec);
+    }
+
+    public void updateAttackPools() {
+        List<AttackPoolData> newPools = new ArrayList<>();
+        int dex = attributes.get(Attribute.DEXTERITY).get();
+        int str = attributes.get(Attribute.STRENGTH).get();
+
+        for (Weapon w : weapons) {
+            String abilityName = Ability.MELEE.getDisplayName();
+            if (w.getRange() == Weapon.WeaponRange.ARCHERY) abilityName = Ability.ARCHERY.getDisplayName();
+            else if (w.getRange() == Weapon.WeaponRange.THROWN) abilityName = Ability.THROWN.getDisplayName();
+            else if (w.getTags().contains("Brawl")) abilityName = Ability.BRAWL.getDisplayName();
+            
+            int abil = getAbilityRating(Ability.fromString(abilityName));
+            int spec = (w.getSpecialtyId() != null && !w.getSpecialtyId().isEmpty()) ? 1 : 0;
+            
+            String witheringStr;
+            if (w.getRange() == Weapon.WeaponRange.CLOSE) {
+                int withering = dex + abil + spec + w.getAccuracy();
+                witheringStr = String.valueOf(withering);
+            } else {
+                int base = dex + abil + spec;
+                witheringStr = String.format("C:%d | S:%d | M:%d | L:%d | E:%d",
+                        base + w.getCloseRangeBonus(),
+                        base + w.getShortRangeBonus(),
+                        base + w.getMediumRangeBonus(),
+                        base + w.getLongRangeBonus(),
+                        base + w.getExtremeRangeBonus());
+            }
+            
+            int decisive = dex + abil + spec;
+            int damage = str + w.getDamage();
+            int parryPool = dex + abil + spec;
+            int parry = (int) Math.ceil(parryPool / 2.0) + w.getDefense();
+            
+            newPools.add(new AttackPoolData(w, abilityName, witheringStr, decisive, damage, parry));
+        }
+        attackPools.setAll(newPools);
+    }
+
+    private void updateValidSupernalAbilities() {
+        String current = supernalAbility.get();
+        List<String> options = new ArrayList<>();
+        options.add(""); // None
+        for (Ability abil : SystemData.ABILITIES) {
+            if (casteAbilities.get(abil).get()) {
+                options.add(abil.getDisplayName());
+            }
+        }
+        validSupernalAbilities.setAll(options);
+        if (!options.contains(current)) {
+            supernalAbility.set("");
+        }
     }
     
     public boolean isArtifactPossessed(String artifactId) {
@@ -861,6 +937,7 @@ public class CharacterData {
             }
             this.creationSnapshot = state.creationSnapshot;
 
+            updateValidSupernalAbilities();
             dirty.set(false);
         } finally { isImporting = false; }
     }

@@ -90,6 +90,79 @@ public class CharacterDataTest {
     }
 
     @Test
+    void testSupernalAbilityOptions() {
+        // Initially no caste abilities, so only "" should be in options
+        assertEquals(1, data.getValidSupernalAbilities().size());
+        assertTrue(data.getValidSupernalAbilities().contains(""));
+
+        // Add a caste ability
+        data.getCasteAbility(Ability.ARCHERY).set(true);
+        assertEquals(2, data.getValidSupernalAbilities().size());
+        assertTrue(data.getValidSupernalAbilities().contains(Ability.ARCHERY.getDisplayName()));
+
+        // Remove it
+        data.getCasteAbility(Ability.ARCHERY).set(false);
+        assertEquals(1, data.getValidSupernalAbilities().size());
+    }
+
+    @Test
+    void testSupernalAbilityReset() {
+        data.getCasteAbility(Ability.MELEE).set(true);
+        data.supernalAbilityProperty().set(Ability.MELEE.getDisplayName());
+        assertEquals(Ability.MELEE.getDisplayName(), data.supernalAbilityProperty().get());
+
+        // Unset caste ability should reset supernal
+        data.getCasteAbility(Ability.MELEE).set(false);
+        assertEquals("", data.supernalAbilityProperty().get());
+    }
+
+    @Test
+    void testAttackPoolCalculation() {
+        data.getAttribute(Attribute.DEXTERITY).set(3);
+        data.getAttribute(Attribute.STRENGTH).set(2);
+        data.getAbility(Ability.MELEE).set(4);
+        
+        Weapon sword = new Weapon("Sword");
+        sword.setRange(Weapon.WeaponRange.CLOSE);
+        sword.setAccuracy(2);
+        sword.setDamage(3);
+        sword.setDefense(1);
+        data.getWeapons().add(sword);
+        
+        // Find the attack pool data for the sword
+        AttackPoolData apd = data.getAttackPools().stream()
+                .filter(p -> p.getWeaponName().equals("Sword"))
+                .findFirst().orElseThrow();
+        
+        // Dex 3 + Melee 4 + Accuracy 2 = 9
+        assertEquals("9", apd.getWitheringPool());
+        // Dex 3 + Melee 4 = 7
+        assertEquals(7, apd.getDecisivePool());
+        // Str 2 + Damage 3 = 5
+        assertEquals(5, apd.getDamage());
+        // ceil((Dex 3 + Melee 4) / 2) + Def 1 = 4 + 1 = 5
+        assertEquals(5, apd.getParry());
+    }
+
+    @Test
+    void testAttackPoolReactiveUpdate() {
+        data.getAttribute(Attribute.DEXTERITY).set(3);
+        data.getAbility(Ability.MELEE).set(2);
+        
+        Weapon sword = new Weapon("Sword");
+        sword.setRange(Weapon.WeaponRange.CLOSE);
+        data.getWeapons().add(sword);
+        
+        assertEquals(5, data.getAttackPools().get(data.getAttackPools().size()-1).getDecisivePool());
+        
+        data.getAttribute(Attribute.DEXTERITY).set(4);
+        assertEquals(6, data.getAttackPools().get(data.getAttackPools().size()-1).getDecisivePool());
+        
+        data.getAbility(Ability.MELEE).set(5);
+        assertEquals(9, data.getAttackPools().get(data.getAttackPools().size()-1).getDecisivePool());
+    }
+
+    @Test
     void testReactiveUpdates() {
         data.getAttribute(Attribute.DEXTERITY).set(2);
         data.getAbility(Ability.DODGE).set(2);

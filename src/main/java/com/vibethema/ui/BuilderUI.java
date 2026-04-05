@@ -7,6 +7,7 @@ import com.vibethema.model.logic.ExperienceRuleEngine;
 import com.vibethema.model.CharacterMode;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
+import com.vibethema.service.PdfExportService;
 import com.vibethema.ui.charms.CharmTreeComponent;
 import com.vibethema.ui.equipment.EquipmentTab;
 import com.vibethema.ui.equipment.DefaultEquipmentDialogService;
@@ -29,7 +30,6 @@ import javafx.scene.text.Text;
 import javafx.scene.Scene;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import javafx.scene.Cursor;
 import javafx.stage.Stage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -171,6 +171,8 @@ public class BuilderUI extends BorderPane {
                 .load();
         experienceTab.setContent(expVt.getView());
 
+        mainTabPane.getTabs().addAll(statsTab, meritsTab, equipmentTab, charmsTab, martialArtsTab, intimaciesTab, sorceryTab);
+
         // Experience tab is only shown in Experienced mode; add/remove dynamically
         data.modeProperty().addListener((obs, oldMode, newMode) -> {
             if (newMode == CharacterMode.EXPERIENCED && !mainTabPane.getTabs().contains(experienceTab)) {
@@ -183,8 +185,6 @@ public class BuilderUI extends BorderPane {
         if (data.modeProperty().get() == CharacterMode.EXPERIENCED) {
             mainTabPane.getTabs().add(experienceTab);
         }
-
-        mainTabPane.getTabs().addAll(statsTab, meritsTab, equipmentTab, charmsTab, martialArtsTab, intimaciesTab, sorceryTab);
 
         setCenter(mainTabPane);
 
@@ -275,7 +275,11 @@ public class BuilderUI extends BorderPane {
             }
         });
 
-        fileMenu.getItems().addAll(newItem, new SeparatorMenuItem(), saveItem, saveAsItem, loadItem, new SeparatorMenuItem(), importPdfItem, importMosePdfItem, new SeparatorMenuItem(), quitItem);
+        MenuItem exportPdfItem = new MenuItem("Export Character Sheet to PDF...");
+        exportPdfItem.setAccelerator(KeyCombination.keyCombination("Shortcut+P"));
+        exportPdfItem.setOnAction(e -> handleExportPdf());
+
+        fileMenu.getItems().addAll(newItem, new SeparatorMenuItem(), saveItem, saveAsItem, loadItem, new SeparatorMenuItem(), exportPdfItem, new SeparatorMenuItem(), importPdfItem, importMosePdfItem, new SeparatorMenuItem(), quitItem);
         
         Menu viewMenu = new Menu("View");
         
@@ -443,47 +447,8 @@ public class BuilderUI extends BorderPane {
 
         ComboBox<String> supernalDropdown = new ComboBox<>();
         supernalDropdown.setPrefWidth(120);
-
-        Runnable updateSupernalDropdown = () -> {
-            String current = data.supernalAbilityProperty().get();
-            List<String> options = new ArrayList<>();
-            options.add(""); // None
-            for (Ability abil : SystemData.ABILITIES) {
-                if (data.getCasteAbility(abil).get()) {
-                    options.add(abil.getDisplayName());
-                }
-            }
-            supernalDropdown.getItems().setAll(options);
-            if (options.contains(current)) {
-                supernalDropdown.setValue(current);
-            } else {
-                supernalDropdown.setValue("");
-                data.supernalAbilityProperty().set("");
-            }
-        };
-
-        supernalDropdown.valueProperty().addListener((obs, oldV, newV) -> {
-            if (newV != null && supernalDropdown.getItems().contains(newV)) {
-                data.supernalAbilityProperty().set(newV);
-            } else {
-                data.supernalAbilityProperty().set("");
-            }
-        });
-
-        data.supernalAbilityProperty().addListener((obs, oldV, newV) -> {
-            if (newV != null && !newV.equals(supernalDropdown.getValue())) {
-                if (supernalDropdown.getItems().contains(newV)) {
-                    supernalDropdown.setValue(newV);
-                } else if (newV.isEmpty()) {
-                    supernalDropdown.setValue("");
-                }
-            }
-        });
-
-        for (Ability abil : SystemData.ABILITIES) {
-            data.getCasteAbility(abil).addListener((obs, oldV, newV) -> updateSupernalDropdown.run());
-        }
-        updateSupernalDropdown.run();
+        supernalDropdown.setItems(data.getValidSupernalAbilities());
+        supernalDropdown.valueProperty().bindBidirectional(data.supernalAbilityProperty());
 
         basicInfo.getChildren().addAll(new Label("Name:"), nameField, new Label("Caste:"), casteBox,
                 new Label("Supernal:"), supernalDropdown);
@@ -1499,43 +1464,13 @@ public class BuilderUI extends BorderPane {
         Runnable refresh = () -> {
             grid.getChildren().removeIf(node -> GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node) > 0);
             int row = 1;
-            int dex = data.getAttribute(Attribute.DEXTERITY).get();
-            int str = data.getAttribute(Attribute.STRENGTH).get();
             
-            for (Weapon w : data.getWeapons()) {
-                String abilityName = Ability.MELEE.getDisplayName();
-                if (w.getRange() == Weapon.WeaponRange.ARCHERY) abilityName = Ability.ARCHERY.getDisplayName();
-                else if (w.getRange() == Weapon.WeaponRange.THROWN) abilityName = Ability.THROWN.getDisplayName();
-                else if (w.getTags().contains("Brawl")) abilityName = Ability.BRAWL.getDisplayName();
-                
-                int abil = data.getAbilityRating(Ability.fromString(abilityName));
-                int spec = (w.getSpecialtyId() != null && !w.getSpecialtyId().isEmpty()) ? 1 : 0;
-                
-                String witheringStr;
-                if (w.getRange() == Weapon.WeaponRange.CLOSE) {
-                    int withering = dex + abil + spec + w.getAccuracy();
-                    witheringStr = String.valueOf(withering);
-                } else {
-                    int base = dex + abil + spec;
-                    witheringStr = String.format("C:%d | S:%d | M:%d | L:%d | E:%d",
-                            base + w.getCloseRangeBonus(),
-                            base + w.getShortRangeBonus(),
-                            base + w.getMediumRangeBonus(),
-                            base + w.getLongRangeBonus(),
-                            base + w.getExtremeRangeBonus());
-                }
-                
-                int decisive = dex + abil + spec;
-                int damage = str + w.getDamage();
-                int parryPool = dex + abil + spec;
-                int parry = (int) Math.ceil(parryPool / 2.0) + w.getDefense();
-                
-                grid.add(new Label(w.getName()), 0, row);
-                grid.add(new Label(witheringStr), 1, row);
-                grid.add(new Label(String.valueOf(decisive)), 2, row);
-                grid.add(new Label(String.valueOf(damage)), 3, row);
-                grid.add(new Label(String.valueOf(parry)), 4, row);
-                
+            for (AttackPoolData apd : data.getAttackPools()) {
+                grid.add(new Label(apd.getWeaponName()), 0, row);
+                grid.add(new Label(apd.getWitheringPool()), 1, row);
+                grid.add(new Label(String.valueOf(apd.getDecisivePool())), 2, row);
+                grid.add(new Label(String.valueOf(apd.getDamage())), 3, row);
+                grid.add(new Label(String.valueOf(apd.getParry())), 4, row);
                 row++;
             }
             
@@ -1546,15 +1481,7 @@ public class BuilderUI extends BorderPane {
             }
         };
 
-        // Listeners for all dependencies
-        data.getAttribute(Attribute.DEXTERITY).addListener((obs, old, nv) -> refresh.run());
-        data.getAttribute(Attribute.STRENGTH).addListener((obs, old, nv) -> refresh.run());
-        data.getAbility(Ability.MELEE).addListener((obs, old, nv) -> refresh.run());
-        data.getAbility(Ability.ARCHERY).addListener((obs, old, nv) -> refresh.run());
-        data.getAbility(Ability.BRAWL).addListener((obs, old, nv) -> refresh.run());
-        data.getWeapons().addListener((javafx.collections.ListChangeListener<? super Weapon>) c -> refresh.run());
-        data.getSpecialties().addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> refresh.run());
-        data.getMartialArtsStyles().addListener((javafx.collections.ListChangeListener<? super MartialArtsStyle>) c -> refresh.run());
+        data.getAttackPools().addListener((javafx.collections.ListChangeListener<? super AttackPoolData>) c -> refresh.run());
         
         refresh.run();
         
@@ -2266,4 +2193,36 @@ public class BuilderUI extends BorderPane {
         dialog.showAndWait().ifPresent(r -> refreshCharms());
     }
 
+    private void handleExportPdf() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Export Character Sheet to PDF");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Documents", "*.pdf"));
+        if (currentFile != null) {
+            String initialName = currentFile.getName().replaceAll("\\.[^.]+$", "") + ".pdf";
+            fileChooser.setInitialFileName(initialName);
+        } else if (data.nameProperty().get() != null && !data.nameProperty().get().isEmpty()) {
+            fileChooser.setInitialFileName(data.nameProperty().get() + ".pdf");
+        } else {
+            fileChooser.setInitialFileName("CharacterSheet.pdf");
+        }
+
+        File file = fileChooser.showSaveDialog(getScene().getWindow());
+        if (file != null) {
+            try {
+                new PdfExportService().exportToPdf(data, file);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Export Successful");
+                alert.setHeaderText(null);
+                alert.setContentText("Character sheet exported successfully to:\n" + file.getAbsolutePath());
+                alert.showAndWait();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Export Failed");
+                alert.setHeaderText("An error occurred during PDF generation.");
+                alert.setContentText(e.getMessage());
+                alert.showAndWait();
+            }
+        }
+    }
 }
