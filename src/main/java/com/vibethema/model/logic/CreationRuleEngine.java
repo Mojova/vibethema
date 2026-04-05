@@ -45,8 +45,8 @@ public class CreationRuleEngine {
         // 2. Abilities (28 dots, caps, BP)
         int mustBp = 0;
         List<Integer> poolDots = new ArrayList<>();
-        for (String abil : SystemData.ABILITIES) {
-            if ("Craft".equals(abil) || "Martial Arts".equals(abil)) continue;
+        for (Ability abil : SystemData.ABILITIES) {
+            if (Ability.CRAFT == abil || Ability.MARTIAL_ARTS == abil) continue;
             int dots = data.getAbility(abil).get();
             boolean isFavored = data.getCasteAbility(abil).get() || data.getFavoredAbility(abil).get();
             int costPerDot = isFavored ? 1 : 2;
@@ -98,8 +98,23 @@ public class CreationRuleEngine {
         for (PurchasedCharm pc : data.getUnlockedCharms()) {
             String ability = pc.ability();
             boolean isFavored = false;
-            if (ability != null && data.getCasteAbility(ability) != null) {
-                isFavored = data.getCasteAbility(ability).get() || data.getFavoredAbility(ability).get();
+            Ability enumAbil = Ability.fromString(ability);
+            if (enumAbil != null) {
+                isFavored = data.getCasteAbility(enumAbil).get() || data.getFavoredAbility(enumAbil).get();
+            } else {
+                // Check if it's a MA/Craft style
+                for (MartialArtsStyle mas : data.getMartialArtsStyles()) {
+                    if (mas.getStyleName().equals(ability)) {
+                        isFavored = mas.isCaste() || mas.isFavored();
+                        break;
+                    }
+                }
+                for (CraftAbility ca : data.getCrafts()) {
+                    if (ca.getExpertise().equals(ability)) {
+                        isFavored = ca.isCaste() || ca.isFavored();
+                        break;
+                    }
+                }
             }
             charmCosts.add(isFavored ? 4 : 5);
         }
@@ -107,7 +122,7 @@ public class CreationRuleEngine {
         boolean hasTCS = data.hasCharmByName(SystemData.TERRESTRIAL_CIRCLE_SORCERY);
         int billableSpells = Math.max(0, data.getSpells().size() - (hasTCS ? 1 : 0));
         if (billableSpells > 0) {
-            boolean isOccultFavored = data.getCasteAbility("Occult").get() || data.getFavoredAbility("Occult").get();
+            boolean isOccultFavored = data.getCasteAbility(Ability.OCCULT).get() || data.getFavoredAbility(Ability.OCCULT).get();
             int spellCost = isOccultFavored ? 4 : 5;
             for (int i = 0; i < billableSpells; i++) charmCosts.add(spellCost);
         }
@@ -126,8 +141,8 @@ public class CreationRuleEngine {
         status.peripheralMotes = (essence * 7) + 26;
         
         status.healthLevels = new ArrayList<>(Arrays.asList("-0", "-1", "-1", "-2", "-2", "-4", "Incap"));
-        int stamina = data.getAttribute("Stamina").get();
-        String oxBodyId = java.util.UUID.nameUUIDFromBytes(("Ox-Body Technique" + "|" + "Resistance").getBytes()).toString();
+        int stamina = data.getAttribute(Attribute.STAMINA).get();
+        String oxBodyId = java.util.UUID.nameUUIDFromBytes(("Ox-Body Technique" + "|" + Ability.RESISTANCE.getDisplayName()).getBytes()).toString();
         int oxBodyCount = data.getCharmCount(oxBodyId);
         for (int i = 0; i < oxBodyCount; i++) {
             if (stamina >= 5) { status.healthLevels.add("-0"); status.healthLevels.add("-1"); status.healthLevels.add("-2"); }
@@ -143,7 +158,7 @@ public class CreationRuleEngine {
         return status;
     }
 
-    private static int getAttributeTotal(CharacterData data, List<String> attrCategory) {
+    private static int getAttributeTotal(CharacterData data, List<Attribute> attrCategory) {
         return attrCategory.stream().mapToInt(attr -> data.getAttribute(attr).get() - 1).sum();
     }
 }

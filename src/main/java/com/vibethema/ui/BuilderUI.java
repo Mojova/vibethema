@@ -51,15 +51,8 @@ public class BuilderUI extends BorderPane {
     private CharacterData data;
     private File currentFile = null;
 
-    private Label physicalLabel = new Label();
-    private Label socialLabel = new Label();
-    private Label mentalLabel = new Label();
-    private Label abilitiesLabel = new Label();
     private Label casteLabel = new Label();
     private Label favoredLabel = new Label();
-    private Label charmsLabel = new Label();
-    private Label meritsLabel = new Label();
-    private Label specialtiesLabel = new Label();
     private Label bpLabel = new Label();
     private Label personalMotesLabel = new Label();
     private Label peripheralMotesLabel = new Label();
@@ -424,9 +417,9 @@ public class BuilderUI extends BorderPane {
             String current = data.supernalAbilityProperty().get();
             List<String> options = new ArrayList<>();
             options.add(""); // None
-            for (String abil : SystemData.ABILITIES) {
+            for (Ability abil : SystemData.ABILITIES) {
                 if (data.getCasteAbility(abil).get()) {
-                    options.add(abil);
+                    options.add(abil.getDisplayName());
                 }
             }
             supernalDropdown.getItems().setAll(options);
@@ -456,7 +449,7 @@ public class BuilderUI extends BorderPane {
             }
         });
 
-        for (String abil : SystemData.ABILITIES) {
+        for (Ability abil : SystemData.ABILITIES) {
             data.getCasteAbility(abil).addListener((obs, oldV, newV) -> updateSupernalDropdown.run());
         }
         updateSupernalDropdown.run();
@@ -490,10 +483,10 @@ public class BuilderUI extends BorderPane {
     }
 
     private void setupListeners() {
-        for (String attr : SystemData.ATTRIBUTES) {
+        for (Attribute attr : SystemData.ATTRIBUTES) {
             data.getAttribute(attr).addListener((obs, oldV, newV) -> updateFooter());
         }
-        for (String abil : SystemData.ABILITIES) {
+        for (Ability abil : SystemData.ABILITIES) {
             data.getAbility(abil).addListener((obs, oldV, newV) -> updateFooter());
             data.getCasteAbility(abil).addListener((obs, oldV, newV) -> updateFooter());
             data.getFavoredAbility(abil).addListener((obs, oldV, newV) -> updateFooter());
@@ -501,7 +494,7 @@ public class BuilderUI extends BorderPane {
         data.willpowerProperty().addListener((obs, oldV, newV) -> updateFooter());
         data.casteProperty().addListener((obs, oldV, newV) -> {
             if (oldV != newV && !data.isImporting()) {
-                for (String abil : SystemData.ABILITIES) {
+                for (Ability abil : SystemData.ABILITIES) {
                     data.getCasteAbility(abil).set(false);
                 }
                 data.supernalAbilityProperty().set("");
@@ -670,51 +663,51 @@ public class BuilderUI extends BorderPane {
 
         int rowCount = 0;
         int colCount = 0;
-        for (String ability : SystemData.ABILITIES) {
-            if ("Craft".equals(ability) || "Martial Arts".equals(ability))
+        for (Ability abil : SystemData.ABILITIES) {
+            if (Ability.CRAFT == abil || Ability.MARTIAL_ARTS == abil)
                 continue;
             HBox rowBox = new HBox(6);
             rowBox.setAlignment(Pos.CENTER_LEFT);
 
             CheckBox casteBox = new CheckBox("C");
             casteBox.getStyleClass().add("caste-checkbox");
-            casteBox.selectedProperty().bindBidirectional(data.getCasteAbility(ability));
+            casteBox.selectedProperty().bindBidirectional(data.getCasteAbility(abil));
             casteBox.disableProperty().bind(Bindings.createBooleanBinding(() -> {
-                if ("Martial Arts".equals(ability))
+                if (Ability.MARTIAL_ARTS == abil)
                     return true; // Synced with Brawl
                 Caste c = data.casteProperty().get();
                 boolean notInCasteList = c == null || c == Caste.NONE
-                        || !SystemData.CASTE_OPTIONS.get(c).contains(ability);
-                boolean atLimit = data.casteAbilityCountProperty().get() >= 5 && !data.getCasteAbility(ability).get();
-                return (notInCasteList || atLimit) && !data.getCasteAbility(ability).get();
-            }, data.casteProperty(), data.casteAbilityCountProperty(), data.getCasteAbility(ability)));
+                        || !SystemData.CASTE_OPTIONS.get(c).contains(abil);
+                boolean atLimit = data.casteAbilityCountProperty().get() >= 5 && !data.getCasteAbility(abil).get();
+                return (notInCasteList || atLimit) && !data.getCasteAbility(abil).get();
+            }, data.casteProperty(), data.casteAbilityCountProperty(), data.getCasteAbility(abil)));
 
             CheckBox favoredBox = new CheckBox("F");
             favoredBox.getStyleClass().add("favored-checkbox");
-            favoredBox.selectedProperty().bindBidirectional(data.getFavoredAbility(ability));
+            favoredBox.selectedProperty().bindBidirectional(data.getFavoredAbility(abil));
             favoredBox.disableProperty().bind(Bindings.createBooleanBinding(() -> {
-                if ("Martial Arts".equals(ability))
+                if (Ability.MARTIAL_ARTS == abil)
                     return true; // Synced with Brawl
-                boolean isCaste = data.getCasteAbility(ability).get();
-                boolean atLimit = data.favoredAbilityCountProperty().get() >= 5 && !data.getFavoredAbility(ability).get();
-                return (isCaste || atLimit) && !data.getFavoredAbility(ability).get();
-            }, data.getCasteAbility(ability), data.favoredAbilityCountProperty(), data.getFavoredAbility(ability)));
+                boolean isCaste = data.getCasteAbility(abil).get();
+                boolean atLimit = data.favoredAbilityCountProperty().get() >= 5 && !data.getFavoredAbility(abil).get();
+                return (isCaste || atLimit) && !data.getFavoredAbility(abil).get();
+            }, data.getCasteAbility(abil), data.favoredAbilityCountProperty(), data.getFavoredAbility(abil)));
 
-            data.getCasteAbility(ability).addListener((obs, oldV, newV) -> {
+            data.getCasteAbility(abil).addListener((obs, oldV, newV) -> {
                 if (newV) {
                     favoredBox.setSelected(false);
                 }
             });
 
-            data.getFavoredAbility(ability).addListener((obs, oldV, newV) -> {
-                if (newV && data.getAbility(ability).get() == 0) {
-                    if ("Brawl".equals(ability)) {
+            data.getFavoredAbility(abil).addListener((obs, oldV, newV) -> {
+                if (newV && data.getAbility(abil).get() == 0) {
+                    if (Ability.BRAWL == abil) {
                         boolean maHasDots = data.getMartialArtsStyles().stream().anyMatch(s -> s.getRating() > 0);
-                        if (!maHasDots) data.getAbility(ability).set(1);
-                    } else if ("Craft".equals(ability)) {
+                        if (!maHasDots) data.getAbility(abil).set(1);
+                    } else if (Ability.CRAFT == abil) {
                         if (data.getCrafts().isEmpty()) {
                             CraftAbility ca = new CraftAbility("General", 1);
-                            ca.setCaste(data.getCasteAbility("Craft").get());
+                            ca.setCaste(data.getCasteAbility(Ability.CRAFT).get());
                             ca.setFavored(true);
                             data.getCrafts().add(ca);
                         } else {
@@ -722,24 +715,24 @@ public class BuilderUI extends BorderPane {
                             if (!craftHasDots) data.getCrafts().get(0).ratingProperty().set(1);
                         }
                     } else {
-                        data.getAbility(ability).set(1);
+                        data.getAbility(abil).set(1);
                     }
                 }
             });
 
-            Label abLabel = new Label(ability);
+            Label abLabel = new Label(abil.getDisplayName());
             abLabel.setPrefWidth(95);
             abLabel.setCursor(Cursor.HAND);
             abLabel.setOnMouseClicked(e -> {
-                if (e.getClickCount() == 2) jumpToCharmAbility(ability);
+                if (e.getClickCount() == 2) jumpToCharmAbility(abil.getDisplayName());
             });
-            if ("Martial Arts".equals(ability)) {
+            if (Ability.MARTIAL_ARTS == abil) {
                 Tooltip.install(abLabel, new Tooltip("Caste/Favored status linked to Brawl."));
             }
 
             data.casteProperty().addListener((obs, oldV, newV) -> {
                 boolean isOption = newV != null && newV != Caste.NONE
-                        && SystemData.CASTE_OPTIONS.get(newV).contains(ability);
+                        && SystemData.CASTE_OPTIONS.get(newV).contains(abil);
                 if (isOption) {
                     if (!abLabel.getStyleClass().contains("caste-option")) {
                         abLabel.getStyleClass().add("caste-option");
@@ -750,20 +743,20 @@ public class BuilderUI extends BorderPane {
             });
 
             Runnable updateExcellency = () -> {
-                if (data.hasExcellency(ability)) {
-                    abLabel.setText(ability + " [E]");
+                if (data.hasExcellency(abil)) {
+                    abLabel.setText(abil.getDisplayName() + " [E]");
                     if (!abLabel.getStyleClass().contains("excellency-label")) {
                         abLabel.getStyleClass().add("excellency-label");
                     }
                 } else {
-                    abLabel.setText(ability);
+                    abLabel.setText(abil.getDisplayName());
                     abLabel.getStyleClass().remove("excellency-label");
                 }
             };
 
-            data.getAbility(ability).addListener((obs, oldV, newV) -> updateExcellency.run());
-            data.getCasteAbility(ability).addListener((obs, oldV, newV) -> updateExcellency.run());
-            data.getFavoredAbility(ability).addListener((obs, oldV, newV) -> updateExcellency.run());
+            data.getAbility(abil).addListener((obs, oldV, newV) -> updateExcellency.run());
+            data.getCasteAbility(abil).addListener((obs, oldV, newV) -> updateExcellency.run());
+            data.getFavoredAbility(abil).addListener((obs, oldV, newV) -> updateExcellency.run());
             data.supernalAbilityProperty().addListener((obs, oldV, newV) -> updateExcellency.run());
             data.getUnlockedCharms()
                     .addListener((javafx.collections.ListChangeListener.Change<? extends PurchasedCharm> change) -> {
@@ -771,8 +764,8 @@ public class BuilderUI extends BorderPane {
                     });
             updateExcellency.run();
 
-            DotSelector selector = new DotSelector(data.getAbility(ability), 0);
-            if ("Brawl".equals(ability)) {
+            DotSelector selector = new DotSelector(data.getAbility(abil), 0);
+            if (Ability.BRAWL == abil) {
                 // To trigger re-evaluation on MA rating changes, we need to bind to the item properties too.
                 // A simpler way is to have a listener on MA styles that triggers a dummy property update or just re-binds.
                 SimpleIntegerProperty maTotalDots = new SimpleIntegerProperty(0);
@@ -796,11 +789,11 @@ public class BuilderUI extends BorderPane {
                 updateMaTotal.run();
 
                 selector.minDotsProperty().bind(Bindings.createIntegerBinding(() -> {
-                    if (!data.getFavoredAbility("Brawl").get()) return 0;
+                    if (!data.getFavoredAbility(Ability.BRAWL).get()) return 0;
                     return maTotalDots.get() > 0 ? 0 : 1;
-                }, data.getFavoredAbility("Brawl"), maTotalDots));
+                }, data.getFavoredAbility(Ability.BRAWL), maTotalDots));
             } else {
-                selector.minDotsProperty().bind(Bindings.when(data.getFavoredAbility(ability)).then(1).otherwise(0));
+                selector.minDotsProperty().bind(Bindings.when(data.getFavoredAbility(abil)).then(1).otherwise(0));
             }
             rowBox.getChildren().addAll(casteBox, favoredBox, abLabel, selector);
 
@@ -901,11 +894,11 @@ public class BuilderUI extends BorderPane {
                 
                 // If Brawl is favored, at least one dot across Brawl + MA must exist.
                 selector.minDotsProperty().bind(Bindings.createIntegerBinding(() -> {
-                    if (!data.getFavoredAbility("Brawl").get()) return 0;
-                    int brawlDots = data.getAbility("Brawl").get();
+                    if (!data.getFavoredAbility(Ability.BRAWL).get()) return 0;
+                    int brawlDots = data.getAbility(Ability.BRAWL).get();
                     int otherMaDots = maTotalDots.get() - mas.getRating();
                     return (brawlDots == 0 && otherMaDots == 0) ? 1 : 0;
-                }, data.getFavoredAbility("Brawl"), data.getAbility("Brawl"), maTotalDots));
+                }, data.getFavoredAbility(Ability.BRAWL), data.getAbility(Ability.BRAWL), maTotalDots));
 
                 Region spacer = new Region();
                 HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -1106,25 +1099,25 @@ public class BuilderUI extends BorderPane {
 
         CheckBox casteBox = new CheckBox("C");
         casteBox.getStyleClass().add("caste-checkbox");
-        casteBox.selectedProperty().bindBidirectional(data.getCasteAbility("Craft"));
+        casteBox.selectedProperty().bindBidirectional(data.getCasteAbility(Ability.CRAFT));
         casteBox.disableProperty().bind(Bindings.createBooleanBinding(() -> {
             Caste c = data.casteProperty().get();
             boolean notInCasteList = c == null || c == Caste.NONE
-                    || !SystemData.CASTE_OPTIONS.get(c).contains("Craft");
-            boolean atLimit = data.casteAbilityCountProperty().get() >= 5 && !data.getCasteAbility("Craft").get();
-            return (notInCasteList || atLimit) && !data.getCasteAbility("Craft").get();
-        }, data.casteProperty(), data.casteAbilityCountProperty(), data.getCasteAbility("Craft")));
+                    || !SystemData.CASTE_OPTIONS.get(c).contains(Ability.CRAFT);
+            boolean atLimit = data.casteAbilityCountProperty().get() >= 5 && !data.getCasteAbility(Ability.CRAFT).get();
+            return (notInCasteList || atLimit) && !data.getCasteAbility(Ability.CRAFT).get();
+        }, data.casteProperty(), data.casteAbilityCountProperty(), data.getCasteAbility(Ability.CRAFT)));
 
         CheckBox favoredBox = new CheckBox("F");
         favoredBox.getStyleClass().add("favored-checkbox");
-        favoredBox.selectedProperty().bindBidirectional(data.getFavoredAbility("Craft"));
+        favoredBox.selectedProperty().bindBidirectional(data.getFavoredAbility(Ability.CRAFT));
         favoredBox.disableProperty().bind(Bindings.createBooleanBinding(() -> {
-            boolean isCaste = data.getCasteAbility("Craft").get();
-            boolean atLimit = data.favoredAbilityCountProperty().get() >= 5 && !data.getFavoredAbility("Craft").get();
-            return (isCaste || atLimit) && !data.getFavoredAbility("Craft").get();
-        }, data.getCasteAbility("Craft"), data.favoredAbilityCountProperty(), data.getFavoredAbility("Craft")));
+            boolean isCaste = data.getCasteAbility(Ability.CRAFT).get();
+            boolean atLimit = data.favoredAbilityCountProperty().get() >= 5 && !data.getFavoredAbility(Ability.CRAFT).get();
+            return (isCaste || atLimit) && !data.getFavoredAbility(Ability.CRAFT).get();
+        }, data.getCasteAbility(Ability.CRAFT), data.favoredAbilityCountProperty(), data.getFavoredAbility(Ability.CRAFT)));
 
-        data.getCasteAbility("Craft").addListener((obs, oldV, newV) -> {
+        data.getCasteAbility(Ability.CRAFT).addListener((obs, oldV, newV) -> {
             if (newV)
                 favoredBox.setSelected(false);
         });
@@ -1161,14 +1154,14 @@ public class BuilderUI extends BorderPane {
                 Button jumpBtn = new Button("🔍");
                 jumpBtn.getStyleClass().add("action-btn-small");
                 jumpBtn.setTooltip(new Tooltip("Jump to Craft Charms"));
-                jumpBtn.setOnAction(e -> jumpToCharmAbility("Craft"));
+                jumpBtn.setOnAction(e -> jumpToCharmAbility(Ability.CRAFT.getDisplayName()));
 
                 DotSelector selector = new DotSelector(ca.ratingProperty(), 0, 5);
                 selector.minDotsProperty().bind(Bindings.createIntegerBinding(() -> {
-                    if (!data.getFavoredAbility("Craft").get()) return 0;
+                    if (!data.getFavoredAbility(Ability.CRAFT).get()) return 0;
                     int otherDots = craftTotalDots.get() - ca.getRating();
                     return otherDots > 0 ? 0 : 1;
-                }, data.getFavoredAbility("Craft"), craftTotalDots));
+                }, data.getFavoredAbility(Ability.CRAFT), craftTotalDots));
 
                 Region spacer = new Region();
                 HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -1223,7 +1216,7 @@ public class BuilderUI extends BorderPane {
                 nameField.setPrefWidth(200);
 
                 ComboBox<String> abilPicker = new ComboBox<>();
-                abilPicker.getItems().addAll(SystemData.ABILITIES);
+                abilPicker.getItems().addAll(SystemData.ABILITIES.stream().map(Ability::getDisplayName).collect(Collectors.toList()));
                 abilPicker.valueProperty().bindBidirectional(s.abilityProperty());
                 abilPicker.setPromptText("Select Ability");
 
@@ -1329,8 +1322,8 @@ public class BuilderUI extends BorderPane {
             }
         };
 
-        data.getAttribute("Stamina").addListener((obs, old, nv) -> updateHealth.run());
-        data.getAbility("Resistance").addListener((obs, old, nv) -> updateHealth.run());
+        data.getAttribute(Attribute.STAMINA).addListener((obs, old, nv) -> updateHealth.run());
+        data.getAbility(Ability.RESISTANCE).addListener((obs, old, nv) -> updateHealth.run());
         data.getUnlockedCharms().addListener(
                 (javafx.collections.ListChangeListener.Change<? extends PurchasedCharm> c) -> updateHealth.run());
         updateHealth.run();
@@ -1376,14 +1369,14 @@ public class BuilderUI extends BorderPane {
         dodgeBox.getChildren().addAll(dodgeBaseLabel, dodgeBonusLabel);
 
         Runnable updateEvasion = () -> {
-            int dex = data.getAttribute("Dexterity").get();
-            int dodge = data.getAbility("Dodge").get();
+            int dex = data.getAttribute(Attribute.DEXTERITY).get();
+            int dodge = data.getAbility(Ability.DODGE).get();
             int base = (int) Math.ceil((dex + dodge) / 2.0);
             int total = (int) Math.ceil((dex + dodge + 1) / 2.0);
             int bonus = total - base;
             
             boolean hasDodgeSpec = data.getSpecialties().stream()
-                    .anyMatch(s -> "Dodge".equals(s.getAbility()) && s.getName() != null && !s.getName().trim().isEmpty());
+                    .anyMatch(s -> Ability.DODGE.getDisplayName().equals(s.getAbility()) && s.getName() != null && !s.getName().trim().isEmpty());
             
             dodgeBaseLabel.setText("Evasion: " + base);
             if (hasDodgeSpec) {
@@ -1394,8 +1387,8 @@ public class BuilderUI extends BorderPane {
                 Tooltip.uninstall(dodgeBonusLabel, dodgeTooltip);
             }
         };
-        data.getAttribute("Dexterity").addListener((obs, oldVal, newVal) -> updateEvasion.run());
-        data.getAbility("Dodge").addListener((obs, oldVal, newVal) -> updateEvasion.run());
+        data.getAttribute(Attribute.DEXTERITY).addListener((obs, oldVal, newVal) -> updateEvasion.run());
+        data.getAbility(Ability.DODGE).addListener((obs, oldVal, newVal) -> updateEvasion.run());
         data.getSpecialties().addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> updateEvasion.run());
         updateEvasion.run();
 
@@ -1411,12 +1404,12 @@ public class BuilderUI extends BorderPane {
         joinBattleBox.getChildren().addAll(joinBattleLabel, joinBattleBonusLabel);
 
         Runnable updateJoinBattle = () -> {
-            int wits = data.getAttribute("Wits").get();
-            int awareness = data.getAbility("Awareness").get();
+            int wits = data.getAttribute(Attribute.WITS).get();
+            int awareness = data.getAbility(Ability.AWARENESS).get();
             int base = wits + awareness;
             
             boolean hasAwarenessSpec = data.getSpecialties().stream()
-                    .anyMatch(s -> "Awareness".equals(s.getAbility()) && s.getName() != null && !s.getName().trim().isEmpty());
+                    .anyMatch(s -> Ability.AWARENESS.getDisplayName().equals(s.getAbility()) && s.getName() != null && !s.getName().trim().isEmpty());
             
             joinBattleLabel.setText("Join Battle: " + base);
             if (hasAwarenessSpec) {
@@ -1427,8 +1420,8 @@ public class BuilderUI extends BorderPane {
                 Tooltip.uninstall(joinBattleBonusLabel, awarenessTooltip);
             }
         };
-        data.getAttribute("Wits").addListener((obs, oldVal, newVal) -> updateJoinBattle.run());
-        data.getAbility("Awareness").addListener((obs, oldVal, newVal) -> updateJoinBattle.run());
+        data.getAttribute(Attribute.WITS).addListener((obs, oldVal, newVal) -> updateJoinBattle.run());
+        data.getAbility(Ability.AWARENESS).addListener((obs, oldVal, newVal) -> updateJoinBattle.run());
         data.getSpecialties().addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> updateJoinBattle.run());
         updateJoinBattle.run();
         
@@ -1491,14 +1484,14 @@ public class BuilderUI extends BorderPane {
         // No more double-click
 
         Runnable updateResolve = () -> {
-            int wits = data.getAttribute("Wits").get();
-            int integrity = data.getAbility("Integrity").get();
+            int wits = data.getAttribute(Attribute.WITS).get();
+            int integrity = data.getAbility(Ability.INTEGRITY).get();
             int base = (int) Math.ceil((wits + integrity) / 2.0);
             int total = (int) Math.ceil((wits + integrity + 1) / 2.0);
             int bonus = total - base;
             
             boolean hasSpec = data.getSpecialties().stream()
-                    .anyMatch(s -> "Integrity".equals(s.getAbility()) && s.getName() != null && !s.getName().trim().isEmpty());
+                    .anyMatch(s -> Ability.INTEGRITY.getDisplayName().equals(s.getAbility()) && s.getName() != null && !s.getName().trim().isEmpty());
             
             resolveBaseLabel.setText("Resolve: " + base);
             if (hasSpec) {
@@ -1524,14 +1517,14 @@ public class BuilderUI extends BorderPane {
         // No more double-click
 
         Runnable updateGuile = () -> {
-            int manipulation = data.getAttribute("Manipulation").get();
-            int socialize = data.getAbility("Socialize").get();
+            int manipulation = data.getAttribute(Attribute.MANIPULATION).get();
+            int socialize = data.getAbility(Ability.SOCIALIZE).get();
             int base = (int) Math.ceil((manipulation + socialize) / 2.0);
             int total = (int) Math.ceil((manipulation + socialize + 1) / 2.0);
             int bonus = total - base;
             
             boolean hasSpec = data.getSpecialties().stream()
-                    .anyMatch(s -> "Socialize".equals(s.getAbility()) && s.getName() != null && !s.getName().trim().isEmpty());
+                    .anyMatch(s -> Ability.SOCIALIZE.getDisplayName().equals(s.getAbility()) && s.getName() != null && !s.getName().trim().isEmpty());
             
             guileBaseLabel.setText("Guile: " + base);
             if (hasSpec) {
@@ -1543,10 +1536,10 @@ public class BuilderUI extends BorderPane {
             }
         };
 
-        data.getAttribute("Wits").addListener((obs, old, nv) -> updateResolve.run());
-        data.getAbility("Integrity").addListener((obs, old, nv) -> updateResolve.run());
-        data.getAttribute("Manipulation").addListener((obs, old, nv) -> updateGuile.run());
-        data.getAbility("Socialize").addListener((obs, old, nv) -> updateGuile.run());
+        data.getAttribute(Attribute.WITS).addListener((obs, old, nv) -> updateResolve.run());
+        data.getAbility(Ability.INTEGRITY).addListener((obs, old, nv) -> updateResolve.run());
+        data.getAttribute(Attribute.MANIPULATION).addListener((obs, old, nv) -> updateGuile.run());
+        data.getAbility(Ability.SOCIALIZE).addListener((obs, old, nv) -> updateGuile.run());
         data.getSpecialties().addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> {
             updateResolve.run();
             updateGuile.run();
@@ -1581,16 +1574,16 @@ public class BuilderUI extends BorderPane {
         Runnable refresh = () -> {
             grid.getChildren().removeIf(node -> GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node) > 0);
             int row = 1;
-            int dex = data.getAttribute("Dexterity").get();
-            int str = data.getAttribute("Strength").get();
+            int dex = data.getAttribute(Attribute.DEXTERITY).get();
+            int str = data.getAttribute(Attribute.STRENGTH).get();
             
             for (Weapon w : data.getWeapons()) {
-                String abilityName = "Melee";
-                if (w.getRange() == Weapon.WeaponRange.ARCHERY) abilityName = "Archery";
-                else if (w.getRange() == Weapon.WeaponRange.THROWN) abilityName = "Thrown";
-                else if (w.getTags().contains("Brawl")) abilityName = "Brawl";
+                String abilityName = Ability.MELEE.getDisplayName();
+                if (w.getRange() == Weapon.WeaponRange.ARCHERY) abilityName = Ability.ARCHERY.getDisplayName();
+                else if (w.getRange() == Weapon.WeaponRange.THROWN) abilityName = Ability.THROWN.getDisplayName();
+                else if (w.getTags().contains("Brawl")) abilityName = Ability.BRAWL.getDisplayName();
                 
-                int abil = data.getAbilityRating(abilityName);
+                int abil = data.getAbilityRating(Ability.fromString(abilityName));
                 int spec = (w.getSpecialtyId() != null && !w.getSpecialtyId().isEmpty()) ? 1 : 0;
                 
                 String witheringStr;
@@ -1629,11 +1622,11 @@ public class BuilderUI extends BorderPane {
         };
 
         // Listeners for all dependencies
-        data.getAttribute("Dexterity").addListener((obs, old, nv) -> refresh.run());
-        data.getAttribute("Strength").addListener((obs, old, nv) -> refresh.run());
-        data.getAbility("Melee").addListener((obs, old, nv) -> refresh.run());
-        data.getAbility("Archery").addListener((obs, old, nv) -> refresh.run());
-        data.getAbility("Brawl").addListener((obs, old, nv) -> refresh.run());
+        data.getAttribute(Attribute.DEXTERITY).addListener((obs, old, nv) -> refresh.run());
+        data.getAttribute(Attribute.STRENGTH).addListener((obs, old, nv) -> refresh.run());
+        data.getAbility(Ability.MELEE).addListener((obs, old, nv) -> refresh.run());
+        data.getAbility(Ability.ARCHERY).addListener((obs, old, nv) -> refresh.run());
+        data.getAbility(Ability.BRAWL).addListener((obs, old, nv) -> refresh.run());
         data.getWeapons().addListener((javafx.collections.ListChangeListener<? super Weapon>) c -> refresh.run());
         data.getSpecialties().addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> refresh.run());
         data.getMartialArtsStyles().addListener((javafx.collections.ListChangeListener<? super MartialArtsStyle>) c -> refresh.run());
@@ -1685,17 +1678,17 @@ public class BuilderUI extends BorderPane {
         return box;
     }
 
-    private VBox createAttributeColumn(String title, List<String> attrs) {
+    private VBox createAttributeColumn(String title, List<Attribute> attrs) {
         VBox box = new VBox(8);
         box.getStyleClass().add("attribute-column");
         Label titleLabel = new Label(title);
         titleLabel.getStyleClass().add("subsection-title");
         box.getChildren().add(titleLabel);
 
-        for (String attr : attrs) {
+        for (Attribute attr : attrs) {
             HBox row = new HBox(10);
             row.setAlignment(Pos.CENTER_LEFT);
-            Label lbl = new Label(attr);
+            Label lbl = new Label(attr.getDisplayName());
             lbl.setPrefWidth(90);
             DotSelector selector = new DotSelector(data.getAttribute(attr), 1);
             row.getChildren().addAll(lbl, selector);
@@ -1770,10 +1763,11 @@ public class BuilderUI extends BorderPane {
         charmsAbilityCombo = new ComboBox<>();
         charmsAbilityCombo.getItems().addAll(
             SystemData.ABILITIES.stream()
-                .filter(a -> !a.equals("Martial Arts"))
+                .filter(a -> a != Ability.MARTIAL_ARTS)
+                .map(Ability::getDisplayName)
                 .collect(Collectors.toList())
         );
-        charmsAbilityCombo.setValue("Archery");
+        charmsAbilityCombo.setValue(Ability.ARCHERY.getDisplayName());
         
         CharmTreeComponent charmsView = new CharmTreeComponent(data, dataService, keywordDefs, charmTreeListener, charmsAbilityCombo, "Ability");
         charmTrees.add(charmsView);
@@ -1806,7 +1800,7 @@ public class BuilderUI extends BorderPane {
                 .filter(pc -> data.isMartialArtsStyle(pc.ability()) == martialArtsMode)
                 .collect(Collectors.toList());
 
-            // Group by Ability
+            // Group by Ability (keep as string key for grouping, or convert to Enum if preferred)
             Map<String, List<com.vibethema.model.PurchasedCharm>> groupedByAbility = filtered.stream()
                 .collect(Collectors.groupingBy(com.vibethema.model.PurchasedCharm::ability));
 
@@ -2006,9 +2000,9 @@ public class BuilderUI extends BorderPane {
             abCombo.getItems().add(contextName);
             abCombo.setDisable(true);
         } else {
-            abCombo.getItems().addAll(SystemData.ABILITIES);
+            abCombo.getItems().addAll(SystemData.ABILITIES.stream().map(Ability::getDisplayName).collect(Collectors.toList()));
         }
-        abCombo.setValue(contextName != null ? contextName : "Archery");
+        abCombo.setValue(contextName != null ? contextName : Ability.ARCHERY.getDisplayName());
 
         Spinner<Integer> minAb = new Spinner<>(0, 5, 0);
         minAb.setEditable(true);
@@ -2180,7 +2174,7 @@ public class BuilderUI extends BorderPane {
 
         TextField nameField = new TextField(charm.getName());
         ComboBox<String> abCombo = new ComboBox<>();
-        abCombo.getItems().addAll(SystemData.ABILITIES);
+        abCombo.getItems().addAll(SystemData.ABILITIES.stream().map(Ability::getDisplayName).collect(Collectors.toList()));
         abCombo.getItems().addAll(dataService.getAvailableMartialArtsStyles());
         abCombo.setValue(charm.getAbility());
         

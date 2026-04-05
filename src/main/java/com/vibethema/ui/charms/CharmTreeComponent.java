@@ -1,5 +1,6 @@
 package com.vibethema.ui.charms;
 
+import com.vibethema.model.Ability;
 import com.vibethema.model.CharacterData;
 import com.vibethema.model.Charm;
 import com.vibethema.model.PurchasedCharm;
@@ -230,7 +231,7 @@ public class CharmTreeComponent extends SplitPane {
             }
         }
 
-        currentRatingProperty = "Evocation".equals(filterType) ? null : data.getAbilityProperty(selection);
+        currentRatingProperty = "Evocation".equals(filterType) ? null : data.getAbilityPropertyByName(selection);
         if (currentRatingProperty != null) {
             ratingListener = (obs, ov, nv) -> {
                 updateWebNodeStyles();
@@ -473,7 +474,7 @@ public class CharmTreeComponent extends SplitPane {
 
         String term = "Evocation".equals(filterType) ? "Evocation" : "Charm";
         if (stackable) {
-            int limit = isOxBody ? data.getAbility("Resistance").get() : 10; // Default limit for other stackable
+            int limit = isOxBody ? data.getAbility(Ability.RESISTANCE).get() : 10; // Default limit for other stackable
             toggleBtn.setText("Purchase (" + count + "/" + limit + ")");
             toggleBtn.setDisable(count >= limit || !c.isEligible(data));
             toggleBtn.setStyle("-fx-base: #d4af37;");

@@ -50,7 +50,7 @@ public class SolarCharm extends Charm {
         }
         
         if (effectiveEssence < getMinEssence()) return false;
-        if (data.getAbilityRating(ability) < minAbility) return false;
+        if (data.getAbilityRatingByName(ability) < minAbility) return false;
         
         List<String> prereqs = getPrerequisites();
         if (prereqs != null) {
