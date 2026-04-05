@@ -501,7 +501,7 @@ public class CharacterData {
         state.limitTrigger = limitTrigger.get();
         state.limit = limit.get();
         state.attributes = new HashMap<>();
-        for (Attribute attr : SystemData.ATTRIBUTES) state.attributes.put(attr.getDisplayName(), attributes.get(attr).get());
+        for (Attribute attr : SystemData.ATTRIBUTES) state.attributes.put(attr.name(), attributes.get(attr).get());
         state.attributePriorities = new HashMap<>();
         for (Map.Entry<Attribute.Category, ObjectProperty<AttributePriority>> entry : attributePriorities.entrySet()) {
             if (entry.getValue().get() != null) {
@@ -509,11 +509,11 @@ public class CharacterData {
             }
         }
         state.abilities = new HashMap<>();
-        for (Ability abil : SystemData.ABILITIES) state.abilities.put(abil.getDisplayName(), abilities.get(abil).get());
+        for (Ability abil : SystemData.ABILITIES) state.abilities.put(abil.name(), abilities.get(abil).get());
         state.casteAbilities = new ArrayList<>();
-        for (Ability abil : SystemData.ABILITIES) if (casteAbilities.get(abil).get()) state.casteAbilities.add(abil.getDisplayName());
+        for (Ability abil : SystemData.ABILITIES) if (casteAbilities.get(abil).get()) state.casteAbilities.add(abil.name());
         state.favoredAbilities = new ArrayList<>();
-        for (Ability abil : SystemData.ABILITIES) if (favoredAbilities.get(abil).get()) state.favoredAbilities.add(abil.getDisplayName());
+        for (Ability abil : SystemData.ABILITIES) if (favoredAbilities.get(abil).get()) state.favoredAbilities.add(abil.name());
         state.unlockedCharms = new ArrayList<>(unlockedCharms);
         state.merits = new HashMap<>();
         for (Merit m : merits) state.merits.put(m.getName(), m.getRating());
@@ -643,7 +643,7 @@ public class CharacterData {
             limitTrigger.set(state.limitTrigger != null ? state.limitTrigger : "");
             limit.set(state.limit);
             if (state.attributes != null) {
-                for (Attribute attr : SystemData.ATTRIBUTES) if (state.attributes.containsKey(attr.getDisplayName())) attributes.get(attr).set(state.attributes.get(attr.getDisplayName()));
+                for (Attribute attr : SystemData.ATTRIBUTES) if (state.attributes.containsKey(attr.name())) attributes.get(attr).set(state.attributes.get(attr.name()));
             }
             if (state.attributePriorities != null) {
                 for (Attribute.Category cat : Attribute.Category.values()) {
@@ -662,11 +662,11 @@ public class CharacterData {
                 for (ObjectProperty<AttributePriority> p : attributePriorities.values()) p.set(null);
             }
             if (state.abilities != null) {
-                for (Ability abil : SystemData.ABILITIES) if (state.abilities.containsKey(abil.getDisplayName())) abilities.get(abil).set(state.abilities.get(abil.getDisplayName()));
+                for (Ability abil : SystemData.ABILITIES) if (state.abilities.containsKey(abil.name())) abilities.get(abil).set(state.abilities.get(abil.name()));
             }
             for (Ability abil : SystemData.ABILITIES) {
-                casteAbilities.get(abil).set(state.casteAbilities != null && state.casteAbilities.contains(abil.getDisplayName()));
-                favoredAbilities.get(abil).set(state.favoredAbilities != null && state.favoredAbilities.contains(abil.getDisplayName()));
+                casteAbilities.get(abil).set(state.casteAbilities != null && state.casteAbilities.contains(abil.name()));
+                favoredAbilities.get(abil).set(state.favoredAbilities != null && state.favoredAbilities.contains(abil.name()));
             }
             if (state.unlockedCharms != null) {
                 List<PurchasedCharm> migrated = new ArrayList<>();

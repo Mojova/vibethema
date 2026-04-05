@@ -3,6 +3,7 @@ package com.vibethema.ui;
 import com.vibethema.model.*;
 import com.vibethema.model.logic.CreationRuleEngine;
 import com.vibethema.model.logic.CreationRuleEngine.CreationStatus;
+import com.vibethema.model.logic.ExperienceRuleEngine;
 import com.vibethema.model.CharacterMode;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
@@ -59,6 +60,8 @@ public class BuilderUI extends BorderPane {
     private Label abilitiesLabel = new Label();
     private Label charmsLabel = new Label();
     private Label specialtiesLabel = new Label();
+    private Label regularXpLabel = new Label();
+    private Label solarXpLabel = new Label();
     private Button finalizeBtn = new Button("Finalize Character");
 
     private Map<String, String> keywordDefs = new HashMap<>();
@@ -481,7 +484,21 @@ public class BuilderUI extends BorderPane {
         finalizeBtn.managedProperty().bind(finalizeBtn.visibleProperty());
         finalizeBtn.setOnAction(e -> handleFinalization());
 
-        row1.getChildren().addAll(casteLabel, favoredLabel, attrLabel, abilitiesLabel, specialtiesLabel, charmsLabel, bpLabel, spacer, finalizeBtn);
+        // Creation-mode labels: hide in experienced mode
+        for (Label l : new Label[] {casteLabel, favoredLabel, attrLabel, abilitiesLabel, specialtiesLabel, charmsLabel, bpLabel}) {
+            l.visibleProperty().bind(data.modeProperty().isEqualTo(CharacterMode.CREATION));
+            l.managedProperty().bind(l.visibleProperty());
+        }
+
+        // Experience-mode labels: hide in creation mode
+        regularXpLabel.setStyle("-fx-text-fill: white;");
+        solarXpLabel.setStyle("-fx-text-fill: #d4af37;");
+        for (Label l : new Label[] {regularXpLabel, solarXpLabel}) {
+            l.visibleProperty().bind(data.modeProperty().isEqualTo(CharacterMode.EXPERIENCED));
+            l.managedProperty().bind(l.visibleProperty());
+        }
+
+        row1.getChildren().addAll(casteLabel, favoredLabel, attrLabel, abilitiesLabel, specialtiesLabel, charmsLabel, bpLabel, regularXpLabel, solarXpLabel, spacer, finalizeBtn);
         footer.getChildren().add(row1);
         return footer;
     }
@@ -494,6 +511,7 @@ public class BuilderUI extends BorderPane {
 
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
+                data.setCreationSnapshot(data.exportState());
                 data.setMode(CharacterMode.EXPERIENCED);
                 updateFooter();
                 saveCharacter();
@@ -613,6 +631,15 @@ public class BuilderUI extends BorderPane {
     }
 
     private void updateFooter() {
+        if (data.modeProperty().get() == CharacterMode.EXPERIENCED) {
+            updateExperiencedFooter();
+        } else {
+            updateCreationFooter();
+        }
+        updateAllWebNodeStyles();
+    }
+
+    private void updateCreationFooter() {
         CreationStatus status = CreationRuleEngine.calculateStatus(data);
         
         bpLabel.setText("BP Spent: " + status.bonusPointsSpent + "/15");
@@ -631,8 +658,20 @@ public class BuilderUI extends BorderPane {
         } else {
             finalizeBtn.setTooltip(new Tooltip("Check creation pools: Attributes (18), Abilities (28), Merits (10), Specialties (4), Charms (15), and 15 BP."));
         }
+    }
+
+    private void updateExperiencedFooter() {
+        ExperienceRuleEngine.ExperienceStatus xpStatus = ExperienceRuleEngine.calculateStatus(data, data.getCreationSnapshot());
         
-        updateAllWebNodeStyles();
+        regularXpLabel.setText("Regular XP: " + xpStatus.regularXpSpent + "/" + xpStatus.totalRegularXpAwarded);
+        regularXpLabel.setStyle(xpStatus.getRegularXpRemaining() < 0 
+            ? "-fx-text-fill: red; -fx-font-weight: bold;" 
+            : "-fx-text-fill: white;");
+        
+        solarXpLabel.setText("Solar XP: " + xpStatus.solarXpSpent + "/" + xpStatus.totalSolarXpAwarded);
+        solarXpLabel.setStyle(xpStatus.getSolarXpRemaining() < 0 
+            ? "-fx-text-fill: red; -fx-font-weight: bold;" 
+            : "-fx-text-fill: #d4af37;");
     }
 
     private void updateAllWebNodeStyles() {
