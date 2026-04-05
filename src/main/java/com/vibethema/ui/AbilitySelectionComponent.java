@@ -25,7 +25,6 @@ public class AbilitySelectionComponent extends HBox {
         setAlignment(Pos.CENTER_LEFT);
 
         // 1. Caste Indicator/Checkbox
-        StackPane casteContainer = new StackPane();
         CheckBox casteBox = new CheckBox("C");
         casteBox.getStyleClass().add("caste-checkbox");
         casteBox.selectedProperty().bindBidirectional(caste);
@@ -36,7 +35,6 @@ public class AbilitySelectionComponent extends HBox {
         
         // Visibility bindings
         casteBox.visibleProperty().bind(data.modeProperty().isEqualTo(CharacterMode.CREATION));
-        casteBox.managedProperty().bind(casteBox.visibleProperty());
         casteLabel.visibleProperty().bind(Bindings.and(data.modeProperty().isEqualTo(CharacterMode.EXPERIENCED), caste));
         casteLabel.managedProperty().bind(casteLabel.visibleProperty());
 
@@ -51,11 +49,12 @@ public class AbilitySelectionComponent extends HBox {
             }, data.casteProperty(), data.casteAbilityCountProperty(), caste));
         }
 
-        casteContainer.getChildren().addAll(casteBox, casteLabel);
+        StackPane casteContainer = new StackPane(casteBox);
         casteContainer.setMinWidth(25);
-
+        casteContainer.managedProperty().bind(data.modeProperty().isEqualTo(CharacterMode.CREATION));
+        casteContainer.visibleProperty().bind(casteContainer.managedProperty());
+        
         // 2. Favored Indicator/Checkbox
-        StackPane favoredContainer = new StackPane();
         CheckBox favoredBox = new CheckBox("F");
         favoredBox.getStyleClass().add("favored-checkbox");
         favoredBox.selectedProperty().bindBidirectional(favored);
@@ -65,7 +64,6 @@ public class AbilitySelectionComponent extends HBox {
         favoredLabel.setStyle("-fx-text-fill: #3498db; -fx-font-weight: bold; -fx-font-size: 12px; -fx-padding: 0 4 0 4;");
         
         favoredBox.visibleProperty().bind(data.modeProperty().isEqualTo(CharacterMode.CREATION));
-        favoredBox.managedProperty().bind(favoredBox.visibleProperty());
         favoredLabel.visibleProperty().bind(Bindings.and(data.modeProperty().isEqualTo(CharacterMode.EXPERIENCED), favored));
         favoredLabel.managedProperty().bind(favoredLabel.visibleProperty());
 
@@ -78,9 +76,17 @@ public class AbilitySelectionComponent extends HBox {
             }, caste, data.favoredAbilityCountProperty(), favored));
         }
 
-        favoredContainer.getChildren().addAll(favoredBox, favoredLabel);
+        StackPane favoredContainer = new StackPane(favoredBox);
         favoredContainer.setMinWidth(25);
+        favoredContainer.managedProperty().bind(data.modeProperty().isEqualTo(CharacterMode.CREATION));
+        favoredContainer.visibleProperty().bind(favoredContainer.managedProperty());
 
+        StackPane expModeContainer = new StackPane(casteLabel, favoredLabel);
+        expModeContainer.setMinWidth(25);
+        expModeContainer.setAlignment(Pos.CENTER);
+        expModeContainer.managedProperty().bind(data.modeProperty().isEqualTo(CharacterMode.EXPERIENCED));
+        expModeContainer.visibleProperty().bind(expModeContainer.managedProperty());
+        
         // 3. Ability Name Label
         Label nameLabel = new Label(displayName);
         nameLabel.setPrefWidth(95);
@@ -122,11 +128,11 @@ public class AbilitySelectionComponent extends HBox {
         DotSelector selector = new DotSelector(rating, 0);
         selector.minDotsProperty().bind(Bindings.when(favored).then(1).otherwise(0));
 
-        getChildren().addAll(casteContainer, favoredContainer, nameLabel, selector);
+        getChildren().addAll(casteContainer, favoredContainer, expModeContainer, nameLabel, selector);
     }
 
     public void setOnNameClick(javafx.event.EventHandler<? super javafx.scene.input.MouseEvent> value) {
-        javafx.scene.Node nameNode = getChildren().get(2);
+        javafx.scene.Node nameNode = getChildren().get(3);
         if (nameNode instanceof Label) {
             nameNode.setCursor(javafx.scene.Cursor.HAND);
             nameNode.setOnMouseClicked(value);
@@ -134,7 +140,7 @@ public class AbilitySelectionComponent extends HBox {
     }
 
     public void setNameWidth(double width) {
-        javafx.scene.Node nameNode = getChildren().get(2);
+        javafx.scene.Node nameNode = getChildren().get(3);
         if (nameNode instanceof Label l) {
             l.setPrefWidth(width);
             l.setMinWidth(width);
@@ -142,6 +148,6 @@ public class AbilitySelectionComponent extends HBox {
     }
 
     public DotSelector getSelector() {
-        return (DotSelector) getChildren().get(3);
+        return (DotSelector) getChildren().get(4);
     }
 }

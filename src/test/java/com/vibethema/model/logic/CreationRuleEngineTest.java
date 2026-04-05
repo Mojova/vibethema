@@ -166,5 +166,30 @@ public class CreationRuleEngineTest {
         status = CreationRuleEngine.calculateStatus(data);
         assertEquals(12, status.bonusPointsSpent);
     }
+
+    @Test
+    void testBrawlAndMartialArtsFavoredCounting() {
+        // Set 4 other abilities as favored
+        data.getFavoredAbility(Ability.ARCHERY).set(true);
+        data.getFavoredAbility(Ability.AWARENESS).set(true);
+        data.getFavoredAbility(Ability.DODGE).set(true);
+        data.getFavoredAbility(Ability.RESISTANCE).set(true);
+        
+        assertEquals(4, data.favoredAbilityCountProperty().get());
+
+        // Brawl and Martial Arts are tied properties. Setting Brawl sets Martial Arts,
+        // and they count as a single total ability towards the limit.
+        data.getFavoredAbility(Ability.BRAWL).set(true);
+        
+        assertEquals(5, data.favoredAbilityCountProperty().get());
+        assertTrue(data.getFavoredAbility(Ability.MARTIAL_ARTS).get(), "Martial Arts should be tied to Brawl");
+
+        // Unsetting Brawl should also unset Martial Arts and reduce count
+        data.getFavoredAbility(Ability.BRAWL).set(false);
+        
+        assertEquals(4, data.favoredAbilityCountProperty().get());
+        assertFalse(data.getFavoredAbility(Ability.MARTIAL_ARTS).get(), "Martial Arts should be tied to Brawl");
+    }
 }
+
 

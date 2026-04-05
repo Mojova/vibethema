@@ -2,8 +2,10 @@ package com.vibethema.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -231,13 +233,23 @@ public class CharacterData {
     }
 
     private void updateCasteFavoredCounts() {
+        Set<Ability> castes = new HashSet<>();
+        Set<Ability> favoreds = new HashSet<>();
+
+        for (Ability abil : SystemData.ABILITIES) {
+            if (casteAbilities.get(abil).get()) castes.add(abil);
+            if (favoredAbilities.get(abil).get()) favoreds.add(abil);
+        }
+        
         int c = 0;
         int f = 0;
-        for (Ability abil : SystemData.ABILITIES) {
-            if (Ability.MARTIAL_ARTS == abil) continue;
-            if (casteAbilities.get(abil).get()) c++;
-            if (favoredAbilities.get(abil).get()) f++;
-        }
+        
+        boolean pooledCaste = castes.remove(Ability.BRAWL) | castes.remove(Ability.MARTIAL_ARTS);
+        boolean pooledFavored = favoreds.remove(Ability.BRAWL) | favoreds.remove(Ability.MARTIAL_ARTS);
+        
+        c = castes.size() + (pooledCaste ? 1 : 0);
+        f = favoreds.size() + (pooledFavored ? 1 : 0);
+
         casteAbilityCount.set(c);
         favoredAbilityCount.set(f);
     }

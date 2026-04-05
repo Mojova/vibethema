@@ -58,6 +58,7 @@ public class BuilderUI extends BorderPane {
     private Label attrLabel = new Label();
     private Label abilitiesLabel = new Label();
     private Label charmsLabel = new Label();
+    private Label specialtiesLabel = new Label();
     private Button finalizeBtn = new Button("Finalize Character");
 
     private Map<String, String> keywordDefs = new HashMap<>();
@@ -480,7 +481,7 @@ public class BuilderUI extends BorderPane {
         finalizeBtn.managedProperty().bind(finalizeBtn.visibleProperty());
         finalizeBtn.setOnAction(e -> handleFinalization());
 
-        row1.getChildren().addAll(casteLabel, favoredLabel, attrLabel, abilitiesLabel, charmsLabel, bpLabel, spacer, finalizeBtn);
+        row1.getChildren().addAll(casteLabel, favoredLabel, attrLabel, abilitiesLabel, specialtiesLabel, charmsLabel, bpLabel, spacer, finalizeBtn);
         footer.getChildren().add(row1);
         return footer;
     }
@@ -621,6 +622,7 @@ public class BuilderUI extends BorderPane {
         favoredLabel.setText("Favored: " + data.favoredAbilityCountProperty().get() + "/5");
         attrLabel.setText(String.format("Attributes: %d/%d/%d", status.physicalDots, status.socialDots, status.mentalDots));
         abilitiesLabel.setText("Abilities: " + status.abilitiesSpent + "/28");
+        specialtiesLabel.setText("Specialties: " + status.specialtiesSpent + "/4");
         charmsLabel.setText("Charms: " + status.charmsSpent + "/15");
         
         finalizeBtn.setDisable(!status.isReadyToFinalize);
@@ -1012,8 +1014,8 @@ public class BuilderUI extends BorderPane {
         craftStatus.getSelector().setVisible(false);
         craftStatus.getSelector().setManaged(false);
         // Hide the name label (the "Crafts" title is already there)
-        craftStatus.getChildren().get(2).setVisible(false);
-        craftStatus.getChildren().get(2).setManaged(false);
+        craftStatus.getChildren().get(3).setVisible(false);
+        craftStatus.getChildren().get(3).setManaged(false);
 
         titleRow.getChildren().addAll(title, craftStatus);
 
@@ -1592,8 +1594,23 @@ public class BuilderUI extends BorderPane {
         // Ensure footer updates when priority changes
         data.getAttributePriority(category).addListener((obs, oldV, newV) -> updateFooter());
 
-        headerRow.getChildren().addAll(titleLabel, new Region() {{ HBox.setHgrow(this, Priority.ALWAYS); }}, priorityBox);
+        Label priorityLabel = new Label();
+        priorityLabel.getStyleClass().add("subsection-title");
+        data.getAttributePriority(category).addListener((obs, oldV, newV) -> {
+            priorityLabel.setText(newV == null ? "" : newV.name());
+        });
+        AttributePriority currentPriority = data.getAttributePriority(category).get();
+        priorityLabel.setText(currentPriority == null ? "" : currentPriority.name());
+
+        priorityBox.visibleProperty().bind(data.modeProperty().isEqualTo(CharacterMode.CREATION));
+        priorityBox.managedProperty().bind(priorityBox.visibleProperty());
+
+        priorityLabel.visibleProperty().bind(data.modeProperty().isEqualTo(CharacterMode.EXPERIENCED));
+        priorityLabel.managedProperty().bind(priorityLabel.visibleProperty());
+
+        headerRow.getChildren().addAll(titleLabel, new Region() {{ HBox.setHgrow(this, Priority.ALWAYS); }}, priorityBox, priorityLabel);
         box.getChildren().add(headerRow);
+
 
         for (Attribute attr : attrs) {
             HBox row = new HBox(10);
