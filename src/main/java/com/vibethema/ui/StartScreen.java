@@ -3,6 +3,9 @@ package com.vibethema.ui;
 import com.google.gson.Gson;
 import com.vibethema.model.CharacterData;
 import com.vibethema.model.CharacterSaveState;
+import com.vibethema.viewmodel.MainViewModel;
+import de.saxsys.mvvmfx.FluentViewLoader;
+import de.saxsys.mvvmfx.ViewTuple;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -20,10 +23,10 @@ public class StartScreen extends StackPane {
     public StartScreen() {
         getStyleClass().add("start-screen");
 
-        VBox card = new VBox(15); // Add spacing between title and subtitle
+        VBox card = new VBox(15);
         card.getStyleClass().add("start-card");
-        card.setMaxSize(800, 500); // Taller card for the extra spacing
-        card.setAlignment(Pos.CENTER); // Centralize children
+        card.setMaxSize(800, 500);
+        card.setAlignment(Pos.CENTER);
 
         Label title = new Label("VIBETHEMA");
         title.getStyleClass().add("start-title");
@@ -31,7 +34,6 @@ public class StartScreen extends StackPane {
         Label subtitle = new Label("Exalted 3rd Edition Character Builder");
         subtitle.getStyleClass().add("start-subtitle");
 
-        // Spacer between text and buttons
         Region spacer = new Region();
         spacer.setPrefHeight(60);
 
@@ -61,8 +63,12 @@ public class StartScreen extends StackPane {
 
     private void startNewCharacter() {
         CharacterData data = new CharacterData();
-        BuilderUI builder = new BuilderUI(data);
-        getScene().setRoot(builder);
+        ViewTuple<MainView, MainViewModel> viewTuple = FluentViewLoader.javaView(MainView.class).load();
+        
+        MainView mainView = (MainView) viewTuple.getView();
+        viewTuple.getViewModel().init(data, mainView::showFinalizationDialog);
+        
+        getScene().setRoot(mainView);
     }
 
     private void loadCharacter() {
@@ -77,8 +83,16 @@ public class StartScreen extends StackPane {
                 if (state != null) {
                     CharacterData data = new CharacterData();
                     data.importState(state, new com.vibethema.service.EquipmentDataService());
-                    BuilderUI builder = new BuilderUI(data, file);
-                    getScene().setRoot(builder);
+                    
+                    ViewTuple<MainView, MainViewModel> viewTuple = FluentViewLoader.javaView(MainView.class).load();
+                    
+                    MainView mainView = (MainView) viewTuple.getView();
+                    MainViewModel vm = viewTuple.getViewModel();
+                    vm.init(data, mainView::showFinalizationDialog);
+                    vm.currentFileProperty().set(file);
+                    data.setDirty(false);
+
+                    getScene().setRoot(mainView);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();

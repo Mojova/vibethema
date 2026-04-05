@@ -2,9 +2,12 @@ package com.vibethema;
 
 import com.vibethema.model.CharacterData;
 import com.vibethema.model.CharacterSaveState;
-import com.vibethema.ui.BuilderUI;
+import com.vibethema.ui.MainView;
 import com.vibethema.ui.StartScreen;
+import com.vibethema.viewmodel.MainViewModel;
 import com.google.gson.Gson;
+import de.saxsys.mvvmfx.FluentViewLoader;
+import de.saxsys.mvvmfx.ViewTuple;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -32,8 +35,8 @@ public class Main extends Application {
             primaryStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("/icon.png")));
             primaryStage.setScene(scene);
             primaryStage.setOnCloseRequest(e -> {
-                if (scene.getRoot() instanceof BuilderUI builder) {
-                    if (!builder.confirmDiscardChanges())
+                if (scene.getRoot() instanceof MainView view) {
+                    if (!view.confirmDiscardChanges())
                         e.consume();
                 }
             });
@@ -47,15 +50,21 @@ public class Main extends Application {
             CharacterData data = new CharacterData();
             data.importState(state, new com.vibethema.service.EquipmentDataService());
 
-            BuilderUI builder = new BuilderUI(data, file);
-            Scene scene = new Scene(builder, 1200, 800);
+            ViewTuple<MainView, MainViewModel> viewTuple = FluentViewLoader.javaView(MainView.class).load();
+            MainView view = (MainView) viewTuple.getView();
+            MainViewModel vm = viewTuple.getViewModel();
+            vm.init(data, view::showFinalizationDialog);
+            vm.currentFileProperty().set(file);
+            data.setDirty(false);
+
+            Scene scene = new Scene(view, 1200, 800);
             scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
 
             stage.setTitle("Vibethema - " + file.getName());
             stage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("/icon.png")));
             stage.setScene(scene);
             stage.setOnCloseRequest(e -> {
-                if (builder.confirmDiscardChanges()) {
+                if (view.confirmDiscardChanges()) {
                     // Allowed to close
                 } else {
                     e.consume();
