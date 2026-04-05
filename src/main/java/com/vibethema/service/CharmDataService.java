@@ -232,29 +232,10 @@ public class CharmDataService {
 
         if (Files.exists(filePath)) {
             try (Reader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
-                // 1. Try new format
+                // Try new format
                 collection = gson.fromJson(reader, EvocationCollection.class);
-                // If it lacks artifactName, it might be the old format
-                if (collection != null && collection.artifactName == null) {
-                    collection = null; // Re-attempt with old format
-                }
             } catch (IOException e) {
-                System.err.println("Error loading evocations (new format): " + e.getMessage());
-            }
-
-            if (collection == null) {
-                try (Reader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
-                    // 2. Try old format (CharmListWrapper)
-                    CharmListWrapper wrapper = gson.fromJson(reader, CharmListWrapper.class);
-                    if (wrapper != null && wrapper.charms != null) {
-                        collection = new EvocationCollection(artifactId, wrapper.ability, wrapper.charms);
-                        for (Charm c : collection.evocations) {
-                            c.setSource("Core");
-                        }
-                    }
-                } catch (IOException e) {
-                    System.err.println("Error loading evocations (old format fallback): " + e.getMessage());
-                }
+                System.err.println("Error loading evocations: " + e.getMessage());
             }
         }
 

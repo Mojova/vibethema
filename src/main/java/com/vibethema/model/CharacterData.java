@@ -803,15 +803,11 @@ public class CharacterData {
             if (state.attributePriorities != null) {
                 for (Attribute.Category cat : Attribute.Category.values()) {
                     String priorityName = state.attributePriorities.get(cat.name());
+                    AttributePriority priority = null;
                     if (priorityName != null) {
-                        try {
-                            attributePriorities.get(cat).set(AttributePriority.valueOf(priorityName));
-                        } catch (Exception e) {
-                            attributePriorities.get(cat).set(null);
-                        }
-                    } else {
-                        attributePriorities.get(cat).set(null);
+                        priority = AttributePriority.valueOf(priorityName);
                     }
+                    attributePriorities.get(cat).set(priority);
                 }
             } else {
                 for (ObjectProperty<AttributePriority> p : attributePriorities.values()) p.set(null);
@@ -824,15 +820,11 @@ public class CharacterData {
                 favoredAbilities.get(abil).set(state.favoredAbilities != null && state.favoredAbilities.contains(abil.name()));
             }
             if (state.unlockedCharms != null) {
-                List<PurchasedCharm> migrated = new ArrayList<>();
+                List<PurchasedCharm> list = new ArrayList<>();
                 for (PurchasedCharm pc : state.unlockedCharms) {
-                    String id = pc.id();
-                    if (id == null || id.isEmpty()) {
-                        id = java.util.UUID.nameUUIDFromBytes((pc.name().trim() + "|" + pc.ability().trim()).getBytes()).toString();
-                    }
-                    migrated.add(new PurchasedCharm(id, pc.name(), pc.ability()));
+                    list.add(new PurchasedCharm(pc.id(), pc.name(), pc.ability()));
                 }
-                unlockedCharms.setAll(migrated);
+                unlockedCharms.setAll(list);
             } else unlockedCharms.clear();
             
             merits.clear();
@@ -856,9 +848,7 @@ public class CharacterData {
             martialArtsStyles.clear();
             if (state.martialArts != null) {
                 for (CharacterSaveState.MartialArtsData md : state.martialArts) {
-                    String id = md.id;
-                    if (id == null || id.isEmpty()) id = java.util.UUID.randomUUID().toString();
-                    MartialArtsStyle mas = new MartialArtsStyle(id, md.styleName, md.rating);
+                    MartialArtsStyle mas = new MartialArtsStyle(md.id, md.styleName, md.rating);
                     mas.setCaste(md.isCaste); mas.setFavored(md.isFavored);
                     martialArtsStyles.add(mas);
                 }
@@ -870,9 +860,7 @@ public class CharacterData {
             weapons.clear();
             if (state.weapons != null) {
                 for (CharacterSaveState.WeaponData wd : state.weapons) {
-                    String id = wd.id;
-                    if (id == null || id.isEmpty()) id = java.util.UUID.randomUUID().toString();
-                    Weapon w = new Weapon(id, wd.name, wd.range, wd.type, wd.category);
+                    Weapon w = new Weapon(wd.id, wd.name, wd.range, wd.type, wd.category);
                     if (wd.tags != null) w.getTags().addAll(wd.tags);
                     w.setSpecialtyId(wd.specialtyId);
                     weapons.add(w);
@@ -881,9 +869,7 @@ public class CharacterData {
             armors.clear();
             if (state.armors != null) {
                 for (CharacterSaveState.ArmorData ad : state.armors) {
-                    String id = ad.id;
-                    if (id == null || id.isEmpty()) id = java.util.UUID.randomUUID().toString();
-                    Armor a = new Armor(id, ad.name, ad.type, ad.weight);
+                    Armor a = new Armor(ad.id, ad.name, ad.type, ad.weight);
                     if (ad.tags != null) a.getTags().setAll(ad.tags);
                     a.setEquipped(ad.equipped);
                     armors.add(a);
