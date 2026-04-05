@@ -1,0 +1,123 @@
+package com.vibethema.model.logic;
+
+import com.vibethema.model.*;
+import com.vibethema.model.logic.CreationRuleEngine.CreationStatus;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class CreationRuleEngineTest {
+
+    private CharacterData data;
+
+    @BeforeEach
+    void setUp() {
+        data = new CharacterData();
+    }
+
+    @Test
+    void testSystemDataInitialization() {
+        assertNotNull(SystemData.ATTRIBUTES, "SystemData.ATTRIBUTES should not be null");
+        assertFalse(SystemData.ATTRIBUTES.isEmpty(), "SystemData.ATTRIBUTES should not be empty");
+        assertTrue(SystemData.ATTRIBUTES.contains("Strength"), "SystemData.ATTRIBUTES should contain Strength");
+    }
+
+    @Test
+    void testInitialMotePools() {
+        data.essenceProperty().set(1);
+        CreationStatus status = CreationRuleEngine.calculateStatus(data);
+        assertEquals(13, status.personalMotes);
+        assertEquals(33, status.peripheralMotes);
+    }
+
+    @Test
+    void testAttributeDistributionNoBP() {
+        // Base is 1. Standard is 8/6/4 above base.
+        // Physical: 4+4=8 dots above base (9 total Strength, Dexterity, Stamina combined sum of dots above 1)
+        // Actually getAttributeTotal returns sum of (dot - 1).
+        // Strengh=4 (3 above 1), Dex=4 (3 above 1), Stamina=3 (2 above 1). Total = 3+3+2 = 8.
+        data.getAttribute("Strength").set(4);
+        data.getAttribute("Dexterity").set(4);
+        data.getAttribute("Stamina").set(3);
+        
+        // Social: 1/3/3 dots above base (Total 6)
+        data.getAttribute("Charisma").set(2);
+        data.getAttribute("Manipulation").set(4);
+        data.getAttribute("Appearance").set(3);
+        
+        // Mental: 2/2/1 dots above base (Total 4)
+        data.getAttribute("Perception").set(3);
+        data.getAttribute("Intelligence").set(2);
+        data.getAttribute("Wits").set(2);
+
+        CreationStatus status = CreationRuleEngine.calculateStatus(data);
+        assertEquals(0, status.bonusPointsSpent, "Standard 8/6/4 distribution should cost 0 BP");
+    }
+
+    @Test
+    void testAbilityDotsNoBP() {
+        // 28 free dots, none above 3.
+        for (int i = 0; i < 7; i++) {
+            String abil = SystemData.ABILITIES.get(i);
+            data.getAbility(abil).set(3); // 7 * 3 = 21 dots
+        }
+        data.getAbility(SystemData.ABILITIES.get(7)).set(3); // 24 dots
+        data.getAbility(SystemData.ABILITIES.get(8)).set(3); // 27 dots
+        data.getAbility(SystemData.ABILITIES.get(9)).set(1); // 28 dots total
+
+        CreationStatus status = CreationRuleEngine.calculateStatus(data);
+        assertEquals(0, status.bonusPointsSpent, "28 dots at 3 or less should be 0 BP");
+    }
+
+    @Test
+    void testAbilityDotsWithBP() {
+        // 28 dots free. 1 dot at 4 costs 1 BP (favored) or 2 BP (non-favored).
+        String abil = SystemData.ABILITIES.get(0);
+        data.getAbility(abil).set(4); // 4 dots (3 free, 1 billable)
+        data.getFavoredAbility(abil).set(true);
+        
+        // Fill 28 dots
+        for (int i = 1; i < 10; i++) {
+            data.getAbility(SystemData.ABILITIES.get(i)).set(3);
+        }
+        // Total dots = 4 + 9*3 = 4 + 27 = 31.
+        // 28 are free. 3 dots are extra.
+        // Wait, dots > 3 always cost BP.
+        // The loop in engine says: if (i > 3) mustBp += costPerDot.
+        // So 1 dot (the 4th) costs 1 BP immediately.
+        // Plus 31 dots total - 28 free = 3 extra dots.
+        
+        CreationStatus status = CreationRuleEngine.calculateStatus(data);
+        assertTrue(status.bonusPointsSpent > 0);
+    }
+
+    @Test
+    void testOxBodyHealthLevels() {
+        // Default health: -0, -1, -1, -2, -2, -4, Incap (7 levels)
+        data.getAttribute("Stamina").set(3);
+        CreationStatus status = CreationRuleEngine.calculateStatus(data);
+        assertEquals(7, status.healthLevels.size());
+
+        // Add 1 Ox-Body
+        String oxBodyId = java.util.UUID.nameUUIDFromBytes(("Ox-Body Technique" + "|" + "Resistance").getBytes()).toString();
+        data.getUnlockedCharms().add(new PurchasedCharm(oxBodyId, "Ox-Body Technique", "Resistance"));
+        
+        status = CreationRuleEngine.calculateStatus(data);
+        // At Stamina 3, Ox-Body adds -1, -2, -2 (3 levels)
+        assertEquals(10, status.healthLevels.size());
+        assertTrue(status.healthLevels.contains("-0"));
+        assertTrue(status.healthLevels.contains("Incap"));
+    }
+
+    @Test
+    void testWillpowerBP() {
+        data.willpowerProperty().set(5);
+        CreationStatus status = CreationRuleEngine.calculateStatus(data);
+        assertEquals(0, status.bonusPointsSpent);
+
+        data.willpowerProperty().set(7); // +2 willpower costs 4 BP
+        status = CreationRuleEngine.calculateStatus(data);
+        assertEquals(4, status.bonusPointsSpent);
+    }
+}

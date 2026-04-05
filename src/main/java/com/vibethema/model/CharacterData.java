@@ -1,5 +1,9 @@
 package com.vibethema.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
+
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -12,27 +16,17 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class CharacterData {
-    public enum Caste {
-        DAWN, ZENITH, TWILIGHT, NIGHT, ECLIPSE, NONE;
-
-        @Override
-        public String toString() {
-            if (this == NONE) return "None";
-            String s = super.toString();
-            return s.substring(0, 1) + s.substring(1).toLowerCase();
-        }
-    }
+    // Enums moved to standalone files
 
     private StringProperty name = new SimpleStringProperty("");
     private ObjectProperty<Caste> caste = new SimpleObjectProperty<>(Caste.NONE);
+    private ObjectProperty<CharacterMode> mode = new SimpleObjectProperty<>(CharacterMode.CREATION);
     private StringProperty supernalAbility = new SimpleStringProperty("");
 
     private ObservableMap<String, IntegerProperty> attributes = FXCollections.observableHashMap();
@@ -67,54 +61,37 @@ public class CharacterData {
     private final IntegerProperty totalSoak = new SimpleIntegerProperty(0);
     private final IntegerProperty totalHardness = new SimpleIntegerProperty(0);
 
+    private final IntegerProperty casteAbilityCount = new SimpleIntegerProperty(0);
+    private final IntegerProperty favoredAbilityCount = new SimpleIntegerProperty(0);
+    private final BooleanProperty overBonusPointLimit = new SimpleBooleanProperty(false);
+    
+    private final BooleanProperty terrestrialSorceryAvailable = new SimpleBooleanProperty(false);
+    private final BooleanProperty celestialSorceryAvailable = new SimpleBooleanProperty(false);
+    private final BooleanProperty solarSorceryAvailable = new SimpleBooleanProperty(false);
 
     private BooleanProperty dirty = new SimpleBooleanProperty(false);
     private boolean isImporting = false;
 
-    public static final List<String> PHYSICAL_ATTRIBUTES = Arrays.asList("Strength", "Dexterity", "Stamina");
-    public static final List<String> SOCIAL_ATTRIBUTES = Arrays.asList("Charisma", "Manipulation", "Appearance");
-    public static final List<String> MENTAL_ATTRIBUTES = Arrays.asList("Perception", "Intelligence", "Wits");
-
-    public static final List<String> ATTRIBUTES = Arrays.asList(
-        "Strength", "Dexterity", "Stamina",
-        "Charisma", "Manipulation", "Appearance",
-        "Perception", "Intelligence", "Wits"
-    );
-
-    public static final List<String> ABILITIES = Arrays.asList(
-        "Archery", "Athletics", "Awareness", "Brawl", "Bureaucracy",
-        "Craft", "Dodge", "Integrity", "Investigation", "Larceny",
-        "Linguistics", "Lore", "Martial Arts", "Medicine", "Melee",
-        "Occult", "Performance", "Presence", "Resistance", "Ride",
-        "Sail", "Socialize", "Stealth", "Survival", "Thrown", "War"
-    );
-    
-    public static final String TERRESTRIAL_CIRCLE_SORCERY = "Terrestrial Circle Sorcery";
-    public static final String CELESTIAL_CIRCLE_SORCERY = "Celestial Circle Sorcery";
-    public static final String SOLAR_CIRCLE_SORCERY = "Solar Circle Sorcery";
-
-    public static final Map<Caste, List<String>> CASTE_OPTIONS = new HashMap<>();
-    static {
-        CASTE_OPTIONS.put(Caste.DAWN, Arrays.asList("Archery", "Awareness", "Brawl", "Dodge", "Melee", "Resistance", "Thrown", "War"));
-        CASTE_OPTIONS.put(Caste.ZENITH, Arrays.asList("Athletics", "Integrity", "Performance", "Lore", "Presence", "Resistance", "Survival", "War"));
-        CASTE_OPTIONS.put(Caste.TWILIGHT, Arrays.asList("Bureaucracy", "Craft", "Integrity", "Investigation", "Linguistics", "Lore", "Medicine", "Occult"));
-        CASTE_OPTIONS.put(Caste.NIGHT, Arrays.asList("Athletics", "Awareness", "Dodge", "Investigation", "Larceny", "Ride", "Stealth", "Socialize"));
-        CASTE_OPTIONS.put(Caste.ECLIPSE, Arrays.asList("Bureaucracy", "Larceny", "Linguistics", "Occult", "Presence", "Ride", "Sail", "Socialize"));
-        CASTE_OPTIONS.put(Caste.NONE, new ArrayList<>());
-    }
+    // Handled by SystemData now.
 
     public CharacterData() {
-        for (String attr : ATTRIBUTES) {
+        for (String attr : SystemData.ATTRIBUTES) {
             attributes.put(attr, new SimpleIntegerProperty(1));
             attributes.get(attr).addListener((obs, oldV, newV) -> markDirty());
         }
-        for (String ability : ABILITIES) {
+        for (String ability : SystemData.ABILITIES) {
             abilities.put(ability, new SimpleIntegerProperty(0));
             abilities.get(ability).addListener((obs, oldV, newV) -> markDirty());
             casteAbilities.put(ability, new SimpleBooleanProperty(false));
-            casteAbilities.get(ability).addListener((obs, oldV, newV) -> markDirty());
+            casteAbilities.get(ability).addListener((obs, oldV, newV) -> {
+                updateCasteFavoredCounts();
+                markDirty();
+            });
             favoredAbilities.put(ability, new SimpleBooleanProperty(false));
-            favoredAbilities.get(ability).addListener((obs, oldV, newV) -> markDirty());
+            favoredAbilities.get(ability).addListener((obs, oldV, newV) -> {
+                updateCasteFavoredCounts();
+                markDirty();
+            });
         }
 
         armors.addListener((javafx.collections.ListChangeListener.Change<? extends Armor> c) -> {
@@ -226,10 +203,35 @@ public class CharacterData {
             }
         });
         
+        unlockedCharms.addListener((javafx.collections.ListChangeListener<? super PurchasedCharm>) c -> {
+            updateSorceryAvailability();
+            markDirty();
+        });
+        
         merits.add(new Merit("", 1));
         specialties.add(new Specialty("", ""));
         updateCombatStats();
+        updateSorceryAvailability();
+        updateCasteFavoredCounts();
         dirty.set(false);
+    }
+
+    private void updateCasteFavoredCounts() {
+        int c = 0;
+        int f = 0;
+        for (String abil : SystemData.ABILITIES) {
+            if ("Martial Arts".equals(abil)) continue;
+            if (casteAbilities.get(abil).get()) c++;
+            if (favoredAbilities.get(abil).get()) f++;
+        }
+        casteAbilityCount.set(c);
+        favoredAbilityCount.set(f);
+    }
+
+    private void updateSorceryAvailability() {
+        terrestrialSorceryAvailable.set(hasCharmByName(SystemData.TERRESTRIAL_CIRCLE_SORCERY));
+        celestialSorceryAvailable.set(hasCharmByName(SystemData.CELESTIAL_CIRCLE_SORCERY));
+        solarSorceryAvailable.set(hasCharmByName(SystemData.SOLAR_CIRCLE_SORCERY));
     }
 
     private void markDirty() {
@@ -243,11 +245,21 @@ public class CharacterData {
 
     public StringProperty nameProperty() { return name; }
     public ObjectProperty<Caste> casteProperty() { return caste; }
+    public ObjectProperty<CharacterMode> modeProperty() { return mode; }
+    public CharacterMode getMode() { return mode.get(); }
+    public void setMode(CharacterMode mode) { this.mode.set(mode); }
     public StringProperty supernalAbilityProperty() { return supernalAbility; }
     public IntegerProperty getAttribute(String name) { return attributes.get(name); }
     public IntegerProperty getAbility(String name) { return abilities.get(name); }
     public BooleanProperty getCasteAbility(String name) { return casteAbilities.get(name); }
     public BooleanProperty getFavoredAbility(String name) { return favoredAbilities.get(name); }
+
+    public IntegerProperty casteAbilityCountProperty() { return casteAbilityCount; }
+    public IntegerProperty favoredAbilityCountProperty() { return favoredAbilityCount; }
+    public BooleanProperty overBonusPointLimitProperty() { return overBonusPointLimit; }
+    public BooleanProperty terrestrialSorceryAvailableProperty() { return terrestrialSorceryAvailable; }
+    public BooleanProperty celestialSorceryAvailableProperty() { return celestialSorceryAvailable; }
+    public BooleanProperty solarSorceryAvailableProperty() { return solarSorceryAvailable; }
     
     public IntegerProperty essenceProperty() { return essence; }
     public IntegerProperty willpowerProperty() { return willpower; }
@@ -391,6 +403,8 @@ public class CharacterData {
         return unlockedCharms.stream().anyMatch(c -> c.ability() != null && c.ability().equals(ability));
     }
     
+    // Moved to Rules Engine
+/*
     public int getPersonalMotes() { return (essence.get() * 3) + 10; }
     public int getPeripheralMotes() { return (essence.get() * 7) + 26; }
     
@@ -419,111 +433,18 @@ public class CharacterData {
     }
     
     public int getBonusPointsSpent() {
-        int bp = 0;
-        int phys = getAttributeTotal(PHYSICAL_ATTRIBUTES);
-        int soc = getAttributeTotal(SOCIAL_ATTRIBUTES);
-        int ment = getAttributeTotal(MENTAL_ATTRIBUTES);
-        int minAttrBP = Integer.MAX_VALUE;
-        int[][] permutations = {{8, 6, 4}, {8, 4, 6}, {6, 8, 4}, {6, 4, 8}, {4, 8, 6}, {4, 6, 8}};
-        for (int[] p : permutations) {
-            int cost = 0;
-            cost += Math.max(0, phys - p[0]) * (p[0] == 4 ? 3 : 4);
-            cost += Math.max(0, soc - p[1]) * (p[1] == 4 ? 3 : 4);
-            cost += Math.max(0, ment - p[2]) * (p[2] == 4 ? 3 : 4);
-            if (cost < minAttrBP) minAttrBP = cost;
-        }
-        bp += minAttrBP;
-        
-        int mustBp = 0;
-        List<Integer> poolDots = new ArrayList<>();
-        for (String abil : ABILITIES) {
-            if ("Craft".equals(abil) || "Martial Arts".equals(abil)) continue;
-            int dots = abilities.get(abil).get();
-            boolean isFavored = casteAbilities.get(abil).get() || favoredAbilities.get(abil).get();
-            int costPerDot = isFavored ? 1 : 2;
-            for (int i = 1; i <= dots; i++) {
-                if (i > 3) mustBp += costPerDot;
-                else poolDots.add(costPerDot);
-            }
-        }
-        for (CraftAbility ca : crafts) {
-            int dots = ca.getRating();
-            int costPerDot = (ca.isCaste() || ca.isFavored()) ? 1 : 2;
-            for (int i = 1; i <= dots; i++) {
-                if (i > 3) mustBp += costPerDot;
-                else poolDots.add(costPerDot);
-            }
-        }
-        for (MartialArtsStyle mas : martialArtsStyles) {
-            int dots = mas.getRating();
-            int costPerDot = (mas.isCaste() || mas.isFavored()) ? 1 : 2;
-            for (int i = 1; i <= dots; i++) {
-                if (i > 3) mustBp += costPerDot;
-                else poolDots.add(costPerDot);
-            }
-        }
-        Collections.sort(poolDots, Collections.reverseOrder());
-        int freeLeft = 28;
-        int optPoolBp = 0;
-        for (int cost : poolDots) {
-            if (freeLeft > 0) freeLeft--;
-            else optPoolBp += cost;
-        }
-        bp += mustBp + optPoolBp;
-        if (willpower.get() > 5) bp += (willpower.get() - 5) * 2;
-        
-        List<Integer> charmCosts = new ArrayList<>();
-        for (PurchasedCharm pc : unlockedCharms) {
-            String ability = pc.ability();
-            boolean isFavored = false;
-            if (casteAbilities.containsKey(ability)) {
-                isFavored = casteAbilities.get(ability).get() || favoredAbilities.get(ability).get();
-            }
-            charmCosts.add(isFavored ? 4 : 5);
-        }
-        
-        // Spells after the first one count as charms (or BP if 15 pool exceeded)
-        // Terrestrial Circle Sorcery grants 1 free spell (not counted towards slots/BP)
-        boolean hasTCS = hasCharmByName(TERRESTRIAL_CIRCLE_SORCERY);
-        int billableSpells = Math.max(0, spells.size() - (hasTCS ? 1 : 0));
-        if (billableSpells > 0) {
-            boolean isOccultFavored = casteAbilities.get("Occult").get() || favoredAbilities.get("Occult").get();
-            int spellCost = isOccultFavored ? 4 : 5;
-            for (int i = 0; i < billableSpells; i++) {
-                charmCosts.add(spellCost);
-            }
-        }
-        
-        Collections.sort(charmCosts, Collections.reverseOrder());
-        int freeCharmsLeft = 15;
-        for (int cost : charmCosts) {
-            if (freeCharmsLeft > 0) freeCharmsLeft--;
-            else bp += cost;
-        }
-        bp += Math.max(0, getMeritTotal() - 10);
-        bp += Math.max(0, specialties.size() - 4);
-        return bp;
+        ...
     }
 
     public List<String> getHealthLevels() {
-        List<String> levels = new ArrayList<>(Arrays.asList("-0", "-1", "-1", "-2", "-2", "-4", "Incap"));
-        int stamina = getAttribute("Stamina").get();
-        // Use ID for Ox-Body lookup
-        String oxBodyId = java.util.UUID.nameUUIDFromBytes(("Ox-Body Technique" + "|" + "Resistance").getBytes()).toString();
-        int oxBodyCount = getCharmCount(oxBodyId);
-        
-        for (int i = 0; i < oxBodyCount; i++) {
-            if (stamina >= 5) { levels.add("-0"); levels.add("-1"); levels.add("-2"); }
-            else if (stamina >= 3) { levels.add("-1"); levels.add("-2"); levels.add("-2"); }
-            else { levels.add("-1"); levels.add("-2"); }
-        }
-        Collections.sort(levels);
-        return levels;
+        ...
     }
+*/
     
     public CharacterSaveState exportState() {
         CharacterSaveState state = new CharacterSaveState();
         state.name = this.name.get();
+        state.mode = this.mode.get() != null ? this.mode.get().name() : CharacterMode.CREATION.name();
         state.caste = caste.get() != null ? caste.get().name() : Caste.NONE.name();
         state.supernalAbility = supernalAbility.get();
         state.essence = essence.get();
@@ -531,13 +452,13 @@ public class CharacterData {
         state.limitTrigger = limitTrigger.get();
         state.limit = limit.get();
         state.attributes = new HashMap<>();
-        for (String attr : ATTRIBUTES) state.attributes.put(attr, attributes.get(attr).get());
+        for (String attr : SystemData.ATTRIBUTES) state.attributes.put(attr, attributes.get(attr).get());
         state.abilities = new HashMap<>();
-        for (String abil : ABILITIES) state.abilities.put(abil, abilities.get(abil).get());
+        for (String abil : SystemData.ABILITIES) state.abilities.put(abil, abilities.get(abil).get());
         state.casteAbilities = new ArrayList<>();
-        for (String abil : ABILITIES) if (casteAbilities.get(abil).get()) state.casteAbilities.add(abil);
+        for (String abil : SystemData.ABILITIES) if (casteAbilities.get(abil).get()) state.casteAbilities.add(abil);
         state.favoredAbilities = new ArrayList<>();
-        for (String abil : ABILITIES) if (favoredAbilities.get(abil).get()) state.favoredAbilities.add(abil);
+        for (String abil : SystemData.ABILITIES) if (favoredAbilities.get(abil).get()) state.favoredAbilities.add(abil);
         state.unlockedCharms = new ArrayList<>(unlockedCharms);
         state.merits = new HashMap<>();
         for (Merit m : merits) state.merits.put(m.getName(), m.getRating());
@@ -634,6 +555,13 @@ public class CharacterData {
         isImporting = true;
         try {
             this.name.set(state.name != null ? state.name : "");
+            if (state.mode != null) {
+                try {
+                    mode.set(CharacterMode.valueOf(state.mode.trim().toUpperCase()));
+                } catch (Exception e) {
+                    mode.set(CharacterMode.CREATION);
+                }
+            }
             if (state.caste != null) {
                 try {
                     caste.set(Caste.valueOf(state.caste.trim().toUpperCase()));
@@ -649,12 +577,12 @@ public class CharacterData {
             limitTrigger.set(state.limitTrigger != null ? state.limitTrigger : "");
             limit.set(state.limit);
             if (state.attributes != null) {
-                for (String attr : ATTRIBUTES) if (state.attributes.containsKey(attr)) attributes.get(attr).set(state.attributes.get(attr));
+                for (String attr : SystemData.ATTRIBUTES) if (state.attributes.containsKey(attr)) attributes.get(attr).set(state.attributes.get(attr));
             }
             if (state.abilities != null) {
-                for (String abil : ABILITIES) if (state.abilities.containsKey(abil)) abilities.get(abil).set(state.abilities.get(abil));
+                for (String abil : SystemData.ABILITIES) if (state.abilities.containsKey(abil)) abilities.get(abil).set(state.abilities.get(abil));
             }
-            for (String abil : ABILITIES) {
+            for (String abil : SystemData.ABILITIES) {
                 casteAbilities.get(abil).set(state.casteAbilities != null && state.casteAbilities.contains(abil));
                 favoredAbilities.get(abil).set(state.favoredAbilities != null && state.favoredAbilities.contains(abil));
             }

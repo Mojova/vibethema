@@ -8,6 +8,7 @@ import java.util.Map;
 public class CharacterSaveState {
     public String name;
     public String caste;
+    public String mode;
     public String supernalAbility;
     public int essence, willpower;
     public String limitTrigger;

@@ -1,11 +1,13 @@
 package com.vibethema.ui.sorcery;
 
+import com.vibethema.model.SystemData;
 import com.vibethema.model.CharacterData;
 import com.vibethema.model.ShapingRitual;
 import com.vibethema.model.Spell;
 import com.vibethema.model.PurchasedCharm;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.ui.util.UIUtils;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -46,7 +48,7 @@ public class SorceryTab extends ScrollPane {
 
         setContent(createContent());
         setupListeners();
-        refreshSorceryEligibility();
+        // Bindings set up in createSorceryContent or similar
     }
 
     private VBox createContent() {
@@ -111,22 +113,12 @@ public class SorceryTab extends ScrollPane {
                 if (c.wasAdded() || c.wasRemoved() || c.wasPermutated()) structuralChange = true;
             }
             if (structuralChange) refreshSpellsList();
-            refreshSorceryEligibility();
             if (updateFooter != null) updateFooter.run();
         });
 
-        data.getUnlockedCharms().addListener((ListChangeListener<? super PurchasedCharm>) c -> {
-            refreshSorceryEligibility();
-        });
     }
 
-    private void refreshSorceryEligibility() {
-        if (sorceryWarningLabel == null || sorceryMainContent == null) return;
-        boolean hasTerrestrial = data.hasCharmByName(CharacterData.TERRESTRIAL_CIRCLE_SORCERY);
-        sorceryWarningLabel.setVisible(!hasTerrestrial);
-        sorceryWarningLabel.setManaged(!hasTerrestrial);
-        sorceryMainContent.setDisable(!hasTerrestrial);
-    }
+    // Removed manual refreshSorceryEligibility logic, now handled by bindings
 
     private void refreshShapingRituals() {
         if (shapingRitualsListContainer == null) return;
@@ -264,8 +256,8 @@ public class SorceryTab extends ScrollPane {
             tab.setClosable(false);
             
             boolean eligible = true;
-            if (circle.equals("CELESTIAL") && !data.hasCharmByName(CharacterData.CELESTIAL_CIRCLE_SORCERY)) eligible = false;
-            if (circle.equals("SOLAR") && !data.hasCharmByName(CharacterData.SOLAR_CIRCLE_SORCERY)) eligible = false;
+            if (circle.equals("CELESTIAL") && !data.hasCharmByName(SystemData.CELESTIAL_CIRCLE_SORCERY)) eligible = false;
+            if (circle.equals("SOLAR") && !data.hasCharmByName(SystemData.SOLAR_CIRCLE_SORCERY)) eligible = false;
             
             if (!eligible) {
                 tab.setDisable(true);

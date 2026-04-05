@@ -1,18 +1,10 @@
 package com.vibethema.ui;
 
+import com.vibethema.model.*;
+import com.vibethema.model.logic.CreationRuleEngine;
+import com.vibethema.model.logic.CreationRuleEngine.CreationStatus;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
-import com.vibethema.model.CharacterData;
-import com.vibethema.model.Charm;
-import com.vibethema.model.SolarCharm;
-import com.vibethema.model.Evocation;
-import com.vibethema.model.Intimacy;
-import com.vibethema.model.MartialArtsStyle;
-import com.vibethema.model.PurchasedCharm;
-import com.vibethema.model.Specialty;
-import com.vibethema.model.Weapon;
-import com.vibethema.model.ShapingRitual;
-import com.vibethema.model.Spell;
 import com.vibethema.ui.charms.CharmTreeComponent;
 import com.vibethema.ui.equipment.EquipmentTab;
 import com.vibethema.ui.sorcery.SorceryTab;
@@ -68,6 +60,9 @@ public class BuilderUI extends BorderPane {
     private Label meritsLabel = new Label();
     private Label specialtiesLabel = new Label();
     private Label bpLabel = new Label();
+    private Label personalMotesLabel = new Label();
+    private Label peripheralMotesLabel = new Label();
+    private HBox healthBox = new HBox(5);
 
     private Map<String, String> keywordDefs = new HashMap<>();
     private CharmDataService dataService;
@@ -419,8 +414,8 @@ public class BuilderUI extends BorderPane {
         nameField.setPromptText("Character Name");
         nameField.textProperty().bindBidirectional(data.nameProperty());
 
-        ComboBox<CharacterData.Caste> casteBox = new ComboBox<>();
-        casteBox.getItems().addAll(CharacterData.Caste.values());
+        ComboBox<Caste> casteBox = new ComboBox<>();
+        casteBox.getItems().addAll(Caste.values());
         casteBox.setValue(data.casteProperty().get());
         data.casteProperty().bindBidirectional(casteBox.valueProperty());
 
@@ -431,7 +426,7 @@ public class BuilderUI extends BorderPane {
             String current = data.supernalAbilityProperty().get();
             List<String> options = new ArrayList<>();
             options.add(""); // None
-            for (String abil : CharacterData.ABILITIES) {
+            for (String abil : SystemData.ABILITIES) {
                 if (data.getCasteAbility(abil).get()) {
                     options.add(abil);
                 }
@@ -463,7 +458,7 @@ public class BuilderUI extends BorderPane {
             }
         });
 
-        for (String abil : CharacterData.ABILITIES) {
+        for (String abil : SystemData.ABILITIES) {
             data.getCasteAbility(abil).addListener((obs, oldV, newV) -> updateSupernalDropdown.run());
         }
         updateSupernalDropdown.run();
@@ -476,41 +471,31 @@ public class BuilderUI extends BorderPane {
     }
 
     private VBox createFooter() {
-        VBox footer = new VBox(10);
+        VBox footer = new VBox(5);
         footer.getStyleClass().add("footer");
+        footer.setPadding(new Insets(10));
 
         HBox row1 = new HBox(20);
+        row1.setAlignment(Pos.CENTER_LEFT);
+        row1.getChildren().addAll(casteLabel, favoredLabel, bpLabel);
+
         HBox row2 = new HBox(20);
+        row2.setAlignment(Pos.CENTER_LEFT);
+        row2.getChildren().addAll(personalMotesLabel, peripheralMotesLabel);
 
-        bpLabel.getStyleClass().add("bp-label");
+        HBox row3 = new HBox(10);
+        row3.setAlignment(Pos.CENTER_LEFT);
+        row3.getChildren().addAll(new Label("Health:"), healthBox);
 
-        row1.getChildren().addAll(
-                new Label("Attributes (8/6/4):"), physicalLabel, socialLabel, mentalLabel,
-                new Region() {
-                    {
-                        HBox.setHgrow(this, Priority.ALWAYS);
-                    }
-                },
-                casteLabel, favoredLabel);
-
-        row2.getChildren().addAll(
-                new Label("Pools:"), abilitiesLabel, charmsLabel, meritsLabel, specialtiesLabel,
-                new Region() {
-                    {
-                        HBox.setHgrow(this, Priority.ALWAYS);
-                    }
-                },
-                bpLabel);
-
-        footer.getChildren().addAll(row1, row2);
+        footer.getChildren().addAll(row1, row2, row3);
         return footer;
     }
 
     private void setupListeners() {
-        for (String attr : CharacterData.ATTRIBUTES) {
+        for (String attr : SystemData.ATTRIBUTES) {
             data.getAttribute(attr).addListener((obs, oldV, newV) -> updateFooter());
         }
-        for (String abil : CharacterData.ABILITIES) {
+        for (String abil : SystemData.ABILITIES) {
             data.getAbility(abil).addListener((obs, oldV, newV) -> updateFooter());
             data.getCasteAbility(abil).addListener((obs, oldV, newV) -> updateFooter());
             data.getFavoredAbility(abil).addListener((obs, oldV, newV) -> updateFooter());
@@ -518,7 +503,7 @@ public class BuilderUI extends BorderPane {
         data.willpowerProperty().addListener((obs, oldV, newV) -> updateFooter());
         data.casteProperty().addListener((obs, oldV, newV) -> {
             if (oldV != newV && !data.isImporting()) {
-                for (String abil : CharacterData.ABILITIES) {
+                for (String abil : SystemData.ABILITIES) {
                     data.getCasteAbility(abil).set(false);
                 }
                 data.supernalAbilityProperty().set("");
@@ -618,35 +603,24 @@ public class BuilderUI extends BorderPane {
     }
 
     private void updateFooter() {
-        int phys = data.getAttributeTotal(CharacterData.PHYSICAL_ATTRIBUTES);
-        int soc = data.getAttributeTotal(CharacterData.SOCIAL_ATTRIBUTES);
-        int ment = data.getAttributeTotal(CharacterData.MENTAL_ATTRIBUTES);
-        int abils = data.getAbilityTotal();
-        int bp = data.getBonusPointsSpent();
+        CreationStatus status = CreationRuleEngine.calculateStatus(data);
+        
+        bpLabel.setText("BP Spent: " + status.bonusPointsSpent + "/15");
+        bpLabel.setStyle(status.overBonusPoints ? "-fx-text-fill: red; -fx-font-weight: bold;" : "-fx-text-fill: white;");
 
-        long casteCount = CharacterData.ABILITIES.stream()
-                .filter(a -> !"Martial Arts".equals(a) && data.getCasteAbility(a).get()).count();
-        long favoredCount = CharacterData.ABILITIES.stream()
-                .filter(a -> !"Martial Arts".equals(a) && data.getFavoredAbility(a).get()).count();
-        int charmsCount = data.getTotalCharmPoolUsage();
-
-        physicalLabel.setText("Phys: " + phys);
-        socialLabel.setText("Soc: " + soc);
-        mentalLabel.setText("Ment: " + ment);
-
-        abilitiesLabel.setText("Abils: " + Math.min(28, abils) + "/28");
-        charmsLabel.setText("Charms: " + charmsCount + "/15");
-        meritsLabel.setText("Merits: " + data.getMeritTotal() + "/10");
-        specialtiesLabel.setText("Specialties: " + data.getSpecialties().size() + "/4");
-        casteLabel.setText("Caste: " + casteCount + "/5");
-        favoredLabel.setText("Favored: " + favoredCount + "/5");
-        bpLabel.setText("Bonus Points: " + bp + "/15");
-        if (bp > 15) {
-            bpLabel.setStyle("-fx-text-fill: #ff4d4d; -fx-font-weight: bold;");
-        } else {
-            bpLabel.setStyle("");
+        casteLabel.setText("Caste: " + data.casteAbilityCountProperty().get() + "/5");
+        favoredLabel.setText("Favored: " + data.favoredAbilityCountProperty().get() + "/5");
+        
+        personalMotesLabel.setText("Personal: " + status.personalMotes);
+        peripheralMotesLabel.setText("Peripheral: " + status.peripheralMotes);
+        
+        healthBox.getChildren().clear();
+        for (String lv : status.healthLevels) {
+            Label l = new Label(lv);
+            l.setStyle("-fx-text-fill: white; -fx-padding: 2; -fx-border-color: #34495e; -fx-background-color: #2c3e50;");
+            healthBox.getChildren().add(l);
         }
-
+        
         updateAllWebNodeStyles();
     }
 
@@ -675,9 +649,9 @@ public class BuilderUI extends BorderPane {
 
         HBox attrColumns = new HBox(30);
         attrColumns.getChildren().addAll(
-                createAttributeColumn("Physical", CharacterData.PHYSICAL_ATTRIBUTES),
-                createAttributeColumn("Social", CharacterData.SOCIAL_ATTRIBUTES),
-                createAttributeColumn("Mental", CharacterData.MENTAL_ATTRIBUTES));
+                createAttributeColumn("Physical", SystemData.PHYSICAL_ATTRIBUTES),
+                createAttributeColumn("Social", SystemData.SOCIAL_ATTRIBUTES),
+                createAttributeColumn("Mental", SystemData.MENTAL_ATTRIBUTES));
         attributesSection.getChildren().addAll(attrTitle, attrColumns);
 
         VBox abilitiesSection = new VBox(10);
@@ -688,31 +662,11 @@ public class BuilderUI extends BorderPane {
         abilGrid.setHgap(20);
         abilGrid.setVgap(10);
 
-        javafx.beans.property.IntegerProperty casteCount = new javafx.beans.property.SimpleIntegerProperty(0);
-        javafx.beans.property.IntegerProperty favoredCount = new javafx.beans.property.SimpleIntegerProperty(0);
-
-        Runnable updateCounts = () -> {
-            int c = 0;
-            int f = 0;
-            for (String abil : CharacterData.ABILITIES) {
-                if ("Martial Arts".equals(abil)) continue;
-                if (data.getCasteAbility(abil).get())
-                    c++;
-                if (data.getFavoredAbility(abil).get())
-                    f++;
-            }
-            casteCount.set(c);
-            favoredCount.set(f);
-        };
-        for (String abil : CharacterData.ABILITIES) {
-            data.getCasteAbility(abil).addListener((obs, old, nv) -> updateCounts.run());
-            data.getFavoredAbility(abil).addListener((obs, old, nv) -> updateCounts.run());
-        }
-        updateCounts.run();
+        // Counters now managed in CharacterData
 
         int rowCount = 0;
         int colCount = 0;
-        for (String ability : CharacterData.ABILITIES) {
+        for (String ability : SystemData.ABILITIES) {
             if ("Craft".equals(ability) || "Martial Arts".equals(ability))
                 continue;
             HBox rowBox = new HBox(6);
@@ -724,12 +678,12 @@ public class BuilderUI extends BorderPane {
             casteBox.disableProperty().bind(Bindings.createBooleanBinding(() -> {
                 if ("Martial Arts".equals(ability))
                     return true; // Synced with Brawl
-                CharacterData.Caste c = data.casteProperty().get();
-                boolean notInCasteList = c == null || c == CharacterData.Caste.NONE
-                        || !CharacterData.CASTE_OPTIONS.get(c).contains(ability);
-                boolean atLimit = casteCount.get() >= 5 && !data.getCasteAbility(ability).get();
+                Caste c = data.casteProperty().get();
+                boolean notInCasteList = c == null || c == Caste.NONE
+                        || !SystemData.CASTE_OPTIONS.get(c).contains(ability);
+                boolean atLimit = data.casteAbilityCountProperty().get() >= 5 && !data.getCasteAbility(ability).get();
                 return (notInCasteList || atLimit) && !data.getCasteAbility(ability).get();
-            }, data.casteProperty(), casteCount, data.getCasteAbility(ability)));
+            }, data.casteProperty(), data.casteAbilityCountProperty(), data.getCasteAbility(ability)));
 
             CheckBox favoredBox = new CheckBox("F");
             favoredBox.getStyleClass().add("favored-checkbox");
@@ -738,9 +692,9 @@ public class BuilderUI extends BorderPane {
                 if ("Martial Arts".equals(ability))
                     return true; // Synced with Brawl
                 boolean isCaste = data.getCasteAbility(ability).get();
-                boolean atLimit = favoredCount.get() >= 5 && !data.getFavoredAbility(ability).get();
+                boolean atLimit = data.favoredAbilityCountProperty().get() >= 5 && !data.getFavoredAbility(ability).get();
                 return (isCaste || atLimit) && !data.getFavoredAbility(ability).get();
-            }, data.getCasteAbility(ability), favoredCount, data.getFavoredAbility(ability)));
+            }, data.getCasteAbility(ability), data.favoredAbilityCountProperty(), data.getFavoredAbility(ability)));
 
             data.getCasteAbility(ability).addListener((obs, oldV, newV) -> {
                 if (newV) {
@@ -780,8 +734,8 @@ public class BuilderUI extends BorderPane {
             }
 
             data.casteProperty().addListener((obs, oldV, newV) -> {
-                boolean isOption = newV != null && newV != CharacterData.Caste.NONE
-                        && CharacterData.CASTE_OPTIONS.get(newV).contains(ability);
+                boolean isOption = newV != null && newV != Caste.NONE
+                        && SystemData.CASTE_OPTIONS.get(newV).contains(ability);
                 if (isOption) {
                     if (!abLabel.getStyleClass().contains("caste-option")) {
                         abLabel.getStyleClass().add("caste-option");
@@ -855,7 +809,7 @@ public class BuilderUI extends BorderPane {
         }
         abilitiesSection.getChildren().addAll(abilTitle, abilGrid);
 
-        VBox craftsSection = createCraftsSection(casteCount, favoredCount);
+        VBox craftsSection = createCraftsSection();
         VBox specialtiesSection = createSpecialtiesSection();
 
         VBox sideStuff = new VBox(20);
@@ -1134,8 +1088,7 @@ public class BuilderUI extends BorderPane {
         return new SorceryTab(data, dataService, this::updateFooter);
     }
 
-    private VBox createCraftsSection(javafx.beans.property.IntegerProperty casteCount,
-            javafx.beans.property.IntegerProperty favoredCount) {
+    private VBox createCraftsSection() {
         VBox section = new VBox(10);
 
         HBox titleRow = new HBox(15);
@@ -1151,21 +1104,21 @@ public class BuilderUI extends BorderPane {
         casteBox.getStyleClass().add("caste-checkbox");
         casteBox.selectedProperty().bindBidirectional(data.getCasteAbility("Craft"));
         casteBox.disableProperty().bind(Bindings.createBooleanBinding(() -> {
-            CharacterData.Caste c = data.casteProperty().get();
-            boolean notInCasteList = c == null || c == CharacterData.Caste.NONE
-                    || !CharacterData.CASTE_OPTIONS.get(c).contains("Craft");
-            boolean atLimit = casteCount.get() >= 5 && !data.getCasteAbility("Craft").get();
+            Caste c = data.casteProperty().get();
+            boolean notInCasteList = c == null || c == Caste.NONE
+                    || !SystemData.CASTE_OPTIONS.get(c).contains("Craft");
+            boolean atLimit = data.casteAbilityCountProperty().get() >= 5 && !data.getCasteAbility("Craft").get();
             return (notInCasteList || atLimit) && !data.getCasteAbility("Craft").get();
-        }, data.casteProperty(), casteCount, data.getCasteAbility("Craft")));
+        }, data.casteProperty(), data.casteAbilityCountProperty(), data.getCasteAbility("Craft")));
 
         CheckBox favoredBox = new CheckBox("F");
         favoredBox.getStyleClass().add("favored-checkbox");
         favoredBox.selectedProperty().bindBidirectional(data.getFavoredAbility("Craft"));
         favoredBox.disableProperty().bind(Bindings.createBooleanBinding(() -> {
             boolean isCaste = data.getCasteAbility("Craft").get();
-            boolean atLimit = favoredCount.get() >= 5 && !data.getFavoredAbility("Craft").get();
+            boolean atLimit = data.favoredAbilityCountProperty().get() >= 5 && !data.getFavoredAbility("Craft").get();
             return (isCaste || atLimit) && !data.getFavoredAbility("Craft").get();
-        }, data.getCasteAbility("Craft"), favoredCount, data.getFavoredAbility("Craft")));
+        }, data.getCasteAbility("Craft"), data.favoredAbilityCountProperty(), data.getFavoredAbility("Craft")));
 
         data.getCasteAbility("Craft").addListener((obs, oldV, newV) -> {
             if (newV)
@@ -1266,7 +1219,7 @@ public class BuilderUI extends BorderPane {
                 nameField.setPrefWidth(200);
 
                 ComboBox<String> abilPicker = new ComboBox<>();
-                abilPicker.getItems().addAll(CharacterData.ABILITIES);
+                abilPicker.getItems().addAll(SystemData.ABILITIES);
                 abilPicker.valueProperty().bindBidirectional(s.abilityProperty());
                 abilPicker.setPromptText("Select Ability");
 
@@ -1331,8 +1284,9 @@ public class BuilderUI extends BorderPane {
         peripheralLabel.getStyleClass().add("label");
 
         Runnable updateMotes = () -> {
-            personalLabel.setText("Personal: " + data.getPersonalMotes());
-            peripheralLabel.setText("Peripheral: " + data.getPeripheralMotes());
+            CreationStatus status = CreationRuleEngine.calculateStatus(data);
+            personalLabel.setText("Personal: " + status.personalMotes);
+            peripheralLabel.setText("Peripheral: " + status.peripheralMotes);
             updateFooter();
         };
         data.essenceProperty().addListener((obs, oldV, newV) -> updateMotes.run());
@@ -1355,7 +1309,8 @@ public class BuilderUI extends BorderPane {
 
         Runnable updateHealth = () -> {
             trackBoxes.getChildren().clear();
-            List<String> levels = data.getHealthLevels();
+            CreationStatus status = CreationRuleEngine.calculateStatus(data);
+            List<String> levels = status.healthLevels;
             Map<String, Integer> counts = new java.util.LinkedHashMap<>();
             // Ensure order -0, -1, -2, -4, Incap
             for (String lv : new String[] { "-0", "-1", "-2", "-4", "Incap" })
@@ -1810,7 +1765,7 @@ public class BuilderUI extends BorderPane {
     private javafx.scene.Node createCharmsContent() {
         charmsAbilityCombo = new ComboBox<>();
         charmsAbilityCombo.getItems().addAll(
-            CharacterData.ABILITIES.stream()
+            SystemData.ABILITIES.stream()
                 .filter(a -> !a.equals("Martial Arts"))
                 .collect(Collectors.toList())
         );
@@ -2047,7 +2002,7 @@ public class BuilderUI extends BorderPane {
             abCombo.getItems().add(contextName);
             abCombo.setDisable(true);
         } else {
-            abCombo.getItems().addAll(CharacterData.ABILITIES);
+            abCombo.getItems().addAll(SystemData.ABILITIES);
         }
         abCombo.setValue(contextName != null ? contextName : "Archery");
 
@@ -2221,7 +2176,7 @@ public class BuilderUI extends BorderPane {
 
         TextField nameField = new TextField(charm.getName());
         ComboBox<String> abCombo = new ComboBox<>();
-        abCombo.getItems().addAll(CharacterData.ABILITIES);
+        abCombo.getItems().addAll(SystemData.ABILITIES);
         abCombo.getItems().addAll(dataService.getAvailableMartialArtsStyles());
         abCombo.setValue(charm.getAbility());
         
