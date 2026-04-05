@@ -5,16 +5,18 @@ import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ListChangeListener;
-import java.util.function.Consumer;
+import com.vibethema.viewmodel.util.Messenger;
+import de.saxsys.mvvmfx.ViewModel;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.collections.ListChangeListener;
 
 public class StatsViewModel implements ViewModel {
     private final CharacterData data;
     private final IntegerProperty maTotalDots = new SimpleIntegerProperty(0);
-    private final Consumer<String> jumpAction;
 
-    public StatsViewModel(CharacterData data, Consumer<String> jumpAction) {
+    public StatsViewModel(CharacterData data) {
         this.data = data;
-        this.jumpAction = jumpAction;
         
         // MA total dots for Brawl min-dot logic
         updateMaTotal();
@@ -47,9 +49,7 @@ public class StatsViewModel implements ViewModel {
     }
 
     public void jumpToCharms(String abilityName) {
-        if (jumpAction != null) {
-            jumpAction.accept(abilityName);
-        }
+        Messenger.publish("jump_to_charms", abilityName);
     }
     
     public void markDirty() {

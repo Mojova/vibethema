@@ -411,8 +411,8 @@ public class CharmDataService {
     private void assignMigrationIds(List<Charm> charms, String ability) {
         for (Charm c : charms) {
             if (c.getId() == null || c.getId().isEmpty()) {
-                String id = java.util.UUID.nameUUIDFromBytes((c.getName().trim() + "|" + ability.trim()).getBytes())
-                        .toString();
+                String id = java.util.UUID.nameUUIDFromBytes((c.getName().trim() + "|" + ability.trim())
+                        .getBytes(java.nio.charset.StandardCharsets.UTF_8)).toString();
                 c.setId(id);
             }
         }

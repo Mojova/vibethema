@@ -116,6 +116,33 @@
     -fx-background-color: #1e1e1e;
 }
 
+/* Health Box Styles */
+.health-checkbox {
+    -fx-cursor: hand;
+}
+
+.health-checkbox .box {
+    -fx-background-color: #1a1a1a;
+    -fx-border-color: #d4af37;
+    -fx-border-width: 1px;
+    -fx-border-radius: 2px;
+    -fx-padding: 2px;
+}
+
+.health-checkbox:hover .box {
+    -fx-border-color: #f9f6e6;
+}
+
+.health-checkbox:selected .box {
+    -fx-background-color: #4a0000;
+    -fx-border-color: #ff3333;
+}
+
+.health-checkbox:selected .mark {
+    -fx-background-color: #ff3333;
+    -fx-shape: "M 0 -0.5 L 5 -5.5 L 6 -4.5 L 1 -0.5 L 6 3.5 L 5 4.5 L 0 -0.5 L -5 4.5 L -6 3.5 L -1 -0.5 L -6 -4.5 L -5 -5.5 L 0 -0.5 Z"; /* Slightly stylized X */
+}
+
 .caste-option {
     -fx-text-fill: #d4af37;
     -fx-font-weight: bold;

@@ -14,8 +14,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
 import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, Initializable {
@@ -249,6 +248,7 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         updateHealth(data);
         data.getAttribute(Attribute.STAMINA).addListener((obs, old, nv) -> updateHealth(data));
         data.getAbility(Ability.RESISTANCE).addListener((obs, old, nv) -> updateHealth(data));
+        data.getUnlockedCharms().addListener((javafx.collections.ListChangeListener<? super PurchasedCharm>) c -> updateHealth(data));
         healthBox.getChildren().add(trackBoxes);
         return healthBox;
     }
@@ -256,10 +256,37 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
     private void updateHealth(CharacterData data) {
         if (trackBoxes == null) return;
         trackBoxes.getChildren().clear();
-        CreationStatus status = CreationRuleEngine.calculateStatus(data);
-        for (String level : status.healthLevels) {
-            trackBoxes.getChildren().add(new Label("Level: " + level));
+        
+        List<String> levels = data.getHealthLevels();
+        // Group by penalty, preserving order as much as possible, or using a fixed order.
+        Map<String, Integer> counts = new LinkedHashMap<>();
+        for (String lvl : levels) {
+            counts.put(lvl, counts.getOrDefault(lvl, 0) + 1);
         }
+
+        // Standard Exalted health level order
+        String[] order = {"-0", "-1", "-2", "-4", "Incap"};
+        for (String penalty : order) {
+            if (counts.containsKey(penalty)) {
+                trackBoxes.getChildren().add(createHealthLevelRow(penalty, counts.get(penalty)));
+            }
+        }
+    }
+
+    private HBox createHealthLevelRow(String penalty, int boxes) {
+        HBox row = new HBox(10);
+        row.setAlignment(Pos.CENTER_LEFT);
+        Label pLabel = new Label(penalty + ":");
+        pLabel.setMinWidth(45);
+        pLabel.getStyleClass().add("merit-name");
+        row.getChildren().add(pLabel);
+
+        for (int i = 0; i < boxes; i++) {
+            CheckBox cb = new CheckBox();
+            cb.getStyleClass().add("health-checkbox");
+            row.getChildren().add(cb);
+        }
+        return row;
     }
 
     private VBox createCombatStatsSection(CharacterData data) {

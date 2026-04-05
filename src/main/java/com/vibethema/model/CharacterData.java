@@ -794,8 +794,12 @@ public class CharacterData {
         return unlockedCharms.stream().anyMatch(c -> c.id().equals(id));
     }
 
-    public int getCharmCount(String id) {
-        return (int) unlockedCharms.stream().filter(c -> c.id().equals(id) || c.name().equals(id)).count();
+    public int getCharmCount(String identity) {
+        if (identity == null || identity.trim().isEmpty()) return 0;
+        String trimmed = identity.trim();
+        return (int) unlockedCharms.stream()
+                .filter(c -> c.id().equals(trimmed) || c.name().equalsIgnoreCase(trimmed))
+                .count();
     }
 
     public boolean hasCharmByName(String name) {
@@ -847,10 +851,15 @@ public class CharacterData {
         List<String> levels = new ArrayList<>(Arrays.asList("-0", "-1", "-1", "-2", "-2", "-4", "Incap"));
         int stamina = attributes.get(Attribute.STAMINA).get();
 
-        // Solar Ox-Body Technique ID calculation
+        // Solar Ox-Body Technique ID calculation - specify UTF-8 for consistency
         String oxBodyId = java.util.UUID.nameUUIDFromBytes(
-                ("Ox-Body Technique" + "|" + Ability.RESISTANCE.getDisplayName()).getBytes()).toString();
+                ("Ox-Body Technique" + "|" + Ability.RESISTANCE.getDisplayName())
+                .getBytes(java.nio.charset.StandardCharsets.UTF_8)).toString();
         int oxBodyCount = getCharmCount(oxBodyId);
+        if (oxBodyCount == 0) {
+            // Fallback to name search if ID doesn't match (e.g. legacy or custom ID)
+            oxBodyCount = getCharmCount("Ox-Body Technique");
+        }
 
         for (int i = 0; i < oxBodyCount; i++) {
             if (stamina >= 5) {

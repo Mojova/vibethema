@@ -39,6 +39,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
     private TabPane mainTabPane;
     private Tab experienceTab;
     private Map<String, CharmsTab> charmTabs = new HashMap<>();
+    private Map<String, CharmsViewModel> charmViewModels = new HashMap<>();
 
     private final CharmTreeComponent.CharmTreeListener charmTreeListener = new CharmTreeComponent.CharmTreeListener() {
         @Override
@@ -68,7 +69,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         
         // Tabs
         mainTabPane.getTabs().addAll(
-                createTab("Stats", StatsTab.class, new StatsViewModel(viewModel.getData(), this::handleJumpToCharms)),
+                createTab("Stats", StatsTab.class, new StatsViewModel(viewModel.getData())),
                 createTab("Merits", MeritsTab.class, new MeritsViewModel(viewModel.getData())),
                 createTab("Intimacies", IntimaciesTab.class, new IntimaciesViewModel(viewModel.getData())),
                 createCharmsTab("Solar Charms", "Ability"),
@@ -92,6 +93,13 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         
         // Window Title binding
         viewModel.windowTitleProperty().addListener((obs, oldV, newV) -> updateWindowTitle(newV));
+
+        // UI Messenger subscriptions
+        com.vibethema.viewmodel.util.Messenger.subscribe("jump_to_charms", (name, payload) -> {
+            if (payload != null && payload.length > 0 && payload[0] instanceof String) {
+                handleJumpToCharms((String) payload[0]);
+            }
+        });
     }
 
     private Tab createCharmsTab(String title, String filterType) {
@@ -104,6 +112,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         
         CharmsTab view = (CharmsTab) vt.getView();
         charmTabs.put(title, view);
+        charmViewModels.put(title, cvm);
         
         Tab tab = new Tab(title, view);
         tab.setClosable(false);
@@ -402,7 +411,21 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
     }
 
     private void handleJumpToCharms(String abilityName) {
-        // Logic to switch to Charms tab and select ability
+        String tabTitle = "Solar Charms";
+        if (viewModel.getData().isMartialArtsStyle(abilityName)) {
+            tabTitle = "Martial Arts";
+        }
+
+        CharmsViewModel cvm = charmViewModels.get(tabTitle);
+        if (cvm != null) {
+            cvm.selectedFilterValueProperty().set(abilityName);
+            for (Tab tab : mainTabPane.getTabs()) {
+                if (tabTitle.equals(tab.getText())) {
+                    mainTabPane.getSelectionModel().select(tab);
+                    break;
+                }
+            }
+        }
     }
 
     private void handleJumpToEvocations(String artifactId, String artifactName) {
