@@ -1,0 +1,765 @@
+name | Tx | Value: 
+player | Tx | Value: 
+caste | Tx | Value: 
+concept | Tx | Value: 
+anima | Tx | Value: 
+SA | Tx | Value: 
+dot1 | Btn | Value: Yes
+dot2 | Btn | Value: Off
+dot3 | Btn | Value: Off
+dot4 | Btn | Value: Off
+dot5 | Btn | Value: Off
+dot9 | Btn | Value: Yes
+dot10 | Btn | Value: Off
+dot11 | Btn | Value: Off
+dot12 | Btn | Value: Off
+dot13 | Btn | Value: Off
+dot17 | Btn | Value: Yes
+dot18 | Btn | Value: Off
+dot19 | Btn | Value: Off
+dot20 | Btn | Value: Off
+dot21 | Btn | Value: Off
+dot6 | Btn | Value: Yes
+dot7 | Btn | Value: Off
+dot8 | Btn | Value: Off
+dot14 | Btn | Value: Yes
+dot15 | Btn | Value: Off
+dot16 | Btn | Value: Off
+dot22 | Btn | Value: Yes
+dot23 | Btn | Value: Off
+dot24 | Btn | Value: Off
+dot8a | Btn | Value: Off
+dot16a | Btn | Value: Off
+dot24a | Btn | Value: Off
+dot8az | Btn | Value: Off
+dot16az | Btn | Value: Off
+dot24az | Btn | Value: Off
+dot25 | Btn | Value: Yes
+dot26 | Btn | Value: Off
+dot27 | Btn | Value: Off
+dot28 | Btn | Value: Off
+dot29 | Btn | Value: Off
+dot33 | Btn | Value: Yes
+dot34 | Btn | Value: Off
+dot35 | Btn | Value: Off
+dot36 | Btn | Value: Off
+dot37 | Btn | Value: Off
+dot41 | Btn | Value: Yes
+dot42 | Btn | Value: Off
+dot43 | Btn | Value: Off
+dot44 | Btn | Value: Off
+dot45 | Btn | Value: Off
+dot30 | Btn | Value: Off
+dot31 | Btn | Value: Off
+dot32 | Btn | Value: Off
+dot38 | Btn | Value: Off
+dot39 | Btn | Value: Off
+dot40 | Btn | Value: Off
+dot46 | Btn | Value: Off
+dot47 | Btn | Value: Off
+dot48 | Btn | Value: Off
+dot32a | Btn | Value: Off
+dot40a | Btn | Value: Off
+dot48a | Btn | Value: Off
+dot32az | Btn | Value: Off
+dot40az | Btn | Value: Off
+dot48az | Btn | Value: Off
+dot49 | Btn | Value: Off
+dot50 | Btn | Value: Off
+dot51 | Btn | Value: Off
+dot52 | Btn | Value: Off
+dot53 | Btn | Value: Off
+dot57 | Btn | Value: Off
+dot58 | Btn | Value: Off
+dot59 | Btn | Value: Off
+dot60 | Btn | Value: Off
+dot61 | Btn | Value: Off
+dot65 | Btn | Value: Off
+dot66 | Btn | Value: Off
+dot67 | Btn | Value: Off
+dot68 | Btn | Value: Off
+dot69 | Btn | Value: Off
+dot54 | Btn | Value: Off
+dot55 | Btn | Value: Off
+dot56 | Btn | Value: Off
+dot62 | Btn | Value: Off
+dot63 | Btn | Value: Off
+dot64 | Btn | Value: Off
+dot70 | Btn | Value: Off
+dot71 | Btn | Value: Off
+dot72 | Btn | Value: Off
+dot56a | Btn | Value: Off
+dot64a | Btn | Value: Off
+dot72a | Btn | Value: Off
+dot56az | Btn | Value: Off
+dot64az | Btn | Value: Off
+dot72az | Btn | Value: Off
+dot73 | Btn | Value: Off
+dot74 | Btn | Value: Off
+dot75 | Btn | Value: Off
+dot76 | Btn | Value: Off
+dot77 | Btn | Value: Off
+dot81 | Btn | Value: Off
+dot82 | Btn | Value: Off
+dot83 | Btn | Value: Off
+dot84 | Btn | Value: Off
+dot85 | Btn | Value: Off
+dot89 | Btn | Value: Off
+dot90 | Btn | Value: Off
+dot91 | Btn | Value: Off
+dot92 | Btn | Value: Off
+dot93 | Btn | Value: Off
+dot97 | Btn | Value: Off
+dot98 | Btn | Value: Off
+dot99 | Btn | Value: Off
+dot100 | Btn | Value: Off
+dot101 | Btn | Value: Off
+dot105 | Btn | Value: Off
+dot106 | Btn | Value: Off
+dot107 | Btn | Value: Off
+dot108 | Btn | Value: Off
+dot109 | Btn | Value: Off
+dot113 | Btn | Value: Off
+dot114 | Btn | Value: Off
+dot115 | Btn | Value: Off
+dot116 | Btn | Value: Off
+dot117 | Btn | Value: Off
+dot121 | Btn | Value: Off
+dot122 | Btn | Value: Off
+dot123 | Btn | Value: Off
+dot124 | Btn | Value: Off
+dot125 | Btn | Value: Off
+dot129 | Btn | Value: Off
+dot130 | Btn | Value: Off
+dot131 | Btn | Value: Off
+dot132 | Btn | Value: Off
+dot133 | Btn | Value: Off
+dot137 | Btn | Value: Off
+dot138 | Btn | Value: Off
+dot139 | Btn | Value: Off
+dot140 | Btn | Value: Off
+dot141 | Btn | Value: Off
+dot145 | Btn | Value: Off
+dot146 | Btn | Value: Off
+dot147 | Btn | Value: Off
+dot148 | Btn | Value: Off
+dot149 | Btn | Value: Off
+dot145q | Btn | Value: Off
+dot146q | Btn | Value: Off
+dot147q | Btn | Value: Off
+dot148q | Btn | Value: Off
+dot149q | Btn | Value: Off
+dot78 | Btn | Value: Off
+dot79 | Btn | Value: Off
+dot80 | Btn | Value: Off
+dot86 | Btn | Value: Off
+dot87 | Btn | Value: Off
+dot88 | Btn | Value: Off
+dot94 | Btn | Value: Off
+dot95 | Btn | Value: Off
+dot96 | Btn | Value: Off
+dot102 | Btn | Value: Off
+dot103 | Btn | Value: Off
+dot104 | Btn | Value: Off
+dot110 | Btn | Value: Off
+dot111 | Btn | Value: Off
+dot112 | Btn | Value: Off
+dot118 | Btn | Value: Off
+dot119 | Btn | Value: Off
+dot120 | Btn | Value: Off
+dot80a | Btn | Value: Off
+dot88a | Btn | Value: Off
+dot96a | Btn | Value: Off
+dot104a | Btn | Value: Off
+dot112a | Btn | Value: Off
+dot120a | Btn | Value: Off
+dot80az | Btn | Value: Off
+dot88az | Btn | Value: Off
+dot96az | Btn | Value: Off
+dot104az | Btn | Value: Off
+dot112az | Btn | Value: Off
+dot120az | Btn | Value: Off
+dot126 | Btn | Value: Off
+dot127 | Btn | Value: Off
+dot128 | Btn | Value: Off
+dot134 | Btn | Value: Off
+dot135 | Btn | Value: Off
+dot136 | Btn | Value: Off
+dot142 | Btn | Value: Off
+dot143 | Btn | Value: Off
+dot144 | Btn | Value: Off
+dot150 | Btn | Value: Off
+dot151 | Btn | Value: Off
+dot152 | Btn | Value: Off
+dot150q | Btn | Value: Off
+dot151q | Btn | Value: Off
+dot152q | Btn | Value: Off
+dot128a | Btn | Value: Off
+dot136a | Btn | Value: Off
+dot144a | Btn | Value: Off
+dot152a | Btn | Value: Off
+dot152qa | Btn | Value: Off
+dot128az | Btn | Value: Off
+dot136az | Btn | Value: Off
+dot144az | Btn | Value: Off
+dot152az | Btn | Value: Off
+dot152qaz | Btn | Value: Off
+dot153 | Btn | Value: Off
+dot154 | Btn | Value: Off
+dot155 | Btn | Value: Off
+dot156 | Btn | Value: Off
+dot157 | Btn | Value: Off
+dot225q | Btn | Value: Off
+dot226q | Btn | Value: Off
+dot227q | Btn | Value: Off
+dot228q | Btn | Value: Off
+dot229q | Btn | Value: Off
+dot158 | Btn | Value: Off
+dot159 | Btn | Value: Off
+dot160 | Btn | Value: Off
+dot166 | Btn | Value: Off
+dot167 | Btn | Value: Off
+dot168 | Btn | Value: Off
+dot174 | Btn | Value: Off
+dot175 | Btn | Value: Off
+dot176 | Btn | Value: Off
+dot182 | Btn | Value: Off
+dot183 | Btn | Value: Off
+dot184 | Btn | Value: Off
+dot190 | Btn | Value: Off
+dot191 | Btn | Value: Off
+dot192 | Btn | Value: Off
+dot198 | Btn | Value: Off
+dot199 | Btn | Value: Off
+dot200 | Btn | Value: Off
+dot206 | Btn | Value: Off
+dot207 | Btn | Value: Off
+dot208 | Btn | Value: Off
+dot214 | Btn | Value: Off
+dot215 | Btn | Value: Off
+dot216 | Btn | Value: Off
+dot160a | Btn | Value: Off
+dot168a | Btn | Value: Off
+dot176a | Btn | Value: Off
+dot184a | Btn | Value: Off
+dot192a | Btn | Value: Off
+dot200a | Btn | Value: Off
+dot208a | Btn | Value: Off
+dot216a | Btn | Value: Off
+dot160az | Btn | Value: Off
+dot168az | Btn | Value: Off
+dot176az | Btn | Value: Off
+dot184az | Btn | Value: Off
+dot192az | Btn | Value: Off
+dot200az | Btn | Value: Off
+dot208az | Btn | Value: Off
+dot216az | Btn | Value: Off
+willdot6 | Btn | Value: Off
+willdot7 | Btn | Value: Off
+willdot8 | Btn | Value: Off
+willdot9 | Btn | Value: Off
+willdot10 | Btn | Value: Off
+check2 | Btn | Value: Off
+check3 | Btn | Value: Off
+check4 | Btn | Value: Off
+check5 | Btn | Value: Off
+check6 | Btn | Value: Off
+check7 | Btn | Value: Off
+check8 | Btn | Value: Off
+check9 | Btn | Value: Off
+check10 | Btn | Value: Off
+check11 | Btn | Value: Off
+check12 | Btn | Value: Off
+check13 | Btn | Value: Off
+check14 | Btn | Value: Off
+check15 | Btn | Value: Off
+check16 | Btn | Value: Off
+check17 | Btn | Value: Off
+check18 | Btn | Value: Off
+check19 | Btn | Value: Off
+check20 | Btn | Value: Off
+willdot1 | Btn | Value: Off
+willdot2 | Btn | Value: Off
+willdot3 | Btn | Value: Off
+willdot4 | Btn | Value: Off
+willdot5 | Btn | Value: Off
+essdot1 | Btn | Value: Off
+essdot2 | Btn | Value: Off
+essdot3 | Btn | Value: Off
+essdot4 | Btn | Value: Off
+essdot5 | Btn | Value: Off
+check1 | Btn | Value: Off
+abcheck1 | Btn | Value: Off
+abcheck2 | Btn | Value: Off
+abcheck3 | Btn | Value: Off
+abcheck4 | Btn | Value: Off
+abcheck5 | Btn | Value: Off
+abcheck6 | Btn | Value: Off
+abcheck7 | Btn | Value: Off
+abcheck8 | Btn | Value: Off
+abcheck9 | Btn | Value: Off
+abcheck10 | Btn | Value: Off
+abcheck11 | Btn | Value: Off
+abcheck12 | Btn | Value: Off
+abcheck13 | Btn | Value: Off
+abcheck14 | Btn | Value: Off
+abcheck15 | Btn | Value: Off
+abcheck16 | Btn | Value: Off
+abcheck17 | Btn | Value: Off
+abcheck18 | Btn | Value: Off
+abcheck19 | Btn | Value: Off
+abcheck20 | Btn | Value: Off
+abcheck21 | Btn | Value: Off
+abcheck22 | Btn | Value: Off
+abcheck23 | Btn | Value: Off
+abcheck24 | Btn | Value: Off
+abcheck25 | Btn | Value: Off
+abcheck26 | Btn | Value: Off
+abcheck27 | Btn | Value: Off
+abcheck28 | Btn | Value: Off
+abcheck29 | Btn | Value: Off
+abcheck30 | Btn | Value: Off
+abcheck31 | Btn | Value: Off
+attrib2 | Tx | Value: 
+attrib3 | Tx | Value: 
+attrib4 | Tx | Value: 
+attrib5 | Tx | Value: 
+attrib6 | Tx | Value: 
+attrib7 | Tx | Value: 
+attrib8 | Tx | Value: 
+attrib9 | Tx | Value: 
+attrib1 | Tx | Value: 
+ablities2 | Tx | Value: 
+ablities3 | Tx | Value: 
+ablities4 | Tx | Value: 
+ablities5 | Tx | Value: 
+ablities6 | Tx | Value: 
+ablities7 | Tx | Value: 
+ablities8 | Tx | Value: 
+ablities9 | Tx | Value: 
+ablities10 | Tx | Value: 
+ablities11 | Tx | Value: 
+ablities12 | Tx | Value: 
+ablities13 | Tx | Value: 
+ablities14 | Tx | Value: 
+ablities15 | Tx | Value: 
+ablities16 | Tx | Value: 
+ablities17 | Tx | Value: 
+ablities18 | Tx | Value: 
+ablities19 | Tx | Value: 
+ablities20 | Tx | Value: 
+ablities21 | Tx | Value: 
+ablities22 | Tx | Value: 
+ablities23 | Tx | Value: 
+ablities24 | Tx | Value: 
+ablities25 | Tx | Value: 
+ablities26 | Tx | Value: 
+ablities27 | Tx | Value: 
+ablities28 | Tx | Value: 
+ablities29 | Tx | Value: 
+ablities30 | Tx | Value: 
+ablities31 | Tx | Value: 
+ablities32 | Tx | Value: 
+ablities1 | Tx | Value: 
+merits2 | Tx | Value: 
+merits3 | Tx | Value: 
+merits4 | Tx | Value: 
+merits5 | Tx | Value: 
+merits6 | Tx | Value: 
+merits7 | Tx | Value: 
+merits8 | Tx | Value: 
+merits10 | Tx | Value: 
+merits11 | Tx | Value: 
+merits12 | Tx | Value: 
+merits13 | Tx | Value: 
+merits14 | Tx | Value: 
+merits15 | Tx | Value: 
+merits16 | Tx | Value: 
+merits17 | Tx | Value: 
+merits9 | Tx | Value: 
+essence1 | Tx | Value: 
+essence2 | Tx | Value: 
+essence3 | Tx | Value: 
+essence4 | Tx | Value: 
+merits18 | Tx | Value: 
+limitt1 | Tx | Value: 
+limitt2 | Tx | Value: 
+limitt3 | Tx | Value: 
+essence5 | Tx | Value: 
+exp2 | Tx | Value: 
+exp3 | Tx | Value: 
+exp4 | Tx | Value: 
+limitt4 | Tx | Value: 
+exp1 | Tx | Value: 
+abcheck32 | Btn | Value: Off
+hl1 | Tx | Value: 
+hl2 | Tx | Value: 
+hl3 | Tx | Value: 
+hl4 | Tx | Value: 
+hl5 | Tx | Value: 
+hl6 | Tx | Value: 
+hl7 | Tx | Value: 
+hl8 | Tx | Value: 
+hl9 | Tx | Value: 
+hl10 | Tx | Value: 
+hl11 | Tx | Value: 
+hl12 | Tx | Value: 
+hl13 | Tx | Value: 
+hl14 | Tx | Value: 
+hl15 | Tx | Value: 
+hl16 | Tx | Value: 
+hl17 | Tx | Value: 
+hl18 | Tx | Value: 
+hl19 | Tx | Value: 
+hl20 | Tx | Value: 
+hl21 | Tx | Value: 
+hl22 | Tx | Value: 
+hl23 | Tx | Value: 
+hl24 | Tx | Value: 
+hl25 | Tx | Value: 
+hl26 | Tx | Value: 
+hl27 | Tx | Value: 
+hl28 | Tx | Value: 
+hl29 | Tx | Value: 
+hl30 | Tx | Value: 
+hl31 | Tx | Value: 
+merits1 | Tx | Value: 
+intimacies1 | Tx | Value: 
+intimacies2 | Tx | Value: 
+intimacies3 | Tx | Value: 
+intimacies4 | Tx | Value: 
+intimacies5 | Tx | Value: 
+intimacies6 | Tx | Value: 
+intimacies7 | Tx | Value: 
+intimacies8 | Tx | Value: 
+intimacies9 | Tx | Value: 
+intimacies10 | Tx | Value: 
+intimacies11 | Tx | Value: 
+intimacies12 | Tx | Value: 
+intimacies13 | Tx | Value: 
+intimacies14 | Tx | Value: 
+intimacies15 | Tx | Value: 
+intimacies16 | Tx | Value: 
+intimacies17 | Tx | Value: 
+intimacies18 | Tx | Value: 
+intimacies19 | Tx | Value: 
+intimacies21 | Tx | Value: 
+intimacies22 | Tx | Value: 
+intimacies23 | Tx | Value: 
+intimacies24 | Tx | Value: 
+intimacies25 | Tx | Value: 
+intimacies26 | Tx | Value: 
+intimacies27 | Tx | Value: 
+intimacies28 | Tx | Value: 
+intimacies29 | Tx | Value: 
+intimacies30 | Tx | Value: 
+intimacies31 | Tx | Value: 
+intimacies32 | Tx | Value: 
+intimacies33 | Tx | Value: 
+intimacies34 | Tx | Value: 
+intimacies35 | Tx | Value: 
+intimacies36 | Tx | Value: 
+intimacies37 | Tx | Value: 
+intimacies38 | Tx | Value: 
+intimacies39 | Tx | Value: 
+intimacies40 | Tx | Value: 
+intimacies20 | Tx | Value: 
+charms1 | Tx | Value: 
+charms2 | Tx | Value: 
+charms3 | Tx | Value: 
+charms4 | Tx | Value: 
+charms5 | Tx | Value: 
+charms6 | Tx | Value: 
+charms7 | Tx | Value: 
+charms8 | Tx | Value: 
+charms9 | Tx | Value: 
+charms10 | Tx | Value: 
+charms11 | Tx | Value: 
+charms12 | Tx | Value: 
+charms13 | Tx | Value: 
+charms14 | Tx | Value: 
+charms15 | Tx | Value: 
+charms16 | Tx | Value: 
+charms17 | Tx | Value: 
+charms18 | Tx | Value: 
+charms19 | Tx | Value: 
+charms20 | Tx | Value: 
+charms21 | Tx | Value: 
+charms22 | Tx | Value: 
+charms23 | Tx | Value: 
+charms24 | Tx | Value: 
+charms25 | Tx | Value: 
+charms34 | Tx | Value: 
+charms35 | Tx | Value: 
+charms36 | Tx | Value: 
+charms37 | Tx | Value: 
+charms38 | Tx | Value: 
+charms39 | Tx | Value: 
+charms40 | Tx | Value: 
+charms41 | Tx | Value: 
+charms42 | Tx | Value: 
+charms43 | Tx | Value: 
+charms44 | Tx | Value: 
+charms45 | Tx | Value: 
+charms46 | Tx | Value: 
+charms47 | Tx | Value: 
+charms48 | Tx | Value: 
+charms49 | Tx | Value: 
+charms50 | Tx | Value: 
+charms51 | Tx | Value: 
+charms52 | Tx | Value: 
+charms53 | Tx | Value: 
+charms54 | Tx | Value: 
+charms55 | Tx | Value: 
+charms56 | Tx | Value: 
+charms57 | Tx | Value: 
+charms58 | Tx | Value: 
+charms59 | Tx | Value: 
+charms67 | Tx | Value: 
+charms68 | Tx | Value: 
+charms69 | Tx | Value: 
+charms70 | Tx | Value: 
+charms71 | Tx | Value: 
+charms72 | Tx | Value: 
+charms73 | Tx | Value: 
+charms74 | Tx | Value: 
+charms75 | Tx | Value: 
+charms76 | Tx | Value: 
+charms77 | Tx | Value: 
+charms78 | Tx | Value: 
+charms79 | Tx | Value: 
+charms80 | Tx | Value: 
+charms81 | Tx | Value: 
+charms82 | Tx | Value: 
+charms83 | Tx | Value: 
+charms84 | Tx | Value: 
+charms85 | Tx | Value: 
+charms86 | Tx | Value: 
+charms87 | Tx | Value: 
+charms88 | Tx | Value: 
+charms89 | Tx | Value: 
+charms90 | Tx | Value: 
+charms91 | Tx | Value: 
+charms92 | Tx | Value: 
+charms100 | Tx | Value: 
+charms101 | Tx | Value: 
+charms102 | Tx | Value: 
+charms103 | Tx | Value: 
+charms104 | Tx | Value: 
+charms105 | Tx | Value: 
+charms106 | Tx | Value: 
+charms107 | Tx | Value: 
+charms108 | Tx | Value: 
+charms109 | Tx | Value: 
+charms110 | Tx | Value: 
+charms111 | Tx | Value: 
+charms112 | Tx | Value: 
+charms113 | Tx | Value: 
+charms114 | Tx | Value: 
+charms115 | Tx | Value: 
+charms116 | Tx | Value: 
+charms117 | Tx | Value: 
+charms118 | Tx | Value: 
+charms119 | Tx | Value: 
+charms120 | Tx | Value: 
+charms121 | Tx | Value: 
+charms122 | Tx | Value: 
+charms123 | Tx | Value: 
+charms124 | Tx | Value: 
+charms125 | Tx | Value: 
+charms133 | Tx | Value: 
+charms134 | Tx | Value: 
+charms135 | Tx | Value: 
+charms136 | Tx | Value: 
+charms137 | Tx | Value: 
+charms138 | Tx | Value: 
+charms139 | Tx | Value: 
+charms140 | Tx | Value: 
+charms141 | Tx | Value: 
+charms142 | Tx | Value: 
+charms143 | Tx | Value: 
+charms144 | Tx | Value: 
+charms145 | Tx | Value: 
+charms146 | Tx | Value: 
+charms147 | Tx | Value: 
+charms148 | Tx | Value: 
+charms149 | Tx | Value: 
+charms150 | Tx | Value: 
+charms151 | Tx | Value: 
+charms152 | Tx | Value: 
+charms153 | Tx | Value: 
+charms154 | Tx | Value: 
+charms155 | Tx | Value: 
+charms156 | Tx | Value: 
+charms157 | Tx | Value: 
+charms158 | Tx | Value: 
+charms167 | Tx | Value: 
+charms168 | Tx | Value: 
+charms169 | Tx | Value: 
+charms170 | Tx | Value: 
+charms171 | Tx | Value: 
+charms173 | Tx | Value: 
+charms174 | Tx | Value: 
+charms175 | Tx | Value: 
+charms176 | Tx | Value: 
+charms177 | Tx | Value: 
+charms178 | Tx | Value: 
+charms179 | Tx | Value: 
+charms180 | Tx | Value: 
+charms181 | Tx | Value: 
+charms182 | Tx | Value: 
+charms183 | Tx | Value: 
+charms184 | Tx | Value: 
+charms185 | Tx | Value: 
+charms186 | Tx | Value: 
+charms187 | Tx | Value: 
+charms188 | Tx | Value: 
+charms189 | Tx | Value: 
+charms190 | Tx | Value: 
+charms191 | Tx | Value: 
+charms192 | Tx | Value: 
+charms193 | Tx | Value: 
+charms201 | Tx | Value: 
+charms202 | Tx | Value: 
+charms203 | Tx | Value: 
+charms204 | Tx | Value: 
+charms205 | Tx | Value: 
+charms206 | Tx | Value: 
+charms207 | Tx | Value: 
+charms208 | Tx | Value: 
+charms209 | Tx | Value: 
+charms210 | Tx | Value: 
+charms211 | Tx | Value: 
+charms212 | Tx | Value: 
+charms213 | Tx | Value: 
+charms214 | Tx | Value: 
+charms215 | Tx | Value: 
+charms216 | Tx | Value: 
+charms217 | Tx | Value: 
+charms218 | Tx | Value: 
+charms219 | Tx | Value: 
+charms220 | Tx | Value: 
+charms221 | Tx | Value: 
+charms222 | Tx | Value: 
+charms223 | Tx | Value: 
+charms224 | Tx | Value: 
+charms225 | Tx | Value: 
+charms226 | Tx | Value: 
+charms26 | Tx | Value: 
+notes1 | Tx | Value: 
+notes2 | Tx | Value: 
+notes3 | Tx | Value: 
+notes4 | Tx | Value: 
+notes5 | Tx | Value: 
+notes6 | Tx | Value: 
+notes7 | Tx | Value: 
+notes8 | Tx | Value: 
+notes9 | Tx | Value: 
+notes10 | Tx | Value: 
+weapons1 | Tx | Value: 
+weapons2 | Tx | Value: 
+weapons3 | Tx | Value: 
+weapons4 | Tx | Value: 
+weapons5 | Tx | Value: 
+weapons6 | Tx | Value: 
+weapons7 | Tx | Value: 
+weapons9 | Tx | Value: 
+weapons10 | Tx | Value: 
+weapons11 | Tx | Value: 
+weapons12 | Tx | Value: 
+weapons13 | Tx | Value: 
+weapons14 | Tx | Value: 
+weapons15 | Tx | Value: 
+weapons17 | Tx | Value: 
+weapons18 | Tx | Value: 
+weapons19 | Tx | Value: 
+weapons20 | Tx | Value: 
+weapons21 | Tx | Value: 
+weapons22 | Tx | Value: 
+weapons23 | Tx | Value: 
+weapons24 | Tx | Value: 
+weapons25 | Tx | Value: 
+weapons26 | Tx | Value: 
+weapons27 | Tx | Value: 
+weapons28 | Tx | Value: 
+weapons29 | Tx | Value: 
+weapons30 | Tx | Value: 
+weapons31 | Tx | Value: 
+weapons32 | Tx | Value: 
+weapons33 | Tx | Value: 
+weapons34 | Tx | Value: 
+weapons35 | Tx | Value: 
+weapons36 | Tx | Value: 
+weapons37 | Tx | Value: 
+weapons38 | Tx | Value: 
+weapons39 | Tx | Value: 
+weapons40 | Tx | Value: 
+weapons41 | Tx | Value: 
+weapons42 | Tx | Value: 
+weapons43 | Tx | Value: 
+weapons44 | Tx | Value: 
+weapons45 | Tx | Value: 
+weapons46 | Tx | Value: 
+weapons47 | Tx | Value: 
+weapons48 | Tx | Value: 
+weapons49 | Tx | Value: 
+weapons50 | Tx | Value: 
+weapons51 | Tx | Value: 
+weapons52 | Tx | Value: 
+weapons53 | Tx | Value: 
+weapons54 | Tx | Value: 
+weapons55 | Tx | Value: 
+weapons56 | Tx | Value: 
+weapons8 | Tx | Value: 
+weapons16 | Tx | Value: 
+HD1 | Tx | Value: 
+HD2 | Tx | Value: 
+HD3 | Tx | Value: 
+HD4 | Tx | Value: 
+HD5 | Tx | Value: 
+HD6 | Tx | Value: 
+HD7 | Tx | Value: 
+HD8 | Tx | Value: 
+HD9 | Tx | Value: 
+HD10 | Tx | Value: 
+HD11 | Tx | Value: 
+HD12 | Tx | Value: 
+HD13 | Tx | Value: 
+HD14 | Tx | Value: 
+hbox1 | Tx | Value: 
+hbox2 | Tx | Value: 
+hbox3 | Tx | Value: 
+hbox4 | Tx | Value: 
+hbox5 | Tx | Value: 
+hbox6 | Tx | Value: 
+hbox7 | Tx | Value: 
+hbox8 | Tx | Value: 
+hbox9 | Tx | Value: 
+hbox10 | Tx | Value: 
+hbox11 | Tx | Value: 
+hbox12 | Tx | Value: 
+hbox13 | Tx | Value: 
+hbox14 | Tx | Value: 
+hbox15 | Tx | Value: 
+hbox16 | Tx | Value: 
+hbox17 | Tx | Value: 
+hbox18 | Tx | Value: 
+hbox19 | Tx | Value: 
+hbox20 | Tx | Value: 
+hbox21 | Tx | Value: 
+hbox22 | Tx | Value: 
+hbox23 | Tx | Value: 
+hbox24 | Tx | Value: 
+hbox25 | Tx | Value: 
+hbox26 | Tx | Value: 
+hbox27 | Tx | Value: 
+hbox28 | Tx | Value: 
+hbox29 | Tx | Value: 
+hbox30 | Tx | Value: 
+hbox31 | Tx | Value: 
+hbox32 | Tx | Value: 
+HD15 | Tx | Value: 
+HD16 | Tx | Value: 
+HD17 | Tx | Value: 
+HD18 | Tx | Value: 
+HD19 | Tx | Value: 
