@@ -65,6 +65,19 @@ public class CharacterData {
     private final IntegerProperty totalSoak = new SimpleIntegerProperty(0);
     private final IntegerProperty totalHardness = new SimpleIntegerProperty(0);
 
+    private final IntegerProperty evasion = new SimpleIntegerProperty(0);
+    private final IntegerProperty evasionBonus = new SimpleIntegerProperty(0);
+    private final BooleanProperty hasEvasionSpecialty = new SimpleBooleanProperty(false);
+    private final IntegerProperty resolve = new SimpleIntegerProperty(0);
+    private final IntegerProperty resolveBonus = new SimpleIntegerProperty(0);
+    private final BooleanProperty hasResolveSpecialty = new SimpleBooleanProperty(false);
+    private final IntegerProperty guile = new SimpleIntegerProperty(0);
+    private final IntegerProperty guileBonus = new SimpleIntegerProperty(0);
+    private final BooleanProperty hasGuileSpecialty = new SimpleBooleanProperty(false);
+
+    private final IntegerProperty joinBattle = new SimpleIntegerProperty(0);
+    private final BooleanProperty hasJoinBattleSpecialty = new SimpleBooleanProperty(false);
+
     private final IntegerProperty casteAbilityCount = new SimpleIntegerProperty(0);
     private final IntegerProperty favoredAbilityCount = new SimpleIntegerProperty(0);
     private final BooleanProperty overBonusPointLimit = new SimpleBooleanProperty(false);
@@ -132,6 +145,14 @@ public class CharacterData {
         });
 
         attributes.get(Attribute.STAMINA).addListener((obs, oldV, newV) -> updateCombatStats());
+        attributes.get(Attribute.DEXTERITY).addListener((obs, oldV, newV) -> updateDerivedStats());
+        attributes.get(Attribute.WITS).addListener((obs, oldV, newV) -> updateDerivedStats());
+        attributes.get(Attribute.MANIPULATION).addListener((obs, oldV, newV) -> updateDerivedStats());
+
+        getAbilityProperty(Ability.DODGE).addListener((obs, old, nv) -> updateDerivedStats());
+        getAbilityProperty(Ability.INTEGRITY).addListener((obs, old, nv) -> updateDerivedStats());
+        getAbilityProperty(Ability.SOCIALIZE).addListener((obs, old, nv) -> updateDerivedStats());
+        getAbilityProperty(Ability.AWARENESS).addListener((obs, old, nv) -> updateDerivedStats());
 
         // Default weapon for new characters if tags exist
         if (java.nio.file.Files.exists(com.vibethema.service.EquipmentDataService.getEquipmentTagsPath())) {
@@ -170,7 +191,10 @@ public class CharacterData {
         limit.addListener((obs, oldV, newV) -> markDirty());
 
         merits.addListener((javafx.collections.ListChangeListener.Change<? extends Merit> c) -> markDirty());
-        specialties.addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> markDirty());
+        specialties.addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> {
+            markDirty();
+            updateDerivedStats();
+        });
         crafts.addListener((javafx.collections.ListChangeListener<? super CraftAbility>) c -> markDirty());
         martialArtsStyles.addListener((javafx.collections.ListChangeListener<? super MartialArtsStyle>) c -> {
             markDirty();
@@ -232,6 +256,7 @@ public class CharacterData {
         merits.add(new Merit("", 1));
         specialties.add(new Specialty("", ""));
         updateCombatStats();
+        updateDerivedStats();
         updateSorceryAvailability();
         updateCasteFavoredCounts();
         dirty.set(false);
@@ -303,6 +328,19 @@ public class CharacterData {
     
     public StringProperty limitTriggerProperty() { return limitTrigger; }
     public IntegerProperty limitProperty() { return limit; }
+
+    public IntegerProperty evasionProperty() { return evasion; }
+    public IntegerProperty evasionBonusProperty() { return evasionBonus; }
+    public BooleanProperty hasEvasionSpecialtyProperty() { return hasEvasionSpecialty; }
+    public IntegerProperty resolveProperty() { return resolve; }
+    public IntegerProperty resolveBonusProperty() { return resolveBonus; }
+    public BooleanProperty hasResolveSpecialtyProperty() { return hasResolveSpecialty; }
+    public IntegerProperty guileProperty() { return guile; }
+    public IntegerProperty guileBonusProperty() { return guileBonus; }
+    public BooleanProperty hasGuileSpecialtyProperty() { return hasGuileSpecialty; }
+
+    public IntegerProperty joinBattleProperty() { return joinBattle; }
+    public BooleanProperty hasJoinBattleSpecialtyProperty() { return hasJoinBattleSpecialty; }
 
     public IntegerProperty getAbilityProperty(Ability name) {
         return abilities.get(name);
@@ -399,6 +437,43 @@ public class CharacterData {
         armorSoak.set(armorSoakVal);
         totalSoak.set(stamina + armorSoakVal);
         totalHardness.set(armorHardnessVal);
+    }
+
+    public void updateDerivedStats() {
+        int dex = attributes.get(Attribute.DEXTERITY).get();
+        int dodge = abilities.get(Ability.DODGE).get();
+        int wits = attributes.get(Attribute.WITS).get();
+        int integrity = abilities.get(Ability.INTEGRITY).get();
+        int manipulation = attributes.get(Attribute.MANIPULATION).get();
+        int socialize = abilities.get(Ability.SOCIALIZE).get();
+        int awareness = abilities.get(Ability.AWARENESS).get();
+
+        int evasionBase = (int) Math.ceil((dex + dodge) / 2.0);
+        int resolveBase = (int) Math.ceil((wits + integrity) / 2.0);
+        int guileBase = (int) Math.ceil((manipulation + socialize) / 2.0);
+
+        evasion.set(evasionBase);
+        resolve.set(resolveBase);
+        guile.set(guileBase);
+        joinBattle.set(wits + awareness);
+
+        evasionBonus.set((int) Math.ceil((dex + dodge + 1) / 2.0) - evasionBase);
+        resolveBonus.set((int) Math.ceil((wits + integrity + 1) / 2.0) - resolveBase);
+        guileBonus.set((int) Math.ceil((manipulation + socialize + 1) / 2.0) - guileBase);
+
+        boolean evasionSpec = specialties.stream().anyMatch(s -> 
+            Ability.DODGE.getDisplayName().equals(s.getAbility()) && s.getName() != null && !s.getName().trim().isEmpty());
+        boolean resolveSpec = specialties.stream().anyMatch(s -> 
+            Ability.INTEGRITY.getDisplayName().equals(s.getAbility()) && s.getName() != null && !s.getName().trim().isEmpty());
+        boolean guileSpec = specialties.stream().anyMatch(s -> 
+            Ability.SOCIALIZE.getDisplayName().equals(s.getAbility()) && s.getName() != null && !s.getName().trim().isEmpty());
+        boolean joinBattleSpec = specialties.stream().anyMatch(s -> 
+            Ability.AWARENESS.getDisplayName().equals(s.getAbility()) && s.getName() != null && !s.getName().trim().isEmpty());
+
+        hasEvasionSpecialty.set(evasionSpec);
+        hasResolveSpecialty.set(resolveSpec);
+        hasGuileSpecialty.set(guileSpec);
+        hasJoinBattleSpecialty.set(joinBattleSpec);
     }
     
     public boolean isArtifactPossessed(String artifactId) {

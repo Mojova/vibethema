@@ -11,6 +11,8 @@ import com.vibethema.ui.charms.CharmTreeComponent;
 import com.vibethema.ui.equipment.EquipmentTab;
 import com.vibethema.ui.equipment.DefaultEquipmentDialogService;
 import com.vibethema.ui.sorcery.SorceryTab;
+import com.vibethema.ui.experience.ExperienceTab;
+import com.vibethema.viewmodel.experience.ExperienceViewModel;
 import com.vibethema.ui.util.UIUtils;
 import com.google.gson.Gson;
 import javafx.beans.binding.Bindings;
@@ -72,6 +74,7 @@ public class BuilderUI extends BorderPane {
     private TabPane mainTabPane;
     private Tab charmsTab;
     private Tab martialArtsTab;
+    private Tab experienceTab;
     private ComboBox<String> charmsAbilityCombo;
     private ComboBox<String> stylePicker;
     private VBox principlesListContainer;
@@ -158,6 +161,28 @@ public class BuilderUI extends BorderPane {
         Tab sorceryTab = new Tab("Sorcery");
         sorceryTab.setClosable(false);
         sorceryTab.setContent(createSorceryContent());
+
+        experienceTab = new Tab("Experience");
+        experienceTab.setClosable(false);
+        de.saxsys.mvvmfx.ViewTuple<ExperienceTab, ExperienceViewModel> expVt =
+            de.saxsys.mvvmfx.FluentViewLoader.javaView(ExperienceTab.class)
+                .viewModel(new ExperienceViewModel(data, this::updateFooter))
+                .codeBehind(new ExperienceTab())
+                .load();
+        experienceTab.setContent(expVt.getView());
+
+        // Experience tab is only shown in Experienced mode; add/remove dynamically
+        data.modeProperty().addListener((obs, oldMode, newMode) -> {
+            if (newMode == CharacterMode.EXPERIENCED && !mainTabPane.getTabs().contains(experienceTab)) {
+                mainTabPane.getTabs().add(experienceTab);
+            } else if (newMode != CharacterMode.EXPERIENCED) {
+                mainTabPane.getTabs().remove(experienceTab);
+            }
+        });
+        // Add immediately if already in experienced mode
+        if (data.modeProperty().get() == CharacterMode.EXPERIENCED) {
+            mainTabPane.getTabs().add(experienceTab);
+        }
 
         mainTabPane.getTabs().addAll(statsTab, meritsTab, equipmentTab, charmsTab, martialArtsTab, intimaciesTab, sorceryTab);
 
@@ -628,7 +653,9 @@ public class BuilderUI extends BorderPane {
         data.getShapingRituals().addListener((javafx.collections.ListChangeListener<? super ShapingRitual>) c -> updateFooter());
         data.getSpells().addListener((javafx.collections.ListChangeListener<? super Spell>) c -> updateFooter());
         data.getUnlockedCharms().addListener((javafx.collections.ListChangeListener<? super PurchasedCharm>) c -> updateFooter());
+        data.getXpAwards().addListener((javafx.collections.ListChangeListener<? super XpAward>) c -> updateFooter());
     }
+
 
     private void updateFooter() {
         if (data.modeProperty().get() == CharacterMode.EXPERIENCED) {
@@ -1301,29 +1328,20 @@ public class BuilderUI extends BorderPane {
         
         dodgeBox.getChildren().addAll(dodgeBaseLabel, dodgeBonusLabel);
 
-        Runnable updateEvasion = () -> {
-            int dex = data.getAttribute(Attribute.DEXTERITY).get();
-            int dodge = data.getAbility(Ability.DODGE).get();
-            int base = (int) Math.ceil((dex + dodge) / 2.0);
-            int total = (int) Math.ceil((dex + dodge + 1) / 2.0);
-            int bonus = total - base;
-            
-            boolean hasDodgeSpec = data.getSpecialties().stream()
-                    .anyMatch(s -> Ability.DODGE.getDisplayName().equals(s.getAbility()) && s.getName() != null && !s.getName().trim().isEmpty());
-            
-            dodgeBaseLabel.setText("Evasion: " + base);
-            if (hasDodgeSpec) {
-                dodgeBonusLabel.setText(" + " + bonus);
+        Runnable refreshEvasion = () -> {
+            dodgeBaseLabel.setText("Evasion: " + data.evasionProperty().get());
+            if (data.hasEvasionSpecialtyProperty().get()) {
+                dodgeBonusLabel.setText(" + " + data.evasionBonusProperty().get());
                 Tooltip.install(dodgeBonusLabel, dodgeTooltip);
             } else {
                 dodgeBonusLabel.setText("");
                 Tooltip.uninstall(dodgeBonusLabel, dodgeTooltip);
             }
         };
-        data.getAttribute(Attribute.DEXTERITY).addListener((obs, oldVal, newVal) -> updateEvasion.run());
-        data.getAbility(Ability.DODGE).addListener((obs, oldVal, newVal) -> updateEvasion.run());
-        data.getSpecialties().addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> updateEvasion.run());
-        updateEvasion.run();
+        data.evasionProperty().addListener((obs, old, nv) -> refreshEvasion.run());
+        data.evasionBonusProperty().addListener((obs, old, nv) -> refreshEvasion.run());
+        data.hasEvasionSpecialtyProperty().addListener((obs, old, nv) -> refreshEvasion.run());
+        refreshEvasion.run();
 
         HBox joinBattleBox = new HBox(0);
         joinBattleBox.setAlignment(Pos.CENTER_LEFT);
@@ -1336,16 +1354,9 @@ public class BuilderUI extends BorderPane {
 
         joinBattleBox.getChildren().addAll(joinBattleLabel, joinBattleBonusLabel);
 
-        Runnable updateJoinBattle = () -> {
-            int wits = data.getAttribute(Attribute.WITS).get();
-            int awareness = data.getAbility(Ability.AWARENESS).get();
-            int base = wits + awareness;
-            
-            boolean hasAwarenessSpec = data.getSpecialties().stream()
-                    .anyMatch(s -> Ability.AWARENESS.getDisplayName().equals(s.getAbility()) && s.getName() != null && !s.getName().trim().isEmpty());
-            
-            joinBattleLabel.setText("Join Battle: " + base);
-            if (hasAwarenessSpec) {
+        Runnable refreshJoinBattle = () -> {
+            joinBattleLabel.setText("Join Battle: " + data.joinBattleProperty().get());
+            if (data.hasJoinBattleSpecialtyProperty().get()) {
                 joinBattleBonusLabel.setText(" + 1");
                 Tooltip.install(joinBattleBonusLabel, awarenessTooltip);
             } else {
@@ -1353,10 +1364,9 @@ public class BuilderUI extends BorderPane {
                 Tooltip.uninstall(joinBattleBonusLabel, awarenessTooltip);
             }
         };
-        data.getAttribute(Attribute.WITS).addListener((obs, oldVal, newVal) -> updateJoinBattle.run());
-        data.getAbility(Ability.AWARENESS).addListener((obs, oldVal, newVal) -> updateJoinBattle.run());
-        data.getSpecialties().addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> updateJoinBattle.run());
-        updateJoinBattle.run();
+        data.joinBattleProperty().addListener((obs, old, nv) -> refreshJoinBattle.run());
+        data.hasJoinBattleSpecialtyProperty().addListener((obs, old, nv) -> refreshJoinBattle.run());
+        refreshJoinBattle.run();
         
         statsList.getChildren().addAll(naturalSoakVal, armorSoakVal, totalSoakVal, hardnessVal, dodgeBox, joinBattleBox);
         combatBox.getChildren().addAll(combatLabel, statsList);
@@ -1416,19 +1426,10 @@ public class BuilderUI extends BorderPane {
         
         // No more double-click
 
-        Runnable updateResolve = () -> {
-            int wits = data.getAttribute(Attribute.WITS).get();
-            int integrity = data.getAbility(Ability.INTEGRITY).get();
-            int base = (int) Math.ceil((wits + integrity) / 2.0);
-            int total = (int) Math.ceil((wits + integrity + 1) / 2.0);
-            int bonus = total - base;
-            
-            boolean hasSpec = data.getSpecialties().stream()
-                    .anyMatch(s -> Ability.INTEGRITY.getDisplayName().equals(s.getAbility()) && s.getName() != null && !s.getName().trim().isEmpty());
-            
-            resolveBaseLabel.setText("Resolve: " + base);
-            if (hasSpec) {
-                resolveBonusLabel.setText(" + " + bonus);
+        Runnable refreshResolve = () -> {
+            resolveBaseLabel.setText("Resolve: " + data.resolveProperty().get());
+            if (data.hasResolveSpecialtyProperty().get()) {
+                resolveBonusLabel.setText(" + " + data.resolveBonusProperty().get());
                 Tooltip.install(resolveBonusLabel, resolveTooltip);
             } else {
                 resolveBonusLabel.setText("");
@@ -1446,22 +1447,11 @@ public class BuilderUI extends BorderPane {
         guileBonusLabel.setStyle("-fx-text-fill: #3498db; -fx-font-weight: bold;");
         Tooltip guileTooltip = new Tooltip("If socialize specialty applies");
         guileBox.getChildren().addAll(guileBaseLabel, guileBonusLabel);
-        
-        // No more double-click
 
-        Runnable updateGuile = () -> {
-            int manipulation = data.getAttribute(Attribute.MANIPULATION).get();
-            int socialize = data.getAbility(Ability.SOCIALIZE).get();
-            int base = (int) Math.ceil((manipulation + socialize) / 2.0);
-            int total = (int) Math.ceil((manipulation + socialize + 1) / 2.0);
-            int bonus = total - base;
-            
-            boolean hasSpec = data.getSpecialties().stream()
-                    .anyMatch(s -> Ability.SOCIALIZE.getDisplayName().equals(s.getAbility()) && s.getName() != null && !s.getName().trim().isEmpty());
-            
-            guileBaseLabel.setText("Guile: " + base);
-            if (hasSpec) {
-                guileBonusLabel.setText(" + " + bonus);
+        Runnable refreshGuile = () -> {
+            guileBaseLabel.setText("Guile: " + data.guileProperty().get());
+            if (data.hasGuileSpecialtyProperty().get()) {
+                guileBonusLabel.setText(" + " + data.guileBonusProperty().get());
                 Tooltip.install(guileBonusLabel, guileTooltip);
             } else {
                 guileBonusLabel.setText("");
@@ -1469,17 +1459,19 @@ public class BuilderUI extends BorderPane {
             }
         };
 
-        data.getAttribute(Attribute.WITS).addListener((obs, old, nv) -> updateResolve.run());
-        data.getAbility(Ability.INTEGRITY).addListener((obs, old, nv) -> updateResolve.run());
-        data.getAttribute(Attribute.MANIPULATION).addListener((obs, old, nv) -> updateGuile.run());
-        data.getAbility(Ability.SOCIALIZE).addListener((obs, old, nv) -> updateGuile.run());
-        data.getSpecialties().addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> {
-            updateResolve.run();
-            updateGuile.run();
-        });
+        data.resolveProperty().addListener((obs, old, nv) -> refreshResolve.run());
+        data.resolveBonusProperty().addListener((obs, old, nv) -> refreshResolve.run());
+        data.hasResolveSpecialtyProperty().addListener((obs, old, nv) -> refreshResolve.run());
+        
+        data.guileProperty().addListener((obs, old, nv) -> refreshGuile.run());
+        data.guileBonusProperty().addListener((obs, old, nv) -> refreshGuile.run());
+        data.hasGuileSpecialtyProperty().addListener((obs, old, nv) -> refreshGuile.run());
 
-        updateResolve.run();
-        updateGuile.run();
+        refreshResolve.run();
+        refreshGuile.run();
+
+        refreshResolve.run();
+        refreshGuile.run();
         
         statsList.getChildren().addAll(resolveBox, guileBox);
         section.getChildren().addAll(title, statsList);
