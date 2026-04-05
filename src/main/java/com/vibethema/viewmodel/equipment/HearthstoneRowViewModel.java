@@ -19,5 +19,6 @@ public class HearthstoneRowViewModel implements ViewModel {
     }
 
     public StringProperty nameProperty() { return hearthstone.nameProperty(); }
+    public StringProperty idProperty() { return hearthstone.idProperty(); }
     public StringProperty descriptionProperty() { return hearthstone.descriptionProperty(); }
 }

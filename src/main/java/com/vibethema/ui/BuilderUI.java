@@ -141,10 +141,7 @@ public class BuilderUI extends BorderPane {
 
         Tab equipmentTab = new Tab("Equipment");
         equipmentTab.setClosable(false);
-        ScrollPane equipmentScroll = new ScrollPane(createEquipmentContent());
-        equipmentScroll.setFitToWidth(true);
-        equipmentScroll.getStyleClass().add("scroll-pane-custom");
-        equipmentTab.setContent(equipmentScroll);
+        equipmentTab.setContent(createEquipmentContent());
 
         charmsTab = new Tab("Charms");
         charmsTab.setClosable(false);
@@ -631,7 +628,12 @@ public class BuilderUI extends BorderPane {
     }
 
     private EquipmentTab createEquipmentContent() {
-        return new EquipmentTab(data, equipmentService, dataService, tagDescriptions, this::updateFooter, this::showEvocationsDialog);
+        de.saxsys.mvvmfx.ViewTuple<EquipmentTab, com.vibethema.viewmodel.equipment.EquipmentViewModel> viewTuple = 
+            de.saxsys.mvvmfx.FluentViewLoader.javaView(EquipmentTab.class)
+                .viewModel(new com.vibethema.viewmodel.equipment.EquipmentViewModel(
+                    data, equipmentService, dataService, tagDescriptions, this::updateFooter, this::showEvocationsDialog))
+                .load();
+        return (EquipmentTab) viewTuple.getView();
     }
 
 

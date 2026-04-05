@@ -20,6 +20,7 @@ public class OtherEquipmentRowViewModel implements ViewModel {
     }
 
     public StringProperty nameProperty() { return equipment.nameProperty(); }
+    public StringProperty idProperty() { return equipment.idProperty(); }
     public StringProperty descriptionProperty() { return equipment.descriptionProperty(); }
     public BooleanProperty artifactProperty() { return equipment.artifactProperty(); }
 }
