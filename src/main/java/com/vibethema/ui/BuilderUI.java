@@ -7,6 +7,7 @@ import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
 import com.vibethema.ui.charms.CharmTreeComponent;
 import com.vibethema.ui.equipment.EquipmentTab;
+import com.vibethema.ui.equipment.DefaultEquipmentDialogService;
 import com.vibethema.ui.sorcery.SorceryTab;
 import com.vibethema.ui.util.UIUtils;
 import com.google.gson.Gson;
@@ -632,6 +633,7 @@ public class BuilderUI extends BorderPane {
             de.saxsys.mvvmfx.FluentViewLoader.javaView(EquipmentTab.class)
                 .viewModel(new com.vibethema.viewmodel.equipment.EquipmentViewModel(
                     data, equipmentService, dataService, tagDescriptions, this::updateFooter, this::showEvocationsDialog))
+                .codeBehind(new EquipmentTab(new DefaultEquipmentDialogService()))
                 .load();
         return (EquipmentTab) viewTuple.getView();
     }

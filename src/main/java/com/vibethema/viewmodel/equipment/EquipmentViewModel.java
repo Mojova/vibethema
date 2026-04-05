@@ -8,6 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ListChangeListener;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -108,8 +109,19 @@ public class EquipmentViewModel implements ViewModel {
     public ObservableList<OtherEquipmentRowViewModel> getOtherEquipment() { return otherEquipment; }
 
     // Actions
-    public void addWeapon(Weapon weapon) {
-        data.getWeapons().add(weapon);
+    public void saveWeapon(Weapon weapon, boolean isNew) {
+        if (isNew) {
+            data.getWeapons().add(weapon);
+        } else {
+            // Update character data side effects
+            if (weapon.getType() == Weapon.WeaponType.ARTIFACT) {
+                try {
+                    dataService.updateEvocationCollectionName(weapon.getId(), weapon.getName());
+                } catch (IOException ex) {
+                    System.err.println("Failed to update evocation name: " + ex.getMessage());
+                }
+            }
+        }
         data.setDirty(true);
     }
 
@@ -118,8 +130,10 @@ public class EquipmentViewModel implements ViewModel {
         data.setDirty(true);
     }
 
-    public void addArmor(Armor armor) {
-        data.getArmors().add(armor);
+    public void saveArmor(Armor armor, boolean isNew) {
+        if (isNew) {
+            data.getArmors().add(armor);
+        }
         data.setDirty(true);
     }
 
@@ -128,8 +142,10 @@ public class EquipmentViewModel implements ViewModel {
         data.setDirty(true);
     }
 
-    public void addHearthstone(Hearthstone hearthstone) {
-        data.getHearthstones().add(hearthstone);
+    public void saveHearthstone(Hearthstone hearthstone, boolean isNew) {
+        if (isNew) {
+            data.getHearthstones().add(hearthstone);
+        }
         data.setDirty(true);
     }
 
@@ -138,8 +154,10 @@ public class EquipmentViewModel implements ViewModel {
         data.setDirty(true);
     }
 
-    public void addOtherEquipment(OtherEquipment equipment) {
-        data.getOtherEquipment().add(equipment);
+    public void saveOtherEquipment(OtherEquipment equipment, boolean isNew) {
+        if (isNew) {
+            data.getOtherEquipment().add(equipment);
+        }
         data.setDirty(true);
     }
 

@@ -1,51 +1,117 @@
 package com.vibethema.viewmodel.equipment;
 
-import com.vibethema.model.CharacterData;
-import com.vibethema.model.Weapon;
+import com.vibethema.model.*;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.function.BiConsumer;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class EquipmentViewModelTest {
     private CharacterData data;
     private EquipmentViewModel viewModel;
 
+    @Mock
+    private EquipmentDataService equipmentService;
+    @Mock
+    private CharmDataService dataService;
+    @Mock
+    private Runnable refreshSummary;
+    @Mock
+    private BiConsumer<String, String> evocationsCaller;
+
     @BeforeEach
     void setUp() {
         data = new CharacterData();
-        // Mocking services with new instances for testing purposes
         viewModel = new EquipmentViewModel(
             data, 
-            new EquipmentDataService(), 
-            new CharmDataService(),
+            equipmentService, 
+            dataService,
             new HashMap<>(), 
-            () -> {}, 
-            (id, name) -> {}
+            refreshSummary, 
+            evocationsCaller
         );
     }
 
     @Test
-    void testAddingWeaponUpdatesViewModel() {
+    void testAddingWeaponUpdatesViewModelAndDirtyState() {
+        assertFalse(data.isDirty());
         Weapon weapon = new Weapon("Test Blade");
-        viewModel.addWeapon(weapon);
+        viewModel.saveWeapon(weapon, true);
 
-        assertEquals(2, data.getWeapons().size()); // Base has 1 (Unarmed), so now 2.
+        assertTrue(data.isDirty());
+        assertEquals(2, data.getWeapons().size()); // 1 (Unarmed) + 1
         assertEquals(2, viewModel.getWeapons().size());
-        assertEquals("Test Blade", viewModel.getWeapons().get(1).nameProperty().get());
+        verify(refreshSummary, times(1)).run();
     }
 
     @Test
-    void testRemovingWeaponUpdatesViewModel() {
+    void testUpdateArtifactWeaponTriggersSideEffect() throws IOException {
+        Weapon artifact = new Weapon("Soul Mirror");
+        artifact.setType(Weapon.WeaponType.ARTIFACT);
+        data.getWeapons().add(artifact);
+        
+        artifact.setName("Soul Mirror (Awakened)");
+        viewModel.saveWeapon(artifact, false);
+
+        assertTrue(data.isDirty());
+        verify(dataService, times(1)).updateEvocationCollectionName(artifact.getId(), "Soul Mirror (Awakened)");
+    }
+
+    @Test
+    void testRemovingWeaponUpdatesViewModelAndDirtyState() {
         Weapon weapon = data.getWeapons().get(0); // Unarmed
         viewModel.removeWeapon(weapon);
 
+        assertTrue(data.isDirty());
         assertEquals(0, data.getWeapons().size());
         assertEquals(0, viewModel.getWeapons().size());
+        verify(refreshSummary, times(1)).run();
+    }
+
+    @Test
+    void testSaveArmorNew() {
+        Armor armor = new Armor("Plate");
+        viewModel.saveArmor(armor, true);
+
+        assertTrue(data.isDirty());
+        assertEquals(1, data.getArmors().size());
+        assertEquals(1, viewModel.getArmors().size());
+        verify(refreshSummary, times(1)).run();
+    }
+
+    @Test
+    void testSaveHearthstoneNew() {
+        Hearthstone hs = new Hearthstone("Fire Gem", "Hot");
+        viewModel.saveHearthstone(hs, true);
+
+        assertTrue(data.isDirty());
+        assertEquals(1, data.getHearthstones().size());
+    }
+
+    @Test
+    void testSaveOtherEquipmentNew() {
+        OtherEquipment oe = new OtherEquipment("Climbing Gear", "Basic");
+        viewModel.saveOtherEquipment(oe, true);
+
+        assertTrue(data.isDirty());
+        assertEquals(1, data.getOtherEquipment().size());
+    }
+
+    @Test
+    void testCallEvocationsTrigger() {
+        viewModel.callEvocations("art123", "Daiklave");
+        verify(evocationsCaller, times(1)).accept("art123", "Daiklave");
     }
 
     @Test
@@ -55,5 +121,13 @@ public class EquipmentViewModelTest {
 
         assertEquals(2, viewModel.getWeapons().size());
         assertEquals("Background Added Blade", viewModel.getWeapons().get(1).nameProperty().get());
+        verify(refreshSummary, times(1)).run();
+    }
+
+    @Test
+    void testMarkDirty() {
+        assertFalse(data.isDirty());
+        viewModel.markDirty();
+        assertTrue(data.isDirty());
     }
 }

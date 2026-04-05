@@ -1,22 +1,13 @@
 package com.vibethema.ui.equipment;
 
-import com.vibethema.service.EquipmentDataService;
 import com.vibethema.ui.util.UIUtils;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.util.StringConverter;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import com.vibethema.viewmodel.equipment.EquipmentViewModel;
 import com.vibethema.viewmodel.equipment.WeaponRowViewModel;
@@ -37,12 +28,15 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
     @InjectViewModel
     private EquipmentViewModel viewModel;
 
+    private final EquipmentDialogService dialogService;
+
     private VBox weaponsListContainer;
     private VBox armorListContainer;
     private VBox hearthstoneListContainer;
     private VBox otherEquipmentListContainer;
 
-    public EquipmentTab() {
+    public EquipmentTab(EquipmentDialogService dialogService) {
+        this.dialogService = dialogService;
         setFitToWidth(true);
         getStyleClass().add("scroll-pane-custom");
     }
@@ -171,164 +165,13 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
     }
 
     private void showWeaponDialog(Weapon existing) {
-        Dialog<Weapon> dialog = new Dialog<>();
-        dialog.setTitle(existing == null ? "Add New Weapon" : "Edit Weapon");
-        dialog.initOwner(getScene().getWindow());
-
-        ButtonType saveBtnType = new ButtonType(existing == null ? "Add" : "Save", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(saveBtnType, ButtonType.CANCEL);
-
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
-
-        TextField nameField = new TextField(existing == null ? "" : existing.getName());
-        nameField.setPromptText("Weapon Name (e.g. Reaper Daiklave)");
-        
-        ComboBox<Weapon.WeaponRange> rangeCombo = new ComboBox<>(FXCollections.observableArrayList(Weapon.WeaponRange.values()));
-        rangeCombo.setValue(existing == null ? Weapon.WeaponRange.CLOSE : existing.getRange());
-
-        ComboBox<Weapon.WeaponType> typeCombo = new ComboBox<>(FXCollections.observableArrayList(Weapon.WeaponType.values()));
-        typeCombo.setValue(existing == null ? Weapon.WeaponType.MORTAL : existing.getType());
-
-        ComboBox<Weapon.WeaponCategory> categoryCombo = new ComboBox<>(FXCollections.observableArrayList(Weapon.WeaponCategory.values()));
-        categoryCombo.setValue(existing == null ? Weapon.WeaponCategory.MEDIUM : existing.getCategory());
-
-        ListView<EquipmentDataService.Tag> tagsList = new ListView<>();
-        tagsList.setPrefHeight(150);
-        ObservableList<EquipmentDataService.Tag> selectedTags = FXCollections.observableArrayList();
-        
-        ComboBox<Specialty> specialtyCombo = new ComboBox<>();
-        specialtyCombo.setPromptText("Select Specialty");
-        specialtyCombo.setConverter(new StringConverter<Specialty>() {
-            @Override public String toString(Specialty s) { return (s == null) ? "None" : s.getName(); }
-            @Override public Specialty fromString(String string) { return null; }
-        });
-
-        Runnable updateSpecs = () -> {
-            Specialty current = specialtyCombo.getValue();
-            ObservableList<Specialty> options = FXCollections.observableArrayList();
-            options.add(null);
-            
-            boolean melee = selectedTags.stream().anyMatch(t -> t.getName().equalsIgnoreCase("Melee"));
-            boolean archery = selectedTags.stream().anyMatch(t -> t.getName().equalsIgnoreCase("Archery"));
-            boolean brawl = selectedTags.stream().anyMatch(t -> t.getName().equalsIgnoreCase("Brawl"));
-            
-            for (Specialty s : viewModel.getCharacterData().getSpecialties()) {
-                String abil = s.getAbility();
-                if (melee && "Melee".equals(abil)) options.add(s);
-                else if (archery && "Archery".equals(abil)) options.add(s);
-                else if (brawl && ("Brawl".equals(abil) || viewModel.getCharacterData().isMartialArtsStyle(abil))) options.add(s);
-            }
-            specialtyCombo.setItems(options);
-            if (options.contains(current)) specialtyCombo.setValue(current);
-            else specialtyCombo.setValue(null);
-        };
-
-        selectedTags.addListener((ListChangeListener<? super EquipmentDataService.Tag>) c -> updateSpecs.run());
-
-        if (existing != null) {
-            String specId = existing.getSpecialtyId();
-            if (specId != null && !specId.isEmpty()) {
-                specialtyCombo.setValue(viewModel.getCharacterData().getSpecialtyById(specId));
-            }
-            String cat = existing.getRange() == Weapon.WeaponRange.CLOSE ? "melee" : 
-                         (existing.getRange() == Weapon.WeaponRange.THROWN ? "thrown" : "archery");
-            List<EquipmentDataService.Tag> availableTags = viewModel.getEquipmentService().getTagsForCategory(cat);
-            for (EquipmentDataService.Tag t : availableTags) {
-                if (existing.getTags().contains(t.getName())) {
-                    selectedTags.add(t);
-                }
-            }
-        }
-        updateSpecs.run();
-
-        tagsList.setCellFactory(lv -> new ListCell<>() {
-            private final CheckBox cb = new CheckBox();
-            @Override
-            protected void updateItem(EquipmentDataService.Tag item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setGraphic(null);
-                    setText(null);
-                } else {
-                    cb.setText(item.getName());
-                    cb.setTooltip(new Tooltip(item.getDescription()));
-                    cb.setSelected(selectedTags.stream().anyMatch(st -> st.getName().equals(item.getName())));
-                    cb.setOnAction(e -> {
-                        if (cb.isSelected()) {
-                            if (selectedTags.stream().noneMatch(st -> st.getName().equals(item.getName()))) {
-                                selectedTags.add(item);
-                            }
-                        } else {
-                            selectedTags.removeIf(st -> st.getName().equals(item.getName()));
-                        }
-                    });
-                    setGraphic(cb);
-                }
-            }
-        });
-
-        Runnable updateTagsList = () -> {
-            String cat = rangeCombo.getValue() == Weapon.WeaponRange.CLOSE ? "melee" : 
-                         (rangeCombo.getValue() == Weapon.WeaponRange.THROWN ? "thrown" : "archery");
-            List<EquipmentDataService.Tag> available = viewModel.getEquipmentService().getTagsForCategory(cat);
-            tagsList.getItems().setAll(available);
-            tagsList.refresh();
-        };
-
-        rangeCombo.setOnAction(e -> {
-            selectedTags.clear();
-            updateTagsList.run();
-        });
-        updateTagsList.run();
-
-        grid.add(new Label("Name:"), 0, 0);
-        grid.add(nameField, 1, 0);
-        grid.add(new Label("Range:"), 0, 1);
-        grid.add(rangeCombo, 1, 1);
-        grid.add(new Label("Type:"), 0, 2);
-        grid.add(typeCombo, 1, 2);
-        grid.add(new Label("Category:"), 0, 3);
-        grid.add(categoryCombo, 1, 3);
-        grid.add(new Label("Tags:"), 0, 4);
-        grid.add(tagsList, 1, 4);
-        grid.add(new Label("Specialty:"), 0, 5);
-        grid.add(specialtyCombo, 1, 5);
-
-        dialog.getDialogPane().setContent(grid);
-        Platform.runLater(nameField::requestFocus);
-
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == saveBtnType) {
-                Weapon nw = (existing != null) ? existing : new Weapon(nameField.getText());
-                nw.setName(nameField.getText());
-                nw.setRange(rangeCombo.getValue());
-                nw.setType(typeCombo.getValue());
-                nw.setCategory(categoryCombo.getValue());
-                nw.getTags().setAll(selectedTags.stream().map(EquipmentDataService.Tag::getName).collect(Collectors.toList()));
-                nw.setSpecialtyId(specialtyCombo.getValue() == null ? "" : specialtyCombo.getValue().getId());
-                return nw;
-            }
-            return null;
-        });
-
-        dialog.showAndWait().ifPresent(weapon -> {
-            if (existing == null) {
-                viewModel.addWeapon(weapon);
-            } else {
-                if (weapon.getType() == Weapon.WeaponType.ARTIFACT) {
-                    try {
-                        viewModel.getDataService().updateEvocationCollectionName(weapon.getId(), weapon.getName());
-                    } catch (IOException ex) {
-                        System.err.println("Failed to update evocation name: " + ex.getMessage());
-                    }
-                }
-                refreshWeaponsList();
-                viewModel.markDirty();
-            }
-        });
+        dialogService.showWeaponDialog(
+            existing, 
+            viewModel.getCharacterData().getSpecialties(), 
+            viewModel.getEquipmentService(), 
+            viewModel.getTagDescriptions(),
+            getScene().getWindow()
+        ).ifPresent(weapon -> viewModel.saveWeapon(weapon, existing == null));
     }
 
     private void refreshArmorList() {
@@ -377,25 +220,8 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
     }
 
     private void showArmorDialog(Armor existing) {
-        Dialog<Armor> dialog = new Dialog<>(); dialog.setTitle(existing == null ? "Add Armor" : "Edit Armor");
-        dialog.initOwner(getScene().getWindow());
-        ButtonType saveBtn = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(saveBtn, ButtonType.CANCEL);
-        GridPane grid = new GridPane(); grid.setHgap(10); grid.setVgap(10); grid.setPadding(new Insets(20));
-        TextField name = new TextField(); 
-        ComboBox<Armor.ArmorType> type = new ComboBox<>(FXCollections.observableArrayList(Armor.ArmorType.values()));
-        if (existing != null) { name.setText(existing.getName()); type.setValue(existing.getType()); }
-        grid.add(new Label("Name:"), 0, 0); grid.add(name, 1, 0); grid.add(new Label("Type:"), 0, 1); grid.add(type, 1, 1);
-        dialog.getDialogPane().setContent(grid);
-        dialog.setResultConverter(b -> {
-            if (b == saveBtn) {
-                Armor a = (existing != null) ? existing : new Armor(name.getText());
-                a.setName(name.getText()); a.setType(type.getValue()); return a;
-            } return null;
-        });
-        dialog.showAndWait().ifPresent(a -> { 
-            if (existing == null) viewModel.addArmor(a); else refreshArmorList();
-        });
+        dialogService.showArmorDialog(existing, viewModel.getTagDescriptions(), getScene().getWindow())
+                     .ifPresent(a -> viewModel.saveArmor(a, existing == null));
     }
 
     private void refreshHearthstoneList() {
@@ -417,22 +243,8 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
     }
 
     private void showHearthstoneDialog(Hearthstone existing) {
-        Dialog<Hearthstone> dialog = new Dialog<>(); dialog.setTitle(existing == null ? "Add Hearthstone" : "Edit Hearthstone");
-        dialog.initOwner(getScene().getWindow());
-        ButtonType saveBtn = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(saveBtn, ButtonType.CANCEL);
-        VBox root = new VBox(10); root.setPadding(new Insets(10));
-        TextField name = new TextField(); if (existing != null) name.setText(existing.getName());
-        TextArea desc = new TextArea(); if (existing != null) desc.setText(existing.getDescription());
-        root.getChildren().addAll(new Label("Name:"), name, new Label("Description:"), desc);
-        dialog.getDialogPane().setContent(root);
-        dialog.setResultConverter(b -> {
-            if (b == saveBtn) {
-                Hearthstone h = (existing != null) ? existing : new Hearthstone(name.getText(), desc.getText());
-                h.setName(name.getText()); h.setDescription(desc.getText()); return h;
-            } return null;
-        });
-        dialog.showAndWait().ifPresent(h -> { if (existing == null) viewModel.addHearthstone(h); else refreshHearthstoneList(); });
+        dialogService.showHearthstoneDialog(existing, getScene().getWindow())
+                     .ifPresent(h -> viewModel.saveHearthstone(h, existing == null));
     }
 
     private void refreshOtherEquipmentList() {
@@ -463,22 +275,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
     }
 
     private void showOtherEquipmentDialog(OtherEquipment existing) {
-        Dialog<OtherEquipment> dialog = new Dialog<>(); dialog.setTitle(existing == null ? "Add Equipment" : "Edit Equipment");
-        dialog.initOwner(getScene().getWindow());
-        ButtonType saveBtn = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(saveBtn, ButtonType.CANCEL);
-        VBox root = new VBox(10); root.setPadding(new Insets(10));
-        TextField name = new TextField(); if (existing != null) name.setText(existing.getName());
-        TextArea desc = new TextArea(); if (existing != null) desc.setText(existing.getDescription());
-        CheckBox artifact = new CheckBox("Artifact Status"); if (existing != null) artifact.setSelected(existing.isArtifact());
-        root.getChildren().addAll(new Label("Name:"), name, artifact, new Label("Description:"), desc);
-        dialog.getDialogPane().setContent(root);
-        dialog.setResultConverter(b -> {
-            if (b == saveBtn) {
-                OtherEquipment o = (existing != null) ? existing : new OtherEquipment(name.getText(), desc.getText());
-                o.setName(name.getText()); o.setDescription(desc.getText()); o.setArtifact(artifact.isSelected()); return o;
-            } return null;
-        });
-        dialog.showAndWait().ifPresent(o -> { if (existing == null) viewModel.addOtherEquipment(o); else refreshOtherEquipmentList(); });
+        dialogService.showOtherEquipmentDialog(existing, getScene().getWindow())
+                     .ifPresent(o -> viewModel.saveOtherEquipment(o, existing == null));
     }
 }
