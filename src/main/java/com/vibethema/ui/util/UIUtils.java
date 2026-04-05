@@ -116,6 +116,11 @@ public class UIUtils {
         title.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
         
         Scene scene = new Scene(root, 400, 550);
+        scene.addEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, e -> {
+            if (e.getCode() == javafx.scene.input.KeyCode.ESCAPE) {
+                stage.close();
+            }
+        });
         if (owner.getScene() != null) scene.getStylesheets().addAll(owner.getScene().getStylesheets());
         stage.setScene(scene);
         stage.show();

@@ -22,6 +22,7 @@ import com.vibethema.model.Armor;
 import com.vibethema.model.Hearthstone;
 import com.vibethema.model.OtherEquipment;
 import com.vibethema.model.Specialty;
+import java.util.Optional;
 
 /**
  * A dedicated component for managing character equipment.
@@ -195,13 +196,15 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         }
     }
 
-    private void showWeaponDialog(Weapon existing) {
-        dialogService.showWeaponDialog(
+    private boolean showWeaponDialog(Weapon existing) {
+        Optional<Weapon> result = dialogService.showWeaponDialog(
             existing, 
             viewModel.getEquipmentService(), 
             viewModel.getTagDescriptions(),
             getScene().getWindow()
-        ).ifPresent(weapon -> viewModel.saveWeapon(weapon, existing == null));
+        );
+        result.ifPresent(weapon -> viewModel.saveWeapon(weapon, existing == null));
+        return result.isPresent();
     }
 
     private void refreshArmorList() {
@@ -249,9 +252,10 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         }
     }
 
-    private void showArmorDialog(Armor existing) {
-        dialogService.showArmorDialog(existing, viewModel.getTagDescriptions(), getScene().getWindow())
-                     .ifPresent(a -> viewModel.saveArmor(a, existing == null));
+    private boolean showArmorDialog(Armor existing) {
+        Optional<Armor> result = dialogService.showArmorDialog(existing, viewModel.getTagDescriptions(), getScene().getWindow());
+        result.ifPresent(a -> viewModel.saveArmor(a, existing == null));
+        return result.isPresent();
     }
 
     private void refreshHearthstoneList() {
@@ -272,9 +276,10 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         }
     }
 
-    private void showHearthstoneDialog(Hearthstone existing) {
-        dialogService.showHearthstoneDialog(existing, getScene().getWindow())
-                     .ifPresent(h -> viewModel.saveHearthstone(h, existing == null));
+    private boolean showHearthstoneDialog(Hearthstone existing) {
+        Optional<Hearthstone> result = dialogService.showHearthstoneDialog(existing, getScene().getWindow());
+        result.ifPresent(h -> viewModel.saveHearthstone(h, existing == null));
+        return result.isPresent();
     }
 
     private void refreshOtherEquipmentList() {
@@ -304,9 +309,10 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         }
     }
 
-    private void showOtherEquipmentDialog(OtherEquipment existing) {
-        dialogService.showOtherEquipmentDialog(existing, getScene().getWindow())
-                     .ifPresent(o -> viewModel.saveOtherEquipment(o, existing == null));
+    private boolean showOtherEquipmentDialog(OtherEquipment existing) {
+        Optional<OtherEquipment> result = dialogService.showOtherEquipmentDialog(existing, getScene().getWindow());
+        result.ifPresent(o -> viewModel.saveOtherEquipment(o, existing == null));
+        return result.isPresent();
     }
 
     private void showWeaponDatabaseDialog() {
@@ -333,7 +339,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
             item -> viewModel.addOtherEquipmentFromDatabase((OtherEquipment)item));
     }
 
-    private void showGenericDatabaseDialog(String type, java.util.Collection<?> items, Runnable onCreateNew, java.util.function.Consumer<Object> onSelect) {
+    private void showGenericDatabaseDialog(String type, java.util.Collection<?> items, java.util.function.BooleanSupplier onCreateNew, java.util.function.Consumer<Object> onSelect) {
         de.saxsys.mvvmfx.ViewTuple<EquipmentDatabaseView, com.vibethema.viewmodel.equipment.EquipmentDatabaseViewModel> tuple = 
             de.saxsys.mvvmfx.FluentViewLoader.javaView(EquipmentDatabaseView.class).load();
         
@@ -353,11 +359,13 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
             dialog.getDialogPane().getStylesheets().addAll(getScene().getStylesheets());
         }
 
-        // Handle "Create New" - it will close the selection dialog and open the creation dialog
+        // Handle "Create New" - it will open the creation dialog
         dbVm.setCreateNewAction(() -> {
-            dialog.setResult(Boolean.FALSE);
-            dialog.close();
-            javafx.application.Platform.runLater(onCreateNew);
+            boolean success = onCreateNew.getAsBoolean();
+            if (success) {
+                dialog.setResult(Boolean.TRUE);
+                dialog.close();
+            }
         });
 
         // Handle "Add Selected"
@@ -370,8 +378,9 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
             }
         });
 
-        // Add standard Close button to the dialog pane
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+        // Add standard Cancel button to the dialog pane
+        // This also enables the ESC key dismissal automatically in JavaFX dialogs
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
         
         dialog.showAndWait();
     }
