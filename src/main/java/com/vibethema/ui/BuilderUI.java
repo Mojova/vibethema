@@ -56,9 +56,8 @@ public class BuilderUI extends BorderPane {
     private Label favoredLabel = new Label();
     private Label bpLabel = new Label();
     private Label attrLabel = new Label();
-    private Label personalMotesLabel = new Label();
-    private Label peripheralMotesLabel = new Label();
-    private HBox healthBox = new HBox(5);
+    private Label abilitiesLabel = new Label();
+    private Label charmsLabel = new Label();
     private Button finalizeBtn = new Button("Finalize Character");
 
     private Map<String, String> keywordDefs = new HashMap<>();
@@ -481,17 +480,8 @@ public class BuilderUI extends BorderPane {
         finalizeBtn.managedProperty().bind(finalizeBtn.visibleProperty());
         finalizeBtn.setOnAction(e -> handleFinalization());
 
-        row1.getChildren().addAll(casteLabel, favoredLabel, attrLabel, bpLabel, spacer, finalizeBtn);
-
-        HBox row2 = new HBox(20);
-        row2.setAlignment(Pos.CENTER_LEFT);
-        row2.getChildren().addAll(personalMotesLabel, peripheralMotesLabel);
-
-        HBox row3 = new HBox(10);
-        row3.setAlignment(Pos.CENTER_LEFT);
-        row3.getChildren().addAll(new Label("Health:"), healthBox);
-
-        footer.getChildren().addAll(row1, row2, row3);
+        row1.getChildren().addAll(casteLabel, favoredLabel, attrLabel, abilitiesLabel, charmsLabel, bpLabel, spacer, finalizeBtn);
+        footer.getChildren().add(row1);
         return footer;
     }
 
@@ -630,22 +620,14 @@ public class BuilderUI extends BorderPane {
         casteLabel.setText("Caste: " + data.casteAbilityCountProperty().get() + "/5");
         favoredLabel.setText("Favored: " + data.favoredAbilityCountProperty().get() + "/5");
         attrLabel.setText(String.format("Attributes: %d/%d/%d", status.physicalDots, status.socialDots, status.mentalDots));
-        
-        personalMotesLabel.setText("Personal: " + status.personalMotes);
-        peripheralMotesLabel.setText("Peripheral: " + status.peripheralMotes);
+        abilitiesLabel.setText("Abilities: " + status.abilitiesSpent + "/28");
+        charmsLabel.setText("Charms: " + status.charmsSpent + "/15");
         
         finalizeBtn.setDisable(!status.isReadyToFinalize);
         if (status.isReadyToFinalize) {
             finalizeBtn.setTooltip(new Tooltip("All creation points spent. Click to finalize."));
         } else {
             finalizeBtn.setTooltip(new Tooltip("Check creation pools: Attributes (18), Abilities (28), Merits (10), Specialties (4), Charms (15), and 15 BP."));
-        }
-        
-        healthBox.getChildren().clear();
-        for (String lv : status.healthLevels) {
-            Label l = new Label(lv);
-            l.setStyle("-fx-text-fill: white; -fx-padding: 2; -fx-border-color: #34495e; -fx-background-color: #2c3e50;");
-            healthBox.getChildren().add(l);
         }
         
         updateAllWebNodeStyles();
