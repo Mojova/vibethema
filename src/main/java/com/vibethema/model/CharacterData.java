@@ -603,11 +603,11 @@ public class CharacterData {
         return unlockedCharms.stream().anyMatch(c -> c.ability() != null && c.ability().equals(ability.getDisplayName()));
     }
     
-    // Moved to Rules Engine
-/*
     public int getPersonalMotes() { return (essence.get() * 3) + 10; }
     public int getPeripheralMotes() { return (essence.get() * 7) + 26; }
     
+    // Moved to Rules Engine
+/*
     public int getAttributeTotal(List<String> attrCategory) {
         return attrCategory.stream().mapToInt(attr -> attributes.get(attr).get() - 1).sum();
     }

@@ -1,9 +1,16 @@
 package com.vibethema.service;
 
 import com.vibethema.model.Ability;
+import com.vibethema.model.Armor;
+import com.vibethema.model.AttackPoolData;
 import com.vibethema.model.Attribute;
 import com.vibethema.model.CharacterData;
+import com.vibethema.model.CraftAbility;
+import com.vibethema.model.MartialArtsStyle;
+import com.vibethema.model.Merit;
+import com.vibethema.model.Specialty;
 import com.vibethema.model.SystemData;
+import com.vibethema.model.Weapon;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
@@ -13,6 +20,7 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 public class PdfExportService {
     private static final String TEMPLATE_PATH = "/interactive_sheet.pdf";
@@ -44,55 +52,332 @@ public class PdfExportService {
         setDotRating(acroForm, "dot", data.getAttribute(Attribute.STAMINA).get(), 17);
 
         // 2. Social Attributes (Column 2 - Irregular indices)
-        setIrregularDotRating(acroForm, new String[]{"dot6", "dot7", "dot8", "dot8a", "dot8az"}, data.getAttribute(Attribute.CHARISMA).get());
-        setIrregularDotRating(acroForm, new String[]{"dot14", "dot15", "dot16", "dot16a", "dot16az"}, data.getAttribute(Attribute.MANIPULATION).get());
-        setIrregularDotRating(acroForm, new String[]{"dot22", "dot23", "dot24", "dot24a", "dot24az"}, data.getAttribute(Attribute.APPEARANCE).get());
+        setIrregularDotRating(acroForm, new String[] { "dot6", "dot7", "dot8", "dot8a", "dot8az" },
+                data.getAttribute(Attribute.CHARISMA).get());
+        setIrregularDotRating(acroForm, new String[] { "dot14", "dot15", "dot16", "dot16a", "dot16az" },
+                data.getAttribute(Attribute.MANIPULATION).get());
+        setIrregularDotRating(acroForm, new String[] { "dot22", "dot23", "dot24", "dot24a", "dot24az" },
+                data.getAttribute(Attribute.APPEARANCE).get());
 
         // 3. Mental Attributes (Column 3)
         setDotRating(acroForm, "dot", data.getAttribute(Attribute.PERCEPTION).get(), 25);
         setDotRating(acroForm, "dot", data.getAttribute(Attribute.INTELLIGENCE).get(), 33);
         setDotRating(acroForm, "dot", data.getAttribute(Attribute.WITS).get(), 41);
 
-        // Abilities (Alphabetical based on enum order, explicitly mapped due to scrambled PDF indices)
-        String[][] abilityDots = {
-            {"dot30", "dot31", "dot32", "dot32a", "dot32az"}, // Y=582, Ability 1 (Archery)
-            {"dot38", "dot39", "dot40", "dot40a", "dot40az"}, // Y=569, Ability 2
-            {"dot46", "dot47", "dot48", "dot48a", "dot48az"}, // Y=556, Ability 3
-            {"dot49", "dot50", "dot51", "dot52", "dot53"},    // Y=543, Ability 4
-            {"dot57", "dot58", "dot59", "dot60", "dot61"},    // Y=530, Ability 5
-            {"dot65", "dot66", "dot67", "dot68", "dot69"},    // Y=517, Ability 6
-            {"dot54", "dot55", "dot56", "dot56a", "dot56az"}, // Y=504, Ability 7
-            {"dot62", "dot63", "dot64", "dot64a", "dot64az"}, // Y=491, Ability 8
-            {"dot70", "dot71", "dot72", "dot72a", "dot72az"}, // Y=478, Ability 9
-            {"dot73", "dot74", "dot75", "dot76", "dot77"},    // Y=465, Ability 10
-            {"dot81", "dot82", "dot83", "dot84", "dot85"},    // Y=452, Ability 11
-            {"dot89", "dot90", "dot91", "dot92", "dot93"},    // Y=439, Ability 12
-            {"dot97", "dot98", "dot99", "dot100", "dot101"},  // Y=426, Ability 13
-            {"dot105", "dot106", "dot107", "dot108", "dot109"},// Y=413, Ability 14
-            {"dot113", "dot114", "dot115", "dot116", "dot117"},// Y=400, Ability 15
-            {"dot121", "dot122", "dot123", "dot124", "dot125"},// Y=387, Ability 16
-            {"dot129", "dot130", "dot131", "dot132", "dot133"},// Y=374, Ability 17
-            {"dot137", "dot138", "dot139", "dot140", "dot141"},// Y=361, Ability 18
-            {"dot145", "dot146", "dot147", "dot148", "dot149"},// Y=348, Ability 19
-            {"dot145q", "dot146q", "dot147q", "dot148q", "dot149q"}, // Y=335, Ability 20
-            {"dot78", "dot79", "dot80", "dot80a", "dot80az"}, // Y=322, Ability 21
-            {"dot86", "dot87", "dot88", "dot88a", "dot88az"}, // Y=309, Ability 22
-            {"dot94", "dot95", "dot96", "dot96a", "dot96az"}, // Y=296, Ability 23
-            {"dot102", "dot103", "dot104", "dot104a", "dot104az"},// Y=283, Ability 24
-            {"dot110", "dot111", "dot112", "dot112a", "dot112az"},// Y=270, Ability 25
-            {"dot118", "dot119", "dot120", "dot120a", "dot120az"} // Y=257, Ability 26
+        // 4. Specialties (Middle Column, merits1-9 - No dots)
+        int specIndex = 1;
+        for (Specialty s : data.getSpecialties()) {
+            if (s.getName() == null || s.getName().trim().isEmpty())
+                continue;
+            String text = s.getAbility() + ": " + s.getName();
+            setField(acroForm, "merits" + specIndex, text);
+            specIndex++;
+            if (specIndex > 9)
+                break;
+        }
+
+        // 5. Merits (Right Column, merits10-18 - With dots)
+        String[][] meritDots = {
+                { "dot225q", "dot226q", "dot227q", "dot228q", "dot229q" },
+                { "dot158", "dot159", "dot160", "dot160a", "dot160az" },
+                { "dot166", "dot167", "dot168", "dot168a", "dot168az" },
+                { "dot174", "dot175", "dot176", "dot176a", "dot176az" },
+                { "dot182", "dot183", "dot184", "dot184a", "dot184az" },
+                { "dot190", "dot191", "dot192", "dot192a", "dot192az" },
+                { "dot198", "dot199", "dot200", "dot200a", "dot200az" },
+                { "dot206", "dot207", "dot208", "dot208a", "dot208az" },
+                { "dot214", "dot215", "dot216", "dot216a", "dot216az" }
         };
 
-        int checkIndex = 1;
-        for (Ability abil : SystemData.ABILITIES) {
-            int rating = data.getAbility(abil).get();
-            if (checkIndex - 1 < abilityDots.length) {
-                setIrregularDotRating(acroForm, abilityDots[checkIndex - 1], rating);
+        int meritSlot = 0;
+        for (Merit m : data.getMerits()) {
+            if (m.getName() == null || m.getName().trim().isEmpty())
+                continue;
+            setField(acroForm, "merits" + (10 + meritSlot), m.getName());
+            if (meritSlot < meritDots.length) {
+                setIrregularDotRating(acroForm, meritDots[meritSlot], m.getRating());
             }
-            setCheckbox(acroForm, "abcheck" + checkIndex, data.getFavoredAbility(abil).get() || data.getCasteAbility(abil).get());
-            
-            checkIndex++;
-            if (checkIndex > 32) break; // PDF has limited rows
+            meritSlot++;
+            if (meritSlot >= 9)
+                break;
+        }
+
+        // 6. Core Trackers (Essence, Willpower, Limit)
+        setDotRating(acroForm, "essdot", data.essenceProperty().get(), 1);
+        setDotRating(acroForm, "willdot", data.willpowerProperty().get(), 1);
+        setTrackRating(acroForm, "check", data.limitProperty().get(), 11, 10);
+        setWrappedText(acroForm, "limitt", data.limitTriggerProperty().get(), 4, 45); // ~45 chars per line
+
+        // 7. Weapons (8x7 grid)
+        fillWeapons(data, acroForm);
+
+        // 8. Protection and Derived Stats (HD1-19)
+        fillProtection(data, acroForm);
+
+        // 9. Specialized Abilities (Craft & Martial Arts)
+        fillSpecializedAbilities(data, acroForm);
+
+        // Abilities (Physical mapping to the 26 standard rows Ab1-26)
+        String[][] abilityDots = {
+                { "dot30", "dot31", "dot32", "dot32a", "dot32az" }, // Row 1: Archery
+                { "dot38", "dot39", "dot40", "dot40a", "dot40az" }, // Row 2: Athletics
+                { "dot46", "dot47", "dot48", "dot48a", "dot48az" }, // Row 3: Awareness
+                { "dot49", "dot50", "dot51", "dot52", "dot53" }, // Row 4: Brawl
+                { "dot57", "dot58", "dot59", "dot60", "dot61" }, // Row 5: Bureaucracy
+                { "dot65", "dot66", "dot67", "dot68", "dot69" }, // Row 6: CRAFT (Specialized)
+                { "dot54", "dot55", "dot56", "dot56a", "dot56az" }, // Row 7: Dodge
+                { "dot62", "dot63", "dot64", "dot64a", "dot64az" }, // Row 8: Integrity
+                { "dot70", "dot71", "dot72", "dot72a", "dot72az" }, // Row 9: Investigation
+                { "dot73", "dot74", "dot75", "dot76", "dot77" }, // Row 10: Larceny
+                { "dot81", "dot82", "dot83", "dot84", "dot85" }, // Row 11: Linguistics
+                { "dot89", "dot90", "dot91", "dot92", "dot93" }, // Row 12: Lore
+                { "dot97", "dot98", "dot99", "dot100", "dot101" }, // Row 13: MARTIAL ARTS (Specialized)
+                { "dot105", "dot106", "dot107", "dot108", "dot109" }, // Row 14: Medicine
+                { "dot113", "dot114", "dot115", "dot116", "dot117" }, // Row 15: Melee
+                { "dot121", "dot122", "dot123", "dot124", "dot125" }, // Row 16: Occult
+                { "dot129", "dot130", "dot131", "dot132", "dot133" }, // Row 17: Performance
+                { "dot137", "dot138", "dot139", "dot140", "dot141" }, // Row 18: Presence
+                { "dot145", "dot146", "dot147", "dot148", "dot149" }, // Row 19: Resistance
+                { "dot145q", "dot146q", "dot147q", "dot148q", "dot149q" }, // Row 20: Ride
+                { "dot78", "dot79", "dot80", "dot80a", "dot80az" }, // Row 21: Sail
+                { "dot86", "dot87", "dot88", "dot88a", "dot88az" }, // Row 22: Socialize
+                { "dot94", "dot95", "dot96", "dot96a", "dot96az" }, // Row 23: Stealth
+                { "dot102", "dot103", "dot104", "dot104a", "dot104az" }, // Row 24: Survival
+                { "dot110", "dot111", "dot112", "dot112a", "dot112az" }, // Row 25: Thrown
+                { "dot118", "dot119", "dot120", "dot120a", "dot120az" } // Row 26: War
+        };
+
+        Ability[] abilityList = Ability.values();
+        int rowIndex = 0;
+        for (Ability ability : abilityList) {
+            if (ability == Ability.CRAFT || ability == Ability.MARTIAL_ARTS) {
+                // Skips both because they are specialized (Craft) or separate (Martial Arts
+                // style mapping)
+                // However, we still increment rowIndex for both because they HAVE a row on the
+                // PDF (Row 6 and Row 13)
+                rowIndex++;
+                continue;
+            }
+
+            // Map remaining standard abilities (Dot Tracks and Caste/Favored Checkboxes
+            // only)
+            if (rowIndex < abilityDots.length) {
+                int rating = data.getAbilityRating(ability);
+                setTrackRating(acroForm, abilityDots[rowIndex], rating);
+                setCheckbox(acroForm, "abcheck" + (rowIndex + 1),
+                        data.getCasteAbility(ability).get() || data.getFavoredAbility(ability).get());
+            }
+            rowIndex++;
+        }
+    }
+
+    private void fillSpecializedAbilities(CharacterData data, PDAcroForm form) throws IOException {
+        List<CraftAbility> crafts = data.getCrafts();
+        List<MartialArtsStyle> styles = data.getMartialArtsStyles();
+
+        // 1. Principal Slots
+        // Row 6: Main Craft
+        if (!crafts.isEmpty()) {
+            CraftAbility main = crafts.get(0);
+            setField(form, "ablities6", main.getExpertise());
+            String[] mainDots = { "dot65", "dot66", "dot67", "dot68", "dot69" };
+            setTrackRating(form, mainDots, main.getRating());
+            setCheckbox(form, "abcheck6", main.isCaste() || main.isFavored());
+        }
+
+        // Row 13: Main Martial Arts
+        if (!styles.isEmpty()) {
+            MartialArtsStyle mainStyle = styles.get(0);
+            String name = mainStyle.getStyleName();
+            if (name != null && name.length() > 5) {
+                if (name.charAt(5) == ' ') {
+                    name = name.substring(0, 5);
+                } else {
+                    name = name.substring(0, 5) + ".";
+                }
+            }
+            setField(form, "ablities13", name);
+            String[] styleDots = { "dot97", "dot98", "dot99", "dot100", "dot101" };
+            setTrackRating(form, styleDots, mainStyle.getRating());
+            setCheckbox(form, "abcheck13", mainStyle.isCaste() || mainStyle.isFavored());
+        }
+
+        // 2. Additional Slots (verified starting at Ab27 through Ab32)
+        String[] addAbLabels = { "ablities27", "ablities28", "ablities29", "ablities30", "ablities31", "ablities32" };
+        String[][] addAbDots = {
+                { "dot126", "dot127", "dot128", "dot128a", "dot128az" }, // Ab27
+                { "dot134", "dot135", "dot136", "dot136a", "dot136az" }, // Ab28
+                { "dot142", "dot143", "dot144", "dot144a", "dot144az" }, // Ab29
+                { "dot150", "dot151", "dot152", "dot152a", "dot152az" }, // Ab30
+                { "dot150q", "dot151q", "dot152q", "dot152qa", "dot152qaz" }, // Ab31
+                { "dot153", "dot154", "dot155", "dot156", "dot157" } // Ab32
+        };
+
+        int addSlotIdx = 0;
+
+        // Surplus Crafts
+        for (int i = 1; i < crafts.size() && addSlotIdx < addAbLabels.length; i++) {
+            CraftAbility extra = crafts.get(i);
+            setField(form, addAbLabels[addSlotIdx], "Craft: " + extra.getExpertise());
+            setTrackRating(form, addAbDots[addSlotIdx], extra.getRating());
+            setCheckbox(form, "abcheck" + (27 + addSlotIdx), extra.isCaste() || extra.isFavored());
+            addSlotIdx++;
+        }
+
+        // Martial Arts Styles
+        for (int i = 1; i < styles.size() && addSlotIdx < addAbLabels.length; i++) {
+            MartialArtsStyle extraStyle = styles.get(i);
+            setField(form, addAbLabels[addSlotIdx], "MA: " + extraStyle.getStyleName());
+            setTrackRating(form, addAbDots[addSlotIdx], extraStyle.getRating());
+            setCheckbox(form, "abcheck" + (27 + addSlotIdx), extraStyle.isCaste() || extraStyle.isFavored());
+            addSlotIdx++;
+        }
+    }
+
+    private void fillProtection(CharacterData data, PDAcroForm form) throws IOException {
+        // 1. Armor Slots (HD1-HD10)
+        List<Armor> armors = data.getArmors();
+        for (int i = 0; i < Math.min(2, armors.size()); i++) {
+            Armor a = armors.get(i);
+            int nameIdx = i + 1; // HD1, HD2
+            int soakIdx = i + 3; // HD3, HD4
+            int hardnessIdx = i + 5; // HD5, HD6
+            int mobilityIdx = i + 7; // HD7, HD8
+            int tagsIdx = i + 9; // HD9, HD10
+
+            setField(form, "HD" + nameIdx, a.getName());
+            setField(form, "HD" + soakIdx, String.valueOf(a.getSoak()));
+            setField(form, "HD" + hardnessIdx, String.valueOf(a.getHardness()));
+            setField(form, "HD" + mobilityIdx, String.valueOf(a.getMobilityPenalty()));
+            setField(form, "HD" + tagsIdx, String.join(", ", a.getTags()));
+        }
+
+        // 2. Derived Stats (HD15-19)
+        setField(form, "HD15", String.valueOf(data.evasionProperty().get()));
+        setField(form, "HD16", String.valueOf(data.guileProperty().get()));
+
+        int dex = data.getAttribute(Attribute.DEXTERITY).get();
+        setField(form, "HD17", String.valueOf(dex + data.getAbilityRating(Ability.ATHLETICS)));
+        setField(form, "HD18", String.valueOf(dex + data.getAbilityRating(Ability.DODGE)));
+        setField(form, "HD19", String.valueOf(data.joinBattleProperty().get()));
+
+        // 3. Final Protection Mapping
+        int stamina = data.getAttribute(Attribute.STAMINA).get();
+        setField(form, "HD11", String.valueOf(stamina));
+        setField(form, "HD12", String.valueOf(data.totalSoakProperty().get()));
+        setField(form, "HD13", ""); // Parry - Leave empty
+        setField(form, "HD14", String.valueOf(data.resolveProperty().get()));
+
+        // Mote Pools (Below Essence Dots)
+        setField(form, "essence1", ""); // Leave current blank for player use
+        setField(form, "essence2", String.valueOf(data.getPersonalMotes()));
+
+        setField(form, "essence3", ""); // Leave current blank for player use
+        setField(form, "essence4", String.valueOf(data.getPeripheralMotes()));
+    }
+
+    private void fillWeapons(CharacterData data, PDAcroForm form) throws IOException {
+        int rowCursor = 1;
+        for (AttackPoolData apd : data.getAttackPools()) {
+            Weapon w = apd.getWeapon();
+            boolean isRanged = w.getRange() != Weapon.WeaponRange.CLOSE;
+            List<String> tags = w.getTags();
+            int rowsNeeded = isRanged ? 3 : (tags.size() > 2 ? 2 : 1);
+
+            if (rowCursor + rowsNeeded - 1 > 8)
+                break;
+
+            // --- Row 1 ---
+            setField(form, "weapons" + rowCursor, w.getName());
+
+            // Accuracy Row 1
+            if (!isRanged) {
+                setField(form, "weapons" + (rowCursor + 8), String.valueOf(w.getAccuracy()));
+            } else {
+                setField(form, "weapons" + (rowCursor + 8),
+                        String.format("%d/%d", w.getCloseRangeBonus(), w.getShortRangeBonus()));
+            }
+
+            // Damage (always Row 1)
+            boolean isBashing = tags.contains("Bashing");
+            setField(form, "weapons" + (rowCursor + 16), apd.getDamage() + (isBashing ? "B" : "L"));
+
+            // Defense Row 1
+            setField(form, "weapons" + (rowCursor + 24), String.valueOf(w.getDefense()));
+
+            // Overwhelming Row 1
+            setField(form, "weapons" + (rowCursor + 32), String.valueOf(w.getOverwhelming()));
+
+            // Tags Row 1
+            setField(form, "weapons" + (rowCursor + 40), String.join(", ", tags.subList(0, Math.min(2, tags.size()))));
+
+            // Dice Pool Row 1 (Decisive only)
+            setField(form, "weapons" + (rowCursor + 48), String.valueOf(apd.getDecisivePool()));
+
+            // --- Row 2 ---
+            if (rowsNeeded >= 2) {
+                int row2 = rowCursor + 1;
+                if (isRanged) {
+                    setField(form, "weapons" + (row2 + 8),
+                            String.format("%d/%d", w.getMediumRangeBonus(), w.getLongRangeBonus()));
+                }
+                if (tags.size() > 2) {
+                    setField(form, "weapons" + (row2 + 40),
+                            String.join(", ", tags.subList(2, Math.min(4, tags.size()))));
+                }
+            }
+
+            // --- Row 3 ---
+            if (rowsNeeded == 3) {
+                int row3 = rowCursor + 2;
+                setField(form, "weapons" + (row3 + 8), String.valueOf(w.getExtremeRangeBonus()));
+                if (tags.size() > 4) {
+                    setField(form, "weapons" + (row3 + 40), String.join(", ", tags.subList(4, tags.size())));
+                }
+            }
+
+            rowCursor += rowsNeeded;
+        }
+    }
+
+    private void setTrackRating(PDAcroForm form, String prefix, int rating, int startIndex, int count)
+            throws IOException {
+        for (int i = 0; i < count; i++) {
+            setCheckbox(form, prefix + (startIndex + i), i < rating);
+        }
+    }
+
+    private void setTrackRating(PDAcroForm form, String[] dots, int rating) throws IOException {
+        for (int i = 0; i < dots.length; i++) {
+            setCheckbox(form, dots[i], i < rating);
+        }
+    }
+
+    private void setWrappedText(PDAcroForm form, String prefix, String text, int maxLines, int charsPerLine)
+            throws IOException {
+        if (text == null)
+            return;
+
+        // Simple word wrap
+        String[] words = text.split("\\s+");
+        StringBuilder currentLine = new StringBuilder();
+        int lineIndex = 1;
+
+        for (String word : words) {
+            if (lineIndex > maxLines)
+                break;
+
+            if (currentLine.length() + word.length() + 1 > charsPerLine) {
+                setField(form, prefix + lineIndex, currentLine.toString().trim());
+                currentLine = new StringBuilder(word).append(" ");
+                lineIndex++;
+            } else {
+                currentLine.append(word).append(" ");
+            }
+        }
+
+        if (lineIndex <= maxLines && currentLine.length() > 0) {
+            setField(form, prefix + lineIndex, currentLine.toString().trim());
         }
     }
 
@@ -115,8 +400,10 @@ public class PdfExportService {
     private void setCheckbox(PDAcroForm acroForm, String fieldName, boolean value) throws IOException {
         PDField field = acroForm.getField(fieldName);
         if (field instanceof PDCheckBox cb) {
-            if (value) cb.check();
-            else cb.unCheck();
+            if (value)
+                cb.check();
+            else
+                cb.unCheck();
         }
     }
 

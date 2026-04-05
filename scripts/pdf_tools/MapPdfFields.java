@@ -5,10 +5,7 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationWidget;
 
 import java.io.File;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
 
 public class MapPdfFields {
     public static void main(String[] args) throws Exception {
@@ -19,30 +16,28 @@ public class MapPdfFields {
         
         for (PDField field : form.getFields()) {
             String name = field.getFullyQualifiedName();
-            if (name.startsWith("ablities") || name.startsWith("dot") || name.startsWith("abcheck")) {
-                List<PDAnnotationWidget> widgets = field.getWidgets();
-                if (widgets != null && !widgets.isEmpty()) {
-                    float y = widgets.get(0).getRectangle().getLowerLeftY();
-                    float x = widgets.get(0).getRectangle().getLowerLeftX();
-                    fields.add(new FieldInfo(name, x, y));
-                }
+            String type = field.getFieldType();
+            List<PDAnnotationWidget> widgets = field.getWidgets();
+            if (widgets != null && !widgets.isEmpty()) {
+                float y = widgets.get(0).getRectangle().getLowerLeftY();
+                float x = widgets.get(0).getRectangle().getLowerLeftX();
+                fields.add(new FieldInfo(name, type, x, y));
             }
         }
         
-        // Sort by Y strictly (top to bottom is highest Y first) then X (left to right)
         fields.sort(Comparator.comparing((FieldInfo f) -> -Math.round(f.y / 5.0f) * 5.0f)
                               .thenComparing(f -> f.x));
                               
         for (FieldInfo f : fields) {
-            System.out.println(String.format("Y: %5.1f, X: %5.1f -> %s", f.y, f.x, f.name));
+            System.out.println(String.format("Y:%5.1f, X:%5.1f, Type:%s -> %s", f.y, f.x, f.type, f.name));
         }
         
         doc.close();
     }
     
     static class FieldInfo {
-        String name;
+        String name, type;
         float x, y;
-        FieldInfo(String n, float x, float y) { this.name = n; this.x = x; this.y = y; }
+        FieldInfo(String n, String t, float x, float y) { this.name = n; this.type = t; this.x = x; this.y = y; }
     }
 }
