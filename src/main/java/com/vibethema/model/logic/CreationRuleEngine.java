@@ -165,16 +165,7 @@ public class CreationRuleEngine {
         status.personalMotes = (essence * 3) + 10;
         status.peripheralMotes = (essence * 7) + 26;
         
-        status.healthLevels = new ArrayList<>(Arrays.asList("-0", "-1", "-1", "-2", "-2", "-4", "Incap"));
-        int stamina = data.getAttribute(Attribute.STAMINA).get();
-        String oxBodyId = java.util.UUID.nameUUIDFromBytes(("Ox-Body Technique" + "|" + Ability.RESISTANCE.getDisplayName()).getBytes()).toString();
-        int oxBodyCount = data.getCharmCount(oxBodyId);
-        for (int i = 0; i < oxBodyCount; i++) {
-            if (stamina >= 5) { status.healthLevels.add("-0"); status.healthLevels.add("-1"); status.healthLevels.add("-2"); }
-            else if (stamina >= 3) { status.healthLevels.add("-1"); status.healthLevels.add("-2"); status.healthLevels.add("-2"); }
-            else { status.healthLevels.add("-1"); status.healthLevels.add("-2"); }
-        }
-        Collections.sort(status.healthLevels);
+        status.healthLevels = data.getHealthLevels();
 
         status.overBonusPoints = status.bonusPointsSpent > 15;
         status.casteAbilities = data.casteAbilityCountProperty().get();

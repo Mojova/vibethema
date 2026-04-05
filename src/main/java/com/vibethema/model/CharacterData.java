@@ -1,6 +1,8 @@
 package com.vibethema.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -606,40 +608,32 @@ public class CharacterData {
     public int getPersonalMotes() { return (essence.get() * 3) + 10; }
     public int getPeripheralMotes() { return (essence.get() * 7) + 26; }
     
-    // Moved to Rules Engine
-/*
-    public int getAttributeTotal(List<String> attrCategory) {
-        return attrCategory.stream().mapToInt(attr -> attributes.get(attr).get() - 1).sum();
-    }
-    
-    public int getAbilityTotal() {
-        int total = ABILITIES.stream().filter(abil -> !"Craft".equals(abil) && !"Martial Arts".equals(abil))
-                .mapToInt(ability -> Math.min(3, abilities.get(ability).get())).sum();
-        for (CraftAbility ca : crafts) total += Math.min(3, ca.getRating());
-        for (MartialArtsStyle mas : martialArtsStyles) total += Math.min(3, mas.getRating());
-        return total;
-    }
-    
-    public int getMeritTotal() {
-        int total = 0;
-        for (Merit m : merits) total += m.getRating();
-        return total;
-    }
-
-    public int getTotalCharmPoolUsage() {
-        boolean hasTCS = hasCharmByName(TERRESTRIAL_CIRCLE_SORCERY);
-        int billableSpells = Math.max(0, spells.size() - (hasTCS ? 1 : 0));
-        return unlockedCharms.size() + billableSpells;
-    }
-    
-    public int getBonusPointsSpent() {
-        ...
-    }
-
     public List<String> getHealthLevels() {
-        ...
+        List<String> levels = new ArrayList<>(Arrays.asList("-0", "-1", "-1", "-2", "-2", "-4", "Incap"));
+        int stamina = attributes.get(Attribute.STAMINA).get();
+
+        // Solar Ox-Body Technique ID calculation
+        String oxBodyId = java.util.UUID.nameUUIDFromBytes(
+                ("Ox-Body Technique" + "|" + Ability.RESISTANCE.getDisplayName()).getBytes()).toString();
+        int oxBodyCount = getCharmCount(oxBodyId);
+
+        for (int i = 0; i < oxBodyCount; i++) {
+            if (stamina >= 5) {
+                levels.add("-0");
+                levels.add("-1");
+                levels.add("-2");
+            } else if (stamina >= 3) {
+                levels.add("-1");
+                levels.add("-2");
+                levels.add("-2");
+            } else {
+                levels.add("-1");
+                levels.add("-2");
+            }
+        }
+        Collections.sort(levels);
+        return levels;
     }
-*/
     
     public CharacterSaveState exportState() {
         CharacterSaveState state = new CharacterSaveState();

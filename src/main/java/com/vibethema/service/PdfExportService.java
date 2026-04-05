@@ -117,6 +117,9 @@ public class PdfExportService {
         // 9. Specialized Abilities (Craft & Martial Arts)
         fillSpecializedAbilities(data, acroForm);
 
+        // 10. Health Section
+        fillHealth(data, acroForm);
+
         // Abilities (Physical mapping to the 26 standard rows Ab1-26)
         String[][] abilityDots = {
                 { "dot30", "dot31", "dot32", "dot32a", "dot32az" }, // Row 1: Archery
@@ -338,6 +341,25 @@ public class PdfExportService {
 
             rowCursor += rowsNeeded;
         }
+    }
+
+    private void fillHealth(CharacterData data, PDAcroForm form) throws IOException {
+        List<String> levels = data.getHealthLevels();
+        // Skip the first level as it's hardcoded as -0 on the PDF
+        for (int i = 1; i < levels.size(); i++) {
+            String level = levels.get(i);
+            String label;
+            if (level.equals("Incap")) {
+                label = "I";
+            } else {
+                // Use absolute value (e.g., "-1" -> "1", "-0" -> "0")
+                label = level.replace("-", "");
+            }
+            if (i <= 31) {
+                setField(form, "hl" + i, label);
+            }
+        }
+        // hbox fields are left empty as per user request
     }
 
     private void setTrackRating(PDAcroForm form, String prefix, int rating, int startIndex, int count)
