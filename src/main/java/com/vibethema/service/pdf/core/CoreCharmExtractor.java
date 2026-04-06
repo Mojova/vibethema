@@ -51,12 +51,6 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                 }
             }
 
-            if (name.isEmpty() || costLine.isEmpty()) continue;
-            if (name.endsWith("Style")) {
-                currentMartialArtsStyle = name;
-                continue;
-            }
-
             // Mins: [Ability] [Dots], Essence [Dots]
             Pattern minsPattern = Pattern.compile("Mins: ([\\w\\s]+) (\\d+), Essence (\\d+)");
             Matcher minsMatcher = minsPattern.matcher(costLine);
