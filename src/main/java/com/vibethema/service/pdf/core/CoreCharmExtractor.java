@@ -116,10 +116,6 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                     String trimmed = p.replaceAll("\\s+", " ").trim();
                     // Final sanity check: prerequisite names shouldn't be long sentences
                     if (!trimmed.isEmpty() && !trimmed.startsWith("The ") && trimmed.length() < 100) {
-                        // Athletics specific fix: Handle column merging for Feather Foot Style
-                        if (name.equals("Feather Foot Style") && trimmed.equals("Graceful Crane Stance")) {
-                            continue;
-                        }
                         prereqs.add(trimmed);
                     }
                 }
