@@ -1,14 +1,17 @@
 package com.vibethema.viewmodel;
 
+import com.vibethema.service.SystemDataService;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.utils.notifications.NotificationObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for StartScreenViewModel.
@@ -16,10 +19,14 @@ import static org.junit.jupiter.api.Assertions.*;
 public class StartScreenViewModelTest {
 
     private StartScreenViewModel viewModel;
+    private SystemDataService systemDataService;
 
     @BeforeEach
     void setUp() {
-        viewModel = new StartScreenViewModel();
+        systemDataService = Mockito.mock(SystemDataService.class);
+        // By default, assume core data is imported for these tests
+        when(systemDataService.isCoreDataImported()).thenReturn(true);
+        viewModel = new StartScreenViewModel(systemDataService);
     }
 
     /**

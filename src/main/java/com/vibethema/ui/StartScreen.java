@@ -15,6 +15,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.application.Platform;
 import java.io.File;
 
 /**
@@ -24,6 +25,11 @@ public class StartScreen extends StackPane implements JavaView<StartScreenViewMo
 
     @InjectViewModel
     private StartScreenViewModel viewModel;
+
+    private final Button newBtn = new Button("Create New Character");
+    private final Button loadBtn = new Button("Load Existing Character");
+    private final Button importBtn = new Button("Import Core PDF");
+    private final Label statusLabel = new Label();
 
     public StartScreen() {
         getStyleClass().add("start-screen");
@@ -45,24 +51,22 @@ public class StartScreen extends StackPane implements JavaView<StartScreenViewMo
         HBox buttonBox = new HBox(30);
         buttonBox.setAlignment(Pos.CENTER);
 
-        Button newBtn = new Button("Create New Character");
         newBtn.getStyleClass().add("start-button");
         newBtn.setPrefWidth(280);
-        newBtn.setOnAction(e -> viewModel.onNewCharacter());
 
-        Button loadBtn = new Button("Load Existing Character");
         loadBtn.getStyleClass().add("start-button-secondary");
         loadBtn.setPrefWidth(280);
-        loadBtn.setOnAction(e -> viewModel.onLoadCharacter());
 
-        Button importBtn = new Button("Import Core PDF");
         importBtn.getStyleClass().add("start-button-secondary");
         importBtn.setPrefWidth(280);
-        importBtn.setOnAction(e -> viewModel.onImportPdf());
+
+        statusLabel.getStyleClass().add("problematic-warning"); // Reuse existing warning style
+        statusLabel.setWrapText(true);
+        statusLabel.setMaxWidth(600);
 
         buttonBox.getChildren().addAll(newBtn, loadBtn);
 
-        card.getChildren().addAll(title, subtitle, spacer, buttonBox, importBtn);
+        card.getChildren().addAll(title, subtitle, spacer, buttonBox, importBtn, statusLabel);
         getChildren().add(card);
     }
 
@@ -70,6 +74,19 @@ public class StartScreen extends StackPane implements JavaView<StartScreenViewMo
      * Initializes the view listeners and subscriptions.
      */
     public void initialize() {
+        // Now that the ViewModel is injected, we can perform bindings and set actions
+        newBtn.setOnAction(e -> viewModel.onNewCharacter());
+        newBtn.disableProperty().bind(viewModel.coreDataImportedProperty().not());
+
+        loadBtn.setOnAction(e -> viewModel.onLoadCharacter());
+        loadBtn.disableProperty().bind(viewModel.coreDataImportedProperty().not());
+
+        importBtn.setOnAction(e -> viewModel.onImportPdf());
+
+        statusLabel.textProperty().bind(viewModel.statusMessageProperty());
+        statusLabel.visibleProperty().bind(viewModel.coreDataImportedProperty().not());
+        statusLabel.managedProperty().bind(statusLabel.visibleProperty());
+
         // Handle transition to main view (either new or loaded)
         Messenger.subscribe("show_main_view", (name, payload) -> {
             ViewTuple<MainView, MainViewModel> viewTuple = FluentViewLoader.javaView(MainView.class).load();
@@ -94,7 +111,9 @@ public class StartScreen extends StackPane implements JavaView<StartScreenViewMo
 
         // Handle PDF import request
         Messenger.subscribe("request_import_pdf", (name, payload) -> {
-            PdfImportHelper.importCorePdf(getScene().getWindow(), null);
+            PdfImportHelper.importCorePdf(getScene().getWindow(), () -> {
+                Platform.runLater(() -> viewModel.refreshStatus());
+            });
         });
     }
 }

@@ -270,6 +270,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         MenuItem newItem = new MenuItem("New Character");
         newItem.setAccelerator(KeyCombination.keyCombination("Shortcut+N"));
         newItem.setOnAction(e -> viewModel.onNewCharacterRequest());
+        newItem.disableProperty().bind(viewModel.coreDataImportedProperty().not());
         
         MenuItem saveItem = new MenuItem("Save");
         saveItem.setAccelerator(KeyCombination.keyCombination("Shortcut+S"));
@@ -278,6 +279,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         MenuItem loadItem = new MenuItem("Load Character");
         loadItem.setAccelerator(KeyCombination.keyCombination("Shortcut+O"));
         loadItem.setOnAction(e -> viewModel.onLoadRequest());
+        loadItem.disableProperty().bind(viewModel.coreDataImportedProperty().not());
 
         MenuItem exportPdf = new MenuItem("Export to PDF...");
         exportPdf.setAccelerator(KeyCombination.keyCombination("Shortcut+E"));

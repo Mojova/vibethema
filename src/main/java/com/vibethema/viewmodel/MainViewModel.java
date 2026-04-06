@@ -3,6 +3,7 @@ package com.vibethema.viewmodel;
 import com.vibethema.model.*;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
+import com.vibethema.service.SystemDataService;
 import com.vibethema.viewmodel.footer.FooterViewModel;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;
@@ -29,6 +30,7 @@ public class MainViewModel implements ViewModel {
     private FooterViewModel footerViewModel;
     private final EquipmentDataService equipmentService = new EquipmentDataService();
     private final CharmDataService charmDataService = new CharmDataService();
+    private final SystemDataService systemDataService;
 
     private final Map<String, String> tagDescriptions = new HashMap<>();
     private final Map<String, String> keywordDefs = new HashMap<>();
@@ -36,13 +38,20 @@ public class MainViewModel implements ViewModel {
     private final ObjectProperty<File> currentFile = new SimpleObjectProperty<>();
     private final StringProperty windowTitle = new SimpleStringProperty("Vibethema");
     private final BooleanProperty dirty = new SimpleBooleanProperty();
+    private final BooleanProperty coreDataImported = new SimpleBooleanProperty();
 
     public MainViewModel() {
         this(CharacterFactory.createNewCharacter(new EquipmentDataService()));
     }
 
     public MainViewModel(CharacterData data) {
+        this(data, new SystemDataService());
+    }
+
+    public MainViewModel(CharacterData data, SystemDataService systemDataService) {
+        this.systemDataService = systemDataService;
         init(data);
+        coreDataImported.set(systemDataService.isCoreDataImported());
     }
 
     public void init(CharacterData data) {
@@ -101,6 +110,7 @@ public class MainViewModel implements ViewModel {
     public StringProperty windowTitleProperty() { return windowTitle; }
     public ObjectProperty<File> currentFileProperty() { return currentFile; }
     public BooleanProperty dirtyProperty() { return dirty; }
+    public BooleanProperty coreDataImportedProperty() { return coreDataImported; }
 
     // Actions
     public void saveCharacter(File file) {
@@ -142,6 +152,7 @@ public class MainViewModel implements ViewModel {
     }
 
     public void onNewCharacterRequest() {
+        if (!coreDataImported.get()) return;
         if (dirty.get()) {
             Messenger.publish("confirm_discard_changes", "NEW");
         } else {
@@ -159,6 +170,7 @@ public class MainViewModel implements ViewModel {
     }
 
     public void onLoadRequest() {
+        if (!coreDataImported.get()) return;
         if (dirty.get()) {
             Messenger.publish("confirm_discard_changes", "LOAD");
         } else {

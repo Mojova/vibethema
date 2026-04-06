@@ -44,6 +44,16 @@ public class Main extends Application {
     }
 
     private void loadAndStart(Stage stage, File file) {
+        if (!new com.vibethema.service.SystemDataService().isCoreDataImported()) {
+            javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+            alert.setTitle("Data Missing");
+            alert.setHeaderText("Core Book Data Missing");
+            alert.setContentText("You must import the Exalted 3rd Edition Core PDF before loading characters.");
+            alert.showAndWait();
+            pendingFile = null;
+            start(stage);
+            return;
+        }
         try {
             ViewTuple<MainView, MainViewModel> viewTuple = FluentViewLoader.javaView(MainView.class).load();
             MainView view = (MainView) viewTuple.getView();

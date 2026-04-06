@@ -1,24 +1,31 @@
 package com.vibethema.viewmodel;
 
 import com.vibethema.model.CharacterData;
+import com.vibethema.service.SystemDataService;
 import de.saxsys.mvvmfx.utils.notifications.NotificationObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import com.vibethema.viewmodel.util.Messenger;
+import org.mockito.Mockito;
 
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 public class MainViewModelTest {
 
     private MainViewModel viewModel;
     private CharacterData data;
+    private SystemDataService systemDataService;
 
     @BeforeEach
     void setUp() {
         data = new CharacterData();
-        viewModel = new MainViewModel(data);
+        systemDataService = Mockito.mock(SystemDataService.class);
+        // By default, assume core data is imported for these tests
+        when(systemDataService.isCoreDataImported()).thenReturn(true);
+        viewModel = new MainViewModel(data, systemDataService);
     }
 
     @Test
