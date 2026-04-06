@@ -267,6 +267,10 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         hearthstoneListContainer.getChildren().clear();
         for (HearthstoneRowViewModel hvm : viewModel.getHearthstones()) {
             HBox row = new HBox(15); row.getStyleClass().add("merit-row"); row.setAlignment(Pos.CENTER_LEFT);
+            CheckBox equippedCb = new CheckBox();
+            equippedCb.setTooltip(new Tooltip("Equipped"));
+            equippedCb.selectedProperty().bindBidirectional(hvm.equippedProperty());
+
             VBox details = new VBox(5);
             Label nameLabel = new Label(hvm.nameProperty().get()); nameLabel.getStyleClass().add("merit-name");
             Label descLabel = new Label(hvm.descriptionProperty().get()); descLabel.setStyle("-fx-font-size: 0.9em; -fx-text-fill: #aaa;");
@@ -275,7 +279,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
             editBtn.setOnAction(e -> showHearthstoneDialog(hvm.getHearthstone()));
             Button delBtn = new Button("🗑"); delBtn.getStyleClass().add("remove-btn"); delBtn.setOnAction(e -> viewModel.removeHearthstone(hvm.getHearthstone()));
             HBox.setHgrow(details, Priority.ALWAYS);
-            row.getChildren().addAll(details, editBtn, delBtn);
+            row.getChildren().addAll(equippedCb, details, editBtn, delBtn);
             hearthstoneListContainer.getChildren().add(row);
         }
     }
@@ -291,8 +295,19 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         otherEquipmentListContainer.getChildren().clear();
         for (OtherEquipmentRowViewModel ovm : viewModel.getOtherEquipment()) {
             HBox row = new HBox(15); row.getStyleClass().add("merit-row"); row.setAlignment(Pos.CENTER_LEFT);
+            CheckBox equippedCb = new CheckBox();
+            equippedCb.setTooltip(new Tooltip("Equipped"));
+            equippedCb.selectedProperty().bindBidirectional(ovm.equippedProperty());
+
             VBox details = new VBox(5);
-            Label nameLabel = new Label(ovm.nameProperty().get() + (ovm.artifactProperty().get() ? " (Artifact)" : ""));
+            String name = ovm.nameProperty().get();
+            if (ovm.artifactProperty().get()) {
+                name += " (Artifact)";
+                if (ovm.attunementProperty().get() > 0) {
+                    name += " | Attunement: " + ovm.attunementProperty().get();
+                }
+            }
+            Label nameLabel = new Label(name);
             nameLabel.getStyleClass().add("merit-name");
             Label descLabel = new Label(ovm.descriptionProperty().get()); descLabel.setStyle("-fx-font-size: 0.9em; -fx-text-fill: #aaa;");
             details.getChildren().addAll(nameLabel, descLabel);
@@ -308,7 +323,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
 
             Button delBtn = new Button("🗑"); delBtn.getStyleClass().add("remove-btn"); delBtn.setOnAction(e -> viewModel.removeOtherEquipment(ovm.getOtherEquipment()));
             HBox.setHgrow(details, Priority.ALWAYS);
-            row.getChildren().addAll(details, editBtn, evBtn, delBtn);
+            row.getChildren().addAll(equippedCb, details, editBtn, evBtn, delBtn);
             otherEquipmentListContainer.getChildren().add(row);
         }
     }

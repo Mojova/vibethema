@@ -8,6 +8,7 @@ public class Hearthstone {
     private final StringProperty id = new SimpleStringProperty(UUID.randomUUID().toString());
     private final StringProperty name = new SimpleStringProperty("");
     private final StringProperty description = new SimpleStringProperty("");
+    private final javafx.beans.property.BooleanProperty equipped = new javafx.beans.property.SimpleBooleanProperty(false);
 
     public Hearthstone(String name, String description) {
         this.name.set(name);
@@ -30,6 +31,10 @@ public class Hearthstone {
     public StringProperty descriptionProperty() { return description; }
     public String getDescription() { return description.get(); }
     public void setDescription(String v) { description.set(v); }
+
+    public javafx.beans.property.BooleanProperty equippedProperty() { return equipped; }
+    public boolean isEquipped() { return equipped.get(); }
+    public void setEquipped(boolean v) { equipped.set(v); }
 
     // --- Persistence Support (DTO) ---
     public static class HearthstoneData {

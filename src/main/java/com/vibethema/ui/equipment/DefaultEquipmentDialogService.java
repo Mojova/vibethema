@@ -161,7 +161,6 @@ public class DefaultEquipmentDialogService implements EquipmentDialogService {
         TextArea description = new TextArea(existing == null ? "" : existing.getDescription());
         description.setWrapText(true);
         description.setPrefRowCount(3);
-        
         grid.add(new Label("Name:"), 0, 0); grid.add(name, 1, 0);
         grid.add(new Label("Description:"), 0, 1); grid.add(description, 1, 1);
         
@@ -194,9 +193,15 @@ public class DefaultEquipmentDialogService implements EquipmentDialogService {
         CheckBox isArtifact = new CheckBox("Artifact");
         isArtifact.setSelected(existing != null && existing.isArtifact());
         
+        Spinner<Integer> attunement = new Spinner<>(0, 20, existing == null ? 0 : existing.getAttunement());
+        attunement.setEditable(true);
+        attunement.disableProperty().bind(isArtifact.selectedProperty().not());
+
         grid.add(new Label("Name:"), 0, 0); grid.add(name, 1, 0);
         grid.add(new Label("Description:"), 0, 1); grid.add(description, 1, 1);
         grid.add(isArtifact, 1, 2);
+        grid.add(new Label("Attunement:"), 0, 3); grid.add(attunement, 1, 3);
+        grid.add(new Label("Attunement:"), 0, 3); grid.add(attunement, 1, 3);
         
         dialog.getDialogPane().setContent(grid);
         dialog.setResultConverter(b -> {
@@ -205,6 +210,7 @@ public class DefaultEquipmentDialogService implements EquipmentDialogService {
                 oe.setName(name.getText());
                 oe.setDescription(description.getText());
                 oe.setArtifact(isArtifact.isSelected());
+                oe.setAttunement(attunement.getValue());
                 return oe;
             }
             return null;

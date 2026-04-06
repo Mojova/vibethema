@@ -956,13 +956,18 @@ public class CharacterData {
             al.equipped = a.isEquipped();
             state.armors.add(al);
         }
-        state.hearthstones = new ArrayList<>();
         for (Hearthstone h : hearthstones) {
-            state.hearthstones.add(h.getId());
+            CharacterSaveState.HearthstoneLink hl = new CharacterSaveState.HearthstoneLink();
+            hl.id = h.getId();
+            hl.equipped = h.isEquipped();
+            state.hearthstones.add(hl);
         }
         state.otherEquipment = new ArrayList<>();
         for (OtherEquipment o : otherEquipment) {
-            state.otherEquipment.add(o.getId());
+            CharacterSaveState.OtherEquipmentLink ol = new CharacterSaveState.OtherEquipmentLink();
+            ol.id = o.getId();
+            ol.equipped = o.isEquipped();
+            state.otherEquipment.add(ol);
         }
         state.intimacies = new ArrayList<>();
         for (Intimacy i : intimacies) {
@@ -1155,16 +1160,22 @@ public class CharacterData {
             }
             hearthstones.clear();
             if (state.hearthstones != null) {
-                for (String id : state.hearthstones) {
-                    Hearthstone h = equipmentService.loadHearthstone(id);
-                    if (h != null) hearthstones.add(h);
+                for (CharacterSaveState.HearthstoneLink hl : state.hearthstones) {
+                    Hearthstone h = equipmentService.loadHearthstone(hl.id);
+                    if (h != null) {
+                        h.setEquipped(hl.equipped);
+                        hearthstones.add(h);
+                    }
                 }
             }
             otherEquipment.clear();
             if (state.otherEquipment != null) {
-                for (String id : state.otherEquipment) {
-                    OtherEquipment oe = equipmentService.loadOtherEquipment(id);
-                    if (oe != null) otherEquipment.add(oe);
+                for (CharacterSaveState.OtherEquipmentLink ol : state.otherEquipment) {
+                    OtherEquipment oe = equipmentService.loadOtherEquipment(ol.id);
+                    if (oe != null) {
+                        oe.setEquipped(ol.equipped);
+                        otherEquipment.add(oe);
+                    }
                 }
             }
             intimacies.clear();

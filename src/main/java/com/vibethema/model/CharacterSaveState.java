@@ -26,8 +26,8 @@ public class CharacterSaveState {
     public List<MartialArtsData> martialArts = new ArrayList<>();
     public List<WeaponLink> weapons = new ArrayList<>();
     public List<ArmorLink> armors = new ArrayList<>();
-    public List<String> hearthstones = new ArrayList<>();
-    public List<String> otherEquipment = new ArrayList<>();
+    public List<HearthstoneLink> hearthstones = new ArrayList<>();
+    public List<OtherEquipmentLink> otherEquipment = new ArrayList<>();
     public List<IntimacyData> intimacies = new ArrayList<>();
     
     public List<ShapingRitualData> shapingRituals = new ArrayList<>();
@@ -44,6 +44,16 @@ public class CharacterSaveState {
     }
 
     public static class ArmorLink {
+        public String id;
+        public boolean equipped;
+    }
+
+    public static class HearthstoneLink {
+        public String id;
+        public boolean equipped;
+    }
+
+    public static class OtherEquipmentLink {
         public String id;
         public boolean equipped;
     }

@@ -23,4 +23,6 @@ public class OtherEquipmentRowViewModel implements ViewModel {
     public StringProperty idProperty() { return equipment.idProperty(); }
     public StringProperty descriptionProperty() { return equipment.descriptionProperty(); }
     public BooleanProperty artifactProperty() { return equipment.artifactProperty(); }
+    public BooleanProperty equippedProperty() { return equipment.equippedProperty(); }
+    public javafx.beans.property.IntegerProperty attunementProperty() { return equipment.attunementProperty(); }
 }
