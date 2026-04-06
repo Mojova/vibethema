@@ -20,7 +20,7 @@ Vibethema is a JavaFX-based character builder for Exalted 3rd Edition. It provid
 - **Data Extraction**: Run-time extraction of charms and equipment data from the Exalted 3rd Edition Core PDF using Apache PDFBox.
 - **Persistence**: 
     - Character files saved in `.vbtm` (JSON) format.
-    - User-defined data (custom charms, spells, keywords) stored in `~/.vibethema/`.
+    - User-defined data (custom charms, spells, keywords) and converted Core Book data stored in platform-specific standard locations (see Data Storage below).
 
 ## Technology Stack
 
@@ -51,7 +51,7 @@ To build a native application bundle (macOS):
 
 ### PDF Extraction
 
-The application does not distribute copyrighted charm or equipment data. To populate the database, use the in-app PDF import feature to extract data from a legitimate copy of the Exalted 3e Core rulebook. Extracted data is cached in `~/.vibethema/`.
+The application does not distribute copyrighted charm or equipment data. To populate the database, use the in-app PDF import feature to extract data from a legitimate copy of the Exalted 3e Core rulebook. Extracted data is cached in the application's Data directory.
 
 ## Project Structure
 
@@ -59,6 +59,21 @@ The application does not distribute copyrighted charm or equipment data. To popu
 - `src/main/java/com/vibethema/ui/`: UI components and tab-based views (e.g., `EquipmentTab`, `SorceryTab`, `CharmTreeComponent`).
 - `src/main/java/com/vibethema/service/`: Backend services for data loading, PDF extraction, and persistence.
 - `src/main/resources/`: Application styles (CSS), icons, and configuration.
+
+## Data Storage
+
+Vibethema stores its data (charms, equipment database, results of PDF imports) in platform-specific standard locations to ensure better integration with each OS:
+
+| Platform | Category | Path |
+| :--- | :--- | :--- |
+| **macOS** | Data | `~/Library/Application Support/Vibethema/` |
+| | Config | `~/Library/Preferences/Vibethema/` |
+| **Windows** | Data | `%AppData%\Vibethema\Data\` |
+| | Config | `%AppData%\Vibethema\Config\` |
+| **Linux** | Data | `~/.local/share/vibethema/` |
+| | Config | `~/.config/vibethema/` |
+
+**Note**: As of version 0.2.0, the application no longer uses `~/.vibethema`. If you have existing data there, please re-import your core book PDF or manually move your files to the new location.
 
 ## Legal
 

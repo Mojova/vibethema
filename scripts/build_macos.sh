@@ -47,7 +47,7 @@ jpackage \
   --icon "$ICNS_TARGET" \
   --name "Vibethema" \
   --dest target/dist \
-  --java-options "--enable-native-access=ALL-UNNAMED" `
+  --java-options "--enable-native-access=ALL-UNNAMED" \
   --file-associations src/main/resources/vbtm.properties \
   --verbose
 

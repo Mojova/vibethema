@@ -8,7 +8,6 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,17 +17,16 @@ import org.slf4j.LoggerFactory;
 
 public class EquipmentDataService {
     private static final Logger logger = LoggerFactory.getLogger(EquipmentDataService.class);
-    private static final String APP_DIR = ".vibethema";
     private static final String TAGS_FILE = "equipment_tags.json";
     private static final String EQUIPMENT_DIR = "equipment";
     private final Gson gson = new Gson();
 
     public static Path getEquipmentTagsPath() {
-        return Paths.get(System.getProperty("user.home"), APP_DIR, TAGS_FILE);
+        return PathService.getDataPath().resolve(TAGS_FILE);
     }
 
     private static Path getGlobalEquipmentPath() {
-        return Paths.get(System.getProperty("user.home"), APP_DIR, EQUIPMENT_DIR);
+        return PathService.getDataPath().resolve(EQUIPMENT_DIR);
     }
 
     public static Path getWeaponsPath() { return getGlobalEquipmentPath().resolve("weapons"); }

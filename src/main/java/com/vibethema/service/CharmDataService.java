@@ -9,7 +9,6 @@ import com.vibethema.model.Evocation;
 import com.vibethema.model.Keyword;
 import com.vibethema.model.Spell;
 import com.vibethema.model.CharacterSaveState;
-
 import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
@@ -21,7 +20,6 @@ import org.slf4j.LoggerFactory;
 
 public class CharmDataService {
     private static final Logger logger = LoggerFactory.getLogger(CharmDataService.class);
-    private static final String APP_DIR = ".vibethema";
     private static final String CHARMS_DIR = "charms";
     private static final String MA_DIR = "martial_arts";
     private static final String EVOCATIONS_DIR = "evocations";
@@ -39,19 +37,19 @@ public class CharmDataService {
             .create();
 
     public static Path getUserCharmsPath() {
-        return Paths.get(System.getProperty("user.home"), APP_DIR, CHARMS_DIR);
+        return PathService.getDataPath().resolve(CHARMS_DIR);
     }
 
     public static Path getUserMartialArtsPath() {
-        return Paths.get(System.getProperty("user.home"), APP_DIR, CHARMS_DIR, MA_DIR);
+        return PathService.getDataPath().resolve(CHARMS_DIR).resolve(MA_DIR);
     }
 
     public static Path getUserEvocationsPath() {
-        return Paths.get(System.getProperty("user.home"), APP_DIR, CHARMS_DIR, EVOCATIONS_DIR);
+        return PathService.getDataPath().resolve(CHARMS_DIR).resolve(EVOCATIONS_DIR);
     }
 
     public static Path getUserSpellsPath() {
-        return Paths.get(System.getProperty("user.home"), APP_DIR, SPELLS_DIR);
+        return PathService.getDataPath().resolve(SPELLS_DIR);
     }
 
     public List<Charm> loadCharmsForAbility(String ability) {
