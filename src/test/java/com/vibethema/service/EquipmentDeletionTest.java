@@ -28,6 +28,15 @@ public class EquipmentDeletionTest {
 
             service.deleteWeapon("test-id");
             assertFalse(Files.exists(filePath), "File should be deleted");
+            
+            // Test Unarmed protection
+            Weapon unarmed = new Weapon(Weapon.UNARMED_ID, "Unarmed", Weapon.WeaponRange.CLOSE, Weapon.WeaponType.MORTAL, Weapon.WeaponCategory.LIGHT);
+            service.saveWeapon(unarmed);
+            Path unarmedPath = EquipmentDataService.getWeaponsPath().resolve(Weapon.UNARMED_ID + ".json");
+            assertTrue(Files.exists(unarmedPath), "Unarmed should be saved");
+            
+            service.deleteWeapon(Weapon.UNARMED_ID);
+            assertTrue(Files.exists(unarmedPath), "Unarmed should NOT be deleted from disk");
         } finally {
             System.setProperty("user.home", originalHome);
         }

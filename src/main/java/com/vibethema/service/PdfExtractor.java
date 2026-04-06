@@ -74,9 +74,41 @@ public class PdfExtractor {
 
                 if (progressCallback != null) progressCallback.accept(0.85);
                 extractAndSaveEquipmentTags(document, stripper);
+                saveDefaultUnarmedWeapon();
             }
             
             if (progressCallback != null) progressCallback.accept(1.0);
+        }
+    }
+
+    private void saveDefaultUnarmedWeapon() throws IOException {
+        Map<String, Object> unarmed = new LinkedHashMap<>();
+        unarmed.put("id", com.vibethema.model.Weapon.UNARMED_ID);
+        unarmed.put("name", "Unarmed");
+        unarmed.put("range", "CLOSE");
+        unarmed.put("type", "MORTAL");
+        unarmed.put("category", "LIGHT");
+        unarmed.put("accuracy", 0);
+        unarmed.put("damage", 0);
+        unarmed.put("defense", 0);
+        unarmed.put("overwhelming", 1);
+        unarmed.put("attunement", 0);
+        unarmed.put("equipped", false);
+        unarmed.put("tags", Arrays.asList("Bashing", "Brawl", "Grappling", "Natural"));
+
+        Path outDir = com.vibethema.service.EquipmentDataService.getWeaponsPath();
+        if (outDir == null) {
+            // Fallback if ViewModel not helping, use same logic as tags
+            outDir = java.nio.file.Paths.get(System.getProperty("user.home"), ".vibethema", "equipment", "weapons");
+        }
+        
+        if (!Files.exists(outDir)) {
+            Files.createDirectories(outDir);
+        }
+
+        Path filePath = outDir.resolve("unarmed.json");
+        try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
+            gson.toJson(unarmed, writer);
         }
     }
 

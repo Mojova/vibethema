@@ -38,7 +38,7 @@ public class MainViewModel implements ViewModel {
     private final BooleanProperty dirty = new SimpleBooleanProperty();
 
     public MainViewModel() {
-        this(new CharacterData());
+        this(CharacterFactory.createNewCharacter(new EquipmentDataService()));
     }
 
     public MainViewModel(CharacterData data) {
@@ -175,7 +175,7 @@ public class MainViewModel implements ViewModel {
     }
 
     public void resetToNew() {
-        this.data.clear();
+        init(CharacterFactory.createNewCharacter(equipmentService));
         this.currentFile.set(null);
         Messenger.publish("refresh_all_ui");
     }

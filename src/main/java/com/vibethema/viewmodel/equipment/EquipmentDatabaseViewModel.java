@@ -69,10 +69,24 @@ public class EquipmentDatabaseViewModel implements ViewModel {
 
     public void performDelete() {
         Object selected = selectedItem.get();
-        if (selected != null && deleteAction != null) {
+        if (selected != null && deleteAction != null && canDeleteSelectedProperty().get()) {
             deleteAction.accept(selected);
             allItems.remove(selected);
         }
+    }
+
+    public javafx.beans.binding.BooleanExpression canDeleteSelectedProperty() {
+        return javafx.beans.binding.Bindings.createBooleanBinding(
+            () -> {
+                Object selected = selectedItem.get();
+                if (selected == null) return false;
+                if (selected instanceof com.vibethema.model.Weapon w) {
+                    return !com.vibethema.model.Weapon.UNARMED_ID.equals(w.getId());
+                }
+                return true;
+            },
+            selectedItem
+        );
     }
 
     public ObservableList<Object> getFilteredItems() {

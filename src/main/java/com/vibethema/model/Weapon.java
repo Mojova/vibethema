@@ -13,6 +13,8 @@ import javafx.collections.ObservableList;
 import java.util.UUID;
 
 public class Weapon {
+    public static final String UNARMED_ID = "63d76e46-5c6a-356c-82e7-ef437a371c6d";
+
     public enum WeaponRange {
         CLOSE, THROWN, ARCHERY;
 

@@ -79,7 +79,8 @@ public class EquipmentDatabaseView extends VBox implements JavaView<EquipmentDat
         
         // Disable "Add" and "Delete" buttons if nothing is selected
         addSelectedBtn.disableProperty().bind(itemListView.getSelectionModel().selectedItemProperty().isNull());
-        deleteBtn.disableProperty().bind(itemListView.getSelectionModel().selectedItemProperty().isNull());
+        deleteBtn.visibleProperty().bind(viewModel.canDeleteSelectedProperty());
+        deleteBtn.managedProperty().bind(deleteBtn.visibleProperty());
 
         deleteBtn.setOnAction(e -> viewModel.onDeleteRequest());
 

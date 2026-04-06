@@ -171,16 +171,6 @@ public class CharacterData {
         getAbilityProperty(Ability.BRAWL).addListener((obs, old, nv) -> updateAttackPools());
         getAbilityProperty(Ability.THROWN).addListener((obs, old, nv) -> updateAttackPools());
 
-        // Default weapon for new characters if tags exist
-        if (java.nio.file.Files.exists(com.vibethema.service.EquipmentDataService.getEquipmentTagsPath())) {
-            Weapon unarmed = new Weapon("Unarmed");
-            unarmed.setRange(Weapon.WeaponRange.CLOSE);
-            unarmed.setType(Weapon.WeaponType.MORTAL);
-            unarmed.setCategory(Weapon.WeaponCategory.LIGHT);
-            unarmed.getTags().addAll(java.util.Arrays.asList("Bashing", "Brawl", "Grappling", "Natural"));
-            weapons.add(unarmed);
-        }
-
         getAbilityProperty(Ability.CRAFT).addListener((obs, old, nv) -> {
             boolean isCaste = getCasteAbility(Ability.CRAFT).get();
             boolean isFavored = getFavoredAbility(Ability.CRAFT).get();

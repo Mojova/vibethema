@@ -52,4 +52,27 @@ public class EquipmentDatabaseViewModelTest {
         assertEquals("Steel Shield", vm.getFilteredItems().get(0).toString());
         assertEquals("Steel Sword", vm.getFilteredItems().get(1).toString());
     }
+
+    @Test
+    public void testCanDeleteProperty() {
+        EquipmentDatabaseViewModel vm = new EquipmentDatabaseViewModel();
+        
+        com.vibethema.model.Weapon w1 = new com.vibethema.model.Weapon("sword", "Steel Sword", com.vibethema.model.Weapon.WeaponRange.CLOSE, com.vibethema.model.Weapon.WeaponType.MORTAL, com.vibethema.model.Weapon.WeaponCategory.MEDIUM);
+        com.vibethema.model.Weapon unarmed = new com.vibethema.model.Weapon(com.vibethema.model.Weapon.UNARMED_ID, "Unarmed", com.vibethema.model.Weapon.WeaponRange.CLOSE, com.vibethema.model.Weapon.WeaponType.MORTAL, com.vibethema.model.Weapon.WeaponCategory.LIGHT);
+        
+        // Nothing selected
+        assertFalse(vm.canDeleteSelectedProperty().get());
+        
+        // Select normal sword
+        vm.selectedItemProperty().set(w1);
+        assertTrue(vm.canDeleteSelectedProperty().get());
+        
+        // Select Unarmed
+        vm.selectedItemProperty().set(unarmed);
+        assertFalse(vm.canDeleteSelectedProperty().get(), "Unarmed should NOT be deletable");
+        
+        // Select another non-weapon object
+        vm.selectedItemProperty().set("Random String");
+        assertTrue(vm.canDeleteSelectedProperty().get(), "Non-weapon items should be deletable by default in this generic VM");
+    }
 }

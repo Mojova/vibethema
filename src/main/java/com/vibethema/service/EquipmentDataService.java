@@ -94,7 +94,10 @@ public class EquipmentDataService {
     public com.vibethema.model.Weapon loadWeapon(String id) { 
         return com.vibethema.model.Weapon.fromData(loadGlobalItem(id, getWeaponsPath(), com.vibethema.model.Weapon.WeaponData.class)); 
     }
-    public void deleteWeapon(String id) throws IOException { deleteGlobalItem(id, getWeaponsPath()); }
+    public void deleteWeapon(String id) throws IOException { 
+        if (com.vibethema.model.Weapon.UNARMED_ID.equals(id)) return;
+        deleteGlobalItem(id, getWeaponsPath()); 
+    }
     public List<com.vibethema.model.Weapon> getGlobalWeapons() { 
         return listGlobalItems(getWeaponsPath(), com.vibethema.model.Weapon.WeaponData.class).stream()
                 .map(com.vibethema.model.Weapon::fromData)
