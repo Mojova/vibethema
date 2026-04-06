@@ -44,6 +44,7 @@ public class Weapon {
     }
 
     private final StringProperty id = new SimpleStringProperty(UUID.randomUUID().toString());
+    private final StringProperty instanceId = new SimpleStringProperty(UUID.randomUUID().toString());
     private final StringProperty name = new SimpleStringProperty("");
     private final ObjectProperty<WeaponRange> range = new SimpleObjectProperty<>(WeaponRange.CLOSE);
     private final ObjectProperty<WeaponType> type = new SimpleObjectProperty<>(WeaponType.MORTAL);
@@ -74,6 +75,18 @@ public class Weapon {
 
     public Weapon(String id, String name, WeaponRange range, WeaponType type, WeaponCategory category) {
         this.id.set(id);
+        this.instanceId.set(UUID.randomUUID().toString());
+        this.name.set(name);
+        this.range.set(range);
+        this.type.set(type);
+        this.category.set(category);
+        setupListeners();
+        updateStats();
+    }
+
+    public Weapon(String id, String instanceId, String name, WeaponRange range, WeaponType type, WeaponCategory category) {
+        this.id.set(id);
+        this.instanceId.set(instanceId);
         this.name.set(name);
         this.range.set(range);
         this.type.set(type);
@@ -197,6 +210,10 @@ public class Weapon {
     public String getId() { return id.get(); }
     public void setId(String id) { this.id.set(id); }
 
+    public StringProperty instanceIdProperty() { return instanceId; }
+    public String getInstanceId() { return instanceId.get(); }
+    public void setInstanceId(String instanceId) { this.instanceId.set(instanceId); }
+
     public StringProperty nameProperty() { return name; }
     public String getName() { return name.get(); }
     public void setName(String name) { this.name.set(name); }
@@ -226,6 +243,7 @@ public class Weapon {
     // --- Persistance Support (DTO) ---
     public static class WeaponData {
         public String id;
+        public String instanceId;
         public String name;
         public WeaponRange range;
         public WeaponType type;
@@ -236,6 +254,7 @@ public class Weapon {
     public WeaponData toData() {
         WeaponData data = new WeaponData();
         data.id = getId();
+        data.instanceId = getInstanceId();
         data.name = getName();
         data.range = getRange();
         data.type = getType();
@@ -246,8 +265,14 @@ public class Weapon {
 
     public static Weapon fromData(WeaponData data) {
         if (data == null) return null;
-        Weapon w = new Weapon(data.id, data.name, data.range, data.type, data.category);
+        Weapon w = new Weapon(data.id, data.instanceId, data.name, data.range, data.type, data.category);
         w.getTags().setAll(data.tags != null ? data.tags : java.util.Collections.emptyList());
+        return w;
+    }
+
+    public Weapon copy() {
+        Weapon w = fromData(toData());
+        w.setInstanceId(UUID.randomUUID().toString());
         return w;
     }
 

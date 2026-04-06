@@ -39,22 +39,26 @@ public class CharacterSaveState {
         
     public static class WeaponLink {
         public String id;
+        public String instanceId;
         public String specialtyId;
         public boolean equipped;
     }
 
     public static class ArmorLink {
         public String id;
+        public String instanceId;
         public boolean equipped;
     }
 
     public static class HearthstoneLink {
         public String id;
+        public String instanceId;
         public boolean equipped;
     }
 
     public static class OtherEquipmentLink {
         public String id;
+        public String instanceId;
         public boolean equipped;
     }
 

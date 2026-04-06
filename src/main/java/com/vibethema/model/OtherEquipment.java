@@ -6,6 +6,7 @@ import java.util.UUID;
 
 public class OtherEquipment {
     private final StringProperty id = new SimpleStringProperty(UUID.randomUUID().toString());
+    private final StringProperty instanceId = new SimpleStringProperty(UUID.randomUUID().toString());
     private final StringProperty name = new SimpleStringProperty("");
     private final StringProperty description = new SimpleStringProperty("");
     private final javafx.beans.property.BooleanProperty artifact = new javafx.beans.property.SimpleBooleanProperty(false);
@@ -19,12 +20,24 @@ public class OtherEquipment {
 
     public OtherEquipment(String id, String name, String description) {
         this.id.set(id);
+        this.instanceId.set(UUID.randomUUID().toString());
+        this.name.set(name);
+        this.description.set(description);
+    }
+
+    public OtherEquipment(String id, String instanceId, String name, String description) {
+        this.id.set(id);
+        this.instanceId.set(instanceId);
         this.name.set(name);
         this.description.set(description);
     }
 
     public StringProperty idProperty() { return id; }
     public String getId() { return id.get(); }
+
+    public StringProperty instanceIdProperty() { return instanceId; }
+    public String getInstanceId() { return instanceId.get(); }
+    public void setInstanceId(String instanceId) { this.instanceId.set(instanceId); }
 
     public StringProperty nameProperty() { return name; }
     public String getName() { return name.get(); }
@@ -49,6 +62,7 @@ public class OtherEquipment {
     // --- Persistence Support (DTO) ---
     public static class OtherEquipmentData {
         public String id;
+        public String instanceId;
         public String name;
         public String description;
         public boolean artifact;
@@ -58,6 +72,7 @@ public class OtherEquipment {
     public OtherEquipmentData toData() {
         OtherEquipmentData data = new OtherEquipmentData();
         data.id = getId();
+        data.instanceId = getInstanceId();
         data.name = getName();
         data.description = getDescription();
         data.artifact = isArtifact();
@@ -67,9 +82,15 @@ public class OtherEquipment {
 
     public static OtherEquipment fromData(OtherEquipmentData data) {
         if (data == null) return null;
-        OtherEquipment oe = new OtherEquipment(data.id, data.name, data.description);
+        OtherEquipment oe = new OtherEquipment(data.id, data.instanceId, data.name, data.description);
         oe.setArtifact(data.artifact);
         oe.setAttunement(data.attunement);
+        return oe;
+    }
+
+    public OtherEquipment copy() {
+        OtherEquipment oe = fromData(toData());
+        oe.setInstanceId(UUID.randomUUID().toString());
         return oe;
     }
 

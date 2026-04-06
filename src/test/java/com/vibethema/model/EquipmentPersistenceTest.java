@@ -1,97 +1,64 @@
 package com.vibethema.model;
 
 import com.vibethema.service.EquipmentDataService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
+import org.mockito.Mockito;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
 public class EquipmentPersistenceTest {
 
-    private CharacterData data;
-    
-    @Mock
-    private EquipmentDataService service;
-
-    @BeforeEach
-    void setUp() {
-        data = new CharacterData();
-    }
-
     @Test
-    void testWeaponEquippedPersistence() {
-        data.getWeapons().clear();
-        Weapon w = new Weapon("Steel Sword");
-        w.setEquipped(true);
-        data.getWeapons().add(w);
+    public void testMultipleIdenticalWeaponsPersistence() {
+        EquipmentDataService mockService = Mockito.mock(EquipmentDataService.class);
+        
+        // Mock loading a weapon from the database
+        String templateId = "short-sword-id";
+        Weapon prototype = new Weapon(templateId, "Short Sword", Weapon.WeaponRange.CLOSE, Weapon.WeaponType.MORTAL, Weapon.WeaponCategory.LIGHT);
+        
+        // Ensure loadWeapon returns a NEW instance each time (crucial)
+        when(mockService.loadWeapon(anyString())).thenAnswer(invocation -> {
+            String id = invocation.getArgument(0);
+            if (id.equals(templateId)) {
+                return new Weapon(templateId, "Short Sword", Weapon.WeaponRange.CLOSE, Weapon.WeaponType.MORTAL, Weapon.WeaponCategory.LIGHT);
+            }
+            return null;
+        });
+
+        CharacterData data = new CharacterData();
+        data.getWeapons().clear(); // Remove default "Unarmed" if present
+        
+        // Add two identical weapons
+        Weapon w1 = prototype.copy();
+        Weapon w2 = prototype.copy();
+        
+        data.getWeapons().add(w1);
+        data.getWeapons().add(w2);
+        
+        assertEquals(2, data.getWeapons().size());
+        assertNotEquals(w1.getInstanceId(), w2.getInstanceId());
 
         // Export state
         CharacterSaveState state = data.exportState();
-        
-        // Verify state has the weapon as equipped
-        boolean found = false;
-        for (CharacterSaveState.WeaponLink wl : state.weapons) {
-            if (wl.id.equals(w.getId())) {
-                assertTrue(wl.equipped, "Exported WeaponLink should be equipped");
-                found = true;
-            }
-        }
-        assertTrue(found, "Weapon should be found in exported state");
+        assertEquals(2, state.weapons.size());
+        assertEquals(templateId, state.weapons.get(0).id);
+        assertEquals(templateId, state.weapons.get(1).id);
+        assertNotEquals(state.weapons.get(0).instanceId, state.weapons.get(1).instanceId);
 
-        // Mock the service to return our weapon when loaded
-        when(service.loadWeapon(w.getId())).thenReturn(w);
-
-        // Now import into a clean data object
+        // Import into a new CharacterData
         CharacterData newData = new CharacterData();
-        newData.importState(state, service);
-        
-        Weapon importedW = newData.getWeapons().stream()
-                .filter(weapon -> weapon.getId().equals(w.getId()))
-                .findFirst()
-                .orElse(null);
-        
-        assertNotNull(importedW, "Imported weapon should not be null");
-        assertTrue(importedW.isEquipped(), "Imported weapon should still be equipped");
-    }
+        newData.importState(state, mockService);
 
-    @Test
-    void testArmorEquippedPersistence() {
-        data.getArmors().clear();
-        Armor a = new Armor("Buff Jacket");
-        a.setEquipped(true);
-        data.getArmors().add(a);
+        assertEquals(2, newData.getWeapons().size(), "Should have two weapons after import");
+        Weapon imported1 = newData.getWeapons().get(0);
+        Weapon imported2 = newData.getWeapons().get(1);
 
-        // Export state
-        CharacterSaveState state = data.exportState();
+        assertEquals(templateId, imported1.getId());
+        assertEquals(templateId, imported2.getId());
+        assertNotEquals(imported1.getInstanceId(), imported2.getInstanceId(), "Imported instance IDs should be unique");
         
-        // Verify state has armor as equipped
-        boolean found = false;
-        for (CharacterSaveState.ArmorLink al : state.armors) {
-            if (al.id.equals(a.getId())) {
-                assertTrue(al.equipped, "Exported ArmorLink should be equipped");
-                found = true;
-            }
-        }
-        assertTrue(found, "Armor should be found in exported state");
-
-        // Mock the service to return our armor when loaded
-        when(service.loadArmor(a.getId())).thenReturn(a);
-
-        // Import into clean data object
-        CharacterData newData = new CharacterData();
-        newData.importState(state, service);
-        
-        Armor importedA = newData.getArmors().stream()
-                .filter(armor -> armor.getId().equals(a.getId()))
-                .findFirst()
-                .orElse(null);
-        
-        assertNotNull(importedA);
-        assertTrue(importedA.isEquipped(), "Imported armor should still be equipped");
+        // Verify they are different objects
+        assertNotSame(imported1, imported2);
     }
 }

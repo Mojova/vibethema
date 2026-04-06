@@ -134,31 +134,23 @@ public class EquipmentViewModel implements ViewModel {
     public ObservableList<OtherEquipment> getGlobalOtherEquipment() { return FXCollections.observableArrayList(equipmentService.getGlobalOtherEquipment()); }
 
     public void addWeaponFromDatabase(Weapon w) {
-        if (data.getWeapons().stream().noneMatch(existing -> existing.getId().equals(w.getId()))) {
-            data.getWeapons().add(w);
-            data.setDirty(true);
-        }
+        data.getWeapons().add(w.copy());
+        data.setDirty(true);
     }
 
     public void addArmorFromDatabase(Armor a) {
-        if (data.getArmors().stream().noneMatch(existing -> existing.getId().equals(a.getId()))) {
-            data.getArmors().add(a);
-            data.setDirty(true);
-        }
+        data.getArmors().add(a.copy());
+        data.setDirty(true);
     }
 
     public void addHearthstoneFromDatabase(Hearthstone h) {
-        if (data.getHearthstones().stream().noneMatch(existing -> existing.getId().equals(h.getId()))) {
-            data.getHearthstones().add(h);
-            data.setDirty(true);
-        }
+        data.getHearthstones().add(h.copy());
+        data.setDirty(true);
     }
 
     public void addOtherEquipmentFromDatabase(OtherEquipment oe) {
-        if (data.getOtherEquipment().stream().noneMatch(existing -> existing.getId().equals(oe.getId()))) {
-            data.getOtherEquipment().add(oe);
-            data.setDirty(true);
-        }
+        data.getOtherEquipment().add(oe.copy());
+        data.setDirty(true);
     }
 
     // Actions

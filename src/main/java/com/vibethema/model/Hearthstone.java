@@ -6,6 +6,7 @@ import java.util.UUID;
 
 public class Hearthstone {
     private final StringProperty id = new SimpleStringProperty(UUID.randomUUID().toString());
+    private final StringProperty instanceId = new SimpleStringProperty(UUID.randomUUID().toString());
     private final StringProperty name = new SimpleStringProperty("");
     private final StringProperty description = new SimpleStringProperty("");
     private final javafx.beans.property.BooleanProperty equipped = new javafx.beans.property.SimpleBooleanProperty(false);
@@ -17,12 +18,24 @@ public class Hearthstone {
 
     public Hearthstone(String id, String name, String description) {
         this.id.set(id);
+        this.instanceId.set(UUID.randomUUID().toString());
+        this.name.set(name);
+        this.description.set(description);
+    }
+
+    public Hearthstone(String id, String instanceId, String name, String description) {
+        this.id.set(id);
+        this.instanceId.set(instanceId);
         this.name.set(name);
         this.description.set(description);
     }
 
     public StringProperty idProperty() { return id; }
     public String getId() { return id.get(); }
+
+    public StringProperty instanceIdProperty() { return instanceId; }
+    public String getInstanceId() { return instanceId.get(); }
+    public void setInstanceId(String instanceId) { this.instanceId.set(instanceId); }
 
     public StringProperty nameProperty() { return name; }
     public String getName() { return name.get(); }
@@ -39,6 +52,7 @@ public class Hearthstone {
     // --- Persistence Support (DTO) ---
     public static class HearthstoneData {
         public String id;
+        public String instanceId;
         public String name;
         public String description;
     }
@@ -46,6 +60,7 @@ public class Hearthstone {
     public HearthstoneData toData() {
         HearthstoneData data = new HearthstoneData();
         data.id = getId();
+        data.instanceId = getInstanceId();
         data.name = getName();
         data.description = getDescription();
         return data;
@@ -53,7 +68,13 @@ public class Hearthstone {
 
     public static Hearthstone fromData(HearthstoneData data) {
         if (data == null) return null;
-        return new Hearthstone(data.id, data.name, data.description);
+        return new Hearthstone(data.id, data.instanceId, data.name, data.description);
+    }
+
+    public Hearthstone copy() {
+        Hearthstone h = fromData(toData());
+        h.setInstanceId(UUID.randomUUID().toString());
+        return h;
     }
 
     @Override

@@ -34,6 +34,7 @@ public class Armor {
     }
 
     private final StringProperty id = new SimpleStringProperty(UUID.randomUUID().toString());
+    private final StringProperty instanceId = new SimpleStringProperty(UUID.randomUUID().toString());
     private final StringProperty name = new SimpleStringProperty("");
     private final ObjectProperty<ArmorType> type = new SimpleObjectProperty<>(ArmorType.MORTAL);
     private final ObjectProperty<ArmorWeight> weight = new SimpleObjectProperty<>(ArmorWeight.MEDIUM);
@@ -54,6 +55,17 @@ public class Armor {
 
     public Armor(String id, String name, ArmorType type, ArmorWeight weight) {
         this.id.set(id);
+        this.instanceId.set(UUID.randomUUID().toString());
+        this.name.set(name);
+        this.type.set(type);
+        this.weight.set(weight);
+        setupListeners();
+        updateStats();
+    }
+
+    public Armor(String id, String instanceId, String name, ArmorType type, ArmorWeight weight) {
+        this.id.set(id);
+        this.instanceId.set(instanceId);
         this.name.set(name);
         this.type.set(type);
         this.weight.set(weight);
@@ -90,6 +102,10 @@ public class Armor {
     // Accessors
     public StringProperty idProperty() { return id; }
     public String getId() { return id.get(); }
+
+    public StringProperty instanceIdProperty() { return instanceId; }
+    public String getInstanceId() { return instanceId.get(); }
+    public void setInstanceId(String instanceId) { this.instanceId.set(instanceId); }
     
     public StringProperty nameProperty() { return name; }
     public String getName() { return name.get(); }
@@ -124,6 +140,7 @@ public class Armor {
     // --- Persistence Support (DTO) ---
     public static class ArmorData {
         public String id;
+        public String instanceId;
         public String name;
         public ArmorType type;
         public ArmorWeight weight;
@@ -133,6 +150,7 @@ public class Armor {
     public ArmorData toData() {
         ArmorData data = new ArmorData();
         data.id = getId();
+        data.instanceId = getInstanceId();
         data.name = getName();
         data.type = getType();
         data.weight = getWeight();
@@ -142,8 +160,14 @@ public class Armor {
 
     public static Armor fromData(ArmorData data) {
         if (data == null) return null;
-        Armor a = new Armor(data.id, data.name, data.type, data.weight);
+        Armor a = new Armor(data.id, data.instanceId, data.name, data.type, data.weight);
         a.getTags().setAll(data.tags != null ? data.tags : java.util.Collections.emptyList());
+        return a;
+    }
+
+    public Armor copy() {
+        Armor a = fromData(toData());
+        a.setInstanceId(UUID.randomUUID().toString());
         return a;
     }
 

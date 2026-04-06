@@ -945,6 +945,7 @@ public class CharacterData {
         for (Weapon w : weapons) {
             CharacterSaveState.WeaponLink wl = new CharacterSaveState.WeaponLink();
             wl.id = w.getId();
+            wl.instanceId = w.getInstanceId();
             wl.specialtyId = w.getSpecialtyId();
             wl.equipped = w.isEquipped();
             state.weapons.add(wl);
@@ -953,12 +954,14 @@ public class CharacterData {
         for (Armor a : armors) {
             CharacterSaveState.ArmorLink al = new CharacterSaveState.ArmorLink();
             al.id = a.getId();
+            al.instanceId = a.getInstanceId();
             al.equipped = a.isEquipped();
             state.armors.add(al);
         }
         for (Hearthstone h : hearthstones) {
             CharacterSaveState.HearthstoneLink hl = new CharacterSaveState.HearthstoneLink();
             hl.id = h.getId();
+            hl.instanceId = h.getInstanceId();
             hl.equipped = h.isEquipped();
             state.hearthstones.add(hl);
         }
@@ -966,6 +969,7 @@ public class CharacterData {
         for (OtherEquipment o : otherEquipment) {
             CharacterSaveState.OtherEquipmentLink ol = new CharacterSaveState.OtherEquipmentLink();
             ol.id = o.getId();
+            ol.instanceId = o.getInstanceId();
             ol.equipped = o.isEquipped();
             state.otherEquipment.add(ol);
         }
@@ -1142,6 +1146,11 @@ public class CharacterData {
                 for (CharacterSaveState.WeaponLink wl : state.weapons) {
                     Weapon w = equipmentService.loadWeapon(wl.id);
                     if (w != null) {
+                        if (wl.instanceId != null && !wl.instanceId.isEmpty()) {
+                            w.setInstanceId(wl.instanceId);
+                        } else {
+                            w.setInstanceId(java.util.UUID.randomUUID().toString());
+                        }
                         w.setSpecialtyId(wl.specialtyId);
                         w.setEquipped(wl.equipped);
                         weapons.add(w);
@@ -1153,6 +1162,11 @@ public class CharacterData {
                 for (CharacterSaveState.ArmorLink al : state.armors) {
                     Armor a = equipmentService.loadArmor(al.id);
                     if (a != null) {
+                        if (al.instanceId != null && !al.instanceId.isEmpty()) {
+                            a.setInstanceId(al.instanceId);
+                        } else {
+                            a.setInstanceId(java.util.UUID.randomUUID().toString());
+                        }
                         a.setEquipped(al.equipped);
                         armors.add(a);
                     }
@@ -1163,6 +1177,11 @@ public class CharacterData {
                 for (CharacterSaveState.HearthstoneLink hl : state.hearthstones) {
                     Hearthstone h = equipmentService.loadHearthstone(hl.id);
                     if (h != null) {
+                        if (hl.instanceId != null && !hl.instanceId.isEmpty()) {
+                            h.setInstanceId(hl.instanceId);
+                        } else {
+                            h.setInstanceId(java.util.UUID.randomUUID().toString());
+                        }
                         h.setEquipped(hl.equipped);
                         hearthstones.add(h);
                     }
@@ -1173,6 +1192,11 @@ public class CharacterData {
                 for (CharacterSaveState.OtherEquipmentLink ol : state.otherEquipment) {
                     OtherEquipment oe = equipmentService.loadOtherEquipment(ol.id);
                     if (oe != null) {
+                        if (ol.instanceId != null && !ol.instanceId.isEmpty()) {
+                            oe.setInstanceId(ol.instanceId);
+                        } else {
+                            oe.setInstanceId(java.util.UUID.randomUUID().toString());
+                        }
                         oe.setEquipped(ol.equipped);
                         otherEquipment.add(oe);
                     }
