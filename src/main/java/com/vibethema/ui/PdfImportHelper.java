@@ -69,7 +69,7 @@ public class PdfImportHelper {
             @Override
             protected Void call() throws Exception {
                 PdfExtractor extractor = new PdfExtractor();
-                extractor.extractAll(pdfFile, suffix, extractKeywords, source, progress -> {
+                extractor.extractAll(pdfFile, suffix, extractKeywords, source, null, progress -> {
                     Platform.runLater(() -> progressBar.setProgress(progress));
                 });
                 return null;

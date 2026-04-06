@@ -13,6 +13,11 @@ import java.util.*;
 
 public class CoreSpellExtractor {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private Path overrideOutputPath;
+
+    public void setOverrideOutputPath(Path path) {
+        this.overrideOutputPath = path;
+    }
 
     public void extractAndSave(String text, String suffix) throws IOException {
         Map<String, List<Map<String, Object>>> spellsByCircle = new HashMap<>();
@@ -103,7 +108,7 @@ public class CoreSpellExtractor {
     }
 
     private void saveSpells(Map<String, List<Map<String, Object>>> spellsByCircle, String suffix) throws IOException {
-        Path outDir = CharmDataService.getUserSpellsPath();
+        Path outDir = overrideOutputPath != null ? overrideOutputPath : CharmDataService.getUserSpellsPath();
         if (!Files.exists(outDir)) Files.createDirectories(outDir);
 
         for (Map.Entry<String, List<Map<String, Object>>> entry : spellsByCircle.entrySet()) {

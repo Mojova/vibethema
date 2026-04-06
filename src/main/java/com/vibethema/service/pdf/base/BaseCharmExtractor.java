@@ -21,6 +21,11 @@ public abstract class BaseCharmExtractor {
     );
 
     protected final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    protected Path overrideOutputPath;
+
+    public void setOverrideOutputPath(Path path) {
+        this.overrideOutputPath = path;
+    }
 
     public abstract void extractAndSave(String text, String suffix) throws IOException;
 
@@ -126,7 +131,7 @@ public abstract class BaseCharmExtractor {
     }
 
     protected void saveCharms(Map<String, List<Map<String, Object>>> charmsByAbility, String suffix, boolean isMartialArts) throws IOException {
-        Path outDir = isMartialArts ? CharmDataService.getUserMartialArtsPath() : CharmDataService.getUserCharmsPath();
+        Path outDir = overrideOutputPath != null ? overrideOutputPath : (isMartialArts ? CharmDataService.getUserMartialArtsPath() : CharmDataService.getUserCharmsPath());
         if (!Files.exists(outDir)) Files.createDirectories(outDir);
 
         for (Map.Entry<String, List<Map<String, Object>>> entry : charmsByAbility.entrySet()) {

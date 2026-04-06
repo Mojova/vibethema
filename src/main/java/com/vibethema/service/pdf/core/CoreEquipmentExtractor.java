@@ -15,6 +15,11 @@ import java.util.regex.Pattern;
 
 public class CoreEquipmentExtractor {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private Path overrideOutputPath;
+
+    public void setOverrideOutputPath(Path path) {
+        this.overrideOutputPath = path;
+    }
 
     public void extractAndSaveTags(String text) throws IOException {
         Map<String, List<Map<String, String>>> output = new LinkedHashMap<>();
@@ -28,7 +33,7 @@ public class CoreEquipmentExtractor {
         output.put("archery", parseTags(relevantText, "archery"));
         output.put("armor", parseTags(relevantText, "armor"));
         
-        Path outDir = CharmDataService.getUserCharmsPath().getParent();
+        Path outDir = overrideOutputPath != null ? overrideOutputPath : CharmDataService.getUserCharmsPath().getParent();
         Path filePath = outDir.resolve("equipment_tags.json");
         if (!Files.exists(outDir)) Files.createDirectories(outDir);
         

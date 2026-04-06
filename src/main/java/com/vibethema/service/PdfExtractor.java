@@ -30,10 +30,10 @@ public class PdfExtractor {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public void extractAll(File pdfFile, Consumer<Double> progressCallback) throws IOException {
-        extractAll(pdfFile, "", true, PdfSource.CORE, progressCallback);
+        extractAll(pdfFile, "", true, PdfSource.CORE, null, progressCallback);
     }
 
-    public void extractAll(File pdfFile, String suffix, boolean extractKeywords, PdfSource source, Consumer<Double> progressCallback) throws IOException {
+    public void extractAll(File pdfFile, String suffix, boolean extractKeywords, PdfSource source, Path outputBasePath, Consumer<Double> progressCallback) throws IOException {
         try (PDDocument document = Loader.loadPDF(pdfFile)) {
             PDFTextStripper stripper = new PDFTextStripper();
             
@@ -43,42 +43,50 @@ public class PdfExtractor {
                 stripper.setStartPage(250);
                 stripper.setEndPage(466);
                 String charmText = stripper.getText(document);
-                new CoreCharmExtractor().extractAndSave(charmText, suffix);
+                CoreCharmExtractor charmExtractor = new CoreCharmExtractor();
+                if (outputBasePath != null) charmExtractor.setOverrideOutputPath(outputBasePath.resolve("charms"));
+                charmExtractor.extractAndSave(charmText, suffix);
 
                 // 2. Sorcery (Pages 470 - 495)
                 if (progressCallback != null) progressCallback.accept(0.5);
                 stripper.setStartPage(470);
                 stripper.setEndPage(495);
                 String spellText = stripper.getText(document);
-                new CoreSpellExtractor().extractAndSave(spellText, suffix);
+                CoreSpellExtractor spellExtractor = new CoreSpellExtractor();
+                if (outputBasePath != null) spellExtractor.setOverrideOutputPath(outputBasePath.resolve("spells"));
+                spellExtractor.extractAndSave(spellText, suffix);
 
                 // 3. Equipment Tags & Gear (Pages 585 - 610)
                 if (progressCallback != null) progressCallback.accept(0.8);
                 stripper.setStartPage(585);
                 stripper.setEndPage(610);
                 String equipText = stripper.getText(document);
-                new CoreEquipmentExtractor().extractAndSaveTags(equipText);
+                CoreEquipmentExtractor equipExtractor = new CoreEquipmentExtractor();
+                if (outputBasePath != null) equipExtractor.setOverrideOutputPath(outputBasePath);
+                equipExtractor.extractAndSaveTags(equipText);
 
                 // 4. Keywords (Page range overlap with charms)
                 if (extractKeywords) {
                     stripper.setStartPage(250);
                     stripper.setEndPage(260);
-                    extractAndSaveKeywords(stripper.getText(document));
+                    extractAndSaveKeywords(stripper.getText(document), outputBasePath);
                 }
 
-                saveDefaultUnarmedWeapon();
+                saveDefaultUnarmedWeapon(outputBasePath);
             } else if (source == PdfSource.MOSE) {
                 // MoSE specifically - keep simple whole-text for now or add MoSEExtractor
                 if (progressCallback != null) progressCallback.accept(0.1);
                 String fullText = stripper.getText(document);
-                new CoreCharmExtractor().extractAndSave(fullText, suffix); // Fallback to Core extractor for MoSE
+                CoreCharmExtractor charmExtractor = new CoreCharmExtractor();
+                if (outputBasePath != null) charmExtractor.setOverrideOutputPath(outputBasePath.resolve("charms"));
+                charmExtractor.extractAndSave(fullText, suffix); // Fallback to Core extractor for MoSE
             }
             
             if (progressCallback != null) progressCallback.accept(1.0);
         }
     }
 
-    private void saveDefaultUnarmedWeapon() throws IOException {
+    private void saveDefaultUnarmedWeapon(Path outputBasePath) throws IOException {
         Map<String, Object> unarmed = new LinkedHashMap<>();
         unarmed.put("id", com.vibethema.model.Weapon.UNARMED_ID);
         unarmed.put("name", "Unarmed");
@@ -93,7 +101,7 @@ public class PdfExtractor {
         unarmed.put("equipped", false);
         unarmed.put("tags", Arrays.asList("Bashing", "Brawl", "Grappling", "Natural"));
 
-        Path outDir = com.vibethema.service.EquipmentDataService.getWeaponsPath();
+        Path outDir = outputBasePath != null ? outputBasePath.resolve("equipment").resolve("weapons") : com.vibethema.service.EquipmentDataService.getWeaponsPath();
         if (outDir == null) {
             outDir = java.nio.file.Paths.get(System.getProperty("user.home"), ".vibethema", "equipment", "weapons");
         }
@@ -105,7 +113,7 @@ public class PdfExtractor {
         }
     }
 
-    private void extractAndSaveKeywords(String text) throws IOException {
+    private void extractAndSaveKeywords(String text, Path outputBasePath) throws IOException {
         // Keyword list is relatively stable across books
         List<String> keywordsToFind = Arrays.asList(
             "Aggravated", "Bridge", "Clash", "Counterattack", "Decisive-only",
@@ -141,7 +149,8 @@ public class PdfExtractor {
             addKeyword(outputKeywords, currentKeyword, text.substring(lastEnd));
         }
 
-        Path outDir = CharmDataService.getUserCharmsPath();
+        Path outDir = outputBasePath != null ? outputBasePath.resolve("charms") : CharmDataService.getUserCharmsPath();
+        if (!Files.exists(outDir)) Files.createDirectories(outDir);
         Path filePath = outDir.resolve("keywords.json");
         try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
             gson.toJson(outputKeywords, writer);

@@ -39,9 +39,27 @@ The project strictly follows the **Model-View-ViewModel (MVVM)** pattern using t
 ### Service Layer (`com.vibethema.service`)
 - **`CharmDataService`**: Manages charm/spell loading and custom definitions.
 - **`EquipmentDataService`**: Handles equipment tags and metadata.
-- **`PdfExtractor`**: Run-time PDF parsing using Apache PDFBox.
+- **`SystemDataService`**: Checks for core book data presence (via `keywords.json`).
+- **`PdfExtractor`**: Coordinator for the multi-book import system.
+- **`com.vibethema.service.pdf`**:
+    - **`base.BaseCharmExtractor`**: Common logic for descriptive cleanup and UUID resolution.
+    - **`core.CoreCharmExtractor`**: Specialized parsing for Solar/Martial Arts charms.
+    - **`core.CoreSpellExtractor`**: Specialized parsing for Sorcery spells.
+    - **`core.CoreEquipmentExtractor`**: Specialized parsing for gear stats and tags.
 - **`PdfExportService`**: Exports character data to a formatted PDF sheet.
 - **`EquipmentDialogService`**: Provides MVVM-based dialogs for adding/editing equipment.
+
+## PDF Import Architecture
+
+The PDF extraction system is designed for high-fidelity parsing of official Exalted 3e rulebooks and supplements.
+
+### Extraction Pipeline
+1.  **Input**: PDF file and `PdfSource` (e.g., `CORE`, `MOSE`).
+2.  **Coordination**: `PdfExtractor` selects the correct book-specific parser.
+3.  **Resolution**: `BaseCharmExtractor` handles:
+    - **Cleaning**: Removal of page headers, footers, "EX3" markers, and sidebars.
+    - **ID Stability**: All charm IDs are generated as **v3 UUIDs** using the format `name|ability` (e.g., `Excelled Strike|Melee`). This ensures persistent prerequisite links across multiple imports.
+    - **Problematic Flagging**: Marks charms with `potentiallyProblematicImport` if prerequisites cannot be resolved to a known ID in the current batch.
 
 ## Key Rules & Logic
 
@@ -57,10 +75,11 @@ The project strictly follows the **Model-View-ViewModel (MVVM)** pattern using t
 
 1. **MVVM Integrity**: No business logic (math, validation) should be in the View. Properties in the View should be bound to the ViewModel.
 2. **Craft & Martial Arts**: These are dynamic `ObservableList` collections. Use `data.getAbilityRating(Name)` for highest rating.
-3. **Save/Load**: Always update `CharacterSaveState` AND `CharacterData` when adding new persistent fields.
-4. **GSON Compatibility**: Redundant fields (like `ability` in charms) are no longer serialized. They are transient or inferred from parents.
-5. **Dialog Handling**: Equipment dialogs are refactored to MVVM. Use `FluentViewLoader` to create them via `DefaultEquipmentDialogService`.
-6. **Logging**: Standardized on **SLF4J + Logback**. Avoid `System.out`.
+3. **Charm ID Generation**: **CRITICAL**. Never hardcode charm IDs. Use `UUID.nameUUIDFromBytes((name + "|" + ability).getBytes())` to match the import system's stable identifiers.
+4. **Save/Load**: Always update `CharacterSaveState` AND `CharacterData` when adding new persistent fields.
+5. **GSON Compatibility**: Redundant fields (like `ability` in charms) are no longer serialized. They are transient or inferred from parents.
+6. **Dialog Handling**: Equipment dialogs are refactored to MVVM. Use `FluentViewLoader` to create them via `DefaultEquipmentDialogService`.
+7. **Logging**: Standardized on **SLF4J + Logback**. Avoid `System.out`.
 
 ## File Map
 - `src/main/java/com/vibethema/Main.java`: App Launcher.
