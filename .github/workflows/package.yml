@@ -37,7 +37,7 @@ jobs:
       - name: Prepare DMG Artifact
         run: |
           cd target/dist
-          mv Vibethema.dmg Vibethema-macOS-${{ matrix.arch }}.dmg
+          mv Vibethema*.dmg Vibethema-macOS-${{ matrix.arch }}.dmg
 
       - name: Upload macOS Artifact
         uses: actions/upload-artifact@v7

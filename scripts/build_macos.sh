@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Create a native macOS application bundle with an icon
 echo "Starting macOS build for architecture: $(uname -m)"
