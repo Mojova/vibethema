@@ -11,10 +11,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.function.BiConsumer;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import com.vibethema.viewmodel.util.Messenger;
+import de.saxsys.mvvmfx.utils.notifications.NotificationObserver;
 
 @ExtendWith(MockitoExtension.class)
 public class EquipmentViewModelTest {
@@ -27,8 +29,6 @@ public class EquipmentViewModelTest {
     private CharmDataService dataService;
     @Mock
     private Runnable refreshSummary;
-    @Mock
-    private BiConsumer<String, String> evocationsCaller;
 
     @BeforeEach
     void setUp() {
@@ -38,8 +38,7 @@ public class EquipmentViewModelTest {
             equipmentService, 
             dataService,
             new HashMap<>(), 
-            refreshSummary, 
-            evocationsCaller
+            refreshSummary
         );
     }
 
@@ -110,8 +109,15 @@ public class EquipmentViewModelTest {
 
     @Test
     void testCallEvocationsTrigger() {
-        viewModel.callEvocations("art123", "Daiklave");
-        verify(evocationsCaller, times(1)).accept("art123", "Daiklave");
+        AtomicReference<String[]> ref = new AtomicReference<>();
+        NotificationObserver observer = (name, payload) -> ref.set(new String[]{(String)payload[0], (String)payload[1]});
+        Messenger.subscribe("jump_to_evocations", observer);
+        try {
+            viewModel.callEvocations("art123", "Daiklave");
+            assertArrayEquals(new String[]{"art123", "Daiklave"}, ref.get());
+        } finally {
+            Messenger.unsubscribe(null, observer);
+        }
     }
 
     @Test

@@ -6,10 +6,6 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ListChangeListener;
 import com.vibethema.viewmodel.util.Messenger;
-import de.saxsys.mvvmfx.ViewModel;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.collections.ListChangeListener;
 
 public class StatsViewModel implements ViewModel {
     private final CharacterData data;

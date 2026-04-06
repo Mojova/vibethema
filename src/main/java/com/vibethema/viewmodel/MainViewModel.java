@@ -1,11 +1,10 @@
 package com.vibethema.viewmodel;
 
-import com.vibethema.model.CharacterData;
-import com.vibethema.model.CharacterMode;
-import com.vibethema.model.CharacterSaveState;
+import com.vibethema.model.*;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
 import com.vibethema.viewmodel.footer.FooterViewModel;
+import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -27,7 +26,6 @@ public class MainViewModel implements ViewModel {
     private FooterViewModel footerViewModel;
     private final EquipmentDataService equipmentService = new EquipmentDataService();
     private final CharmDataService charmDataService = new CharmDataService();
-    private Runnable finalizeRequestAction;
 
     private final Map<String, String> tagDescriptions = new HashMap<>();
     private final Map<String, String> keywordDefs = new HashMap<>();
@@ -37,16 +35,15 @@ public class MainViewModel implements ViewModel {
     private final BooleanProperty dirty = new SimpleBooleanProperty();
 
     public MainViewModel() {
-        this(new CharacterData(), null);
+        this(new CharacterData());
     }
 
-    public MainViewModel(CharacterData data, Runnable finalizeRequestAction) {
-        init(data, finalizeRequestAction);
+    public MainViewModel(CharacterData data) {
+        init(data);
     }
 
-    public void init(CharacterData data, Runnable finalizeRequestAction) {
+    public void init(CharacterData data) {
         this.data = data;
-        this.finalizeRequestAction = finalizeRequestAction;
         this.footerViewModel = new FooterViewModel(data, this::handleFinalization);
         this.dirty.unbind();
         this.dirty.bind(data.dirtyProperty());
@@ -130,9 +127,7 @@ public class MainViewModel implements ViewModel {
     }
 
     private void handleFinalization() {
-        if (finalizeRequestAction != null) {
-            finalizeRequestAction.run();
-        }
+        Messenger.publish("show_finalization_dialog");
     }
 
     public void proceedWithFinalization() {

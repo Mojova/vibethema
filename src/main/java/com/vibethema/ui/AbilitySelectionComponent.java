@@ -5,6 +5,7 @@ import com.vibethema.model.CharacterData;
 import com.vibethema.model.CharacterMode;
 import com.vibethema.model.Caste;
 import com.vibethema.model.SystemData;
+import com.vibethema.viewmodel.util.Messenger;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -127,6 +128,10 @@ public class AbilitySelectionComponent extends HBox {
         // 4. Dot Selector
         DotSelector selector = new DotSelector(rating, 0);
         selector.minDotsProperty().bind(Bindings.when(favored).then(1).otherwise(0));
+
+        // Listeners for Refresh
+        caste.addListener((obs, ov, nv) -> Messenger.publish("refresh_all_ui"));
+        favored.addListener((obs, ov, nv) -> Messenger.publish("refresh_all_ui"));
 
         getChildren().addAll(casteContainer, favoredContainer, expModeContainer, nameLabel, selector);
     }

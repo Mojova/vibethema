@@ -6,6 +6,7 @@ import com.vibethema.model.logic.CreationRuleEngine;
 import com.vibethema.model.logic.CreationRuleEngine.CreationStatus;
 import com.vibethema.model.logic.ExperienceRuleEngine;
 import com.vibethema.model.logic.ExperienceRuleEngine.ExperienceStatus;
+import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -48,9 +49,9 @@ public class FooterViewModel implements ViewModel {
         
         // Listeners
         data.modeProperty().addListener((obs, oldV, newV) -> update());
-        // In a real app, we'd listen to many more specific properties, 
-        // but for now we can have a global refresh or listen to key ones.
-        // BuilderUI currently calls updateFooter() on almost every change.
+        
+        // Subscribe to global refresh triggers
+        Messenger.subscribe("refresh_all_ui", (name, payload) -> update());
     }
 
     public void update() {

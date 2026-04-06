@@ -3,6 +3,7 @@ package com.vibethema.viewmodel.equipment;
 import com.vibethema.model.*;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
+import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,7 +11,6 @@ import javafx.collections.ListChangeListener;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 /**
@@ -23,7 +23,6 @@ public class EquipmentViewModel implements ViewModel {
     private final CharmDataService dataService;
     private final Map<String, String> tagDescriptions;
     private final Runnable refreshSummary;
-    private final BiConsumer<String, String> evocationsCaller;
 
     private final ObservableList<WeaponRowViewModel> weapons = FXCollections.observableArrayList();
     private final ObservableList<ArmorRowViewModel> armors = FXCollections.observableArrayList();
@@ -34,14 +33,12 @@ public class EquipmentViewModel implements ViewModel {
             EquipmentDataService equipmentService,
             CharmDataService dataService,
             Map<String, String> tagDescriptions,
-            Runnable refreshSummary,
-            BiConsumer<String, String> evocationsCaller) {
+            Runnable refreshSummary) {
         this.data = data;
         this.equipmentService = equipmentService;
         this.dataService = dataService;
         this.tagDescriptions = tagDescriptions;
         this.refreshSummary = refreshSummary;
-        this.evocationsCaller = evocationsCaller;
 
         syncCollections();
         setupModelListeners();
@@ -236,9 +233,7 @@ public class EquipmentViewModel implements ViewModel {
 
     // Specialized Logic
     public void callEvocations(String id, String name) {
-        if (evocationsCaller != null) {
-            evocationsCaller.accept(id, name);
-        }
+        Messenger.publish("jump_to_evocations", id, name);
     }
 
     public Map<String, String> getTagDescriptions() {

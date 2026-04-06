@@ -14,6 +14,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -257,6 +258,13 @@ public class SorceryTab extends ScrollPane implements JavaView<SorceryViewModel>
         layout.getChildren().addAll(filterField, circlesTabPane, addBtn);
         Scene selectionScene = new Scene(layout, 600, 600);
         selectionScene.getStylesheets().addAll(getScene().getStylesheets());
+
+        selectionScene.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ESCAPE) {
+                stage.close();
+            }
+        });
+
         stage.setScene(selectionScene);
         stage.show();
     }

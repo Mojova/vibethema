@@ -4,6 +4,7 @@ import com.vibethema.model.*;
 import com.vibethema.model.logic.CreationRuleEngine;
 import com.vibethema.model.logic.CreationRuleEngine.CreationStatus;
 import com.vibethema.viewmodel.StatsViewModel;
+import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
 import javafx.beans.binding.Bindings;
@@ -121,6 +122,7 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         ComboBox<AttributePriority> priorityBox = new ComboBox<>();
         priorityBox.getItems().setAll(AttributePriority.values());
         priorityBox.valueProperty().bindBidirectional(data.getAttributePriority(category));
+        priorityBox.valueProperty().addListener((obs, oldV, newV) -> Messenger.publish("refresh_all_ui"));
         priorityBox.visibleProperty().bind(data.modeProperty().isEqualTo(CharacterMode.CREATION));
         priorityBox.managedProperty().bind(priorityBox.visibleProperty());
 
@@ -212,7 +214,10 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         VBox section = new VBox(10);
         specList = new VBox(8);
         refreshSpecsContent(data);
-        data.getSpecialties().addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> refreshSpecsContent(data));
+        data.getSpecialties().addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> {
+            refreshSpecsContent(data);
+            Messenger.publish("refresh_all_ui");
+        });
         
         Button addBtn = new Button("+ Add Specialty");
         addBtn.setOnAction(e -> data.getSpecialties().add(new Specialty("", "")));

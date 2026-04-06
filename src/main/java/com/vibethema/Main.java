@@ -53,7 +53,7 @@ public class Main extends Application {
             ViewTuple<MainView, MainViewModel> viewTuple = FluentViewLoader.javaView(MainView.class).load();
             MainView view = (MainView) viewTuple.getView();
             MainViewModel vm = viewTuple.getViewModel();
-            vm.init(data, view::showFinalizationDialog);
+            vm.init(data);
             vm.currentFileProperty().set(file);
             data.setDirty(false);
 
@@ -65,7 +65,7 @@ public class Main extends Application {
             stage.setScene(scene);
             stage.setOnCloseRequest(e -> {
                 if (view.confirmDiscardChanges()) {
-                    // Allowed to close
+                    view.cleanup();
                 } else {
                     e.consume();
                 }

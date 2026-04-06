@@ -5,6 +5,7 @@ import com.vibethema.model.CharacterData;
 import com.vibethema.model.Charm;
 import com.vibethema.model.PurchasedCharm;
 import com.vibethema.service.CharmDataService;
+import com.vibethema.viewmodel.util.Messenger;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -196,6 +197,9 @@ public class CharmTreeComponent extends SplitPane {
     public void refresh() {
         if (charmCanvas == null)
             return;
+            
+        String savedId = (selectedCharm != null) ? selectedCharm.getId() : null;
+            
         charmCanvas.getChildren().clear();
         charmNodeMap.clear();
         currentCharms.clear();
@@ -261,6 +265,10 @@ public class CharmTreeComponent extends SplitPane {
         deleteCustomBtn.setManaged(false);
         editBtn.setVisible(false);
         editBtn.setManaged(false);
+        
+        if (savedId != null) {
+            selectCharm(savedId);
+        }
     }
 
     private void drawCharmWeb(List<Charm> charms, String ability) {
@@ -419,6 +427,7 @@ public class CharmTreeComponent extends SplitPane {
                 }
                 updateSidebarButton(selectedCharm);
                 updateWebNodeStyles();
+                Messenger.publish("refresh_all_ui");
             }
         });
 
@@ -427,6 +436,7 @@ public class CharmTreeComponent extends SplitPane {
                 data.removeOneCharm(selectedCharm.getId());
                 updateSidebarButton(selectedCharm);
                 updateWebNodeStyles();
+                Messenger.publish("refresh_all_ui");
             }
         });
 
@@ -483,6 +493,7 @@ public class CharmTreeComponent extends SplitPane {
     }
 
     private void updateSidebarButton(Charm c) {
+        if (c == null) return;
         int count = data.getCharmCount(c.getId());
         boolean isOxBody = c.getName().equals("Ox-Body Technique");
         boolean stackable = c.getKeywords() != null && c.getKeywords().contains("Stackable");

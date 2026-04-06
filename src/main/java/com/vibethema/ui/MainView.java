@@ -12,9 +12,11 @@ import com.vibethema.viewmodel.*;
 import com.vibethema.viewmodel.equipment.EquipmentViewModel;
 import com.vibethema.viewmodel.experience.ExperienceViewModel;
 import com.vibethema.viewmodel.footer.FooterViewModel;
+import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
 import de.saxsys.mvvmfx.ViewTuple;
+import de.saxsys.mvvmfx.utils.notifications.NotificationObserver;
 import javafx.application.Platform;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -40,6 +42,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
     private Tab experienceTab;
     private Map<String, CharmsTab> charmTabs = new HashMap<>();
     private Map<String, CharmsViewModel> charmViewModels = new HashMap<>();
+    private final List<NotificationObserver> observers = new ArrayList<>();
 
     private final CharmTreeComponent.CharmTreeListener charmTreeListener = new CharmTreeComponent.CharmTreeListener() {
         @Override
@@ -95,11 +98,33 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         viewModel.windowTitleProperty().addListener((obs, oldV, newV) -> updateWindowTitle(newV));
 
         // UI Messenger subscriptions
-        com.vibethema.viewmodel.util.Messenger.subscribe("jump_to_charms", (name, payload) -> {
+        addObserver("jump_to_charms", (name, payload) -> {
             if (payload != null && payload.length > 0 && payload[0] instanceof String) {
                 handleJumpToCharms((String) payload[0]);
             }
         });
+
+        addObserver("jump_to_evocations", (name, payload) -> {
+            if (payload != null && payload.length > 1 && payload[0] instanceof String && payload[1] instanceof String) {
+                handleJumpToEvocations((String) payload[0], (String) payload[1]);
+            }
+        });
+
+        addObserver("show_finalization_dialog", (name, payload) -> showFinalizationDialog());
+
+        addObserver("refresh_all_ui", (name, payload) -> {
+            charmTabs.values().forEach(CharmsTab::refresh);
+        });
+    }
+
+    private void addObserver(String name, NotificationObserver observer) {
+        Messenger.subscribe(name, observer);
+        observers.add(observer);
+    }
+
+    public void cleanup() {
+        observers.forEach(obs -> Messenger.unsubscribe(null, obs));
+        observers.clear();
     }
 
     private Tab createCharmsTab(String title, String filterType) {
@@ -125,8 +150,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                 viewModel.getEquipmentService(), 
                 viewModel.getCharmDataService(), 
                 viewModel.getTagDescriptions(),
-                null,
-                this::handleJumpToEvocations);
+                null);
         
         ViewTuple<EquipmentTab, EquipmentViewModel> vt = de.saxsys.mvvmfx.FluentViewLoader
                 .javaView(EquipmentTab.class)
@@ -225,11 +249,13 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         ComboBox<Caste> casteBox = new ComboBox<>();
         casteBox.getItems().addAll(Caste.values());
         casteBox.valueProperty().bindBidirectional(viewModel.getData().casteProperty());
+        casteBox.valueProperty().addListener((obs, oldV, newV) -> Messenger.publish("refresh_all_ui"));
 
         ComboBox<String> supernalDropdown = new ComboBox<>();
         supernalDropdown.setPrefWidth(120);
         supernalDropdown.setItems(viewModel.getData().getValidSupernalAbilities());
         supernalDropdown.valueProperty().bindBidirectional(viewModel.getData().supernalAbilityProperty());
+        supernalDropdown.valueProperty().addListener((obs, oldV, newV) -> Messenger.publish("refresh_all_ui"));
 
         basicInfo.getChildren().addAll(new Label("Name:"), nameField, new Label("Caste:"), casteBox,
                 new Label("Supernal:"), supernalDropdown);

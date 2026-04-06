@@ -1,5 +1,6 @@
 package com.vibethema.ui;
 
+import com.vibethema.viewmodel.util.Messenger;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Pos;
@@ -37,8 +38,10 @@ public class DotSelector extends HBox {
                 if (valueProperty.get() == dotIndex && dotIndex > currentMin) {
                     // Clicked the current max dot, decrease by 1
                     valueProperty.set(dotIndex - 1);
+                    Messenger.publish("refresh_all_ui");
                 } else if (dotIndex >= currentMin) {
                     valueProperty.set(dotIndex);
+                    Messenger.publish("refresh_all_ui");
                 }
                 updateDots();
             });

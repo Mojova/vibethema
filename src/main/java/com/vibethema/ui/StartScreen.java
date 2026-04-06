@@ -66,7 +66,7 @@ public class StartScreen extends StackPane {
         ViewTuple<MainView, MainViewModel> viewTuple = FluentViewLoader.javaView(MainView.class).load();
         
         MainView mainView = (MainView) viewTuple.getView();
-        viewTuple.getViewModel().init(data, mainView::showFinalizationDialog);
+        viewTuple.getViewModel().init(data);
         
         getScene().setRoot(mainView);
     }
@@ -88,7 +88,7 @@ public class StartScreen extends StackPane {
                     
                     MainView mainView = (MainView) viewTuple.getView();
                     MainViewModel vm = viewTuple.getViewModel();
-                    vm.init(data, mainView::showFinalizationDialog);
+                    vm.init(data);
                     vm.currentFileProperty().set(file);
                     data.setDirty(false);
 
