@@ -270,6 +270,13 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                trimmed.startsWith("Using ") || trimmed.startsWith("Focusing ") ||
                trimmed.startsWith("Relentless ") || trimmed.startsWith("Once per ") ||
                trimmed.startsWith("In ") || trimmed.startsWith("Lightening ") ||
+               trimmed.startsWith("Locked ") || trimmed.startsWith("Hardening ") ||
+               trimmed.startsWith("Empowered ") || trimmed.startsWith("As ") ||
+               trimmed.startsWith("Tearing ") || trimmed.startsWith("Hers ") ||
+               trimmed.startsWith("Feeling ") || trimmed.startsWith("Driven ") ||
+               trimmed.startsWith("Ripping ") || trimmed.startsWith("Tossing ") ||
+               trimmed.startsWith("Assuming ") || trimmed.startsWith("Lifting ") ||
+               trimmed.startsWith("Pulling ") ||
                trimmed.startsWith("That’s ") || trimmed.startsWith("Note: ");
     }
 
