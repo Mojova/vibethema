@@ -155,7 +155,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         ViewTuple<EquipmentTab, EquipmentViewModel> vt = de.saxsys.mvvmfx.FluentViewLoader
                 .javaView(EquipmentTab.class)
                 .viewModel(eqVm)
-                .codeBehind(new EquipmentTab(new DefaultEquipmentDialogService()))
+                .codeBehind(new EquipmentTab(new DefaultEquipmentDialogService(viewModel.getEquipmentService())))
                 .load();
         
         EquipmentTab view = (EquipmentTab) vt.getView();
