@@ -71,4 +71,4 @@ jpackage \
   --java-options "--enable-native-access=ALL-UNNAMED" \
   --verbose
 
-echo "Build complete. Check target/dist/Vibethema for the native app image."
+echo "Build complete. Check target/dist/AppDir-Base/Vibethema for the native app image."
