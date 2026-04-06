@@ -175,7 +175,11 @@ public class MainViewModel implements ViewModel {
     }
 
     public void resetToNew() {
-        init(CharacterFactory.createNewCharacter(equipmentService));
+        this.data.clear();
+        Weapon unarmed = equipmentService.loadWeapon(Weapon.UNARMED_ID);
+        if (unarmed != null) {
+            data.getWeapons().add(unarmed.copy());
+        }
         this.currentFile.set(null);
         Messenger.publish("refresh_all_ui");
     }

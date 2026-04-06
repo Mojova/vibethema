@@ -33,6 +33,10 @@ public class EquipmentViewModelTest {
     @BeforeEach
     void setUp() {
         data = new CharacterData();
+        // Add a mock 'Unarmed' to simulate a character created with default gear
+        data.getWeapons().add(new Weapon(Weapon.UNARMED_ID, "Unarmed", Weapon.WeaponRange.CLOSE, Weapon.WeaponType.MORTAL, Weapon.WeaponCategory.LIGHT));
+        data.setDirty(false);
+
         viewModel = new EquipmentViewModel(
             data, 
             equipmentService, 
