@@ -12,7 +12,14 @@ env:
 
 jobs:
   build-macos:
-    runs-on: macos-latest
+    strategy:
+      matrix:
+        include:
+          - arch: x64
+            os: macos-13
+          - arch: arm64
+            os: macos-latest
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v5
       - name: Setup JDK 25
@@ -24,19 +31,19 @@ jobs:
 
       - name: Build and Package macOS
         run: |
-          chmod +x scripts/build_app.sh
-          ./scripts/build_app.sh
+          chmod +x scripts/build_macos.sh
+          ./scripts/build_macos.sh
 
       - name: Archive macOS App
         run: |
           cd target/dist
-          zip -r Vibethema-macOS.zip Vibethema.app
+          zip -r Vibethema-macOS-${{ matrix.arch }}.zip Vibethema.app
 
       - name: Upload macOS Artifact
         uses: actions/upload-artifact@v7
         with:
-          name: Vibethema-macOS
-          path: target/dist/Vibethema-macOS.zip
+          name: Vibethema-macOS-${{ matrix.arch }}
+          path: target/dist/Vibethema-macOS-${{ matrix.arch }}.zip
 
   build-windows:
     runs-on: windows-latest
@@ -119,7 +126,8 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            release-assets/Vibethema-macOS/Vibethema-macOS.zip
+            release-assets/Vibethema-macOS-x64/Vibethema-macOS-x64.zip
+            release-assets/Vibethema-macOS-arm64/Vibethema-macOS-arm64.zip
             release-assets/Vibethema-Windows/Vibethema-Windows.zip
             release-assets/Vibethema-Linux/Vibethema-Linux.tar.gz
         env:

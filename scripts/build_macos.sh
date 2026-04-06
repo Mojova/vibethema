@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Create a native macOS application bundle with an icon
+echo "Starting macOS build for architecture: $(uname -m)"
 
 # 1. Prepare icons
 ICON_SOURCE="src/main/resources/icon.png"
