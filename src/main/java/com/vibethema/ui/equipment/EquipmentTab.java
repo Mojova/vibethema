@@ -22,6 +22,7 @@ import com.vibethema.model.Armor;
 import com.vibethema.model.Hearthstone;
 import com.vibethema.model.OtherEquipment;
 import com.vibethema.model.Specialty;
+import com.vibethema.viewmodel.util.Messenger;
 import java.util.Optional;
 
 /**
@@ -47,6 +48,16 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
 
     public void initialize() {
         setContent(createContent());
+
+        Messenger.subscribe("show_weapon_dialog", (name, payload) -> showWeaponDialog((Weapon) (payload != null && payload.length > 0 ? payload[0] : null)));
+        Messenger.subscribe("show_armor_dialog", (name, payload) -> showArmorDialog((Armor) (payload != null && payload.length > 0 ? payload[0] : null)));
+        Messenger.subscribe("show_hearthstone_dialog", (name, payload) -> showHearthstoneDialog((Hearthstone) (payload != null && payload.length > 0 ? payload[0] : null)));
+        Messenger.subscribe("show_other_equipment_dialog", (name, payload) -> showOtherEquipmentDialog((OtherEquipment) (payload != null && payload.length > 0 ? payload[0] : null)));
+
+        Messenger.subscribe("show_weapon_database", (name, payload) -> showWeaponDatabaseDialog());
+        Messenger.subscribe("show_armor_database", (name, payload) -> showArmorDatabaseDialog());
+        Messenger.subscribe("show_hearthstone_database", (name, payload) -> showHearthstoneDatabaseDialog());
+        Messenger.subscribe("show_other_equipment_database", (name, payload) -> showOtherEquipmentDatabaseDialog());
     }
 
     private VBox createContent() {
@@ -63,7 +74,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
 
         Button addWeaponBtn = new Button("+ Add Weapon");
         addWeaponBtn.getStyleClass().addAll("add-btn", "action-btn");
-        addWeaponBtn.setOnAction(e -> showWeaponDatabaseDialog());
+        addWeaponBtn.setOnAction(e -> viewModel.requestWeaponDatabase());
 
         weaponsSection.getChildren().addAll(weaponsListContainer, addWeaponBtn);
 
@@ -76,7 +87,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
 
         Button addArmorBtn = new Button("+ Add Armor");
         addArmorBtn.getStyleClass().addAll("add-btn", "action-btn");
-        addArmorBtn.setOnAction(e -> showArmorDatabaseDialog());
+        addArmorBtn.setOnAction(e -> viewModel.requestArmorDatabase());
 
         armorSection.getChildren().addAll(armorListContainer, addArmorBtn);
 
@@ -89,7 +100,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
 
         Button addHearthstoneBtn = new Button("+ Add Hearthstone");
         addHearthstoneBtn.getStyleClass().addAll("add-btn", "action-btn");
-        addHearthstoneBtn.setOnAction(e -> showHearthstoneDatabaseDialog());
+        addHearthstoneBtn.setOnAction(e -> viewModel.requestHearthstoneDatabase());
 
         hearthstonesSection.getChildren().addAll(hearthstoneListContainer, addHearthstoneBtn);
 
@@ -102,7 +113,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
 
         Button addOtherBtn = new Button("+ Add Equipment");
         addOtherBtn.getStyleClass().addAll("add-btn", "action-btn");
-        addOtherBtn.setOnAction(e -> showOtherEquipmentDatabaseDialog());
+        addOtherBtn.setOnAction(e -> viewModel.requestOtherEquipmentDatabase());
 
         otherSection.getChildren().addAll(otherEquipmentListContainer, addOtherBtn);
 
@@ -181,7 +192,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
             Button editBtn = new Button("✏️");
             editBtn.getStyleClass().add("edit-btn");
             editBtn.setStyle("-fx-base: #cea212;");
-            editBtn.setOnAction(e -> showWeaponDialog(wvm.getWeapon()));
+            editBtn.setOnAction(e -> viewModel.requestEditWeapon(wvm.getWeapon()));
             
             Button evBtn = new Button("✨");
             evBtn.getStyleClass().add("action-btn-small");
@@ -239,7 +250,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
 
             details.getChildren().addAll(nameLabel, st, tagsPane);
             Button editBtn = new Button("✏️"); editBtn.getStyleClass().add("edit-btn"); editBtn.setStyle("-fx-base: #cea212;");
-            editBtn.setOnAction(e -> showArmorDialog(avm.getArmor()));
+            editBtn.setOnAction(e -> viewModel.requestEditArmor(avm.getArmor()));
             
             Button evBtn = new Button("✨");
             evBtn.getStyleClass().add("action-btn-small");
@@ -276,7 +287,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
             Label descLabel = new Label(hvm.descriptionProperty().get()); descLabel.setStyle("-fx-font-size: 0.9em; -fx-text-fill: #aaa;");
             details.getChildren().addAll(nameLabel, descLabel);
             Button editBtn = new Button("✏️"); editBtn.getStyleClass().add("edit-btn"); editBtn.setStyle("-fx-base: #cea212;");
-            editBtn.setOnAction(e -> showHearthstoneDialog(hvm.getHearthstone()));
+            editBtn.setOnAction(e -> viewModel.requestEditHearthstone(hvm.getHearthstone()));
             Button delBtn = new Button("🗑"); delBtn.getStyleClass().add("remove-btn"); delBtn.setOnAction(e -> viewModel.removeHearthstone(hvm.getHearthstone()));
             HBox.setHgrow(details, Priority.ALWAYS);
             row.getChildren().addAll(equippedCb, details, editBtn, delBtn);
@@ -312,7 +323,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
             Label descLabel = new Label(ovm.descriptionProperty().get()); descLabel.setStyle("-fx-font-size: 0.9em; -fx-text-fill: #aaa;");
             details.getChildren().addAll(nameLabel, descLabel);
             Button editBtn = new Button("✏️"); editBtn.getStyleClass().add("edit-btn"); editBtn.setStyle("-fx-base: #cea212;");
-            editBtn.setOnAction(e -> showOtherEquipmentDialog(ovm.getOtherEquipment()));
+            editBtn.setOnAction(e -> viewModel.requestEditOtherEquipment(ovm.getOtherEquipment()));
             
             Button evBtn = new Button("✨");
             evBtn.getStyleClass().add("action-btn-small");

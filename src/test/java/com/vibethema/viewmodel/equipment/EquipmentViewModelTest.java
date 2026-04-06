@@ -136,4 +136,48 @@ public class EquipmentViewModelTest {
         viewModel.markDirty();
         assertTrue(data.isDirty());
     }
+
+    @Test
+    void testRequestDialogsPublishNotifications() {
+        AtomicReference<String> lastMessage = new AtomicReference<>();
+        AtomicReference<Object[]> lastPayload = new AtomicReference<>();
+        NotificationObserver observer = (name, payload) -> {
+            lastMessage.set(name);
+            lastPayload.set(payload);
+        };
+
+        String[] messages = {
+            "show_weapon_dialog", "show_armor_dialog", "show_hearthstone_dialog", "show_other_equipment_dialog",
+            "show_weapon_database", "show_armor_database", "show_hearthstone_database", "show_other_equipment_database"
+        };
+
+        for (String msg : messages) {
+            Messenger.subscribe(msg, observer);
+        }
+
+        try {
+            viewModel.requestAddWeapon();
+            assertEquals("show_weapon_dialog", lastMessage.get());
+            assertNull(lastPayload.get()[0]);
+
+            Weapon w = new Weapon("Sun Blade");
+            viewModel.requestEditWeapon(w);
+            assertEquals("show_weapon_dialog", lastMessage.get());
+            assertEquals(w, lastPayload.get()[0]);
+
+            viewModel.requestWeaponDatabase();
+            assertEquals("show_weapon_database", lastMessage.get());
+
+            viewModel.requestAddArmor();
+            assertEquals("show_armor_dialog", lastMessage.get());
+            assertNull(lastPayload.get()[0]);
+            
+            viewModel.requestArmorDatabase();
+            assertEquals("show_armor_database", lastMessage.get());
+        } finally {
+            for (String msg : messages) {
+                Messenger.unsubscribe(msg, observer);
+            }
+        }
+    }
 }

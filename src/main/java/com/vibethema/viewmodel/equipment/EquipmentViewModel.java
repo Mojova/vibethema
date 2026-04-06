@@ -250,4 +250,21 @@ public class EquipmentViewModel implements ViewModel {
     public void markDirty() {
         data.setDirty(true);
     }
+
+    // Dialog Requests
+    public void requestAddWeapon() { Messenger.publish("show_weapon_dialog", (Object)null); }
+    public void requestEditWeapon(Weapon w) { Messenger.publish("show_weapon_dialog", w); }
+    public void requestWeaponDatabase() { Messenger.publish("show_weapon_database"); }
+
+    public void requestAddArmor() { Messenger.publish("show_armor_dialog", (Object)null); }
+    public void requestEditArmor(Armor a) { Messenger.publish("show_armor_dialog", a); }
+    public void requestArmorDatabase() { Messenger.publish("show_armor_database"); }
+
+    public void requestAddHearthstone() { Messenger.publish("show_hearthstone_dialog", (Object)null); }
+    public void requestEditHearthstone(Hearthstone h) { Messenger.publish("show_hearthstone_dialog", h); }
+    public void requestHearthstoneDatabase() { Messenger.publish("show_hearthstone_database"); }
+
+    public void requestAddOtherEquipment() { Messenger.publish("show_other_equipment_dialog", (Object)null); }
+    public void requestEditOtherEquipment(OtherEquipment oe) { Messenger.publish("show_other_equipment_dialog", oe); }
+    public void requestOtherEquipmentDatabase() { Messenger.publish("show_other_equipment_database"); }
 }
