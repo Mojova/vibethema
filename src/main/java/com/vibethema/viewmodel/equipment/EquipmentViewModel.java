@@ -48,7 +48,7 @@ public class EquipmentViewModel implements ViewModel {
     }
 
     private void syncCollections() {
-        weapons.setAll(data.getWeapons().stream().map(WeaponRowViewModel::new).collect(Collectors.toList()));
+        weapons.setAll(data.getWeapons().stream().map(w -> new WeaponRowViewModel(w, data.getSpecialties())).collect(Collectors.toList()));
         armors.setAll(data.getArmors().stream().map(ArmorRowViewModel::new).collect(Collectors.toList()));
         hearthstones
                 .setAll(data.getHearthstones().stream().map(HearthstoneRowViewModel::new).collect(Collectors.toList()));
@@ -61,7 +61,7 @@ public class EquipmentViewModel implements ViewModel {
             while (c.next()) {
                 if (c.wasAdded()) {
                     weapons.addAll(
-                            c.getAddedSubList().stream().map(WeaponRowViewModel::new).collect(Collectors.toList()));
+                            c.getAddedSubList().stream().map(w -> new WeaponRowViewModel(w, data.getSpecialties())).collect(Collectors.toList()));
                 }
                 if (c.wasRemoved()) {
                     weapons.removeIf(vm -> c.getRemoved().contains(vm.getWeapon()));

@@ -139,6 +139,14 @@ public class EquipmentDataService {
         private String name;
         private String description;
 
+        public Tag() {}
+
+        public Tag(String name, String description) {
+            this.id = java.util.UUID.randomUUID().toString();
+            this.name = name;
+            this.description = description;
+        }
+
         public String getId() {
             return id;
         }

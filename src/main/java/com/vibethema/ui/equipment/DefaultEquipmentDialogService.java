@@ -6,10 +6,9 @@ import com.vibethema.model.OtherEquipment;
 import com.vibethema.model.Weapon;
 import com.vibethema.service.EquipmentDataService;
 import com.vibethema.viewmodel.equipment.ArmorDialogViewModel;
+import com.vibethema.viewmodel.equipment.WeaponDialogViewModel;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.ViewTuple;
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -32,87 +31,35 @@ public class DefaultEquipmentDialogService implements EquipmentDialogService {
             Weapon existing,
             EquipmentDataService equipmentService,
             Map<String, String> tagDescriptions,
+            javafx.collections.ObservableList<com.vibethema.model.Specialty> characterSpecialties,
             Window owner) {
 
         EquipmentDataService svc = (equipmentService != null) ? equipmentService : this.equipmentService;
+        List<EquipmentDataService.Tag> allTags = svc.getTagsForCategory("melee"); // Base tags
+        allTags.addAll(svc.getTagsForCategory("archery"));
+        allTags.addAll(svc.getTagsForCategory("thrown"));
         
+        // Remove duplicates if any
+        allTags = allTags.stream().distinct().collect(Collectors.toList());
+
+        WeaponDialogViewModel viewModel = new WeaponDialogViewModel(existing, allTags, characterSpecialties);
+        
+        de.saxsys.mvvmfx.ViewTuple<WeaponDialogView, WeaponDialogViewModel> viewTuple = de.saxsys.mvvmfx.FluentViewLoader
+                .javaView(WeaponDialogView.class)
+                .viewModel(viewModel)
+                .load();
+
         Dialog<Weapon> dialog = new Dialog<>();
         dialog.setTitle(existing == null ? "Add New Weapon" : "Edit Weapon");
         dialog.initOwner(owner);
 
         ButtonType saveBtnType = new ButtonType(existing == null ? "Add" : "Save", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(saveBtnType, ButtonType.CANCEL);
-
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20));
-
-        TextField nameField = new TextField(existing == null ? "" : existing.getName());
-        nameField.setPromptText("Weapon Name");
-
-        ComboBox<Weapon.WeaponRange> rangeCombo = new ComboBox<>(FXCollections.observableArrayList(Weapon.WeaponRange.values()));
-        rangeCombo.setValue(existing == null ? Weapon.WeaponRange.CLOSE : existing.getRange());
-
-        ComboBox<Weapon.WeaponType> typeCombo = new ComboBox<>(FXCollections.observableArrayList(Weapon.WeaponType.values()));
-        typeCombo.setValue(existing == null ? Weapon.WeaponType.MORTAL : existing.getType());
-
-        ComboBox<Weapon.WeaponCategory> categoryCombo = new ComboBox<>(FXCollections.observableArrayList(Weapon.WeaponCategory.values()));
-        categoryCombo.setValue(existing == null ? Weapon.WeaponCategory.MEDIUM : existing.getCategory());
-
-        CheckBox equippedField = new CheckBox("Equipped");
-        equippedField.setSelected(existing != null && existing.isEquipped());
-
-        ListView<EquipmentDataService.Tag> tagsList = new ListView<>();
-        tagsList.setPrefHeight(150);
-        
-        List<String> currentTagNames = (existing != null) ? existing.getTags() : List.of();
-
-        Runnable updateTagsList = () -> {
-            String cat = rangeCombo.getValue() == Weapon.WeaponRange.CLOSE ? "melee" :
-                    (rangeCombo.getValue() == Weapon.WeaponRange.THROWN ? "thrown" : "archery");
-            if (svc != null) {
-                List<EquipmentDataService.Tag> available = svc.getTagsForCategory(cat);
-                tagsList.getItems().setAll(available);
-                tagsList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-                for (EquipmentDataService.Tag t : available) {
-                    if (currentTagNames.contains(t.getName())) {
-                        tagsList.getSelectionModel().select(t);
-                    }
-                }
-            }
-        };
-
-        rangeCombo.setOnAction(e -> updateTagsList.run());
-        updateTagsList.run();
-
-        grid.add(new Label("Name:"), 0, 0);
-        grid.add(nameField, 1, 0);
-        grid.add(new Label("Range:"), 0, 1);
-        grid.add(rangeCombo, 1, 1);
-        grid.add(new Label("Type:"), 0, 2);
-        grid.add(typeCombo, 1, 2);
-        grid.add(new Label("Category:"), 0, 3);
-        grid.add(categoryCombo, 1, 3);
-        grid.add(new Label("Tags:"), 0, 4);
-        grid.add(tagsList, 1, 4);
-        grid.add(equippedField, 1, 5);
-
-        dialog.getDialogPane().setContent(grid);
-        Platform.runLater(nameField::requestFocus);
+        dialog.getDialogPane().setContent(viewTuple.getView());
 
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == saveBtnType) {
-                Weapon nw = (existing != null) ? existing : new Weapon(nameField.getText());
-                nw.setName(nameField.getText());
-                nw.setRange(rangeCombo.getValue());
-                nw.setType(typeCombo.getValue());
-                nw.setCategory(categoryCombo.getValue());
-                nw.setEquipped(equippedField.isSelected());
-                nw.getTags().setAll(tagsList.getSelectionModel().getSelectedItems().stream()
-                        .map(EquipmentDataService.Tag::getName)
-                        .collect(Collectors.toList()));
-                return nw;
+                return viewModel.applyTo(existing);
             }
             return null;
         });

@@ -3,7 +3,6 @@ package com.vibethema.ui.equipment;
 import com.vibethema.ui.util.UIUtils;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.util.StringConverter;
@@ -155,7 +154,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
 
             details.getChildren().addAll(nameLabel, statsLabel, tagsPane);
 
-            ComboBox<Specialty> specialtyCombo = new ComboBox<>();
+            ComboBox<Specialty> specialtyCombo = new ComboBox<>(wvm.getAvailableSpecialties());
             specialtyCombo.setPromptText("Specialty");
             specialtyCombo.setPrefWidth(120);
             specialtyCombo.setConverter(new StringConverter<Specialty>() {
@@ -163,31 +162,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
                 @Override public Specialty fromString(String string) { return null; }
             });
 
-            ObservableList<Specialty> specOptions = FXCollections.observableArrayList();
-            specOptions.add(null);
-            
-            boolean melee = wvm.getWeapon().getTags().stream().anyMatch(t -> t.equalsIgnoreCase("Melee"));
-            boolean archery = wvm.getWeapon().getTags().stream().anyMatch(t -> t.equalsIgnoreCase("Archery"));
-            boolean brawl = wvm.getWeapon().getTags().stream().anyMatch(t -> t.equalsIgnoreCase("Brawl"));
-
-            for (Specialty s : viewModel.getCharacterData().getSpecialties()) {
-                if (s == null || s.getName().isEmpty()) continue;
-                String abil = s.getAbility();
-                if (melee && "Melee".equals(abil)) specOptions.add(s);
-                else if (archery && "Archery".equals(abil)) specOptions.add(s);
-                else if (brawl && ("Brawl".equals(abil) || (abil != null && abil.contains("Martial Arts")))) specOptions.add(s);
-            }
-            specialtyCombo.setItems(specOptions);
-            
-            String currentSpecId = wvm.getWeapon().getSpecialtyId();
-            if (currentSpecId != null && !currentSpecId.isEmpty()) {
-                specialtyCombo.setValue(viewModel.getCharacterData().getSpecialtyById(currentSpecId));
-            }
-
-            specialtyCombo.valueProperty().addListener((obs, ov, nv) -> {
-                wvm.getWeapon().setSpecialtyId(nv == null ? "" : nv.getId());
-                viewModel.markDirty();
-            });
+            specialtyCombo.valueProperty().bindBidirectional(wvm.selectedSpecialtyProperty());
             
             Button editBtn = new Button("✏️");
             editBtn.getStyleClass().add("edit-btn");
@@ -216,6 +191,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
             existing, 
             viewModel.getEquipmentService(), 
             viewModel.getTagDescriptions(),
+            viewModel.getCharacterData().getSpecialties(),
             getScene().getWindow()
         );
         result.ifPresent(weapon -> viewModel.saveWeapon(weapon, existing == null));

@@ -22,6 +22,7 @@ public interface EquipmentDialogService {
         Weapon existing, 
         EquipmentDataService equipmentService, 
         Map<String, String> tagDescriptions,
+        javafx.collections.ObservableList<com.vibethema.model.Specialty> characterSpecialties,
         Window owner
     );
 
