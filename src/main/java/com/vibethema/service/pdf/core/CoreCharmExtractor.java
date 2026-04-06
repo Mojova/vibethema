@@ -117,7 +117,8 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                 Matcher keenMatcher = anyKeenPattern.matcher(cleanPrereqs);
                 
                 // Detect patterns like "Awakening Eye + Any 3 non-Excellency Awareness Charms"
-                Pattern complexAnyPattern = Pattern.compile("(?i)(.*?) \\+ Any (\\d+) (?:non-Ex-?cellency )?(?:[\\w\\s-]+? )?Charms");
+                // Note: PDF artifacts may result in "non-Ex- cellency"
+                Pattern complexAnyPattern = Pattern.compile("(?i)(.*?) \\+ Any (\\d+) (?:non-Ex-?\\s*cellency )?(?:[\\w\\s-]+? )?Charms");
                 Matcher complexMatcher = complexAnyPattern.matcher(cleanPrereqs);
 
                 if (keenMatcher.find()) {
@@ -127,16 +128,24 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                     group.put("minCount", parseNumber(keenMatcher.group(1)));
                     prereqGroups.add(group);
                 } else if (complexMatcher.find()) {
+                    String mandatoryName = complexMatcher.group(1).trim();
+                    String countStr = complexMatcher.group(2);
+                    String fullMatch = complexMatcher.group(0).toLowerCase();
+                    boolean nonExcellency = fullMatch.contains("non-excellency") || 
+                                            fullMatch.contains("non-ex-cellency") ||
+                                            fullMatch.contains("non-ex- cellency");
+
                     // Mandatory part
                     Map<String, Object> mandatoryGroup = new LinkedHashMap<>();
-                    mandatoryGroup.put("names", Arrays.asList(complexMatcher.group(1).trim()));
+                    mandatoryGroup.put("names", Arrays.asList(mandatoryName));
                     mandatoryGroup.put("minCount", 0);
                     prereqGroups.add(mandatoryGroup);
 
-                    // Optional part
+                    // Optional part with metadata for resolution
                     Map<String, Object> optionalGroup = new LinkedHashMap<>();
-                    optionalGroup.put("names", Arrays.asList("__OTHERS__"));
-                    optionalGroup.put("minCount", Integer.parseInt(complexMatcher.group(2)));
+                    String flags = nonExcellency ? "|non-Excellency" : "";
+                    optionalGroup.put("names", Arrays.asList("__OTHERS_EXCEPT:" + mandatoryName + flags + "__"));
+                    optionalGroup.put("minCount", Integer.parseInt(countStr));
                     prereqGroups.add(optionalGroup);
                 } else {
                     // Fallback to simple comma-separated list
@@ -159,6 +168,9 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
 
             StringBuilder descRaw = new StringBuilder();
             for (int i = descStartIdx; i < lines.length; i++) {
+                String line = lines[i].trim();
+                // If it's a section header or sidebar, we've gone past the description
+                if (ABILITIES.contains(line) || isSidebarLine(line)) break;
                 descRaw.append(lines[i]).append("\n");
             }
 
@@ -225,6 +237,9 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
         
         // Sidebar headers often start with "ON " (e.g., "ON SURPRISE ANTICIPATION METHOD")
         if (trimmed.startsWith("ON ") && trimmed.length() < 100) return true;
+        
+        // Ability headers
+        if (ABILITIES.contains(trimmed)) return true;
 
         return trimmed.startsWith("The ") || trimmed.startsWith("This ") ||
                trimmed.startsWith("If ") || trimmed.startsWith("When ") ||
@@ -251,19 +266,10 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                trimmed.startsWith("Striking ") || trimmed.startsWith("Summoning ") ||
                trimmed.startsWith("Fearless ") || trimmed.startsWith("Racing ") ||
                trimmed.startsWith("Attuned ") || trimmed.startsWith("Striving ") ||
-               trimmed.startsWith("Meditating ") || trimmed.startsWith("Honing ") ||
-               trimmed.startsWith("Clearing ") || trimmed.startsWith("It is ") ||
-               trimmed.startsWith("By ") || trimmed.startsWith("Using ") ||
-               trimmed.startsWith("Drawing ") || trimmed.startsWith("Focusing ") ||
+               trimmed.startsWith("Meditating ") || trimmed.startsWith("It is ") ||
+               trimmed.startsWith("Using ") || trimmed.startsWith("Focusing ") ||
                trimmed.startsWith("Relentless ") || trimmed.startsWith("Once per ") ||
-               trimmed.startsWith("While ") || trimmed.startsWith("Lightening ") ||
-               trimmed.startsWith("Focusing ") || trimmed.startsWith("In ") ||
-               trimmed.startsWith("Meditating ") || trimmed.startsWith("Honing ") ||
-               trimmed.startsWith("Clearing ") || trimmed.startsWith("It is ") ||
-               trimmed.startsWith("By ") || trimmed.startsWith("Using ") ||
-               trimmed.startsWith("Drawing ") || trimmed.startsWith("Focusing ") ||
-               trimmed.startsWith("Relentless ") || trimmed.startsWith("Once per ") ||
-               trimmed.startsWith("While ") || trimmed.startsWith("Lightening ") ||
+               trimmed.startsWith("In ") || trimmed.startsWith("Lightening ") ||
                trimmed.startsWith("That’s ") || trimmed.startsWith("Note: ");
     }
 

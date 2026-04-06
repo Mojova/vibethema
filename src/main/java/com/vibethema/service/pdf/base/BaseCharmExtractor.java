@@ -146,13 +146,39 @@ public abstract class BaseCharmExtractor {
                         
                         if (names != null) {
                             for (String name : names) {
-                                if ("__OTHERS__".equals(name)) {
-                                    // Add all other charm IDs from this ability
+                                if (name.startsWith("__OTHERS")) {
+                                    Set<String> exclusions = new HashSet<>();
+                                    exclusions.add(currentCharmId);
+                                    int extraMinCount = 0;
+                                    boolean nonExcellency = name.contains("|non-Excellency");
+
+                                    if (name.startsWith("__OTHERS_EXCEPT:")) {
+                                        String targetName = name.substring("__OTHERS_EXCEPT:".length()).split("\\|")[0].replace("__", "");
+                                        TransitiveMetadata meta = calculateTransitiveMetadata(targetName, ability, charms);
+                                        exclusions.addAll(meta.mandatoryExcludedIds);
+                                        extraMinCount = meta.additionalMinCount;
+                                    }
+
+                                    // Add all other charm IDs from this ability that are not excluded
                                     for (Map<String, Object> other : charms) {
+                                        String otherAbility = (String) other.get("ability");
+                                        if (!ability.equals(otherAbility)) continue;
+
                                         String otherId = (String) other.get("id");
-                                        if (!otherId.equals(currentCharmId)) {
+                                        String otherName = (String) other.get("name");
+                                        if (!exclusions.contains(otherId)) {
+                                            if (nonExcellency && (otherName.toLowerCase().contains("excellency") || 
+                                                                 otherName.toLowerCase().contains("ex-cellency"))) {
+                                                continue;
+                                            }
                                             ids.add(otherId);
                                         }
+                                    }
+                                    
+                                    // Update minCount for this group if we added extra counts from AE's prereqs
+                                    if (extraMinCount > 0) {
+                                        int currentMinCount = (int) gMap.getOrDefault("minCount", 0);
+                                        gMap.put("minCount", currentMinCount + extraMinCount);
                                     }
                                 } else {
                                     String cleanedName = name.replaceAll("\\s+", " ").trim();
@@ -197,5 +223,89 @@ public abstract class BaseCharmExtractor {
                 gson.toJson(wrapper, writer);
             }
         }
+    }
+
+    private static class TransitiveMetadata {
+        Set<String> mandatoryExcludedIds = new HashSet<>();
+        int additionalMinCount = 0;
+    }
+
+    @SuppressWarnings("unchecked")
+    private TransitiveMetadata calculateTransitiveMetadata(String targetName, String ability, Collection<Map<String, Object>> charms) {
+        TransitiveMetadata meta = new TransitiveMetadata();
+        String rootId = UUID.nameUUIDFromBytes((targetName + "|" + ability.trim()).getBytes()).toString();
+        
+        Set<String> visited = new HashSet<>();
+        Queue<String> queue = new LinkedList<>();
+        queue.add(rootId);
+        meta.mandatoryExcludedIds.add(rootId);
+
+        while (!queue.isEmpty()) {
+            String currId = queue.poll();
+            if (visited.contains(currId)) continue;
+            visited.add(currId);
+
+            Map<String, Object> charm = charms.stream().filter(c -> c.get("id").equals(currId)).findFirst().orElse(null);
+            if (charm == null) continue;
+
+            List<Object> rawPrereqs = (List<Object>) charm.get("prerequisites");
+            List<Map<String, Object>> resolvedGroups = (List<Map<String, Object>>) charm.get("prerequisiteGroups");
+            
+            if ((rawPrereqs == null || rawPrereqs.isEmpty()) && (resolvedGroups == null || resolvedGroups.isEmpty())) continue;
+
+            if (rawPrereqs != null && !rawPrereqs.isEmpty()) {
+                if (rawPrereqs.get(0) instanceof String) {
+                    // Mandatory simple list
+                    for (Object p : rawPrereqs) {
+                        String pId = UUID.nameUUIDFromBytes(((String) p + "|" + ability.trim()).getBytes()).toString();
+                        meta.mandatoryExcludedIds.add(pId);
+                        queue.add(pId);
+                    }
+                } else {
+                    for (Object gObj : rawPrereqs) {
+                        Map<String, Object> gMap = (Map<String, Object>) gObj;
+                        List<String> names = (List<String>) gMap.get("names");
+                        if (names == null) continue;
+
+                        int minCount = (int) gMap.getOrDefault("minCount", 0);
+                        boolean isMandatory = (minCount == 0 || minCount >= names.size());
+
+                        for (String pName : names) {
+                            String pId = UUID.nameUUIDFromBytes((pName.trim() + "|" + ability.trim()).getBytes()).toString();
+                            if (isMandatory) {
+                                meta.mandatoryExcludedIds.add(pId);
+                                queue.add(pId);
+                            } else {
+                                queue.add(pId); // Recurse to find transitive mandatory prereqs
+                            }
+                        }
+                        if (!isMandatory) {
+                            meta.additionalMinCount += minCount;
+                        }
+                    }
+                }
+            } else if (resolvedGroups != null) {
+                for (Map<String, Object> group : resolvedGroups) {
+                    List<String> ids = (List<String>) group.get("charmIds");
+                    if (ids == null) continue;
+
+                    int minCount = (int) group.getOrDefault("minCount", 0);
+                    boolean isMandatory = (minCount == 0 || minCount >= ids.size());
+
+                    for (String pId : ids) {
+                        if (isMandatory) {
+                            meta.mandatoryExcludedIds.add(pId);
+                            queue.add(pId);
+                        } else {
+                            queue.add(pId);
+                        }
+                    }
+                    if (!isMandatory) {
+                        meta.additionalMinCount += minCount;
+                    }
+                }
+            }
+        }
+        return meta;
     }
 }
