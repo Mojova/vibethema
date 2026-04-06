@@ -369,6 +369,22 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         dbVm.createNewTextProperty().set("+ Create New " + type);
         dbVm.setItems(items);
         
+        dbVm.setDeleteAction(item -> {
+            try {
+                com.vibethema.service.EquipmentDataService svc = viewModel.getEquipmentService();
+                if (item instanceof Weapon) svc.deleteWeapon(((Weapon) item).getId());
+                else if (item instanceof Armor) svc.deleteArmor(((Armor) item).getId());
+                else if (item instanceof Hearthstone) svc.deleteHearthstone(((Hearthstone) item).getId());
+                else if (item instanceof OtherEquipment) svc.deleteOtherEquipment(((OtherEquipment) item).getId());
+            } catch (java.io.IOException e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Deletion Failed");
+                alert.setHeaderText("Could not delete item");
+                alert.setContentText(e.getMessage());
+                alert.showAndWait();
+            }
+        });
+        
         Dialog<Object> dialog = new Dialog<>();
         dialog.setTitle(dbVm.titleProperty().get());
         dialog.initOwner(getScene().getWindow());

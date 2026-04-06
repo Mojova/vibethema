@@ -55,6 +55,11 @@ public class EquipmentDataService {
         }
     }
 
+    private void deleteGlobalItem(String id, Path dir) throws IOException {
+        Path filePath = dir.resolve(id + ".json");
+        Files.deleteIfExists(filePath);
+    }
+
     private <T> T loadGlobalItem(String id, Path dir, Class<T> type) {
         Path filePath = dir.resolve(id + ".json");
         if (!Files.exists(filePath)) return null;
@@ -89,6 +94,7 @@ public class EquipmentDataService {
     public com.vibethema.model.Weapon loadWeapon(String id) { 
         return com.vibethema.model.Weapon.fromData(loadGlobalItem(id, getWeaponsPath(), com.vibethema.model.Weapon.WeaponData.class)); 
     }
+    public void deleteWeapon(String id) throws IOException { deleteGlobalItem(id, getWeaponsPath()); }
     public List<com.vibethema.model.Weapon> getGlobalWeapons() { 
         return listGlobalItems(getWeaponsPath(), com.vibethema.model.Weapon.WeaponData.class).stream()
                 .map(com.vibethema.model.Weapon::fromData)
@@ -99,6 +105,7 @@ public class EquipmentDataService {
     public com.vibethema.model.Armor loadArmor(String id) { 
         return com.vibethema.model.Armor.fromData(loadGlobalItem(id, getArmorsPath(), com.vibethema.model.Armor.ArmorData.class)); 
     }
+    public void deleteArmor(String id) throws IOException { deleteGlobalItem(id, getArmorsPath()); }
     public List<com.vibethema.model.Armor> getGlobalArmors() { 
         return listGlobalItems(getArmorsPath(), com.vibethema.model.Armor.ArmorData.class).stream()
                 .map(com.vibethema.model.Armor::fromData)
@@ -109,6 +116,7 @@ public class EquipmentDataService {
     public com.vibethema.model.Hearthstone loadHearthstone(String id) { 
         return com.vibethema.model.Hearthstone.fromData(loadGlobalItem(id, getHearthstonesPath(), com.vibethema.model.Hearthstone.HearthstoneData.class)); 
     }
+    public void deleteHearthstone(String id) throws IOException { deleteGlobalItem(id, getHearthstonesPath()); }
     public List<com.vibethema.model.Hearthstone> getGlobalHearthstones() { 
         return listGlobalItems(getHearthstonesPath(), com.vibethema.model.Hearthstone.HearthstoneData.class).stream()
                 .map(com.vibethema.model.Hearthstone::fromData)
@@ -119,6 +127,7 @@ public class EquipmentDataService {
     public com.vibethema.model.OtherEquipment loadOtherEquipment(String id) { 
         return com.vibethema.model.OtherEquipment.fromData(loadGlobalItem(id, getOtherEquipmentPath(), com.vibethema.model.OtherEquipment.OtherEquipmentData.class)); 
     }
+    public void deleteOtherEquipment(String id) throws IOException { deleteGlobalItem(id, getOtherEquipmentPath()); }
     public List<com.vibethema.model.OtherEquipment> getGlobalOtherEquipment() { 
         return listGlobalItems(getOtherEquipmentPath(), com.vibethema.model.OtherEquipment.OtherEquipmentData.class).stream()
                 .map(com.vibethema.model.OtherEquipment::fromData)

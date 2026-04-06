@@ -22,6 +22,7 @@ public class EquipmentDatabaseViewModel implements ViewModel {
     private final StringProperty createNewText = new SimpleStringProperty("+ Create New");
     
     private Runnable createNewAction;
+    private java.util.function.Consumer<Object> deleteAction;
     
     public EquipmentDatabaseViewModel() {
         // Setup search filtering
@@ -52,6 +53,25 @@ public class EquipmentDatabaseViewModel implements ViewModel {
     public void onCreateNew() {
         if (createNewAction != null) {
             createNewAction.run();
+        }
+    }
+
+    public void setDeleteAction(java.util.function.Consumer<Object> action) {
+        this.deleteAction = action;
+    }
+
+    public void onDeleteRequest() {
+        Object selected = selectedItem.get();
+        if (selected != null) {
+            com.vibethema.viewmodel.util.Messenger.publish("confirm_database_deletion", selected.toString());
+        }
+    }
+
+    public void performDelete() {
+        Object selected = selectedItem.get();
+        if (selected != null && deleteAction != null) {
+            deleteAction.accept(selected);
+            allItems.remove(selected);
         }
     }
 

@@ -115,6 +115,20 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         addObserver("refresh_all_ui", (name, payload) -> {
             charmTabs.values().forEach(CharmsTab::refresh);
         });
+
+        addObserver("char_load_warning", (name, payload) -> {
+            if (payload != null && payload.length > 0 && payload[0] instanceof java.util.List) {
+                @SuppressWarnings("unchecked")
+                java.util.List<String> missing = (java.util.List<String>) payload[0];
+                String details = String.join("\n• ", missing);
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Missing Equipment");
+                alert.setHeaderText("Some items were not found in the database:");
+                alert.setContentText("The following items are missing from your global equipment library. Stats for these items will not be loaded:\n\n• " + details);
+                alert.getDialogPane().setPrefWidth(500);
+                alert.showAndWait();
+            }
+        });
     }
 
     private void addObserver(String name, NotificationObserver observer) {

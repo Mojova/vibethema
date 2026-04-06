@@ -1024,6 +1024,7 @@ public class CharacterData {
             return;
         isImporting = true;
         try {
+            java.util.List<String> missing = new java.util.ArrayList<>();
             this.name.set(state.name != null ? state.name : "");
             if (state.mode != null) {
                 try {
@@ -1154,6 +1155,8 @@ public class CharacterData {
                         w.setSpecialtyId(wl.specialtyId);
                         w.setEquipped(wl.equipped);
                         weapons.add(w);
+                    } else {
+                        missing.add("Weapon: " + wl.id);
                     }
                 }
             }
@@ -1169,6 +1172,8 @@ public class CharacterData {
                         }
                         a.setEquipped(al.equipped);
                         armors.add(a);
+                    } else {
+                        missing.add("Armor: " + al.id);
                     }
                 }
             }
@@ -1184,6 +1189,8 @@ public class CharacterData {
                         }
                         h.setEquipped(hl.equipped);
                         hearthstones.add(h);
+                    } else {
+                        missing.add("Hearthstone: " + hl.id);
                     }
                 }
             }
@@ -1199,8 +1206,14 @@ public class CharacterData {
                         }
                         oe.setEquipped(ol.equipped);
                         otherEquipment.add(oe);
+                    } else {
+                        missing.add("Item: " + ol.id);
                     }
                 }
+            }
+
+            if (!missing.isEmpty()) {
+                com.vibethema.viewmodel.util.Messenger.publish("char_load_warning", missing);
             }
             intimacies.clear();
             if (state.intimacies != null) {

@@ -21,6 +21,7 @@ public class EquipmentDatabaseView extends VBox implements JavaView<EquipmentDat
     private ListView<Object> itemListView;
     private Button addSelectedBtn;
     private Button createNewBtn;
+    private Button deleteBtn;
 
     public EquipmentDatabaseView() {
         setSpacing(15);
@@ -44,13 +45,19 @@ public class EquipmentDatabaseView extends VBox implements JavaView<EquipmentDat
         HBox footer = new HBox(15);
         footer.setAlignment(Pos.CENTER_RIGHT);
         
+        deleteBtn = new Button("🗑 Delete");
+        deleteBtn.getStyleClass().add("remove-btn");
+        
         createNewBtn = new Button();
         createNewBtn.getStyleClass().add("secondary-btn");
         
         addSelectedBtn = new Button("Add Selected");
         addSelectedBtn.getStyleClass().add("action-btn");
         
-        footer.getChildren().addAll(createNewBtn, addSelectedBtn);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        
+        footer.getChildren().addAll(deleteBtn, spacer, createNewBtn, addSelectedBtn);
         
         getChildren().addAll(titleLabel, searchField, itemListView, footer);
         
@@ -70,8 +77,26 @@ public class EquipmentDatabaseView extends VBox implements JavaView<EquipmentDat
         createNewBtn.textProperty().bind(viewModel.createNewTextProperty());
         createNewBtn.setOnAction(e -> viewModel.onCreateNew());
         
-        // Disable "Add" button if nothing is selected
+        // Disable "Add" and "Delete" buttons if nothing is selected
         addSelectedBtn.disableProperty().bind(itemListView.getSelectionModel().selectedItemProperty().isNull());
+        deleteBtn.disableProperty().bind(itemListView.getSelectionModel().selectedItemProperty().isNull());
+
+        deleteBtn.setOnAction(e -> viewModel.onDeleteRequest());
+
+        com.vibethema.viewmodel.util.Messenger.subscribe("confirm_database_deletion", (name, payload) -> {
+            String itemName = (String) payload[0];
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirm Deletion");
+            alert.setHeaderText("Delete from Database?");
+            alert.setContentText("Are you sure you want to permanently delete '" + itemName + "' from the global database?");
+            alert.initOwner(getScene().getWindow());
+            
+            alert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    viewModel.performDelete();
+                }
+            });
+        });
         
         // Title binding
         // We'll manage the title at the dialog level usually, but we can bind a label if needed
