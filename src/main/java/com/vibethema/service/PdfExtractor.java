@@ -244,12 +244,30 @@ public class PdfExtractor {
                     currentField = "Prereqs";
                     descStartIdx = i + 1;
                 } else if (!currentField.isEmpty() && !line.contains(":") && !line.contains("Cost:")) {
-                    // Check for description start heuristics
-                    boolean isLikelyDescription = line.startsWith("The ") || line.startsWith("This ") || 
-                                               line.startsWith("If ") || line.startsWith("When ") || 
-                                               line.startsWith("A ") || line.startsWith("Solar ");
+                    boolean isLikelyDescription = line.startsWith("The ") || line.startsWith("This ") ||
+                                               line.startsWith("If ") || line.startsWith("When ") ||
+                                               line.startsWith("A ") || line.startsWith("An ") ||
+                                               line.startsWith("Solar ") || line.startsWith("Lawgiver ") ||
+                                               line.startsWith("Exalt ") || line.startsWith("Once ") ||
+                                               line.startsWith("After ") || line.startsWith("At ") ||
+                                               line.startsWith("By ") || line.startsWith("With ") ||
+                                               line.startsWith("Drawing ") || line.startsWith("Charging ") ||
+                                               line.startsWith("Seething ") || line.startsWith("Palming ") ||
+                                               line.startsWith("Honing ") || line.startsWith("Clearing ") ||
+                                               line.startsWith("While ") || line.startsWith("To ") ||
+                                               line.startsWith("Holding ") || line.startsWith("Sensing ") ||
+                                               line.startsWith("Through ") || line.startsWith("Even ") ||
+                                               line.startsWith("Like ") || line.startsWith("Accepting ") ||
+                                               line.startsWith("Given ") || line.startsWith("Tuning ") ||
+                                               line.startsWith("Homing ") || line.startsWith("Channeling ") ||
+                                               line.startsWith("During ") || line.startsWith("Throughout ") ||
+                                               line.startsWith("Under ") || line.startsWith("Across ") ||
+                                               line.startsWith("Within ") || line.startsWith("Upon ") ||
+                                               line.startsWith("Because ") || line.startsWith("Since ") ||
+                                               line.startsWith("Characters ") || line.startsWith("Sometimes ");
                     
                     // Specific "None" check - if we have "None", don't soak description text
+                    // But if there's more on the line after None, it's probably the description
                     if (currentField.equals("Keywords") && keywords.equalsIgnoreCase("none")) isLikelyDescription = true;
                     if (currentField.equals("Prereqs") && rawPrereqs.equalsIgnoreCase("none")) isLikelyDescription = true;
 
@@ -668,14 +686,23 @@ public class PdfExtractor {
     }
 
     private String cleanDescription(String text) {
-        text = text.replaceAll("\\n\\d+\\nEX3\\n", "\n");
-        text = text.replaceAll("\\nEX3\\n", "\n");
-        text = text.replaceAll("\\nCHARMS\\n", "\n");
-        text = text.replaceAll("\\nCHAPTER \\d+\\n", "\n");
+        // Surgical removal of known sidebars that interrupt text
+        text = text.replaceAll("(?s)WHEN DO I NEED TO AIM\\?.*?waive the aim action\\.", "");
+        text = text.replaceAll("(?s)MASTER’S HAND: SOLAR MASTERY AND TERRESTRIAL EFFECTS.*?(?=CHAPTER|EX3|\\d{3})", "");
+
+        // Remove page junk (headers, footers, page numbers)
+        text = text.replaceAll("(?i)\\bC H A P T E R\\s+\\d+\\b", "");
+        text = text.replaceAll("(?i)\\bE X 3\\b", "");
+        text = text.replaceAll("(?i)\\bC H A R M S\\b", "");
+        text = text.replaceAll("(?i)\\bE X A L T E D\\s+T H I R D\\s+E D I T I O N\\b", "");
+        
+        // Remove standalone page numbers
+        text = text.replaceAll("\\n\\s*\\d{1,3}\\s*\\n", "\n");
+        
         text = text.replaceAll("Syntax Warning:.*", "");
         text = text.replaceAll("[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f\\x7f]", "");
 
-        String[] lines = text.trim().split("\n");
+        String[] lines = text.split("\n");
         List<String> cleanedLines = new ArrayList<>();
         StringBuilder currentPara = new StringBuilder();
 
@@ -689,14 +716,23 @@ public class PdfExtractor {
                 continue;
             }
 
+            if (isSidebarLine(line)) continue;
+
             if (currentPara.length() > 0) {
                 String prevContent = currentPara.toString().trim();
-                char prevChar = prevContent.charAt(prevContent.length() - 1);
+                char lastChar = prevContent.charAt(prevContent.length() - 1);
+
+                // Handle hyphenated words split across lines
+                if (lastChar == '-') {
+                    currentPara.setLength(currentPara.length() - 1);
+                    currentPara.append(line);
+                    continue;
+                }
 
                 boolean isBullet = line.startsWith("•") || line.startsWith("- ") || line.startsWith("* ");
-                boolean isContinuation = Character.isLowerCase(line.charAt(0)) || prevChar == ',';
+                boolean isContinuation = Character.isLowerCase(line.charAt(0)) || lastChar == ',';
 
-                if (isBullet || (!isContinuation && ".!? :;".indexOf(prevChar) != -1)) {
+                if (isBullet || (!isContinuation && ".!? :;".indexOf(lastChar) != -1)) {
                     cleanedLines.add(currentPara.toString().trim());
                     currentPara.setLength(0);
                     currentPara.append(line);
@@ -713,5 +749,23 @@ public class PdfExtractor {
         }
 
         return String.join("\n\n", cleanedLines);
+    }
+
+    private boolean isSidebarLine(String line) {
+        // All caps lines that are short or look like internal book navigation headers
+        String upper = line.toUpperCase().trim();
+        if (upper.equals(line.trim()) && line.length() > 3 && line.length() < 70) {
+            if (upper.contains("CHAPTER") || upper.contains("SOLAR") || upper.contains("ARCHERY") || upper.contains("EX3") || upper.contains("EXALTED THIRD EDITION"))
+                return true;
+            // Sidebar headers like "WHEN DO I NEED TO AIM?"
+            if (upper.contains("WHEN DO I NEED TO AIM?") || upper.contains("MASTER’S HAND"))
+                return true;
+        }
+        
+        // Skip lines that look like page dividers or decoration
+        if (upper.equals("EX3") || upper.equals("ARCHERY") || upper.equals("CHARMS") || upper.startsWith("C H A P T E R"))
+            return true;
+
+        return false;
     }
 }
