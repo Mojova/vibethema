@@ -140,4 +140,43 @@ public class MainViewModel implements ViewModel {
             saveCharacter(currentFile.get());
         }
     }
+
+    public void onNewCharacterRequest() {
+        if (dirty.get()) {
+            Messenger.publish("confirm_discard_changes", "NEW");
+        } else {
+            resetToNew();
+        }
+    }
+
+    public void onSaveRequest() {
+        if (currentFile.get() != null) {
+            saveCharacter(currentFile.get());
+        } else {
+            Messenger.publish("request_save_as");
+        }
+    }
+
+    public void onLoadRequest() {
+        if (dirty.get()) {
+            Messenger.publish("confirm_discard_changes", "LOAD");
+        } else {
+            Messenger.publish("request_load_file");
+        }
+    }
+
+    public void onExportPdfRequest() {
+        String suggestName = "Character.pdf";
+        if (currentFile.get() != null) {
+            suggestName = currentFile.get().getName().replace(".vbtm", ".pdf");
+        }
+        Messenger.publish("request_pdf_export", suggestName);
+    }
+
+    public void resetToNew() {
+        this.data = new CharacterData();
+        this.currentFile.set(null);
+        init(this.data);
+        Messenger.publish("refresh_all_ui");
+    }
 }

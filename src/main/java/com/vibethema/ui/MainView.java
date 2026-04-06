@@ -1,7 +1,6 @@
 package com.vibethema.ui;
 
 import com.vibethema.model.*;
-import com.vibethema.service.PdfExportService;
 import com.vibethema.ui.charms.CharmTreeComponent;
 import com.vibethema.ui.equipment.DefaultEquipmentDialogService;
 import com.vibethema.ui.equipment.EquipmentTab;
@@ -129,6 +128,46 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                 alert.showAndWait();
             }
         });
+
+        addObserver("confirm_discard_changes", (name, payload) -> {
+            String nextAction = (payload != null && payload.length > 0) ? (String) payload[0] : "";
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Unsaved Changes");
+            alert.setHeaderText("Your character has unsaved changes.");
+            alert.setContentText("Would you like to save before continuing?");
+
+            ButtonType saveBtn = new ButtonType("Save");
+            ButtonType discardBtn = new ButtonType("Discard");
+            ButtonType cancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+            alert.getButtonTypes().setAll(saveBtn, discardBtn, cancelBtn);
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent()) {
+                if (result.get() == saveBtn) {
+                    viewModel.onSaveRequest();
+                } else if (result.get() == discardBtn) {
+                    viewModel.resetToNew();
+                    if ("LOAD".equals(nextAction)) {
+                        viewModel.onLoadRequest();
+                    }
+                }
+            }
+        });
+
+        addObserver("request_save_as", (name, payload) -> handleSaveAs());
+        addObserver("request_load_file", (name, payload) -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Load Character");
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Vibethema Save File", "*.vbtm"));
+            File file = fileChooser.showOpenDialog(getScene().getWindow());
+            if (file != null) {
+                viewModel.loadCharacter(file);
+            }
+        });
+        addObserver("request_pdf_export", (name, payload) -> {
+            String suggestName = (payload != null && payload.length > 0) ? (String) payload[0] : "Character.pdf";
+            handleExportPdf(suggestName);
+        });
     }
 
     private void addObserver(String name, NotificationObserver observer) {
@@ -221,21 +260,24 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
 
     private MenuBar createMenuBar() {
         MenuBar menuBar = new MenuBar();
-        menuBar.setUseSystemMenuBar(true);
+        menuBar.setUseSystemMenuBar(false);
         
         Menu fileMenu = new Menu("File");
         MenuItem newItem = new MenuItem("New Character");
-        newItem.setOnAction(e -> handleNewCharacter());
+        newItem.setAccelerator(KeyCombination.keyCombination("Shortcut+N"));
+        newItem.setOnAction(e -> viewModel.onNewCharacterRequest());
         
         MenuItem saveItem = new MenuItem("Save");
-        saveItem.setOnAction(e -> handleSave());
+        saveItem.setAccelerator(KeyCombination.keyCombination("Shortcut+S"));
+        saveItem.setOnAction(e -> viewModel.onSaveRequest());
         
         MenuItem loadItem = new MenuItem("Load Character");
-        loadItem.setOnAction(e -> handleLoad());
+        loadItem.setAccelerator(KeyCombination.keyCombination("Shortcut+O"));
+        loadItem.setOnAction(e -> viewModel.onLoadRequest());
 
         MenuItem exportPdf = new MenuItem("Export to PDF...");
         exportPdf.setAccelerator(KeyCombination.keyCombination("Shortcut+E"));
-        exportPdf.setOnAction(e -> handleExportPdf());
+        exportPdf.setOnAction(e -> viewModel.onExportPdfRequest());
 
         MenuItem quitItem = new MenuItem("Quit");
         quitItem.setOnAction(e -> Platform.exit());
@@ -278,20 +320,6 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         return header;
     }
 
-    private void handleNewCharacter() {
-        if (confirmDiscardChanges()) {
-            // Logic to restart application or reset state
-        }
-    }
-
-    private void handleSave() {
-        if (viewModel.currentFileProperty().get() != null) {
-            viewModel.saveCharacter(viewModel.currentFileProperty().get());
-        } else {
-            handleSaveAs();
-        }
-    }
-
     private void handleSaveAs() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Character");
@@ -302,30 +330,16 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         }
     }
 
-    private void handleLoad() {
-        if (confirmDiscardChanges()) {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Load Character");
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Vibethema Save File", "*.vbtm"));
-            File file = fileChooser.showOpenDialog(getScene().getWindow());
-            if (file != null) {
-                viewModel.loadCharacter(file);
-            }
-        }
-    }
-
-    private void handleExportPdf() {
+    private void handleExportPdf(String suggestName) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Export to PDF");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
-        if (viewModel.currentFileProperty().get() != null) {
-            String initialName = viewModel.currentFileProperty().get().getName().replace(".vbtm", ".pdf");
-            fileChooser.setInitialFileName(initialName);
-        }
+        fileChooser.setInitialFileName(suggestName);
+        
         File file = fileChooser.showSaveDialog(getScene().getWindow());
         if (file != null) {
             try {
-                new PdfExportService().exportToPdf(viewModel.getData(), file);
+                new com.vibethema.service.PdfExportService().exportToPdf(viewModel.getData(), file);
                 Alert alert = new Alert(Alert.AlertType.INFORMATION, "Character sheet exported successfully!");
                 alert.showAndWait();
             } catch (Exception e) {
@@ -345,14 +359,13 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         ButtonType saveBtn = new ButtonType("Save");
         ButtonType discardBtn = new ButtonType("Discard");
         ButtonType cancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-
         alert.getButtonTypes().setAll(saveBtn, discardBtn, cancelBtn);
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent()) {
             if (result.get() == saveBtn) {
-                handleSave();
-                return !viewModel.dirtyProperty().get();
+                viewModel.onSaveRequest();
+                return false; // Action is handled asynchronously or as part of save flow
             } else if (result.get() == discardBtn) {
                 return true;
             }
