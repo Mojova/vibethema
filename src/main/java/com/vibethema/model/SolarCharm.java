@@ -29,18 +29,18 @@ public class SolarCharm extends Charm {
         
         // Handle Supernal Ability
         if (ability != null && !supernal.isEmpty()) {
-            boolean isSupernal = ability.equals(supernal);
+            boolean isSupernal = ability.equalsIgnoreCase(supernal);
             // Supernal Martial Arts covers all styles
-            if (!isSupernal && "Martial Arts".equals(supernal) && data.isMartialArtsStyle(ability)) {
+            if (!isSupernal && "Martial Arts".equalsIgnoreCase(supernal) && data.isMartialArtsStyle(ability)) {
                 isSupernal = true;
             }
             // Supernal Craft covers all expertise types
-            if (!isSupernal && "Craft".equals(supernal) && data.isCraftExpertise(ability)) {
+            if (!isSupernal && "Craft".equalsIgnoreCase(supernal) && data.isCraftExpertise(ability)) {
                 isSupernal = true;
             }
             
             // Exception: Sorcery Circle Charms always require Essence minimums
-            if (isSupernal && ("Celestial Circle Sorcery".equals(getName()) || "Solar Circle Sorcery".equals(getName()))) {
+            if (isSupernal && ("Celestial Circle Sorcery".equalsIgnoreCase(getName()) || "Solar Circle Sorcery".equalsIgnoreCase(getName()))) {
                 isSupernal = false;
             }
             
@@ -55,9 +55,10 @@ public class SolarCharm extends Charm {
         List<PrerequisiteGroup> groups = getPrerequisiteGroups();
         if (groups != null) {
             for (PrerequisiteGroup group : groups) {
-                long metCount = group.getCharmIds().stream()
-                        .filter(data::hasCharm)
-                        .count();
+                int metCount = 0;
+                for (String id : group.getCharmIds()) {
+                    metCount += data.getCharmCount(id);
+                }
                 
                 int required = group.getMinCount() > 0 ? group.getMinCount() : group.getCharmIds().size();
                 if (metCount < required) return false;

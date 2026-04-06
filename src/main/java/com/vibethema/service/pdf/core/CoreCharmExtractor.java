@@ -151,9 +151,19 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                     // Fallback to simple comma-separated list
                     for (String p : cleanPrereqs.split(",")) {
                         String trimmed = p.replaceAll("\\s+", " ").trim();
-                        if (!trimmed.isEmpty() && !trimmed.startsWith("The ") && trimmed.length() < 100) {
-                            prereqGroups.add(trimmed);
+                        if (trimmed.isEmpty() || trimmed.startsWith("The ") || trimmed.length() > 100) continue;
+                        
+                        Matcher countMatcher = Pattern.compile("(.*?) \\(x(\\d+)\\)").matcher(trimmed);
+                        Map<String, Object> group = new LinkedHashMap<>();
+                        if (countMatcher.find()) {
+                            group.put("names", Arrays.asList(countMatcher.group(1).trim()));
+                            group.put("minCount", Integer.parseInt(countMatcher.group(2)));
+                        } else {
+                            // Produce a Map group for consistency
+                            group.put("names", Arrays.asList(trimmed));
+                            group.put("minCount", 0);
                         }
+                        prereqGroups.add(group);
                     }
                 }
             }
@@ -192,6 +202,10 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                     String t = kw.trim();
                     if (!t.isEmpty()) kwList.add(t);
                 }
+            }
+            // Automate Stackable if 'repurchase' is mentioned in the full text
+            if (fullText.toLowerCase().contains("repurchase") && !kwList.contains("Stackable")) {
+                kwList.add("Stackable");
             }
             charmMap.put("keywords", kwList);
             charmMap.put("duration", duration);
