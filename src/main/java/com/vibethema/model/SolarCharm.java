@@ -52,10 +52,15 @@ public class SolarCharm extends Charm {
         if (effectiveEssence < getMinEssence()) return false;
         if (data.getAbilityRatingByName(ability) < minAbility) return false;
         
-        List<String> prereqs = getPrerequisites();
-        if (prereqs != null) {
-            for (String reqId : prereqs) {
-                if (!data.hasCharm(reqId)) return false;
+        List<PrerequisiteGroup> groups = getPrerequisiteGroups();
+        if (groups != null) {
+            for (PrerequisiteGroup group : groups) {
+                long metCount = group.getCharmIds().stream()
+                        .filter(data::hasCharm)
+                        .count();
+                
+                int required = group.getMinCount() > 0 ? group.getMinCount() : group.getCharmIds().size();
+                if (metCount < required) return false;
             }
         }
         return true;

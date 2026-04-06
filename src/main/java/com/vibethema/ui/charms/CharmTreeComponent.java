@@ -288,9 +288,11 @@ public class CharmTreeComponent extends SplitPane {
             for (Charm c : charms) {
                 int currentDepth = charmDepth.getOrDefault(c.getId(), 0);
                 int reqDepth = 0;
-                if (c.getPrerequisites() != null) {
-                    for (String reqId : c.getPrerequisites()) {
-                        reqDepth = Math.max(reqDepth, charmDepth.getOrDefault(reqId, 0) + 1);
+                if (c.getPrerequisiteGroups() != null) {
+                    for (Charm.PrerequisiteGroup group : c.getPrerequisiteGroups()) {
+                        for (String reqId : group.getCharmIds()) {
+                            reqDepth = Math.max(reqDepth, charmDepth.getOrDefault(reqId, 0) + 1);
+                        }
                     }
                 }
                 if (reqDepth > currentDepth) {
@@ -369,16 +371,25 @@ public class CharmTreeComponent extends SplitPane {
                     selectedCharm = c;
                     detailTitle.setText(c.getName());
 
-                    List<String> prereqNames = new ArrayList<>();
-                    if (c.getPrerequisites() != null) {
-                        for (String rid : c.getPrerequisites()) {
-                            String resolvedName = globalCharmNameMap.get(rid);
-                            if (resolvedName == null)
-                                resolvedName = idToName.getOrDefault(rid, rid);
-                            prereqNames.add(resolvedName);
+                    List<String> prereqStrings = new ArrayList<>();
+                    if (c.getPrerequisiteGroups() != null) {
+                        for (Charm.PrerequisiteGroup group : c.getPrerequisiteGroups()) {
+                            if (group.getLabel() != null && !group.getLabel().isEmpty()) {
+                                prereqStrings.add(group.getLabel());
+                            } else {
+                                List<String> names = new ArrayList<>();
+                                for (String rid : group.getCharmIds()) {
+                                    String resolvedName = globalCharmNameMap.get(rid);
+                                    if (resolvedName == null) resolvedName = idToName.getOrDefault(rid, rid);
+                                    names.add(resolvedName);
+                                }
+                                String prefix = (group.getMinCount() > 0 && group.getMinCount() < group.getCharmIds().size()) 
+                                    ? "Any " + group.getMinCount() + " of: " : "";
+                                prereqStrings.add(prefix + String.join(", ", names));
+                            }
                         }
                     }
-                    String prereqStr = prereqNames.isEmpty() ? "None" : String.join(", ", prereqNames);
+                    String prereqStr = prereqStrings.isEmpty() ? "None" : String.join("; ", prereqStrings);
 
                     String baseReqs;
                     if ("Evocation".equals(filterType)) {
@@ -470,9 +481,10 @@ public class CharmTreeComponent extends SplitPane {
 
         for (Charm c : charms) {
             VBox targetBox = charmNodeMap.get(c.getId());
-            if (targetBox != null && c.getPrerequisites() != null) {
-                for (String reqId : c.getPrerequisites()) {
-                    VBox sourceBox = charmNodeMap.get(reqId);
+            if (targetBox != null && c.getPrerequisiteGroups() != null) {
+                for (Charm.PrerequisiteGroup group : c.getPrerequisiteGroups()) {
+                    for (String reqId : group.getCharmIds()) {
+                        VBox sourceBox = charmNodeMap.get(reqId);
                     if (sourceBox != null) {
                         double startX = sourceBox.getLayoutX() + boxWidth / 2;
                         double startY = sourceBox.getLayoutY() + boxHeight;
@@ -488,6 +500,7 @@ public class CharmTreeComponent extends SplitPane {
                 }
             }
         }
+    }
 
         double minHeight = (maxDepth + 1) * (boxHeight + gapY) + 40;
         charmCanvas.setPrefSize(virtualCanvasWidth, minHeight);

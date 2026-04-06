@@ -31,10 +31,15 @@ public class Evocation extends Charm {
         
         if (!data.isArtifactPossessed(artifactId)) return false;
         
-        List<String> prereqs = getPrerequisites();
-        if (prereqs != null) {
-            for (String reqId : prereqs) {
-                if (!data.hasCharm(reqId)) return false;
+        List<PrerequisiteGroup> groups = getPrerequisiteGroups();
+        if (groups != null) {
+            for (PrerequisiteGroup group : groups) {
+                long metCount = group.getCharmIds().stream()
+                        .filter(data::hasCharm)
+                        .count();
+                
+                int required = group.getMinCount() > 0 ? group.getMinCount() : group.getCharmIds().size();
+                if (metCount < required) return false;
             }
         }
         return true;

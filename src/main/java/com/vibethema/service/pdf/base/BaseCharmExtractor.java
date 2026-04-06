@@ -109,23 +109,71 @@ public abstract class BaseCharmExtractor {
 
         for (Map<String, Object> charm : charms) {
             String ability = (String) charm.get("ability");
+            String currentCharmId = (String) charm.get("id");
+            
             @SuppressWarnings("unchecked")
-            List<String> prereqNames = (List<String>) charm.get("prerequisites");
-            List<String> prereqIds = new ArrayList<>();
+            List<Object> rawPrereqs = (List<Object>) charm.get("prerequisites");
+            List<Map<String, Object>> resolvedGroups = new ArrayList<>();
             boolean problematic = false;
 
-            if (prereqNames != null) {
-                for (String pName : prereqNames) {
-                    // Collapse internal whitespace/newlines to a single space
-                    String cleanedName = pName.replaceAll("\\s+", " ").trim();
-                    if (cleanedName.isEmpty()) continue;
-                    
-                    String pId = UUID.nameUUIDFromBytes((cleanedName + "|" + ability.trim()).getBytes()).toString();
-                    prereqIds.add(pId);
-                    if (!allExtractedIds.contains(pId)) problematic = true;
+            if (rawPrereqs != null && !rawPrereqs.isEmpty()) {
+                // If it's a simple list of strings, convert to one mandatory group
+                if (rawPrereqs.get(0) instanceof String) {
+                    List<String> ids = new ArrayList<>();
+                    for (Object p : rawPrereqs) {
+                        String pName = (String) p;
+                        String cleanedName = pName.replaceAll("\\s+", " ").trim();
+                        if (cleanedName.isEmpty()) continue;
+                        
+                        String pId = UUID.nameUUIDFromBytes((cleanedName + "|" + ability.trim()).getBytes()).toString();
+                        ids.add(pId);
+                        if (!allExtractedIds.contains(pId)) problematic = true;
+                    }
+                    if (!ids.isEmpty()) {
+                        Map<String, Object> group = new LinkedHashMap<>();
+                        group.put("charmIds", ids);
+                        group.put("minCount", 0); // 0 means ALL
+                        resolvedGroups.add(group);
+                    }
+                } else {
+                    // It's already in Group format (Maps)
+                    for (Object gObj : rawPrereqs) {
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> gMap = (Map<String, Object>) gObj;
+                        @SuppressWarnings("unchecked")
+                        List<String> names = (List<String>) gMap.get("names");
+                        List<String> ids = new ArrayList<>();
+                        
+                        if (names != null) {
+                            for (String name : names) {
+                                if ("__OTHERS__".equals(name)) {
+                                    // Add all other charm IDs from this ability
+                                    for (Map<String, Object> other : charms) {
+                                        String otherId = (String) other.get("id");
+                                        if (!otherId.equals(currentCharmId)) {
+                                            ids.add(otherId);
+                                        }
+                                    }
+                                } else {
+                                    String cleanedName = name.replaceAll("\\s+", " ").trim();
+                                    String pId = UUID.nameUUIDFromBytes((cleanedName + "|" + ability.trim()).getBytes()).toString();
+                                    ids.add(pId);
+                                    if (!allExtractedIds.contains(pId)) problematic = true;
+                                }
+                            }
+                        }
+                        
+                        Map<String, Object> group = new LinkedHashMap<>();
+                        if (gMap.containsKey("label")) group.put("label", gMap.get("label"));
+                        group.put("charmIds", ids);
+                        group.put("minCount", gMap.getOrDefault("minCount", 0));
+                        resolvedGroups.add(group);
+                    }
                 }
             }
-            charm.put("prerequisites", prereqIds);
+
+            charm.remove("prerequisites"); // No backwards comp
+            charm.put("prerequisiteGroups", resolvedGroups);
             charm.put("potentiallyProblematicImport", problematic);
         }
     }

@@ -7,7 +7,27 @@ public abstract class Charm {
     private String id;
     private String name;
     private int minEssence;
-    private List<String> prerequisites;
+    private List<PrerequisiteGroup> prerequisiteGroups;
+
+    public static class PrerequisiteGroup {
+        private String label;
+        private List<String> charmIds;
+        private int minCount;
+
+        public PrerequisiteGroup() {}
+        public PrerequisiteGroup(String label, List<String> charmIds, int minCount) {
+            this.label = label;
+            this.charmIds = charmIds;
+            this.minCount = minCount;
+        }
+
+        public String getLabel() { return label; }
+        public List<String> getCharmIds() { return charmIds; }
+        public int getMinCount() { return minCount; }
+        public void setLabel(String label) { this.label = label; }
+        public void setCharmIds(List<String> charmIds) { this.charmIds = charmIds; }
+        public void setMinCount(int minCount) { this.minCount = minCount; }
+    }
 
     private String cost;
     private String type;
@@ -39,8 +59,8 @@ public abstract class Charm {
         return minEssence;
     }
 
-    public List<String> getPrerequisites() {
-        return prerequisites;
+    public List<PrerequisiteGroup> getPrerequisiteGroups() {
+        return prerequisiteGroups;
     }
 
     public String getCost() {
@@ -83,8 +103,8 @@ public abstract class Charm {
         this.minEssence = minEssence;
     }
 
-    public void setPrerequisites(List<String> prerequisites) {
-        this.prerequisites = prerequisites;
+    public void setPrerequisiteGroups(List<PrerequisiteGroup> prerequisiteGroups) {
+        this.prerequisiteGroups = prerequisiteGroups;
     }
 
     public void setCost(String cost) {

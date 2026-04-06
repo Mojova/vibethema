@@ -104,7 +104,7 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                 }
             }
 
-            List<String> prereqs = new ArrayList<>();
+            List<Object> prereqGroups = new ArrayList<>();
             String cleanPrereqs = rawPrereqs.trim();
             if (cleanPrereqs.toLowerCase().startsWith("none")) {
                 cleanPrereqs = cleanPrereqs.substring(4).trim();
@@ -112,11 +112,39 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
             }
 
             if (!cleanPrereqs.isEmpty()) {
-                for (String p : cleanPrereqs.split(",")) {
-                    String trimmed = p.replaceAll("\\s+", " ").trim();
-                    // Final sanity check: prerequisite names shouldn't be long sentences
-                    if (!trimmed.isEmpty() && !trimmed.startsWith("The ") && trimmed.length() < 100) {
-                        prereqs.add(trimmed);
+                // Detect patterns like "Any two Keen (Sense) Techniques"
+                Pattern anyKeenPattern = Pattern.compile("(?i)Any (two|three|\\d+) Keen \\(Sense\\) Techniques");
+                Matcher keenMatcher = anyKeenPattern.matcher(cleanPrereqs);
+                
+                // Detect patterns like "Awakening Eye + Any 3 non-Excellency Awareness Charms"
+                Pattern complexAnyPattern = Pattern.compile("(?i)(.*?) \\+ Any (\\d+) (?:non-Ex-?cellency )?(?:[\\w\\s-]+? )?Charms");
+                Matcher complexMatcher = complexAnyPattern.matcher(cleanPrereqs);
+
+                if (keenMatcher.find()) {
+                    Map<String, Object> group = new LinkedHashMap<>();
+                    group.put("label", keenMatcher.group(0));
+                    group.put("names", Arrays.asList("Keen Sight Technique", "Keen Hearing and Touch Technique", "Keen Taste and Smell Technique"));
+                    group.put("minCount", parseNumber(keenMatcher.group(1)));
+                    prereqGroups.add(group);
+                } else if (complexMatcher.find()) {
+                    // Mandatory part
+                    Map<String, Object> mandatoryGroup = new LinkedHashMap<>();
+                    mandatoryGroup.put("names", Arrays.asList(complexMatcher.group(1).trim()));
+                    mandatoryGroup.put("minCount", 0);
+                    prereqGroups.add(mandatoryGroup);
+
+                    // Optional part
+                    Map<String, Object> optionalGroup = new LinkedHashMap<>();
+                    optionalGroup.put("names", Arrays.asList("__OTHERS__"));
+                    optionalGroup.put("minCount", Integer.parseInt(complexMatcher.group(2)));
+                    prereqGroups.add(optionalGroup);
+                } else {
+                    // Fallback to simple comma-separated list
+                    for (String p : cleanPrereqs.split(",")) {
+                        String trimmed = p.replaceAll("\\s+", " ").trim();
+                        if (!trimmed.isEmpty() && !trimmed.startsWith("The ") && trimmed.length() < 100) {
+                            prereqGroups.add(trimmed);
+                        }
                     }
                 }
             }
@@ -143,7 +171,7 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
             charmMap.put("ability", ability);
             charmMap.put("minAbility", minAbilityValue);
             charmMap.put("minEssence", minEssenceValue);
-            charmMap.put("prerequisites", prereqs);
+            charmMap.put("prerequisites", prereqGroups);
             charmMap.put("cost", cost);
             charmMap.put("type", type);
             List<String> kwList = new ArrayList<>();
@@ -189,43 +217,54 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
         if (currentField.equals("Keywords") && keywords.equalsIgnoreCase("none")) return true;
         if (currentField.equals("Prereqs") && rawPrereqs.equalsIgnoreCase("none")) return true;
 
-        return line.startsWith("The ") || line.startsWith("This ") ||
-               line.startsWith("If ") || line.startsWith("When ") ||
-               line.startsWith("A ") || line.startsWith("An ") ||
-               line.startsWith("Solar ") || line.startsWith("Lawgiver ") ||
-               line.startsWith("Exalt ") || line.startsWith("Once ") ||
-               line.startsWith("After ") || line.startsWith("At ") ||
-               line.startsWith("By ") || line.startsWith("With ") ||
-               line.startsWith("Drawing ") || line.startsWith("Charging ") ||
-               line.startsWith("Seething ") || line.startsWith("Palming ") ||
-               line.startsWith("Honing ") || line.startsWith("Clearing ") ||
-               line.startsWith("While ") || line.startsWith("To ") ||
-               line.startsWith("Holding ") || line.startsWith("Sensing ") ||
-               line.startsWith("Through ") || line.startsWith("Even ") ||
-               line.startsWith("Like ") || line.startsWith("Accepting ") ||
-               line.startsWith("Given ") || line.startsWith("Tuning ") ||
-               line.startsWith("Homing ") || line.startsWith("Channeling ") ||
-               line.startsWith("During ") || line.startsWith("Throughout ") ||
-               line.startsWith("Under ") || line.startsWith("Across ") ||
-               line.startsWith("Within ") || line.startsWith("Upon ") ||
-               line.startsWith("Because ") || line.startsWith("Since ") ||
-               line.startsWith("Characters ") || line.startsWith("Sometimes ") ||
-               line.startsWith("Striking ") || line.startsWith("Summoning ") ||
-               line.startsWith("Fearless ") || line.startsWith("Racing ") ||
-               line.startsWith("Attuned ") || line.startsWith("Striving ") ||
-               line.startsWith("Meditating ") || line.startsWith("Honing ") ||
-               line.startsWith("Clearing ") || line.startsWith("It is ") ||
-               line.startsWith("By ") || line.startsWith("Using ") ||
-               line.startsWith("Drawing ") || line.startsWith("Focusing ") ||
-               line.startsWith("Relentless ") || line.startsWith("Once per ") ||
-               line.startsWith("While ") || line.startsWith("Lightening ") ||
-               line.startsWith("Focusing ") || line.startsWith("In ") ||
-               line.startsWith("Meditating ") || line.startsWith("Honing ") ||
-               line.startsWith("Clearing ") || line.startsWith("It is ") ||
-               line.startsWith("By ") || line.startsWith("Using ") ||
-               line.startsWith("Drawing ") || line.startsWith("Focusing ") ||
-               line.startsWith("Relentless ") || line.startsWith("Once per ") ||
-               line.startsWith("While ") || line.startsWith("Lightening ");
+        String trimmed = line.trim();
+        if (trimmed.isEmpty()) return false;
+
+        // ALL CAPS lines are usually headers or sidebars
+        if (trimmed.equals(trimmed.toUpperCase()) && trimmed.length() > 5) return true;
+        
+        // Sidebar headers often start with "ON " (e.g., "ON SURPRISE ANTICIPATION METHOD")
+        if (trimmed.startsWith("ON ") && trimmed.length() < 100) return true;
+
+        return trimmed.startsWith("The ") || trimmed.startsWith("This ") ||
+               trimmed.startsWith("If ") || trimmed.startsWith("When ") ||
+               trimmed.startsWith("A ") || trimmed.startsWith("An ") ||
+               trimmed.startsWith("Solar ") || trimmed.startsWith("Lawgiver ") ||
+               trimmed.startsWith("Exalt ") || trimmed.startsWith("Once ") ||
+               trimmed.startsWith("After ") || trimmed.startsWith("At ") ||
+               trimmed.startsWith("By ") || trimmed.startsWith("With ") ||
+               trimmed.startsWith("Cast ") || trimmed.startsWith("Solars ") ||
+               trimmed.startsWith("Drawing ") || trimmed.startsWith("Charging ") ||
+               trimmed.startsWith("Seething ") || trimmed.startsWith("Palming ") ||
+               trimmed.startsWith("Honing ") || trimmed.startsWith("Clearing ") ||
+               trimmed.startsWith("While ") || trimmed.startsWith("To ") ||
+               trimmed.startsWith("Holding ") || trimmed.startsWith("Sensing ") ||
+               trimmed.startsWith("Through ") || trimmed.startsWith("Even ") ||
+               trimmed.startsWith("Like ") || trimmed.startsWith("Accepting ") ||
+               trimmed.startsWith("Given ") || trimmed.startsWith("Tuning ") ||
+               trimmed.startsWith("Homing ") || trimmed.startsWith("Channeling ") ||
+               trimmed.startsWith("During ") || trimmed.startsWith("Throughout ") ||
+               trimmed.startsWith("Under ") || trimmed.startsWith("Across ") ||
+               trimmed.startsWith("Within ") || trimmed.startsWith("Upon ") ||
+               trimmed.startsWith("Because ") || trimmed.startsWith("Since ") ||
+               trimmed.startsWith("Characters ") || trimmed.startsWith("Sometimes ") ||
+               trimmed.startsWith("Striking ") || trimmed.startsWith("Summoning ") ||
+               trimmed.startsWith("Fearless ") || trimmed.startsWith("Racing ") ||
+               trimmed.startsWith("Attuned ") || trimmed.startsWith("Striving ") ||
+               trimmed.startsWith("Meditating ") || trimmed.startsWith("Honing ") ||
+               trimmed.startsWith("Clearing ") || trimmed.startsWith("It is ") ||
+               trimmed.startsWith("By ") || trimmed.startsWith("Using ") ||
+               trimmed.startsWith("Drawing ") || trimmed.startsWith("Focusing ") ||
+               trimmed.startsWith("Relentless ") || trimmed.startsWith("Once per ") ||
+               trimmed.startsWith("While ") || trimmed.startsWith("Lightening ") ||
+               trimmed.startsWith("Focusing ") || trimmed.startsWith("In ") ||
+               trimmed.startsWith("Meditating ") || trimmed.startsWith("Honing ") ||
+               trimmed.startsWith("Clearing ") || trimmed.startsWith("It is ") ||
+               trimmed.startsWith("By ") || trimmed.startsWith("Using ") ||
+               trimmed.startsWith("Drawing ") || trimmed.startsWith("Focusing ") ||
+               trimmed.startsWith("Relentless ") || trimmed.startsWith("Once per ") ||
+               trimmed.startsWith("While ") || trimmed.startsWith("Lightening ") ||
+               trimmed.startsWith("That’s ") || trimmed.startsWith("Note: ");
     }
 
     @Override
@@ -235,5 +274,22 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
         text = text.replaceAll("(?s)MASTER’S HAND: SOLAR MASTERY AND TERRESTRIAL EFFECTS.*?(?=CHAPTER|EX3|\\d{3})", "");
         text = text.replaceAll("(?s)ON TEN OX MEDITATION.*?(?=ment action for the round|CHAPTER|EX3|\\d{3}\\n)", "");
         return super.cleanDescription(text);
+    }
+
+    private int parseNumber(String val) {
+        if (val == null) return 0;
+        switch (val.toLowerCase()) {
+            case "one": return 1;
+            case "two": return 2;
+            case "three": return 3;
+            case "four": return 4;
+            case "five": return 5;
+            default:
+                try {
+                    return Integer.parseInt(val);
+                } catch (NumberFormatException e) {
+                    return 0;
+                }
+        }
     }
 }
