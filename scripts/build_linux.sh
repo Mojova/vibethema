@@ -15,51 +15,12 @@ fi
 echo "Building fat JAR..."
 mvn clean package -DskipTests
 
-# 3. Create the native app
-echo "Packaging native app with jpackage..."
+# 3. Create the base app-image
+# This will be used as the source for all other package formats (DEB, RPM, AppImage).
+echo "Creating base application image..."
 rm -rf target/dist
 mkdir -p target/dist
 
-# On Linux, jpackage --type app-image creates a directory structure.
-# We include --linux-shortcut to ensure meta-data for desktop integration is ready.
-# 3. Create native packages (DEB and RPM)
-echo "Packaging native DEB..."
-jpackage \
-  --input target \
-  --main-jar vibethema.jar \
-  --main-class com.vibethema.Launcher \
-  --type deb \
-  --icon "$ICON_SOURCE" \
-  --name "Vibethema" \
-  --linux-package-name "vibethema" \
-  --app-version "1.0.0" \
-  --vendor "Vibethema" \
-  --linux-shortcut \
-  --linux-menu-group "Utility" \
-  --dest target/dist \
-  --java-options "--enable-native-access=ALL-UNNAMED" \
-  --verbose
-
-echo "Packaging native RPM..."
-jpackage \
-  --input target \
-  --main-jar vibethema.jar \
-  --main-class com.vibethema.Launcher \
-  --type rpm \
-  --icon "$ICON_SOURCE" \
-  --name "Vibethema" \
-  --linux-package-name "vibethema" \
-  --app-version "1.0.0" \
-  --vendor "Vibethema" \
-  --linux-shortcut \
-  --linux-menu-group "Utility" \
-  --dest target/dist \
-  --java-options "--enable-native-access=ALL-UNNAMED" \
-  --verbose
-
-# 4. Create AppImage (requires appimagetool on Runner)
-# We need the app-image structure first
-echo "Creating app-image for AppImage conversion..."
 jpackage \
   --input target \
   --main-jar vibethema.jar \
@@ -71,4 +32,34 @@ jpackage \
   --java-options "--enable-native-access=ALL-UNNAMED" \
   --verbose
 
-echo "Build complete. Check target/dist/AppDir-Base/Vibethema for the native app image."
+# 4. Create DEB from the app-image
+echo "Packaging native DEB from base image..."
+jpackage \
+  --app-image target/dist/AppDir-Base/Vibethema \
+  --type deb \
+  --icon "$ICON_SOURCE" \
+  --name "Vibethema" \
+  --linux-package-name "vibethema" \
+  --app-version "1.0.0" \
+  --vendor "Vibethema" \
+  --linux-shortcut \
+  --linux-menu-group "Utility" \
+  --dest target/dist \
+  --verbose
+
+# 5. Create RPM from the app-image
+echo "Packaging native RPM from base image..."
+jpackage \
+  --app-image target/dist/AppDir-Base/Vibethema \
+  --type rpm \
+  --icon "$ICON_SOURCE" \
+  --name "Vibethema" \
+  --linux-package-name "vibethema" \
+  --app-version "1.0.0" \
+  --vendor "Vibethema" \
+  --linux-shortcut \
+  --linux-menu-group "Utility" \
+  --dest target/dist \
+  --verbose
+
+echo "Build complete. Base image: target/dist/AppDir-Base/Vibethema"
