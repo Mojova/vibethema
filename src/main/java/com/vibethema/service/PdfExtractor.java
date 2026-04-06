@@ -106,7 +106,7 @@ public class PdfExtractor {
             Files.createDirectories(outDir);
         }
 
-        Path filePath = outDir.resolve("unarmed.json");
+        Path filePath = outDir.resolve(com.vibethema.model.Weapon.UNARMED_ID + ".json");
         try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
             gson.toJson(unarmed, writer);
         }
