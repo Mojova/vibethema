@@ -75,6 +75,10 @@ Vibethema stores its data (charms, equipment database, results of PDF imports) i
 
 **Note**: As of version 0.2.0, the application no longer uses `~/.vibethema`. If you have existing data there, please re-import your core book PDF or manually move your files to the new location.
 
+## Special thanks
+
+[MrGone](https://mrgone.rocksolidshells.com/): Vibethema uses MrGone’s interactive character sheet as the base for exporting character sheets.
+
 ## Legal
 
 All game mechanics, terminology, and settings are the property of Onyx Path Publishing and White Wolf. This application is a third-party tool for character management.
