@@ -26,11 +26,18 @@ jpackage `
   --input target `
   --main-jar vibethema.jar `
   --main-class com.vibethema.Launcher `
-  --type app-image `
+  --type msi `
   --icon $ICO_TARGET `
   --name "Vibethema" `
   --dest target/dist `
+  --vendor "Vibethema" `
+  --app-version "1.0.0" `
+  --win-shortcut `
+  --win-menu `
+  --win-shortcut-prompt `
+  --win-dir-chooser `
+  --win-upgrade-uuid "74c10a48-4c8d-4a1e-8e6d-5b3a2a1c0f9d" `
   --java-options "--enable-native-access=ALL-UNNAMED" `
   --verbose
 
-Write-Host "Build complete. Check target/dist/Vibethema for the native executable."
+Write-Host "Build complete. Check target/dist for the MSI installer."

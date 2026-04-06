@@ -56,23 +56,18 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Install WiX
-        run: dotnet tool install --global wix
 
       - name: Build and Package Windows
         shell: pwsh
         run: |
           ./scripts/build_app_win.ps1
 
-      - name: Archive Windows App
-        shell: pwsh
-        run: Compress-Archive -Path target/dist/Vibethema -DestinationPath target/dist/Vibethema-Windows.zip
 
       - name: Upload Windows Artifact
         uses: actions/upload-artifact@v7
         with:
-          name: Vibethema-Windows
-          path: target/dist/Vibethema-Windows.zip
+          name: Vibethema-Windows-MSI
+          path: target/dist/*.msi
 
   build-linux:
     runs-on: ubuntu-latest
@@ -128,7 +123,7 @@ jobs:
           files: |
             release-assets/Vibethema-macOS-x64/Vibethema-macOS-x64.dmg
             release-assets/Vibethema-macOS-arm64/Vibethema-macOS-arm64.dmg
-            release-assets/Vibethema-Windows/Vibethema-Windows.zip
+            release-assets/Vibethema-Windows-MSI/*.msi
             release-assets/Vibethema-Linux/Vibethema-Linux.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
