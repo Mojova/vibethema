@@ -19,6 +19,11 @@ public class PathService {
      * returns the standard base path for application data (Core Book imports, characters, etc.).
      */
     public static Path getDataPath() {
+        String override = System.getProperty("vibethema.data.dir");
+        if (override != null && !override.isEmpty()) {
+            return Paths.get(override);
+        }
+
         String os = System.getProperty("os.name").toLowerCase();
         String home = System.getProperty("user.home");
 
@@ -44,6 +49,11 @@ public class PathService {
      * Returns the standard base path for application configuration (user settings).
      */
     public static Path getConfigPath() {
+        String override = System.getProperty("vibethema.config.dir");
+        if (override != null && !override.isEmpty()) {
+            return Paths.get(override);
+        }
+
         String os = System.getProperty("os.name").toLowerCase();
         String home = System.getProperty("user.home");
 

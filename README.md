@@ -92,6 +92,23 @@ Vibethema stores its data (charms, equipment database, results of PDF imports) i
 
 **Note**: As of version 0.2.0, the application no longer uses `~/.vibethema`. If you have existing data there, please re-import your core book PDF or manually move your files to the new location.
 
+## Developer Utilities
+
+### Headless PDF Import
+
+You can run the PDF extraction process without launching the UI. This is useful for debugging the extractor or batch-processing data. Use the `PdfImportTool` utility:
+
+```bash
+mvn compile exec:java \
+  -Dexec.mainClass="com.vibethema.util.PdfImportTool" \
+  -Dexec.args="/path/to/Ex3_Core.pdf ./debug_import"
+```
+
+- **Arg 1**: Path to the Exalted 3e Core PDF.
+- **Arg 2** (Optional): Custom data directory. If provided, the tool will set the `vibethema.data.dir` property to redirect all output there, keeping it separate from your main application data.
+
+The tool will print a summary of all extracted Charms, Spells, and Equipment tags after completion.
+
 ## Special thanks
 
 [MrGone](https://mrgone.rocksolidshells.com/): Vibethema uses MrGone’s interactive character sheet as the base for exporting character sheets.
