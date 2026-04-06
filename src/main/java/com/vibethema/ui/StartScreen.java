@@ -1,13 +1,8 @@
 package com.vibethema.ui;
 
-import com.google.gson.Gson;
-import com.vibethema.model.CharacterData;
-import com.vibethema.model.CharacterSaveState;
 import com.vibethema.viewmodel.MainViewModel;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.ViewTuple;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,12 +11,9 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-
 import java.io.File;
-import java.io.FileReader;
 
 public class StartScreen extends StackPane {
-    private static final Logger logger = LoggerFactory.getLogger(StartScreen.class);
 
     public StartScreen() {
         getStyleClass().add("start-screen");
@@ -65,12 +57,9 @@ public class StartScreen extends StackPane {
     }
 
     private void startNewCharacter() {
-        CharacterData data = new CharacterData();
         ViewTuple<MainView, MainViewModel> viewTuple = FluentViewLoader.javaView(MainView.class).load();
         
         MainView mainView = (MainView) viewTuple.getView();
-        viewTuple.getViewModel().init(data);
-        
         getScene().setRoot(mainView);
     }
 
@@ -81,25 +70,12 @@ public class StartScreen extends StackPane {
 
         File file = fileChooser.showOpenDialog(getScene().getWindow());
         if (file != null) {
-            try (FileReader reader = new FileReader(file)) {
-                CharacterSaveState state = new Gson().fromJson(reader, CharacterSaveState.class);
-                if (state != null) {
-                    CharacterData data = new CharacterData();
-                    data.importState(state, new com.vibethema.service.EquipmentDataService());
-                    
-                    ViewTuple<MainView, MainViewModel> viewTuple = FluentViewLoader.javaView(MainView.class).load();
-                    
-                    MainView mainView = (MainView) viewTuple.getView();
-                    MainViewModel vm = viewTuple.getViewModel();
-                    vm.init(data);
-                    vm.currentFileProperty().set(file);
-                    data.setDirty(false);
-
-                    getScene().setRoot(mainView);
-                }
-            } catch (Exception ex) {
-                logger.error("Failed to load character file: {}", file.getAbsolutePath(), ex);
-            }
+            ViewTuple<MainView, MainViewModel> viewTuple = FluentViewLoader.javaView(MainView.class).load();
+            MainView mainView = (MainView) viewTuple.getView();
+            MainViewModel vm = viewTuple.getViewModel();
+            
+            vm.loadCharacter(file);
+            getScene().setRoot(mainView);
         }
     }
 }

@@ -1,11 +1,8 @@
 package com.vibethema;
 
-import com.vibethema.model.CharacterData;
-import com.vibethema.model.CharacterSaveState;
 import com.vibethema.ui.MainView;
 import com.vibethema.ui.StartScreen;
 import com.vibethema.viewmodel.MainViewModel;
-import com.google.gson.Gson;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.ViewTuple;
 import javafx.application.Application;
@@ -15,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileReader;
 
 public class Main extends Application {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
@@ -48,17 +44,11 @@ public class Main extends Application {
     }
 
     private void loadAndStart(Stage stage, File file) {
-        try (FileReader reader = new FileReader(file)) {
-            CharacterSaveState state = new Gson().fromJson(reader, CharacterSaveState.class);
-            CharacterData data = new CharacterData();
-            data.importState(state, new com.vibethema.service.EquipmentDataService());
-
+        try {
             ViewTuple<MainView, MainViewModel> viewTuple = FluentViewLoader.javaView(MainView.class).load();
             MainView view = (MainView) viewTuple.getView();
             MainViewModel vm = viewTuple.getViewModel();
-            vm.init(data);
-            vm.currentFileProperty().set(file);
-            data.setDirty(false);
+            vm.loadCharacter(file);
 
             Scene scene = new Scene(view, 1200, 800);
             scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());

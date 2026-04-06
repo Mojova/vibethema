@@ -156,6 +156,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
 
         addObserver("request_save_as", (name, payload) -> {
             String suggestName = (payload != null && payload.length > 0) ? (String) payload[0] : "Character.vbtm";
+            System.out.println("DEBUG: request_save_as received filename: " + suggestName);
             handleSaveAs(suggestName);
         });
         addObserver("request_load_file", (name, payload) -> {
