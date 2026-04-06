@@ -52,15 +52,17 @@ public class MainViewModelTest {
 
     @Test
     void testSaveRequestWhenNoFilePublishesRequestSaveAs() {
-        AtomicReference<String> receivedMessage = new AtomicReference<>();
+        AtomicReference<Object[]> receivedPayload = new AtomicReference<>();
         viewModel.currentFileProperty().set(null);
+        viewModel.getData().nameProperty().set("Tulentanssija");
         
-        NotificationObserver observer = (name, payload) -> receivedMessage.set(name);
+        NotificationObserver observer = (name, payload) -> receivedPayload.set(payload);
         Messenger.subscribe("request_save_as", observer);
         
         try {
             viewModel.onSaveRequest();
-            assertEquals("request_save_as", receivedMessage.get());
+            assertNotNull(receivedPayload.get());
+            assertEquals("Tulentanssija.vbtm", receivedPayload.get()[0]);
         } finally {
             Messenger.unsubscribe("request_save_as", observer);
         }

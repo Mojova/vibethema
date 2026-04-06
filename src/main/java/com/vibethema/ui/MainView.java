@@ -154,7 +154,10 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
             }
         });
 
-        addObserver("request_save_as", (name, payload) -> handleSaveAs());
+        addObserver("request_save_as", (name, payload) -> {
+            String suggestName = (payload != null && payload.length > 0) ? (String) payload[0] : "Character.vbtm";
+            handleSaveAs(suggestName);
+        });
         addObserver("request_load_file", (name, payload) -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Load Character");
@@ -320,10 +323,11 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         return header;
     }
 
-    private void handleSaveAs() {
+    private void handleSaveAs(String suggestName) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Character");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Vibethema Save File", "*.vbtm"));
+        fileChooser.setInitialFileName(suggestName);
         File file = fileChooser.showSaveDialog(getScene().getWindow());
         if (file != null) {
             viewModel.saveCharacter(file);
