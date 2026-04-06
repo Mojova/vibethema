@@ -61,6 +61,15 @@ The PDF extraction system is designed for high-fidelity parsing of official Exal
     - **ID Stability**: All charm IDs are generated as **v3 UUIDs** using the format `name|ability` (e.g., `Excelled Strike|Melee`). This ensures persistent prerequisite links across multiple imports.
     - **Problematic Flagging**: Marks charms with `potentiallyProblematicImport` if prerequisites cannot be resolved to a known ID in the current batch.
 
+### Regression Testing
+To ensure parsing logic remains consistent without committing copyrighted material:
+- **Harness**: `PdfImportRegressionTest` (JUnit 5).
+- **Data Location**: `data_source/` (Git-ignored).
+    - `core_book.pdf`: The official PDF for extraction.
+    - `reference/`: Directory containing "known good" JSONs (must replicate the app's folder structure, e.g., `reference/charms/archery.json`).
+- **Execution**: `mvn test -Dtest=PdfImportRegressionTest`.
+- **Logic**: The test performs a full extraction to `target/` and compares results *only* for files present in the `reference/` directory. Unordered JSON content is verified using Gson's logical equality.
+
 ## Key Rules & Logic
 
 | Feature | Creation Rule | Scaling / BP Cost |
@@ -80,6 +89,7 @@ The PDF extraction system is designed for high-fidelity parsing of official Exal
 5. **GSON Compatibility**: Redundant fields (like `ability` in charms) are no longer serialized. They are transient or inferred from parents.
 6. **Dialog Handling**: Equipment dialogs are refactored to MVVM. Use `FluentViewLoader` to create them via `DefaultEquipmentDialogService`.
 7. **Logging**: Standardized on **SLF4J + Logback**. Avoid `System.out`.
+8. **Copyrighted Material**: **NEVER** commit PDF files or imported JSON data (Charms, Spells, etc.) to the repository. Use the `data_source/` directory for local testing.
 
 ## File Map
 - `src/main/java/com/vibethema/Main.java`: App Launcher.
