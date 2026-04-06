@@ -26,7 +26,7 @@ public class Main extends Application {
         if (pendingFile != null) {
             loadAndStart(primaryStage, pendingFile);
         } else {
-            StartScreen root = new StartScreen();
+            StartScreen root = (StartScreen) FluentViewLoader.javaView(StartScreen.class).load().getView();
             Scene scene = new Scene(root, 1200, 800);
             scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
 

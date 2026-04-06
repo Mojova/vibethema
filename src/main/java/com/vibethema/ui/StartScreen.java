@@ -1,7 +1,11 @@
 package com.vibethema.ui;
 
 import com.vibethema.viewmodel.MainViewModel;
+import com.vibethema.viewmodel.StartScreenViewModel;
+import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.FluentViewLoader;
+import de.saxsys.mvvmfx.InjectViewModel;
+import de.saxsys.mvvmfx.JavaView;
 import de.saxsys.mvvmfx.ViewTuple;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -13,7 +17,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import java.io.File;
 
-public class StartScreen extends StackPane {
+/**
+ * View for the initial start screen, implementing JavaView for StartScreenViewModel.
+ */
+public class StartScreen extends StackPane implements JavaView<StartScreenViewModel> {
+
+    @InjectViewModel
+    private StartScreenViewModel viewModel;
 
     public StartScreen() {
         getStyleClass().add("start-screen");
@@ -38,17 +48,17 @@ public class StartScreen extends StackPane {
         Button newBtn = new Button("Create New Character");
         newBtn.getStyleClass().add("start-button");
         newBtn.setPrefWidth(280);
-        newBtn.setOnAction(e -> startNewCharacter());
+        newBtn.setOnAction(e -> viewModel.onNewCharacter());
 
         Button loadBtn = new Button("Load Existing Character");
         loadBtn.getStyleClass().add("start-button-secondary");
         loadBtn.setPrefWidth(280);
-        loadBtn.setOnAction(e -> loadCharacter());
+        loadBtn.setOnAction(e -> viewModel.onLoadCharacter());
 
         Button importBtn = new Button("Import Core PDF");
         importBtn.getStyleClass().add("start-button-secondary");
         importBtn.setPrefWidth(280);
-        importBtn.setOnAction(e -> PdfImportHelper.importCorePdf(getScene().getWindow(), null));
+        importBtn.setOnAction(e -> viewModel.onImportPdf());
 
         buttonBox.getChildren().addAll(newBtn, loadBtn);
 
@@ -56,26 +66,35 @@ public class StartScreen extends StackPane {
         getChildren().add(card);
     }
 
-    private void startNewCharacter() {
-        ViewTuple<MainView, MainViewModel> viewTuple = FluentViewLoader.javaView(MainView.class).load();
-        
-        MainView mainView = (MainView) viewTuple.getView();
-        getScene().setRoot(mainView);
-    }
-
-    private void loadCharacter() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Load Character");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Vibethema Save File", "*.vbtm"));
-
-        File file = fileChooser.showOpenDialog(getScene().getWindow());
-        if (file != null) {
+    /**
+     * Initializes the view listeners and subscriptions.
+     */
+    public void initialize() {
+        // Handle transition to main view (either new or loaded)
+        Messenger.subscribe("show_main_view", (name, payload) -> {
             ViewTuple<MainView, MainViewModel> viewTuple = FluentViewLoader.javaView(MainView.class).load();
             MainView mainView = (MainView) viewTuple.getView();
-            MainViewModel vm = viewTuple.getViewModel();
             
-            vm.loadCharacter(file);
+            // If a file was provided as payload, load it into the new view model
+            if (payload != null && payload.length > 0 && payload[0] instanceof File file) {
+                viewTuple.getViewModel().loadCharacter(file);
+            }
+            
             getScene().setRoot(mainView);
-        }
+        });
+
+        // Handle file open dialog request
+        Messenger.subscribe("request_load_file_start", (name, payload) -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Load Character");
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Vibethema Save File", "*.vbtm"));
+            File file = fileChooser.showOpenDialog(getScene().getWindow());
+            viewModel.onLoadFileSelected(file);
+        });
+
+        // Handle PDF import request
+        Messenger.subscribe("request_import_pdf", (name, payload) -> {
+            PdfImportHelper.importCorePdf(getScene().getWindow(), null);
+        });
     }
 }
