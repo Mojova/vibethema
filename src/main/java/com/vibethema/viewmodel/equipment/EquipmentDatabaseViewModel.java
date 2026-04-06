@@ -35,7 +35,14 @@ public class EquipmentDatabaseViewModel implements ViewModel {
     }
 
     public void setItems(java.util.Collection<?> items) {
-        allItems.setAll(items);
+        if (items == null) {
+            allItems.clear();
+            return;
+        }
+        
+        java.util.List<Object> sortedList = new java.util.ArrayList<>(items);
+        sortedList.sort((a, b) -> a.toString().compareToIgnoreCase(b.toString()));
+        allItems.setAll(sortedList);
     }
 
     public void setCreateNewAction(Runnable action) {
