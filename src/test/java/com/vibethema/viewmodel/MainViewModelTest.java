@@ -100,4 +100,15 @@ public class MainViewModelTest {
             Messenger.unsubscribe("request_pdf_export", observer);
         }
     }
+
+    @Test
+    void testResetToNewPreservesObjectIdentity() {
+        CharacterData originalData = viewModel.getData();
+        viewModel.getData().nameProperty().set("ToBeCleared");
+        
+        viewModel.resetToNew();
+        
+        assertSame(originalData, viewModel.getData(), "CharacterData instance must be preserved for bindings");
+        assertEquals("", viewModel.getData().nameProperty().get());
+    }
 }

@@ -175,9 +175,8 @@ public class MainViewModel implements ViewModel {
     }
 
     public void resetToNew() {
-        this.data = new CharacterData();
+        this.data.clear();
         this.currentFile.set(null);
-        init(this.data);
         Messenger.publish("refresh_all_ui");
     }
 }

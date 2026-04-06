@@ -1019,6 +1019,56 @@ public class CharacterData {
         return state;
     }
 
+    public void clear() {
+        this.isImporting = true;
+        try {
+            name.set("");
+            caste.set(Caste.NONE);
+            mode.set(CharacterMode.CREATION);
+            supernalAbility.set("");
+            essence.set(1);
+            willpower.set(5);
+            limitTrigger.set("");
+            limit.set(0);
+
+            for (javafx.beans.property.IntegerProperty p : attributes.values())
+                p.set(1);
+            for (Ability abil : SystemData.ABILITIES) {
+                abilities.get(abil).set(0);
+                casteAbilities.get(abil).set(false);
+                favoredAbilities.get(abil).set(false);
+            }
+            for (javafx.beans.property.ObjectProperty<AttributePriority> p : attributePriorities.values())
+                p.set(null);
+
+            unlockedCharms.clear();
+            merits.clear();
+            merits.add(new Merit("", 1));
+            specialties.clear();
+            specialties.add(new Specialty("", ""));
+            crafts.clear();
+            martialArtsStyles.clear();
+            weapons.clear();
+            armors.clear();
+            hearthstones.clear();
+            otherEquipment.clear();
+            intimacies.clear();
+            shapingRituals.clear();
+            spells.clear();
+            xpAwards.clear();
+
+            this.creationSnapshot = null;
+            setDirty(false);
+        } finally {
+            this.isImporting = false;
+            updateCombatStats();
+            updateDerivedStats();
+            updateAttackPools();
+            updateCasteFavoredCounts();
+            updateValidSupernalAbilities();
+        }
+    }
+
     public void importState(CharacterSaveState state, com.vibethema.service.EquipmentDataService equipmentService) {
         if (state == null)
             return;
