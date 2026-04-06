@@ -24,13 +24,13 @@ mkdir -p target/dist
 # We include --linux-shortcut to ensure meta-data for desktop integration is ready.
 jpackage \
   --input target \
-  --main-jar exalted-builder-1.0-SNAPSHOT.jar \
+  --main-jar vibethema.jar \
   --main-class com.vibethema.Launcher \
   --type app-image \
   --icon "$ICON_SOURCE" \
   --name "Vibethema" \
   --dest target/dist \
-  --java-options "--enable-native-access=javafx.graphics" \
+  --java-options "--enable-native-access=ALL-UNNAMED" \
   --verbose
 
 echo "Build complete. Check target/dist/Vibethema for the native app image."

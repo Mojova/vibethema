@@ -24,13 +24,13 @@ New-Item -ItemType Directory -Path "target/dist" | Out-Null
 
 jpackage `
   --input target `
-  --main-jar exalted-builder-1.0-SNAPSHOT.jar `
+  --main-jar vibethema.jar `
   --main-class com.vibethema.Launcher `
   --type app-image `
   --icon $ICO_TARGET `
   --name "Vibethema" `
   --dest target/dist `
-  --java-options "--enable-native-access=javafx.graphics" `
+  --java-options "--enable-native-access=ALL-UNNAMED" `
   --verbose
 
 Write-Host "Build complete. Check target/dist/Vibethema for the native executable."

@@ -41,13 +41,13 @@ mkdir -p target/dist
 
 jpackage \
   --input target \
-  --main-jar exalted-builder-1.0-SNAPSHOT.jar \
+  --main-jar vibethema.jar \
   --main-class com.vibethema.Launcher \
   --type app-image \
   --icon "$ICNS_TARGET" \
   --name "Vibethema" \
   --dest target/dist \
-  --java-options "--enable-native-access=javafx.graphics" \
+  --java-options "--enable-native-access=ALL-UNNAMED" `
   --file-associations src/main/resources/vbtm.properties \
   --verbose
 
