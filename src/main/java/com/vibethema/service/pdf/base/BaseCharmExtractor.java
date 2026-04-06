@@ -111,7 +111,14 @@ public abstract class BaseCharmExtractor {
 
             if (prereqNames != null) {
                 for (String pName : prereqNames) {
-                    String pId = UUID.nameUUIDFromBytes((pName.trim() + "|" + ability.trim()).getBytes()).toString();
+                    // Collapse internal whitespace/newlines to a single space
+                    String cleanedName = pName.replaceAll("\\s+", " ").trim();
+                    if (cleanedName.isEmpty()) continue;
+                    
+                    String pId = UUID.nameUUIDFromBytes((cleanedName + "|" + ability.trim()).getBytes()).toString();
+                    if (cleanedName.contains("Lightning")) {
+                        System.out.println("DEBUG: Generated ID for [" + cleanedName + "|"+ability.trim()+"]: " + pId);
+                    }
                     prereqIds.add(pId);
                     if (!allExtractedIds.contains(pId)) problematic = true;
                 }

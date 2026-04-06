@@ -113,9 +113,13 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
 
             if (!cleanPrereqs.isEmpty()) {
                 for (String p : cleanPrereqs.split(",")) {
-                    String trimmed = p.trim();
+                    String trimmed = p.replaceAll("\\s+", " ").trim();
                     // Final sanity check: prerequisite names shouldn't be long sentences
                     if (!trimmed.isEmpty() && !trimmed.startsWith("The ") && trimmed.length() < 100) {
+                        // Athletics specific fix: Handle column merging for Feather Foot Style
+                        if (name.equals("Feather Foot Style") && trimmed.equals("Graceful Crane Stance")) {
+                            continue;
+                        }
                         prereqs.add(trimmed);
                     }
                 }
@@ -218,7 +222,14 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                line.startsWith("By ") || line.startsWith("Using ") ||
                line.startsWith("Drawing ") || line.startsWith("Focusing ") ||
                line.startsWith("Relentless ") || line.startsWith("Once per ") ||
-               line.startsWith("While ");
+               line.startsWith("While ") || line.startsWith("Lightening ") ||
+               line.startsWith("Focusing ") || line.startsWith("In ") ||
+               line.startsWith("Meditating ") || line.startsWith("Honing ") ||
+               line.startsWith("Clearing ") || line.startsWith("It is ") ||
+               line.startsWith("By ") || line.startsWith("Using ") ||
+               line.startsWith("Drawing ") || line.startsWith("Focusing ") ||
+               line.startsWith("Relentless ") || line.startsWith("Once per ") ||
+               line.startsWith("While ") || line.startsWith("Lightening ");
     }
 
     @Override
