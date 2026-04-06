@@ -1,0 +1,631 @@
+{
+  "$schema": "./charm-schema.json",
+  "version": "0.1.0",
+  "ability": "Occult",
+  "type": "solarAbility",
+  "exalt": "solar",
+  "charms": [
+    {
+      "id": "9e48a4fc-9979-3068-803a-3d04b677c052",
+      "name": "Spirit-Detecting Glance",
+      "ability": "Occult",
+      "minAbility": 1,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "One scene",
+      "fullText": "The Solar can look through the pall of reality to glimpse the realm of spirits beneath. With this Charm, the Solar can see (but not touch) immaterial spirits.",
+      "rawData": "Spirit-Detecting Glance\nCost: 3m; Mins: Occult 1, Essence 1\nType: Reflexive\nKeywords: None\nDuration: One scene\nPrerequisite Charms: None\nThe Solar can look through the pall of reality to glimpse \nthe realm of spirits beneath. With this Charm, the Solar \ncan see (but not touch) immaterial spirits.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "1f8ee910-8efb-38a7-b9b4-a1d893c4fbaf",
+      "name": "Uncanny Perception Technique",
+      "ability": "Occult",
+      "minAbility": 2,
+      "minEssence": 1,
+      "prerequisites": [
+        "9e48a4fc-9979-3068-803a-3d04b677c052"
+      ],
+      "cost": "—",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar’s senses are preternaturally attuned to the movements of spirits and other uncanny beings. Whenever a spirit or Fair Folk is within the range of the Exalt’s senses, she experiences a strange sensory phenomena; she might hear bells tinkling, smell a particularly strong or unusual scent, or taste something resonant. The Solar gains half her Occult (rounded up) in successes to an Awarenessbased attempt to notice such a being. The warning signaled by this Charm occurs even when a spirit is immaterial, allowing the Solar to use Spirit-Detecting Glance.",
+      "rawData": "Uncanny Perception Technique\nCost: —; Mins: Occult 2, Essence 1\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Spirit-Detecting Glance\nThe Solar’s senses are preternaturally attuned to the move-\nments of spirits and other uncanny beings. Whenever a \nspirit or Fair Folk is within the range of the Exalt’s \nsenses, she experiences a strange sensory phenomena; she \nmight hear bells tinkling, smell a particularly strong or \nunusual scent, or taste something resonant. The Solar gains \nhalf her Occult (rounded up) in successes to an Awareness-\nbased attempt to notice such a being. The warning signaled \nby this Charm occurs even when a spirit is immaterial, al-\nlowing the Solar to use Spirit-Detecting Glance.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "f4bf8ab7-6b65-3aa2-902c-e0eb48b5c88a",
+      "name": "Keen Unnatural Eye",
+      "ability": "Occult",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "d7cbc229-c6f5-364a-82b9-c5b039c2484d",
+        "30b506de-edae-328d-80d7-02f17f7eb4de"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "",
+      "rawData": "Keen Unnatural Eye\nCost: —; Mins: Occult 3, Essence 1\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Uncanny Perception Technique\nImmersion into the occult opens the Lawgiver’s eyes to \nevidence of spirit actions. She more readily and easily sees \nthe handiwork of ghosts and demons, and can more skill-\nfully detect the footsteps of spirits. When using Survival \nor Investigation to track a spirit or uncover evidence of \nits actions, the Exalt gains (Essence or three, whichever \nis greater) bonus dice to the attempt.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "2b9bfcf4-f80c-3df5-b9f8-5b3058fa0ae7",
+      "name": "Spirit-Cutting Attack",
+      "ability": "Occult",
+      "minAbility": 2,
+      "minEssence": 1,
+      "prerequisites": [
+        "9e48a4fc-9979-3068-803a-3d04b677c052"
+      ],
+      "cost": "1m",
+      "type": "Supplemental",
+      "keywords": [
+        "Uniform"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar infuses her attack with the emotive force of her anima, to strike an immaterial spirit. This Charm supplements a single attack to strike a spirit which has not materialized. If the Solar is not using the prerequisite or another similar magic, this attack is made at -3 dice. Spirit-Cutting Attack may be used in combination with the Charms of other Abilities.",
+      "rawData": "Spirit-Cutting Attack\nCost: 1m; Mins: Occult 2, Essence 1\nType: Supplemental\nKeywords: Uniform\nDuration: Instant\nPrerequisite Charms: Spirit-Detecting Glance\nThe Solar infuses her attack with the emotive force of her \nanima, to strike an immaterial spirit. This Charm supple-\nments a single attack to strike a spirit which has not ma-\nterialized. If the Solar is not using the prerequisite or \nanother similar magic, this attack is made at -3 dice. Spir-\nit-Cutting Attack may be used in combination with the \nCharms of other Abilities.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "95c7fd24-795b-3f69-99b2-3adb6b526ec5",
+      "name": "Spirit-Draining Stance",
+      "ability": "Occult",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "2b9bfcf4-f80c-3df5-b9f8-5b3058fa0ae7"
+      ],
+      "cost": "5m",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "One scene",
+      "fullText": "The Lawgiver has the power to draw cold entropy and ethereal power from ghosts and spirits, adding swiftness and surety to her attacks. While this Charm is active, the Solar’s successful withering attacks against spirit opponents generate one automatic level of withering damage.\n\nAt Occult 4+, Essence 2+, the Exalt can choose to drain a mote instead of a point of Initiative.",
+      "rawData": "Spirit-Draining Stance\nCost: 5m; Mins: Occult 3, Essence 1\nType: Simple\nKeywords: None\nDuration: One scene\nPrerequisite Charms: Spirit-Cutting Attack\nThe Lawgiver has the power to draw cold entropy and \nethereal power from ghosts and spirits, adding swiftness \nand surety to her attacks. While this Charm is active, the \nSolar’s successful withering attacks against spirit oppo-\nnents generate one automatic level of withering damage. \nAt Occult 4+, Essence 2+, the Exalt can choose to drain a \nmote instead of a point of Initiative.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "a44a1572-6d3f-3ffc-b7c7-9f741daea48e",
+      "name": "Ghost-Eating Technique",
+      "ability": "Occult",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "2b9bfcf4-f80c-3df5-b9f8-5b3058fa0ae7"
+      ],
+      "cost": "3m",
+      "type": "Supplemental",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "This Charm is the technique by which the Solars slew the enemies of the gods, and spirits hate and fear it. This Charm may supplement attacks made by other Abilities.\n\nAn attack supplemented by this Charm does aggravated damage against spirits, and draws a number of motes from the spirit equal to the highest wound penalty inflicted by the attack. For example, striking off a number of -1 health levels would give the Solar one mote. Striking off a number of -2 health levels and a -4 would give the Solar four motes.\n\nIf a spirit is slain by this attack, it is destroyed permanently, and the pattern of its Essence is subsumed by the Solar’s anima. Destroying a spirit with this Charm grants the Exalt (Solar’s Essence + spirit’s Essence) motes.",
+      "rawData": "Ghost-Eating Technique\nCost: 3m; Mins: Occult 3, Essence 1\nType: Supplemental\nKeywords: Decisive-only\nDuration: Instant\nPrerequisite Charms: Spirit-Cutting Attack\nThis Charm is the technique by which the Solars slew the \nenemies of the gods, and spirits hate and fear it. This \nCharm may supplement attacks made by other Abilities. \nAn attack supplemented by this Charm does aggravated \ndamage against spirits, and draws a number of motes from \nthe spirit equal to the highest wound penalty inflicted by \nthe attack. For example, striking off a number of -1 health \nlevels would give the Solar one mote. Striking off a number \nof -2 health levels and a -4 would give the Solar four motes. \nIf a spirit is slain by this attack, it is destroyed permanent-\nly, and the pattern of its Essence is subsumed by the Solar’s \nanima. Destroying a spirit with this Charm grants the \nExalt (Solar’s Essence + spirit’s Essence) motes.\nC H A R M S\nEX3\n355",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "59eb7a86-d39e-3b83-ac11-1d126b3d7c7f",
+      "name": "Phantom-Seizing Strike",
+      "ability": "Occult",
+      "minAbility": 4,
+      "minEssence": 1,
+      "prerequisites": [
+        "a44a1572-6d3f-3ffc-b7c7-9f741daea48e"
+      ],
+      "cost": "1m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Uniform"
+      ],
+      "duration": "Instant",
+      "fullText": "The Exalt suffuses her target’s body with Solar Essence.\n\nAn immaterial opponent struck by this technique becomes material for two turns. The Solar may activate this Charm after landing an attack with Spirit-Cutting Attack. So long as the damage roll generates at least one success, she may trigger this Charm.",
+      "rawData": "Phantom-Seizing Strike\nCost: 1m, 1wp; Mins: Occult 4, Essence 1\nType: Reflexive\nKeywords: Uniform\nDuration: Instant\nPrerequisite Charms: Ghost-Eating Technique\nThe Exalt suffuses her target’s body with Solar Essence. \nAn immaterial opponent struck by this technique becomes \nmaterial for two turns. The Solar may activate this Charm \nafter landing an attack with Spirit-Cutting Attack. So long \nas the damage roll generates at least one success, she may \ntrigger this Charm.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "08f4b937-7874-391c-9d6b-089e4e070f1c",
+      "name": "Spirit-Slaying Stance",
+      "ability": "Occult",
+      "minAbility": 5,
+      "minEssence": 1,
+      "prerequisites": [
+        "59eb7a86-d39e-3b83-ac11-1d126b3d7c7f"
+      ],
+      "cost": "3m",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "One scene",
+      "fullText": "The Lawgiver may expertly hunt the things which slink and slide through cracks in the world. When this Charm is active, the Exalt gains (Essence) dice to her attacks against spirits.",
+      "rawData": "Spirit-Slaying Stance\nCost: 3m; Mins: Occult 5, Essence 1\nType: Simple\nKeywords: None\nDuration: One scene\nPrerequisite Charms: Phantom-Seizing Strike\nThe Lawgiver may expertly hunt the things which slink \nand slide through cracks in the world. When this Charm \nis active, the Exalt gains (Essence) dice to her attacks \nagainst spirits.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "f35867f0-6f44-336f-adf0-d49627829ab7",
+      "name": "Uncanny Shroud Defense",
+      "ability": "Occult",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "3b1f3eaa-e618-3de5-b1bb-166a073db607",
+        "412629ba-be8f-38ec-9ec6-1d81584b03b6",
+        "e8265edc-b92d-3f3c-96d3-9aacc14c04dc"
+      ],
+      "cost": "6m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "Solar is currently on her last uninjured health level.",
+      "rawData": "Uncanny Shroud Defense\nCost: 6m; Mins: Occult 3, Essence 1\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Spirit-Cutting Attack\nOn the verge of death, the Exalt draws uncanny Essence \naround her like a shroud, stepping between worlds. When \nstruck with any kind of damage or attack that would remove \nher last health level, the Exalt may use this Charm to stop \nthe final level of damage. This Charm cannot be used if the \nSolar is currently on her last uninjured health level.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "9d852b58-1133-3fdc-9484-50eed7040394",
+      "name": "Spirit-Manifesting Word",
+      "ability": "Occult",
+      "minAbility": 2,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "1m",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar speaks an unutterable word that pulls one spirit familiar or sorcerously-bound demon into the physical world. This Charm allows a spirit ally to materialize without having to pay a cost or use its own magic.",
+      "rawData": "Spirit-Manifesting Word\nCost: 1m; Mins: Occult 2, Essence 1\nType: Simple\nKeywords: None\nDuration: Instant \nPrerequisite Charms: None\nC H A P T E R  6\nEX3\n356\nThe Solar speaks an unutterable word that pulls one spirit \nfamiliar or sorcerously-bound demon into the physical \nworld. This Charm allows a spirit ally to materialize \nwithout having to pay a cost or use its own magic.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "9cf1a8d1-2239-315e-980d-bce4a736403b",
+      "name": "Ancient Tongue Understanding",
+      "ability": "Occult",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "6m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "One scene",
+      "fullText": "The Exalt expands her knowledge of the realm of spirits to all corners of her mind, shunning knowledge that binds her understanding. While this Charm is in effect, the Lawgiver automatically speaks and understands Old Realm, even if it is not a language she has learned, but loses her ability to comprehend any other language. In addition, the Solar also naturally comprehends other spirit languages as old and strange as Old Realm, languages for which there exists little to no record. While this Charm is in effect, the Solar gains (half her Essence, rounded down, minimum one) automatic successes to all Occult rolls and shaping actions.",
+      "rawData": "Ancient Tongue Understanding\nCost: 6m; Mins: Occult 3, Essence 1\nType: Reflexive\nKeywords: None\nDuration: One scene\nPrerequisite Charms: None\nThe Exalt expands her knowledge of the realm of spirits \nto all corners of her mind, shunning knowledge that binds \nher understanding. While this Charm is in effect, the Law-\ngiver automatically speaks and understands Old Realm, \neven if it is not a language she has learned, but loses her \nability to comprehend any other language. In addition, \nthe Solar also naturally comprehends other spirit lan-\nguages as old and strange as Old Realm, languages for \nwhich there exists little to no record. While this Charm \nis in effect, the Solar gains (half her Essence, rounded \ndown, minimum one) automatic successes to all Occult \nrolls and shaping actions.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "c35d6643-0d5d-3981-a086-4b36c85a9a3e",
+      "name": "Supernal Control Method",
+      "ability": "Occult",
+      "minAbility": 5,
+      "minEssence": 1,
+      "prerequisites": [
+        "9cf1a8d1-2239-315e-980d-bce4a736403b"
+      ],
+      "cost": "—",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Exalt directs the flow of her Essence out of the world and draws it in, bringing back a quickening breath of realms beyond. Once per scene, the Solar may enact a free full Occult Excellency. This Charm may be reset by raising the Exalt’s anima to iconic and shedding it back to the dim level.",
+      "rawData": "Supernal Control Method\nCost: —; Mins: Occult 5, Essence 1\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Ancient Tongue Understanding\nThe Exalt directs the flow of her Essence out of the world \nand draws it in, bringing back a quickening breath of realms \nbeyond. Once per scene, the Solar may enact a free full \nOccult Excellency. This Charm may be reset by raising \nthe Exalt’s anima to iconic and shedding it back to the \ndim level.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "46415d45-4fcc-32f9-a886-c59608ee8448",
+      "name": "All-Encompassing Sorcerer’s Sight",
+      "ability": "Occult",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "9e48a4fc-9979-3068-803a-3d04b677c052"
+      ],
+      "cost": "4m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Exalt gazes into the Essence of the world and sees the patterns of magic that make up Creation. For a few seconds after activating this Charm, the Solar can see Essence flowing through the world. She can perceive immaterial spirits, but moreover, she can see the workings of spirit energies around her. If a character is using a shaping action or Evocation, the Solar may make an Intelligence + Occult roll at a difficulty of the effect’s Essence minimum to determine how the power works. This Charm may also be used to identify the presence of ongoing sorcerous effects such as mystical barriers and levitating platforms, revealing not only the presence of magic, but how it functions. This power also allows the Exalt to see places where Creation is thin—the borders of shadowlands and the Wyld appear as hazy, gauzy distortions of light. The Solar may also detect the entrance to spirit sanctums within her range of vision. This Charm does not reveal the working of the Charms of the Exalted.",
+      "rawData": "All-Encompassing Sorcerer’s Sight\nCost: 4m; Mins: Occult 5, Essence 2\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Spirit-Detecting Glance\nThe Exalt gazes into the Essence of the world and sees \nthe patterns of magic that make up Creation. For a few \nseconds after activating this Charm, the Solar can see \nEssence flowing through the world. She can perceive im-\nmaterial spirits, but moreover, she can see the workings \nof spirit energies around her. If a character is using a \nshaping action or Evocation, the Solar may make an In-\ntelligence + Occult roll at a difficulty of the effect’s Essence \nminimum to determine how the power works. This Charm \nmay also be used to identify the presence of ongoing sor-\ncerous effects such as mystical barriers and levitating \nplatforms, revealing not only the presence of magic, but \nhow it functions. This power also allows the Exalt to see \nplaces where Creation is thin—the borders of shadow-\nlands and the Wyld appear as hazy, gauzy distortions of \nlight. The Solar may also detect the entrance to spirit \nsanctums within her range of vision. This Charm does not \nreveal the working of the Charms of the Exalted.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "2d06682c-d48e-3e27-8bac-46c7750faf26",
+      "name": "Carnal Spirit Rending",
+      "ability": "Occult",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "a44a1572-6d3f-3ffc-b7c7-9f741daea48e"
+      ],
+      "cost": "5m, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "Upon destroying a spirit with Ghost-Eating Technique, the Solar may activate this Charm to draw the rent and torn Essence of the spirit into her limbs and through her chakras, embodying it. For the rest of the scene, the Exalt gains (Essence) powers or traits based on the Charms and themes of the destroyed spirit, to be decided by the Storyteller. This power explicitly allows the Solar to utilize magic effects that cannot be learned through the Eclipse anima power, but the Exalt may not take powers with a prerequisite higher than ([Solar’s Essence] + 2).",
+      "rawData": "Carnal Spirit Rending\nCost: 5m, 1wp; Mins: Occult 5, Essence 2\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Ghost-Eating Technique\nUpon destroying a spirit with Ghost-Eating Technique, \nthe Solar may activate this Charm to draw the rent and \ntorn Essence of the spirit into her limbs and through her \nchakras, embodying it. For the rest of the scene, the Exalt \ngains (Essence) powers or traits based on the Charms and \nthemes of the destroyed spirit, to be decided by the Sto-\nryteller. This power explicitly allows the Solar to utilize \nmagic effects that cannot be learned through the Eclipse \nanima power, but the Exalt may not take powers with a \nprerequisite higher than ([Solar’s Essence] + 2).",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "6c8d2a2f-3272-3d89-b060-94a4bcc8e18e",
+      "name": "Burning Exorcism Technique",
+      "ability": "Occult",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "2d06682c-d48e-3e27-8bac-46c7750faf26"
+      ],
+      "cost": "3m, 1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "Sometimes those who are physically ill or mentally weak become prey to spiritual possession or another malaise of the soul. The Lawgiver may draw the malevolence from such a victim, rolling (Wits + Occult) against the Resolve of the possessing spirit, or the morbidity of a spiritual malaise. If she succeeds, the Solar draws a malaise or a spirit of equal or lower Essence into her anima, neutralizing it until she wishes its release. If the spirit is of a greater Essence than the Solar, then it is automatically forced out of the host, and may not return to the victim’s body for a season, but it is otherwise free. The Exalt may not capture more spirits than she has points of permanent Essence.",
+      "rawData": "Burning Exorcism Technique\nCost: 3m, 1wp; Mins: Occult 5, Essence 2\nType: Simple\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Carnal Spirit Rending\nSometimes those who are physically ill or mentally weak \nbecome prey to spiritual possession or another malaise of \nthe soul. The Lawgiver may draw the malevolence from \nsuch a victim, rolling (Wits + Occult) against the Resolve \nof the possessing spirit, or the morbidity of a spiritual \nmalaise. If she succeeds, the Solar draws a malaise or a \nspirit of equal or lower Essence into her anima, neutral-\nizing it until she wishes its release. If the spirit is of a \ngreater Essence than the Solar, then it is automatically \nforced out of the host, and may not return to the victim’s \nbody for a season, but it is otherwise free. The Exalt may \nnot capture more spirits than she has points of permanent \nEssence.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "974cb542-a41e-343f-a3e3-e5c0b055f95c",
+      "name": "Breath-Drinker Method",
+      "ability": "Occult",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "95c7fd24-795b-3f69-99b2-3adb6b526ec5"
+      ],
+      "cost": "4i",
+      "type": "Supplemental",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar’s understanding of corporeal Essence allows her to channel her forces to rend spirits at the point of impact. Breath-Drinker Method supplements a decisive attack, allowing the Solar to steal a number of motes from a spirit equal to the number of health levels damaged by the attack. The Exalt may not steal more than (Essence x2) motes on a single attack.",
+      "rawData": "Breath-Drinker Method\nCost: 4i; Mins: Occult 4, Essence 2\nType: Supplemental\nKeywords: Decisive-only\nC H A R M S\nEX3\n357\nDuration: Instant\nPrerequisite Charms: Spirit-Draining Stance\nThe Solar’s understanding of corporeal Essence allows \nher to channel her forces to rend spirits at the point of \nimpact. Breath-Drinker Method supplements a decisive \nattack, allowing the Solar to steal a number of motes from \na spirit equal to the number of health levels damaged by \nthe attack. The Exalt may not steal more than (Essence \nx2) motes on a single attack.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "e3cbcdc1-9faa-382e-a1dc-bce2a3149c4d",
+      "name": "Spirit-Repelling Diagram",
+      "ability": "Occult",
+      "minAbility": 3,
+      "minEssence": 2,
+      "prerequisites": [
+        "2b9bfcf4-f80c-3df5-b9f8-5b3058fa0ae7"
+      ],
+      "cost": "6m",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "One scene",
+      "fullText": "Striking at an unseen movement, the Exalt draws a formless pattern from the depths of the universe. A blazing white-gold Essence diagram extends in a circle around the Lawgiver, spreading out to short range. Spirits with Essence ratings equal to or lower than the Exalt’s must materialize or leave the circle. Spirits with a higher Essence rating than the Exalt must apply their Resolve against the Solar’s (Wits + Occult) in order to resist, with the Solar’s influence gaining (Essence) dice against normal spirits or (Essence) automatic successes against demons and other cursed spirits. This mandala stays fixed on the location the Solar is standing for one scene, and vanishes if she leaves the circle. Spirits of equal or lower Essence than the Solar cannot attack characters inside the circle while standing outside it, and spirits forced to leave the diagram may not attack characters within it.",
+      "rawData": "Spirit-Repelling Diagram\nCost: 6m; Mins: Occult 3, Essence 2\nType: Simple\nKeywords: None\nDuration: One scene\nPrerequisite Charms: Spirit-Cutting Attack\nStriking at an unseen movement, the Exalt draws a form-\nless pattern from the depths of the universe. A blazing \nwhite-gold Essence diagram extends in a circle around \nthe Lawgiver, spreading out to short range. Spirits with \nEssence ratings equal to or lower than the Exalt’s must \nmaterialize or leave the circle. Spirits with a higher Essence \nrating than the Exalt must apply their Resolve against the \nSolar’s (Wits + Occult) in order to resist, with the Solar’s \ninfluence gaining (Essence) dice against normal spirits or \n(Essence) automatic successes against demons and other \ncursed spirits. This mandala stays fixed on the location \nthe Solar is standing for one scene, and vanishes if she \nleaves the circle. Spirits of equal or lower Essence than \nthe Solar cannot attack characters inside the circle while \nstanding outside it, and spirits forced to leave the diagram \nmay not attack characters within it.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "f2f17c60-d4fd-38be-ab9b-6df7e3bc6600",
+      "name": "Nine Specters Ban",
+      "ability": "Occult",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "e3cbcdc1-9faa-382e-a1dc-bce2a3149c4d",
+        "f35867f0-6f44-336f-adf0-d49627829ab7"
+      ],
+      "cost": "4m, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "One scene",
+      "fullText": "The divine flame of the Solar’s Essence marks her as the greatest power in Heaven. Though she is made of mortal substance, her Essence is materially inviolate. When she uses this Charm, an immaterial being must struggle to strike her. Any attack made against her by such a being costs an additional point of Willpower.",
+      "rawData": "Nine Specters Ban\nCost: 4m, 1wp; Mins: Occult 4, Essence 2\nType: Reflexive\nKeywords: None\nDuration: One scene\nPrerequisite Charms: Spirit-Repelling Diagram, Uncanny \nShroud Defense\nThe divine flame of the Solar’s Essence marks her as the \ngreatest power in Heaven. Though she is made of mortal \nsubstance, her Essence is materially inviolate. When she \nuses this Charm, an immaterial being must struggle to \nstrike her. Any attack made against her by such a being \ncosts an additional point of Willpower.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "e392b622-265e-3bf8-b621-939d67b0726e",
+      "name": "Spirit-Caging Mandala",
+      "ability": "Occult",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "e3cbcdc1-9faa-382e-a1dc-bce2a3149c4d"
+      ],
+      "cost": "10m, 1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Varies",
+      "fullText": "The Lawgiver inverts Spirit-Repelling Diagram, creating a pattern that binds a spirit in place. This Essence diagram forms around a target up to two range bands from the Solar. An intricate pattern in the diagram traps and binds the spirit’s Essence, sealing it within the mandala. Pay the cost of this Charm once and roll the Solar’s (Wits + Occult) against a difficulty of the spirit’s Essence. If successful, the spirit is bound on the spot for a number of turns equal to (extra successes + 1), upon which the Solar must roll (Wits + Occult) against the spirit’s Essence to maintain the cage. Each time the Solar succeeds at this contest, the binding effect is extended as above, but the difficulty also increases by one on each subsequent attempt. During this time, the Solar may approach the spirit, but if she moves more than two range bands away from it, the mandala fades and the spirit is freed. An immaterial spirit trapped in the Spirit-Caging Mandala may be perceived by characters who cannot normally see spirits, and may be struck by characters who cannot normally strike immaterial foes.\n\nAs the spirit is rendered incapable of moving across range bands, spirits trapped in the cage can only attack characters outside the diagram if they have the ability to attack at range, and only then if they are attacked first. Foes who enter the mandala at close range are always fair game.",
+      "rawData": "Spirit-Caging Mandala\nCost: 10m, 1wp; Mins: Occult 4, Essence 2\nType: Simple\nKeywords: None\nDuration: Varies\nPrerequisite Charms: Spirit-Repelling Diagram\nThe Lawgiver inverts Spirit-Repelling Diagram, creating \na pattern that binds a spirit in place. This Essence diagram \nforms around a target up to two range bands from the \nSolar. An intricate pattern in the diagram traps and binds \nthe spirit’s Essence, sealing it within the mandala. Pay the \ncost of this Charm once and roll the Solar’s (Wits + Occult) \nagainst a difficulty of the spirit’s Essence. If successful, \nthe spirit is bound on the spot for a number of turns equal \nto (extra successes + 1), upon which the Solar must roll \n(Wits + Occult) against the spirit’s Essence to maintain \nthe cage. Each time the Solar succeeds at this contest, the \nbinding effect is extended as above, but the difficulty also \nincreases by one on each subsequent attempt. During this \ntime, the Solar may approach the spirit, but if she moves \nmore than two range bands away from it, the mandala \nfades and the spirit is freed. An immaterial spirit trapped \nin the Spirit-Caging Mandala may be perceived by char-\nacters who cannot normally see spirits, and may be struck \nby characters who cannot normally strike immaterial foes. \nAs the spirit is rendered incapable of moving across range \nbands, spirits trapped in the cage can only attack charac-\nters outside the diagram if they have the ability to attack \nat range, and only then if they are attacked first. Foes who \nenter the mandala at close range are always fair game.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "3d90eed5-92ba-35f7-8804-4229a2d7ad83",
+      "name": "Material Exegesis Prana",
+      "ability": "Occult",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "9d852b58-1133-3fdc-9484-50eed7040394"
+      ],
+      "cost": "3m, 1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "With a greater expenditure of control, the Exalt may rend the veil with word and voice, giving physical form to a number of immaterial spirit allies. Roll the Solar’s (Wits + Occult). Each success materializes a single sorcerouslybound demon or familiar spirit. If the Exalt rolls three sixes—no more, no less—all of her spirit allies materialize at once, regardless of the number of successes, and she gains two points of temporary Willpower.",
+      "rawData": "Material Exegesis Prana\nCost: 3m, 1wp; Mins: Occult 4, Essence 2\nType: Simple\nKeywords: None\nDuration: Instant \nPrerequisite Charms: Spirit-Manifesting Word\nWith a greater expenditure of control, the Exalt may rend \nthe veil with word and voice, giving physical form to a \nnumber of immaterial spirit allies. Roll the Solar’s (Wits \n+ Occult). Each success materializes a single sorcerously-\nbound demon or familiar spirit. If the Exalt rolls three \nsixes—no more, no less—all of her spirit allies materialize \nat once, regardless of the number of successes, and she \ngains two points of temporary Willpower.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "7075d8a4-111e-36bb-b6da-c0cb4f048698",
+      "name": "Dark-Minder’s Observances",
+      "ability": "Occult",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "1c2f766e-8e45-3422-a849-5e5bc1345dc1"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "With this Charm, the Solar may learn up to (Essence) thaumaturgic rituals without paying experience points.",
+      "rawData": "Dark-Minder’s Observances\nCost: —; Mins: Occult 4, Essence 2\nType: Permanent\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Ancient Tongue Understanding\nWalking the haunted roads of Creation, the Lawgiver \nlearns to hear the Essence of the world. These sounds \ngovern her understanding of everything that is not said. \nC H A P T E R  6\nEX3\n358\nWith this Charm, the Solar may learn up to (Essence) \nthaumaturgic rituals without paying experience points.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "27bbcf2b-44b8-34c1-87e6-e758518013b4",
+      "name": "Burning Eye of the Deliverer",
+      "ability": "Occult",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "46415d45-4fcc-32f9-a886-c59608ee8448"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Solar’s keen eyes burn through deception. This Charm enhances All-Encompassing Sorcerer’s Sight, aiding the Solar in an attempt to see through magical disguises, shapeshifting, or any other magic which allows a character— even another Exalt—to appear to be something or someone other than who he is. This Charm makes it possible to notice such effects with Awareness, adding the Solar’s Essence in automatic successes to the attempt. For the difficulty of seeing through disguises, see page 224. Unless stated otherwise, seeing through all other kinds of magical identity-deceptions is a difficulty 5 feat.",
+      "rawData": "Burning Eye of the Deliverer\nCost: —; Mins: Occult 5, Essence 3\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: All-Encompassing Sorcerer’s Sight\nThe Solar’s keen eyes burn through deception. This Charm \nenhances All-Encompassing Sorcerer’s Sight, aiding the \nSolar in an attempt to see through magical disguises, shape-\nshifting, or any other magic which allows a character—\neven another Exalt—to appear to be something or someone \nother than who he is. This Charm makes it possible to \nnotice such effects with Awareness, adding the Solar’s \nEssence in automatic successes to the attempt. For the \ndifficulty of seeing through disguises, see page 224. Unless \nstated otherwise, seeing through all other kinds of magical \nidentity-deceptions is a difficulty 5 feat.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "57c78eb0-377f-33ca-8dd4-ed5150374663",
+      "name": "Soul Projection Method",
+      "ability": "Occult",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "6c8d2a2f-3272-3d89-b060-94a4bcc8e18e"
+      ],
+      "cost": "6m",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar may cast her spirit from her body to save a target from corruption. The Solar steps forward and touches her target, enacting a (Wits + Occult) battle against the character’s Resolve, in which Intimacies do apply. Upon success, both the Exalt and the target become completely entranced, as the Solar casts her spirit into the body of her target. The exact effect of this dramatic action is up to the Storyteller—the Lawgiver may use this to enter a raksha to retrieve the soul of an eaten loved one, or she might enter the body of her Lunar mate to do battle with a Derangement created by a past incarnation. More specifically, the Exalt may use this to cast a spirit into her target, forcing a possession of that character, or infecting him with a spiritual malaise if he fails a Resistance check against the virulence of the attack. This attack requires the Exalt to have previously captured such a spirit or disease using this Charm’s prerequisite.",
+      "rawData": "Soul Projection Method\nCost: 6m; Mins: Occult 5, Essence 3\nType: Simple\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Burning Exorcism Technique\nThe Solar may cast her spirit from her body to save a target \nfrom corruption. The Solar steps forward and touches her \ntarget, enacting a (Wits + Occult) battle against the char-\nacter’s Resolve, in which Intimacies do apply. Upon \nsuccess, both the Exalt and the target become complete-\nly entranced, as the Solar casts her spirit into the body of \nher target. The exact effect of this dramatic action is up \nto the Storyteller—the Lawgiver may use this to enter a \nraksha to retrieve the soul of an eaten loved one, or she \nmight enter the body of her Lunar mate to do battle with \na Derangement created by a past incarnation. More spe-\ncifically, the Exalt may use this to cast a spirit into her \ntarget, forcing a possession of that character, or infecting \nhim with a spiritual malaise if he fails a Resistance check \nagainst the virulence of the attack. This attack requires \nthe Exalt to have previously captured such a spirit or \ndisease using this Charm’s prerequisite.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "d98d466d-2c8f-3f88-85fd-d4bfe142f7f2",
+      "name": "Wyld-Binding Prana",
+      "ability": "Occult",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "e392b622-265e-3bf8-b621-939d67b0726e"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Exalt infuses the Essence pattern of the Spirit-Caging Mandala with gossamer and iron, allowing it to trap formless denizens of the Wyld, temporarily forcing them to manifest a form as substantial as a materialized spirit.",
+      "rawData": "Wyld-Binding Prana\nCost: —; Mins: Occult 5, Essence 3\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Spirit-Caging Mandala\nThe Exalt infuses the Essence pattern of the Spirit-Caging \nMandala with gossamer and iron, allowing it to trap form-\nless denizens of the Wyld, temporarily forcing them to \nmanifest a form as substantial as a materialized spirit.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "400ba14d-b08c-30df-a60e-ff6132e1d6fc",
+      "name": "Spirit-Draining Mudra",
+      "ability": "Occult",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "e392b622-265e-3bf8-b621-939d67b0726e"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Solar may draw on the Essence of a creature she has bound into the Spirit-Caging Mandala to power her Occult magic. Until the bound character is free, the cost of the Exalt’s Occult Charms are reduced by the Essence score of the trapped entity. These motes are taken from the bound character to fuel the Solar’s Charms. The Solar may also invoke this power each time she takes a shaping action in order to cast a spell.",
+      "rawData": "Spirit-Draining Mudra\nCost: —; Mins: Occult 5, Essence 3\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Spirit-Caging Mandala\nThe Solar may draw on the Essence of a creature she has \nbound into the Spirit-Caging Mandala to power her Occult \nmagic. Until the bound character is free, the cost of the \nExalt’s Occult Charms are reduced by the Essence score \nof the trapped entity. These motes are taken from the \nbound character to fuel the Solar’s Charms. The Solar may \nalso invoke this power each time she takes a shaping action \nin order to cast a spell.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "6c9dd279-458d-3b3c-94d4-e9d5957f42bc",
+      "name": "Demon-Compelling Noose",
+      "ability": "Occult",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "400ba14d-b08c-30df-a60e-ff6132e1d6fc"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Lawgiver’s binding pattern stifles the will of her captive, weakening its Resolve. When using non-Occult based social influence on a target bound with Spirit-Caging Mandala, the Solar gains one automatic success to her influence, while the trapped spirit is at -1 Resolve until it escapes. If the captive is a creature of darkness, the Solar gains two automatic successes while the creature’s Resolve is reduced by -2.",
+      "rawData": "Demon-Compelling Noose\nCost: —; Mins: Occult 5, Essence 3\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Spirit-Draining Mudra\nThe Lawgiver’s binding pattern stifles the will of her \ncaptive, weakening its Resolve. When using non-Occult \nbased social influence on a target bound with Spirit-Cag-\ning Mandala, the Solar gains one automatic success to her \ninfluence, while the trapped spirit is at -1 Resolve until it \nescapes. If the captive is a creature of darkness, the Solar \ngains two automatic successes while the creature’s Resolve \nis reduced by -2.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "a6a2f4d2-91b2-3b28-b98a-6dd96831f270",
+      "name": "All Souls Benediction",
+      "ability": "Occult",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "3d90eed5-92ba-35f7-8804-4229a2d7ad83"
+      ],
+      "cost": "16m, 1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Lawgiver speaks her authority into the world, and her words work through the moorings and bindings of Creation to bring forth spirits. Every spirit or immaterial being within six range bands must succeed at a (Wits + Dodge) check at a difficulty of ([the Solar’s current temporary Willpower] + Essence). Beings who fail this check are forced to materialize, though without paying the cost of materializing magic. Ghosts struck with All Souls Benediction have the option to go immediately into lethe to avoid facing the Lawgiver’s wrath. Creatures struck with\n\nAll Souls Benediction may not dematerialize until the Lawgiver permits it, or until the scene ends.",
+      "rawData": "All Souls Benediction\nCost: 16m, 1wp; Mins: Occult 5, Essence 3\nType: Simple\nKeywords: None\nDuration: Instant \nPrerequisite Charms: Material Exegesis Prana\nThe Lawgiver speaks her authority into the world, and \nher words work through the moorings and bindings of \nCreation to bring forth spirits. Every spirit or immaterial \nbeing within six range bands must succeed at a (Wits + \nDodge) check at a difficulty of ([the Solar’s current tem-\nporary Willpower] + Essence). Beings who fail this check \nare forced to materialize, though without paying the cost \nof materializing magic. Ghosts struck with All Souls Bene-\ndiction have the option to go immediately into lethe to \navoid facing the Lawgiver’s wrath. Creatures struck with \nC H A R M S\nEX3\n359\nAll Souls Benediction may not dematerialize until the \nLawgiver permits it, or until the scene ends.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "7822597c-9c74-30fa-b043-ababc6c32479",
+      "name": "Gloaming Eye Understanding",
+      "ability": "Occult",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "7075d8a4-111e-36bb-b6da-c0cb4f048698"
+      ],
+      "cost": "3m per Charm",
+      "type": "Reflexive",
+      "keywords": [
+        "Stackable"
+      ],
+      "duration": "Indefinite",
+      "fullText": "The Solar channels her Essence into a perfect medium.\n\nAt the center of day and night, she may be taught up to (Essence) spirit Charms that are applicable to the Eclipse anima power. She need not pay experience points to learn these Charms; she maintains the power to perform such magic as long as she keeps motes committed to the effect.\n\nReleasing these motes causes knowledge of the Charm to fade. In order to learn these Charms, the Exalt must meet the trait requirements for the Charm, but does not need to have learned the Charm’s prerequisites.",
+      "rawData": "Gloaming Eye Understanding\nCost: 3m per Charm; Mins: Occult 5, Essence 3\nType: Reflexive\nKeywords: Stackable\nDuration: Indefinite\nPrerequisite Charms: Dark-Minder’s Observances\nThe Solar channels her Essence into a perfect medium. \nAt the center of day and night, she may be taught up to \n(Essence) spirit Charms that are applicable to the Eclipse \nanima power. She need not pay experience points to learn \nthese Charms; she maintains the power to perform such \nmagic as long as she keeps motes committed to the effect. \nReleasing these motes causes knowledge of the Charm to \nfade. In order to learn these Charms, the Exalt must meet \nthe trait requirements for the Charm, but does not need \nto have learned the Charm’s prerequisites.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "fd552d2d-3a00-37b0-b1ac-07b6abfa9ca6",
+      "name": "Sorcerer’s Burning Chakra",
+      "ability": "Occult",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "27bbcf2b-44b8-34c1-87e6-e758518013b4"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Solar sees all things truly. When she is at the iconic anima level, she automatically gains the effects of All-Encompassing Sorcerer’s Sight for free. Furthermore, using Spirit-Detecting Glance in combination with All-Encompassing Sorcerer’s Sight allows the Exalt to discern the nature and Essence rating of a spirit if she succeeds at an Occult roll with a difficulty of the spirit’s Essence.",
+      "rawData": "Sorcerer’s Burning Chakra \nCost: —; Mins: Occult 5, Essence 4\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Burning Eye of the Deliverer\nThe Solar sees all things truly. When she is at the iconic \nanima level, she automatically gains the effects of All-En-\ncompassing Sorcerer’s Sight for free. Furthermore, using \nSpirit-Detecting Glance in combination with All-Encom-\npassing Sorcerer’s Sight allows the Exalt to discern the \nnature and Essence rating of a spirit if she succeeds at an \nOccult roll with a difficulty of the spirit’s Essence.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "08c5beb3-3441-3686-bcc0-0afc89d1d6a9",
+      "name": "Immortal Soul Vigil",
+      "ability": "Occult",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "57c78eb0-377f-33ca-8dd4-ed5150374663"
+      ],
+      "cost": "—(7m)",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Solar may use the prerequisite to enter the psyche of another, examining his dreams and memories, no matter how distant or forgotten, for traces of spiritual taint, demonic possession, or other signs of haunting. While entranced, the Solar experiences the dream or memory of her subject in first person, and may interact with the world of her subject’s mind using Awareness, Investigation and Occult Charms to look for signs of spiritual predation. Though she cannot use her presence in her subject’s mind to change his memory’s outcome, she can use what she discovers as a basis for further action. Furthermore, if she is able to confirm the presence of a spirit actor in her subject’s past, she may also commit seven motes to create a doorway which opens in her mind the moment her subject is approached by the spirit. The moment she steps through it, the Exalt falls into a trance and experiences a dematerialized state that allows her to enter the scene through the dreamscape of her subject, where she may confront the spirit with all of the force that is hers to wield. While the Solar may not interact with any other physical beings in this state, if the spirit attempts to escape her by materializing, the Solar may still perceive and attack it by using Charms such as Spirit-Detecting Glance.",
+      "rawData": "Immortal Soul Vigil\nCost: —(7m); Mins: Occult 5, Essence 4\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Soul Projection Method\nThe Solar may use the prerequisite to enter the psyche \nof another, examining his dreams and memories, no matter \nhow distant or forgotten, for traces of spiritual taint, \ndemonic possession, or other signs of haunting. While \nentranced, the Solar experiences the dream or memory \nof her subject in first person, and may interact with the \nworld of her subject’s mind using Awareness, Investiga-\ntion and Occult Charms to look for signs of spiritual pre-\ndation. Though she cannot use her presence in her sub-\nject’s mind to change his memory’s outcome, she can use \nwhat she discovers as a basis for further action. Further-\nmore, if she is able to confirm the presence of a spirit \nactor in her subject’s past, she may also commit seven \nmotes to create a doorway which opens in her mind the \nmoment her subject is approached by the spirit. The \nmoment she steps through it, the Exalt falls into a trance \nand experiences a dematerialized state that allows her \nto enter the scene through the dreamscape of her subject, \nwhere she may confront the spirit with all of the force \nthat is hers to wield. While the Solar may not interact \nwith any other physical beings in this state, if the spirit \nattempts to escape her by materializing, the Solar may \nstill perceive and attack it by using Charms such as Spir-\nit-Detecting Glance.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "86202117-0e84-32af-8456-8552b831a800",
+      "name": "Spirit-Shredding Exorcism",
+      "ability": "Occult",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "400ba14d-b08c-30df-a60e-ff6132e1d6fc"
+      ],
+      "cost": "7m, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "After capturing a being within the Spirit-Caging Mandala, the Lawgiver strikes apart the pattern, inverting the mandala to rend apart the being’s Essence. Roll the Solar’s (Intelligence + Occult) against the target’s Resolve. This attack can neither be enhanced nor defended against through an application of Intimacies—nor can it be resisted with Willpower. If successful, the target’s permanent Essence is reduced by one until it escapes the pattern, and if the difficulty of binding the target has increased due to a number of successful (Wits + Occult) rolls (as per the rules of Spirit-Caging Mandala), then the difficulty returns to its base number, the spirit’s Essence -1.  Spirit-Shredding Exorcism may not be applied more than once to a single target. If this Charm reduces a being’s Essence to 0, it’s unable to act until it escapes the mandala.",
+      "rawData": "Spirit-Shredding Exorcism\nCost: 7m, 1wp; Mins: Occult 5, Essence 4\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Spirit-Draining Mudra\nAfter capturing a being within the Spirit-Caging Mandala, \nthe Lawgiver strikes apart the pattern, inverting the \nmandala to rend apart the being’s Essence. Roll the Solar’s \n(Intelligence + Occult) against the target’s Resolve. This \nattack can neither be enhanced nor defended against \nthrough an application of Intimacies—nor can it be \nresisted with Willpower. If successful, the target’s per-\nmanent Essence is reduced by one until it escapes the \npattern, and if the difficulty of binding the target has \nincreased due to a number of successful (Wits + Occult) \nrolls (as per the rules of Spirit-Caging Mandala), then \nthe difficulty returns to its base number, the spirit’s \nEssence -1.  Spirit-Shredding Exorcism may not be applied \nmore than once to a single target. If this Charm reduces \na being’s Essence to 0, it’s unable to act until it escapes \nthe mandala.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "7fdc0ce9-803e-35fc-b938-7fd32be8e90f",
+      "name": "Spirit-Drawing Oculus",
+      "ability": "Occult",
+      "minAbility": 5,
+      "minEssence": 5,
+      "prerequisites": [
+        "fd552d2d-3a00-37b0-b1ac-07b6abfa9ca6"
+      ],
+      "cost": "1wp, 3a",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar may channel the Essence of the world through her body, becoming a momentary vector for incredible power. While her anima is iconic, the Exalt perceives the flows of Essence around her. Even as she recognizes the inherent genius of cosmic design, she sees its flaws—loose or wasted motes, cast off from expelled Charms or sorcery, or flowing from fissures in the dragon tracks. For one Willpower, she may cast off her anima, shedding it to the dim level. It dissipates, flowing out across the world in all di-\n\nrections, and every loose mote it passes is drawn back to the Solar. Roll a free full Occult Excellency of the Solar’s (Perception + Occult); successes on this roll determine how many motes the Solar is able to gather. These motes may only be used to power Charms from Craft, Investigation, Medicine, Lore, and Occult, or added to the mote total of a shaping action by the Solar. Spirit-Drawing Oculus may only be used once per day.",
+      "rawData": "Spirit-Drawing Oculus\nCost: 1wp, 3a; Mins: Occult 5, Essence 5\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Sorcerer’s Burning Chakra\nThe Solar may channel the Essence of the world through \nher body, becoming a momentary vector for incredible \npower. While her anima is iconic, the Exalt perceives the \nflows of Essence around her. Even as she recognizes the \ninherent genius of cosmic design, she sees its flaws—loose \nor wasted motes, cast off from expelled Charms or sorcery, \nor flowing from fissures in the dragon tracks. For one Will-\npower, she may cast off her anima, shedding it to the dim \nlevel. It dissipates, flowing out across the world in all di-\nC H A P T E R  6\nEX3\n360\nrections, and every loose mote it passes is drawn back to \nthe Solar. Roll a free full Occult Excellency of the Solar’s \n(Perception + Occult); successes on this roll determine \nhow many motes the Solar is able to gather. These motes \nmay only be used to power Charms from Craft, Investiga-\ntion, Medicine, Lore, and Occult, or added to the mote \ntotal of a shaping action by the Solar. Spirit-Drawing \nOculus may only be used once per day.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "6f4fd9a9-bd10-3200-8291-adf81933d5b2",
+      "name": "Ephemeral Induction Technique",
+      "ability": "Occult",
+      "minAbility": 5,
+      "minEssence": 5,
+      "prerequisites": [
+        "2d06682c-d48e-3e27-8bac-46c7750faf26",
+        "7822597c-9c74-30fa-b043-ababc6c32479",
+        "d98d466d-2c8f-3f88-85fd-d4bfe142f7f2"
+      ],
+      "cost": "20m, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar reaches into the Essence of the world to rip new life from the very fabric of Creation. This Charm allows the Solar to induct a single spirit into the world. She draws this creature from her surroundings, but may also use the Essence-patterns of spirits she has captured with Burning Exorcism Technique or absorbed with Carnal Spirit Rending to determine the being’s nature and magic. The spirit begins the game with the Solar’s Essence rating and half her total experience, but may only use the most basic spirit Charms until the Storyteller has had sufficient time to approve the spirit’s stats, Intimacies, and magic, as determined by the Solar’s player. This spirit is bound to the Solar as a familiar and becomes an applicable target for certain Survival Charms. A spirit created by the Solar is her thrall for a season. She may then choose to keep it as her familiar or release it. Freeing the current familiar allows her to use this Charm again to create a new familiar. If she decides to retain a bond with the original creature, then she keeps it for another season. Each season that comes and goes, she may choose to retain or relinquish her bond with the spirit so that she may attain a new familiar. Otherwise, the spirit remains as her familiar and is in all senses another character, gaining experience points as any character would. Alternately, the Solar may also induct a Fair Folk into the world. In the Wyld, this Charm usually entails the creation of a raksha, but in Creation, where many denizens of the Wyld were bound into place by the elemental fusion of the Poles, the result is bound to be more unpredictable.\n\nSorcery",
+      "rawData": "Ephemeral Induction Technique\nCost: 20m, 1wp; Mins: Occult 5, Essence 5\nType: Simple\nKeywords: Mute\nDuration: Instant\nPrerequisite Charms: Carnal Spirit Rending, Gloaming \nEye Understanding, Wyld-Binding Prana\nThe Solar reaches into the Essence of the world to rip new \nlife from the very fabric of Creation. This Charm allows \nthe Solar to induct a single spirit into the world. She draws \nthis creature from her surroundings, but may also use the \nEssence-patterns of spirits she has captured with Burning \nExorcism Technique or absorbed with Carnal Spirit \nRending to determine the being’s nature and magic. The \nspirit begins the game with the Solar’s Essence rating and \nhalf her total experience, but may only use the most basic \nspirit Charms until the Storyteller has had sufficient time \nto approve the spirit’s stats, Intimacies, and magic, as de-\ntermined by the Solar’s player. This spirit is bound to the \nSolar as a familiar and becomes an applicable target for \ncertain Survival Charms. A spirit created by the Solar is \nher thrall for a season. She may then choose to keep it as \nher familiar or release it. Freeing the current familiar \nallows her to use this Charm again to create a new famil-\niar. If she decides to retain a bond with the original crea-\nture, then she keeps it for another season. Each season \nthat comes and goes, she may choose to retain or relin-\nquish her bond with the spirit so that she may attain a \nnew familiar. Otherwise, the spirit remains as her familiar \nand is in all senses another character, gaining experience \npoints as any character would. Alternately, the Solar may \nalso induct a Fair Folk into the world. In the Wyld, this \nCharm usually entails the creation of a raksha, but in Cre-\nation, where many denizens of the Wyld were bound into \nplace by the elemental fusion of the Poles, the result is \nbound to be more unpredictable. \nSorcery",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "65480f63-af5e-35b1-94ba-03ff96edf5db",
+      "name": "Terrestrial Circle Sorcery",
+      "ability": "Occult",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "",
+      "fullText": "Duration: Permanent Prerequisite Charms: None The Solar steps through the First Circle and is forever transformed. Upon learning this Charm, the Exalt gains the ability to learn and cast spells from the Terrestrial Circle of sorcery. In addition, the Solar learns one shaping ritual (p. 466) and one Terrestrial spell for free. The spell selected becomes the sorcerer’s “control spell,” and may feature in the anima iconography and be referenced in the mechanics of certain Charms.",
+      "rawData": "Terrestrial Circle Sorcery\nCost: —; Mins: Occult 3, Essence 1\nType: Permanent\nKeywords: None\nC H A R M S\nEX3\n361\nDuration: Permanent\nPrerequisite Charms: None\nThe Solar steps through the First Circle and is forever \ntransformed. Upon learning this Charm, the Exalt gains \nthe ability to learn and cast spells from the Terrestrial \nCircle of sorcery. In addition, the Solar learns one shaping \nritual (p. 466) and one Terrestrial spell for free. The spell \nselected becomes the sorcerer’s “control spell,” and may \nfeature in the anima iconography and be referenced in \nthe mechanics of certain Charms.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "df19479d-8af8-394c-8a12-944a2ebe6109",
+      "name": "Celestial Circle Sorcery",
+      "ability": "Occult",
+      "minAbility": 4,
+      "minEssence": 3,
+      "prerequisites": [
+        "65480f63-af5e-35b1-94ba-03ff96edf5db"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Solar ascends to the Second Circle and becomes an avatar bearing aspects of Heaven and Hell in her mind. In all the world, there are only a handful of sorcerers at this level of power. Upon learning this Charm, the Exalt gains the ability to cast spells from the Celestial Circle of sorcery.\n\nIn addition, the Solar learns one shaping ritual and one Celestial spell for free. The spell selected acts as an additional control. Celestial Circle Sorcery may not be learned prior to Essence 3 by selecting Occult as a Supernal Ability.",
+      "rawData": "Celestial Circle Sorcery\nCost: —; Mins: Occult 4, Essence 3\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Terrestrial Circle Sorcery\nThe Solar ascends to the Second Circle and becomes an \navatar bearing aspects of Heaven and Hell in her mind. In \nall the world, there are only a handful of sorcerers at this \nlevel of power. Upon learning this Charm, the Exalt gains \nthe ability to cast spells from the Celestial Circle of sorcery. \nIn addition, the Solar learns one shaping ritual and one \nCelestial spell for free. The spell selected acts as an addi-\ntional control. Celestial Circle Sorcery may not be learned \nprior to Essence 3 by selecting Occult as a Supernal Ability.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "64ecdd1a-78ee-33f6-8975-74961d2b2499",
+      "name": "Solar Circle Sorcery",
+      "ability": "Occult",
+      "minAbility": 5,
+      "minEssence": 5,
+      "prerequisites": [
+        "df19479d-8af8-394c-8a12-944a2ebe6109"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Solar rises to the Third and final Circle of sorcery and becomes a herald of untold power. Spells of the Solar Circle are the most powerful sorceries ever imagined.\n\nOnly the Solar Exalted have the power necessary to master spells of this magnitude. Learning this Charm grants the ability to cast spells from the Solar Circle of sorcery. In addition, the Solar learns one shaping ritual and one Solar spell for free. The spell selected acts as an additional control. Solar Circle Sorcery may not be learned prior to Essence 5 by selecting Occult as a Supernal Ability.\n\nPerformance Omni-Applicable",
+      "rawData": "Solar Circle Sorcery\nCost: —; Mins: Occult 5, Essence 5\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Celestial Circle Sorcery\nThe Solar rises to the Third and final Circle of sorcery and \nbecomes a herald of untold power. Spells of the Solar \nCircle are the most powerful sorceries ever imagined. \nOnly the Solar Exalted have the power necessary to master \nspells of this magnitude. Learning this Charm grants the \nability to cast spells from the Solar Circle of sorcery. In \naddition, the Solar learns one shaping ritual and one Solar \nspell for free. The spell selected acts as an additional \ncontrol. Solar Circle Sorcery may not be learned prior to \nEssence 5 by selecting Occult as a Supernal Ability. \nPerformance\nOmni-Applicable",
+      "potentiallyProblematicImport": false
+    }
+  ]
+}

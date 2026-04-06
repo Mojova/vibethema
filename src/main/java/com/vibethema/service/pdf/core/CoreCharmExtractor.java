@@ -11,6 +11,11 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
 
     @Override
     public void extractAndSave(String text, String suffix) throws IOException {
+        // Pre-process: Strip Core Book page-junk blocks before splitting
+        // Patterns: "[Header/Chapter]\nEX3\n[Page#]" or similar
+        text = text.replaceAll("(?m)^(?:[A-Z\\s]{5,}|SOLAR CHARMS|MARTIAL ARTS CHARMS)\\s*\\nEX3\\s*\\n\\d{3}\\s*\\n", "\n")
+                   .replaceAll("(?m)^\\n\\d{3}\\s*\\nEX3\\s*\\n(?:[A-Z\\s]{5,})", "\n");
+
         Map<String, List<Map<String, Object>>> charmsByAbility = new HashMap<>();
         Map<String, List<Map<String, Object>>> charmsByMartialArtsStyle = new HashMap<>();
         for (String abil : ABILITIES) {
@@ -210,7 +215,16 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                line.startsWith("Under ") || line.startsWith("Across ") ||
                line.startsWith("Within ") || line.startsWith("Upon ") ||
                line.startsWith("Because ") || line.startsWith("Since ") ||
-               line.startsWith("Characters ") || line.startsWith("Sometimes ");
+               line.startsWith("Characters ") || line.startsWith("Sometimes ") ||
+               line.startsWith("Striking ") || line.startsWith("Summoning ") ||
+               line.startsWith("Fearless ") || line.startsWith("Racing ") ||
+               line.startsWith("Attuned ") || line.startsWith("Striving ") ||
+               line.startsWith("Meditating ") || line.startsWith("Honing ") ||
+               line.startsWith("Clearing ") || line.startsWith("It is ") ||
+               line.startsWith("By ") || line.startsWith("Using ") ||
+               line.startsWith("Drawing ") || line.startsWith("Focusing ") ||
+               line.startsWith("Relentless ") || line.startsWith("Once per ") ||
+               line.startsWith("While ");
     }
 
     @Override
@@ -218,6 +232,7 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
         // Surgical sidebar removal for Core book
         text = text.replaceAll("(?s)WHEN DO I NEED TO AIM\\?.*?waive the aim action\\.", "");
         text = text.replaceAll("(?s)MASTER’S HAND: SOLAR MASTERY AND TERRESTRIAL EFFECTS.*?(?=CHAPTER|EX3|\\d{3})", "");
+        text = text.replaceAll("(?s)ON TEN OX MEDITATION.*?(?=ment action for the round|CHAPTER|EX3|\\d{3}\\n)", "");
         return super.cleanDescription(text);
     }
 }

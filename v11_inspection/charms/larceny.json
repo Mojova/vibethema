@@ -1,0 +1,495 @@
+{
+  "$schema": "./charm-schema.json",
+  "version": "0.1.0",
+  "ability": "Larceny",
+  "type": "solarAbility",
+  "exalt": "solar",
+  "charms": [
+    {
+      "id": "3199faa8-c0cc-31b2-a3ea-943a17e9206e",
+      "name": "Excellent Solar Larceny",
+      "ability": "Larceny",
+      "minAbility": 1,
+      "minEssence": 1,
+      "prerequisites": [
+        "39e8bea1-2520-35ba-92d4-7f8c00746271"
+      ],
+      "cost": "1m per die",
+      "type": "Supplemental",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Exalt channels Essence into her hands, making them deceptively fast or nimble, capable of switching tiles, palming objects, or pickpocketing goods right under the nose of an adversary. She may also use this power to quicken her wits in order to formulate deceptions, to increase her cunning, identify likely targets for robbery or deceit, or to devise and apply a convincing disguise.\n\nArchery",
+      "rawData": "Excellent Solar Larceny\nCost: 1m per die; Mins: Larceny 1, Essence 1\nType: Supplemental \nKeywords: None \nDuration: Instant \nPrerequisite Charms: Any one Larceny Charm or Larceny \nas Caste or Favored\nThe Exalt channels Essence into her hands, making \nthem deceptively fast or nimble, capable of switching tiles, \npalming objects, or pickpocketing goods right under the \nnose of an adversary. She may also use this power to \nquicken her wits in order to formulate deceptions, to in-\ncrease her cunning, identify likely targets for robbery or \ndeceit, or to devise and apply a convincing disguise. \nArchery",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "72b81238-0bae-3967-8b6d-136dcd484b31",
+      "name": "Seasoned Criminal Method",
+      "ability": "Larceny",
+      "minAbility": 1,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Exalt adapts the nature of the iconic criminal, who must one day become a master of her craft. She is a creature of the criminal element; duplicity is in her every word and step. This Charm allows the Solar to invoke and discard a number of special distinctions at her leisure, which allow her to gather information, infiltrate criminal society, and protect her position there.\n\nThe distinctions are as follows:\n\nFamiliarity: To a member of a criminal organization, she seems familiar—that is, she can play on a Minor Intimacy to make her target believe she is a criminal with whom to be treated: a member of the organization, a prospect for initiation, etc.\n\nDissonance: Magistrates or other officials seeking to establish her identity suffer a -2 penalty to their Bureaucracy and Investigation actions. Persons who do not know her personally but may have spotted her or seen her hanging around the scene of a crime find her unrecognizable and cannot remember doing so.\n\nVulnerability: The Exalt makes herself seem the best possible target for a type of crime dictated by the player.\n\nConfidence men will see her as an easy mark, gamblers will seek to engage her with betting gossip or games of chance, thugs will try to mug her, and so forth. This effect has a visual component: thieves are less likely to steal from an Exalt wearing armor and a battle axe, while a serial killer might find a person who wears her hair a certain way irresistible.\n\nReceptivity: Similar to vulnerability, interested parties perceive the Exalt as a local player. Rather than prey on her directly, she may be identified as a drug buyer or seller, or a person looking to make a bet, hire a prostitute, or take part in other illicit or seedy activities. Such parties will be interested in providing her with information about where to go and who to talk to.",
+      "rawData": "Seasoned Criminal Method\nCost: —; Mins: Larceny 1, Essence 1\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: None\nThe Exalt adapts the nature of the iconic criminal, who \nmust one day become a master of her craft. She is a crea-\nture of the criminal element; duplicity is in her every word \nand step. This Charm allows the Solar to invoke and discard \na number of special distinctions at her leisure, which allow \nher to gather information, infiltrate criminal society, and \nprotect her position there.\nThe distinctions are as follows:\nFamiliarity: To a member of a criminal organization, she \nseems familiar—that is, she can play on a Minor Intimacy \nto make her target believe she is a criminal with whom to \nbe treated: a member of the organization, a prospect for \ninitiation, etc. \nDissonance: Magistrates or other officials seeking to es-\ntablish her identity suffer a -2 penalty to their Bureau-\ncracy and Investigation actions. Persons who do not know \nher personally but may have spotted her or seen her \nhanging around the scene of a crime find her unrecogniz-\nable and cannot remember doing so.\nVulnerability: The Exalt makes herself seem the best \npossible target for a type of crime dictated by the player. \nConfidence men will see her as an easy mark, gamblers \nwill seek to engage her with betting gossip or games of \nchance, thugs will try to mug her, and so forth. This effect \nhas a visual component: thieves are less likely to steal from \nan Exalt wearing armor and a battle axe, while a serial \nkiller might find a person who wears her hair a certain \nway irresistible. \nReceptivity: Similar to vulnerability, interested parties \nperceive the Exalt as a local player. Rather than prey on \nher directly, she may be identified as a drug buyer or seller, \nor a person looking to make a bet, hire a prostitute, or take \npart in other illicit or seedy activities. Such parties will \nbe interested in providing her with information about \nwhere to go and who to talk to.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "0ad40fe8-41a4-3e8f-9964-0358572a044d",
+      "name": "Spurious Presence",
+      "ability": "Larceny",
+      "minAbility": 2,
+      "minEssence": 1,
+      "prerequisites": [
+        "72b81238-0bae-3967-8b6d-136dcd484b31"
+      ],
+      "cost": "6m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "One scene",
+      "fullText": "Even amidst the Imperial Treasury, the Lawgiver projects her right to be there. This Charm makes it nearly impossible to voluntarily question the Exalt’s presence. As long\n\nas the Solar is dressed and behaving as expected for the present circumstances, she cannot normally be considered suspicious. Characters who do suspect something “off” about her may try to read her intentions, but the Exalt’s Guile is at +2 against such attempts. The player may reconstitute the character’s Guile using Larceny instead of Socialize; Charms that protect against read intentions actions are explicitly allowed to enhance this effect. Which characters suspect the Lawgiver depends entirely on the dramatic whim of the Storyteller.",
+      "rawData": "Spurious Presence\nCost: 6m; Mins: Larceny 2, Essence 1\nType: Reflexive\nKeywords: None\nDuration: One scene\nPrerequisite Charms: Seasoned Criminal Method\nEven amidst the Imperial Treasury, the Lawgiver projects \nher right to be there. This Charm makes it nearly impos-\nsible to voluntarily question the Exalt’s presence. As long \nC H A P T E R  6\nEX3\n316\nas the Solar is dressed and behaving as expected for the \npresent circumstances, she cannot normally be consid-\nered suspicious. Characters who do suspect something \n“off” about her may try to read her intentions, but the \nExalt’s Guile is at +2 against such attempts. The player \nmay reconstitute the character’s Guile using Larceny \ninstead of Socialize; Charms that protect against read in-\ntentions actions are explicitly allowed to enhance this \neffect. Which characters suspect the Lawgiver depends \nentirely on the dramatic whim of the Storyteller.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "02db8e6d-35e3-3730-9aca-b12035f90ff6",
+      "name": "Preying on Uncertainty Approach",
+      "ability": "Larceny",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "0ad40fe8-41a4-3e8f-9964-0358572a044d"
+      ],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "When the Lawgiver is caught somewhere she doesn’t belong, she may use this Charm to immediately become aware of a gap in her inquisitor’s knowledge she can exploit. Stopped at a picket, she realizes the soldier questioning her is expecting a messenger he has never seen.\n\nShe can then claim that messenger’s identity. Confronted by a tenant when creeping through the glass towers of Chiaroscuro, she realizes there are vacant rooms and assumes the role of a squatter. Uncertainty of this kind counts as a Minor Intimacy when it is exploited.",
+      "rawData": "Preying on Uncertainty Approach\nCost: 3m; Mins: Larceny 3, Essence 1\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Spurious Presence\nWhen the Lawgiver is caught somewhere she doesn’t \nbelong, she may use this Charm to immediately become \naware of a gap in her inquisitor’s knowledge she can \nexploit. Stopped at a picket, she realizes the soldier ques-\ntioning her is expecting a messenger he has never seen. \nShe can then claim that messenger’s identity. Confronted \nby a tenant when creeping through the glass towers of \nChiaroscuro, she realizes there are vacant rooms and \nassumes the role of a squatter. Uncertainty of this kind \ncounts as a Minor Intimacy when it is exploited.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "c9da3b37-5e8d-37a6-b74a-4c27ae42a748",
+      "name": "Clever Bandit’s Rook",
+      "ability": "Larceny",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "72b81238-0bae-3967-8b6d-136dcd484b31"
+      ],
+      "cost": "2m",
+      "type": "Supplemental",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "A master of the sublime, the Lawgiver hooks a mark with her charisma and genuine seeming. When used, this Charm supplements an instill action to make a person believe an object or structure belongs to the Exalt. This Charm cannot force an assertion on someone that directly contradicts what he knows. However, a character who does not know the truth cannot benefit from any Intimacies that would bolster his Resolve against the attempt. A character may not spend Willpower to contradict this belief unless he sees direct evidence to the contrary.",
+      "rawData": "Clever Bandit’s Rook\nCost: 2m; Mins: Larceny 3, Essence 1\nType: Supplemental\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Seasoned Criminal Method\nA master of the sublime, the Lawgiver hooks a mark with \nher charisma and genuine seeming. When used, this Charm \nsupplements an instill action to make a person believe an \nobject or structure belongs to the Exalt. This Charm cannot \nforce an assertion on someone that directly contradicts \nwhat he knows. However, a character who does not know \nthe truth cannot benefit from any Intimacies that would \nbolster his Resolve against the attempt. A character may \nnot spend Willpower to contradict this belief unless he \nsees direct evidence to the contrary.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "892d4654-328a-3548-b18a-1fcf607d72b2",
+      "name": "Swift Gambler’s Eye",
+      "ability": "Larceny",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "1m",
+      "type": "Supplemental",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Exalt’s jaded insights give her a talent for seeing through the gambits of her opponents. This Charm supplements a read intentions action against an opponent in a game of chance or strategy, lowering the target’s Guile by two. If successful, it tells the Lawgiver how her opponent feels about his current chances. For example, a target who is acting morose but feels exultant is almost certainly bluffing.",
+      "rawData": "Swift Gambler’s Eye\nCost: 1m; Mins: Larceny 3, Essence 1\nType: Supplemental\nKeywords: None\nDuration: Instant\nPrerequisite Charms: None\nThe Exalt’s jaded insights give her a talent for seeing through \nthe gambits of her opponents. This Charm supplements a \nread intentions action against an opponent in a game of \nchance or strategy, lowering the target’s Guile by two. If suc-\ncessful, it tells the Lawgiver how her opponent feels about \nhis current chances. For example, a target who is acting \nmorose but feels exultant is almost certainly bluffing.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "52aa59b1-9da0-397e-acde-7d0ecab7f7bf",
+      "name": "Lightning-Hand Sleight",
+      "ability": "Larceny",
+      "minAbility": 4,
+      "minEssence": 1,
+      "prerequisites": [
+        "892d4654-328a-3548-b18a-1fcf607d72b2"
+      ],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar’s patience hides intense speed. Between breaths, eyeblinks, even thoughts, the Exalt’s hands flash out, changing tiles, switching dice results, trading cards out of dealt hands, moving game pieces, etc. The Exalt’s cheating goes unnoticed so long as she cheats plausibly, skewing the results of only a single round. This deception cannot be realized by onlookers until (Essence + 1) hours have passed.\n\nEach time the Solar uses this Charm in a single game, she lowers that expectation by roughly one hour. At Essence 1, she may not be caught immediately on her third use of the Charm, but while her foes still cannot see her cheating, they can notice the effects of her slick dealing.\n\nThis Charm doubles as Poison-Hand Sleight, which allows a Lawgiver to lace a target’s food or drink with sedatives or poison. It differs in that onlookers will begin to notice the work of a poisoner as soon as people begin to pass out or drop dead.",
+      "rawData": "Lightning-Hand Sleight\nCost: 3m; Mins: Larceny 4, Essence 1\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Swift Gambler’s Eye\nThe Solar’s patience hides intense speed. Between breaths, \neyeblinks, even thoughts, the Exalt’s hands flash out, chang-\ning tiles, switching dice results, trading cards out of dealt \nhands, moving game pieces, etc. The Exalt’s cheating goes \nunnoticed so long as she cheats plausibly, skewing the \nresults of only a single round. This deception cannot be \nrealized by onlookers until (Essence + 1) hours have passed. \nEach time the Solar uses this Charm in a single game, she \nlowers that expectation by roughly one hour. At Essence \n1, she may not be caught immediately on her third use of \nthe Charm, but while her foes still cannot see her cheat-\ning, they can notice the effects of her slick dealing. \nThis Charm doubles as Poison-Hand Sleight, which allows \na Lawgiver to lace a target’s food or drink with sedatives \nor poison. It differs in that onlookers will begin to notice \nthe work of a poisoner as soon as people begin to pass out \nor drop dead.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "217c4553-180e-3f0a-94bc-1e01c4e6d786",
+      "name": "Flawless Pickpocketing Technique",
+      "ability": "Larceny",
+      "minAbility": 2,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "3m",
+      "type": "Supplemental",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "With hands quicker than the eye, the Exalt relieves a hapless soul of his material burden. This Charm enhances a normal pickpocketing attempt (see p. 224). Unless contested by magic, this attempt cannot fail; when such a conflict arises, this Charm adds the Solar’s Essence in automatic successes. To use this Charm, the Exalt must be close enough to touch her target. In every other way, this Charm follows the rules of a normal pickpocketing attempt. The character may not steal items that are in use or artifacts that have been attuned.\n\nCharacters using ordinary senses cannot detect this theft with Awareness. Characters with inhuman sensory acuity,\n\nsuch as a spider feeling vibrations in its web, or those using magic, like a Celestial Lion’s Intemperate Gaze, suffer a -4 dice penalty to spot the theft. Flawless Pickpocketing Technique is also completely immune to magic that detects Larceny-based actions, unless the user also knows Flawless Pickpocketing Technique.",
+      "rawData": "Flawless Pickpocketing Technique\nCost: 3m; Mins: Larceny 2, Essence 1\nType: Supplemental\nKeywords: Mute\nDuration: Instant\nPrerequisite Charms: None\nWith hands quicker than the eye, the Exalt relieves a \nhapless soul of his material burden. This Charm enhanc-\nes a normal pickpocketing attempt (see p. 224). Unless \ncontested by magic, this attempt cannot fail; when such \na conflict arises, this Charm adds the Solar’s Essence in \nautomatic successes. To use this Charm, the Exalt must \nbe close enough to touch her target. In every other way, \nthis Charm follows the rules of a normal pickpocketing \nattempt. The character may not steal items that are in use \nor artifacts that have been attuned.\nCharacters using ordinary senses cannot detect this theft \nwith Awareness. Characters with inhuman sensory acuity, \n\nsuch as a spider feeling vibrations in its web, or those using \nmagic, like a Celestial Lion’s Intemperate Gaze, suffer a \n-4 dice penalty to spot the theft. Flawless Pickpocketing \nTechnique is also completely immune to magic that detects \nLarceny-based actions, unless the user also knows Flaw-\nless Pickpocketing Technique.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "6a57d7a2-6233-3c62-b990-ab237b1f1be6",
+      "name": "Lock-Opening Touch",
+      "ability": "Larceny",
+      "minAbility": 2,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "1m or 5m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Exalt may open a mundane lock simply by touching it and paying five motes. Alternately, she may challenge a sorcerous lock with her picking tools, paying one mote to gain double 9s and (Essence) automatic successes. This version of the Charm guarantees that she successfully picks the lock even if her roll fails, however, a failure constitutes some unwanted occurrence—perhaps she springs a trap, breaks the lock loudly, snaps her lock-pick, etc.",
+      "rawData": "Lock-Opening Touch\nCost: 1m or 5m; Mins: Larceny 2, Essence 1\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: None\nThe Exalt may open a mundane lock simply by touching \nit and paying five motes. Alternately, she may challenge a \nsorcerous lock with her picking tools, paying one mote to \ngain double 9s and (Essence) automatic successes. This \nversion of the Charm guarantees that she successfully \npicks the lock even if her roll fails, however, a failure con-\nstitutes some unwanted occurrence—perhaps she springs \na trap, breaks the lock loudly, snaps her lock-pick, etc.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "ef8b75ca-cb74-359d-864e-376fc9c0f8b1",
+      "name": "Flawlessly Impenetrable Disguise",
+      "ability": "Larceny",
+      "minAbility": 4,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "6m",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Until the Exalt sleeps",
+      "fullText": "Master chameleons, the Solars donned disguises and attended the fetes of the raksha, to hear them confess their nefarious plans for Creation. This Charm recreates a disguise attempt (see p. 224), but allows the Exalt to make a myriad of extraordinary changes to her appearance. She may change her gender, double her age or halve it, alter her height by ten inches in either direction, change her ethnicity, adjust her voice and alter her accent. She can even change her scent. The Solar gains two automatic successes to her disguise attempt, ignores penalties for adapting a different race or gender, and gains double 9s.\n\nThis disguise cannot be pierced by mundane senses. Nor can it be thwarted by inhuman sensory acuity, such as the nose of a hound or the eye of a hawk. Senses heightened to supernatural levels by Charms such as Keen Sight Discipline have a chance to pierce this deception, but subtract 2 successes from their attempts. Magic which pierces this effect does not reveal the Solar’s identity, only that the Exalt is not what she appears to be.\n\nTypically Solars used this Charm to hide their identities or to appeal to specific criteria such as “Only women are allowed into the sept.” However, should it be used to impersonate a specific character, magic which pierces this effect will only reveal the apparent body double of the Charm’s subject. For example, if the Solar disguises herself as the Scarlet Empress, magic which pierces her disguise will see her as a tall, porcelain-skinned red-haired woman with cunningly accurate makeup, as opposed to what the Solar actually looks like.",
+      "rawData": "Flawlessly Impenetrable Disguise \nCost: 6m; Mins: Larceny 4, Essence 1\nType: Simple\nKeywords: None\nDuration: Until the Exalt sleeps\nPrerequisite Charms: None\nMaster chameleons, the Solars donned disguises and at-\ntended the fetes of the raksha, to hear them confess their \nnefarious plans for Creation. This Charm recreates a dis-\nguise attempt (see p. 224), but allows the Exalt to make a \nmyriad of extraordinary changes to her appearance. She \nmay change her gender, double her age or halve it, alter \nher height by ten inches in either direction, change her \nethnicity, adjust her voice and alter her accent. She can \neven change her scent. The Solar gains two automatic \nsuccesses to her disguise attempt, ignores penalties for \nadapting a different race or gender, and gains double 9s.\nThis disguise cannot be pierced by mundane senses. Nor \ncan it be thwarted by inhuman sensory acuity, such as the \nnose of a hound or the eye of a hawk. Senses heightened \nto supernatural levels by Charms such as Keen Sight Dis-\ncipline have a chance to pierce this deception, but sub-\ntract 2 successes from their attempts. Magic which pierces \nthis effect does not reveal the Solar’s identity, only that \nthe Exalt is not what she appears to be.\nTypically Solars used this Charm to hide their identities \nor to appeal to specific criteria such as “Only women are \nallowed into the sept.” However, should it be used to im-\npersonate a specific character, magic which pierces this \neffect will only reveal the apparent body double of the \nCharm’s subject. For example, if the Solar disguises herself \nas the Scarlet Empress, magic which pierces her disguise \nwill see her as a tall, porcelain-skinned red-haired woman \nwith cunningly accurate makeup, as opposed to what the \nSolar actually looks like.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "817014f0-67cb-3ee2-b7b0-1886f613a59e",
+      "name": "Phantom Hood Technique",
+      "ability": "Larceny",
+      "minAbility": 3,
+      "minEssence": 2,
+      "prerequisites": [
+        "02db8e6d-35e3-3730-9aca-b12035f90ff6"
+      ],
+      "cost": "—",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Lawgiver can mask her anima to evade detection.\n\nOnce per scene, the Exalt can activate this Charm to mute five peripheral motes in an instant, causing them to act as if they were motes spent from her personal mote pool, so long as the magic is aiding her in Larceny-based actions.\n\nThis Charm is reset by a two point social stunt in which the Lawgiver uses Larceny, or in which she uses subterfuge enhanced by any other social ability in order to aid her in criminal behavior. This reset must occur after the Charm has been used.",
+      "rawData": "Phantom Hood Technique\nCost: —; Mins: Larceny 3, Essence 2\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms:  Preying on Uncertainty Approach\nThe Lawgiver can mask her anima to evade detection. \nOnce per scene, the Exalt can activate this Charm to mute \nfive peripheral motes in an instant, causing them to act as \nif they were motes spent from her personal mote pool, so \nlong as the magic is aiding her in Larceny-based actions. \nThis Charm is reset by a two point social stunt in which \nthe Lawgiver uses Larceny, or in which she uses subter-\nfuge enhanced by any other social ability in order to aid \nher in criminal behavior. This reset must occur after the \nCharm has been used.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "c18ca783-f0f1-3a37-91f7-c67b25b69459",
+      "name": "Doubt-Sealing Heist",
+      "ability": "Larceny",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "c9da3b37-5e8d-37a6-b74a-4c27ae42a748"
+      ],
+      "cost": "5m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "Upon successfully robbing a person of something they own, the Exalt may attempt to unwind the owner’s memory of attachment to the item. The player rolls a (Manipulation + Larceny) instill action against the target’s Resolve.\n\nOn a success, the Lawgiver convinces the target that the object belongs to her (and always has). The target may not pay Willpower to shake off this belief until (Solar’s Essence) minutes have passed.",
+      "rawData": "Doubt-Sealing Heist\nCost: 5m; Mins: Larceny 4, Essence 2\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Clever Bandit’s Rook\nUpon successfully robbing a person of something they \nown, the Exalt may attempt to unwind the owner’s memory \nof attachment to the item. The player rolls a (Manipula-\ntion + Larceny) instill action against the target’s Resolve. \nOn a success, the Lawgiver convinces the target that the \nobject belongs to her (and always has). The target may \nnot pay Willpower to shake off this belief until (Solar’s \nEssence) minutes have passed.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "dadb3eb4-6c81-3e1d-9766-b60be32f50be",
+      "name": "Living Shadow Preparedness",
+      "ability": "Larceny",
+      "minAbility": 3,
+      "minEssence": 2,
+      "prerequisites": [],
+      "cost": "4m, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar becomes the light which swallows the shadow.\n\nThe player rolls (Wits + Larceny), doubles and banks any successes. Banked successes can be reflexively applied to a single Larceny or Stealth action. This effect lasts until the Exalt sleeps, and can be renewed only once per day.",
+      "rawData": "Living Shadow Preparedness\nCost: 4m, 1wp; Mins: Larceny 3, Essence 2\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: None\nThe Solar becomes the light which swallows the shadow. \nThe player rolls (Wits + Larceny), doubles and banks any \nsuccesses. Banked successes can be reflexively applied to \na single Larceny or Stealth action. This effect lasts until \nthe Exalt sleeps, and can be renewed only once per day.\nC H A P T E R  6\nEX3\n318",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "5eb6109d-54c7-3a3f-8b8b-071d2d05bde9",
+      "name": "Master Plan Meditation",
+      "ability": "Larceny",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "294b757e-1554-3a6f-9b22-da3aff6749d1"
+      ],
+      "cost": "6m, 1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Indefinite",
+      "fullText": "The Exalt’s meticulous preparation forms a bulwark against failure. This Charm can be triggered after performing any of the valid listed actions below. The player rolls (Intelligence + Larceny), converting each success to a pool of contingency points which can be spent on features listed below.\n\nValid actions include a scene spent: forging or counterfeiting; preparing an alibi; pursuing information about a person without using violence; obtaining blueprints to a location the Exalt plans to infiltrate; making a plan to enter and escape a dangerous location; plotting to confuse or undermine local law enforcement or criminal syndicates.\n\nContingency points can be spent in the following ways:\n\n• Distorting a single piece of evidence (5 points)\n\n• Destroying a small piece of evidence (3 points)\n\n• Erasing a small piece of evidence (7 points)\n\n• Raising Resolve by two for one scene (5 points)\n\n• Raising Guile by two for one scene (5 points)\n\n• Door-Evading Technique cost: 5m, 1wp (5 points)\n\n• Disguise attempt +1 automatic success (3 points)\n\n• Flashing Ruse Prana cost: 0m, 0wp (7 points)\n\n•  Retroactively leaving one’s calling card (mark, sign, etc.) in a dramatic location. (1 point) Once the Exalt begins spending contingency points, this Charm may not be used to gather new contingencies until the Exalt has spent all the points. The Exalt may not use Master Plan Meditation twice for the same type of valid action in a single session.",
+      "rawData": "Master Plan Meditation\nCost: 6m, 1wp; Mins: Larceny 5, Essence 2\nType: Simple\nKeywords: None\nDuration: Indefinite\nPrerequisite Charms: Unshakable Rogue’s Spirit\nThe Exalt’s meticulous preparation forms a bulwark \nagainst failure. This Charm can be triggered after per-\nforming any of the valid listed actions below. The player \nrolls (Intelligence + Larceny), converting each success \nto a pool of contingency points which can be spent on \nfeatures listed below.\nValid actions include a scene spent: forging or counter-\nfeiting; preparing an alibi; pursuing information about a \nperson without using violence; obtaining blueprints to a \nlocation the Exalt plans to infiltrate; making a plan to enter \nand escape a dangerous location; plotting to confuse or \nundermine local law enforcement or criminal syndicates. \nContingency points can be spent in the following ways:\n• Distorting a single piece of evidence (5 points)\n• Destroying a small piece of evidence (3 points)\n• Erasing a small piece of evidence (7 points)\n• Raising Resolve by two for one scene (5 points)\n• Raising Guile by two for one scene (5 points)\n• Door-Evading Technique cost: 5m, 1wp (5 points)\n• Disguise attempt +1 automatic success (3 points)\n• Flashing Ruse Prana cost: 0m, 0wp (7 points)\n•  Retroactively leaving one’s calling card (mark, sign, etc.) \nin a dramatic location. (1 point)\nOnce the Exalt begins spending contingency points, this \nCharm may not be used to gather new contingencies until \nthe Exalt has spent all the points. The Exalt may not use \nMaster Plan Meditation twice for the same type of valid \naction in a single session.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "7c81f3e7-725a-320b-b0b4-9666426ad88d",
+      "name": "Proof-Eating Palm",
+      "ability": "Larceny",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "f50b75d2-bffa-3839-bdce-2f9cc94bdcb2",
+        "8ff7a34e-2d3a-33cf-8586-4230d4b2d2a2",
+        "3dcfe02d-390a-3180-872e-45ed976dc6f4",
+        "cc7da8b4-6a1f-36d4-9e23-b6473ffe39e7",
+        "e09982d1-6976-32e9-bdc8-8fb644f6ea83",
+        "275e9dff-c752-3144-b1f2-ce94c7732343"
+      ],
+      "cost": "1m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "This Charm models the Solar’s serious attention to detail and overqualification for mindgames. Each use should be depicted as the Lawgiver channeling a preternatural sense of preparedness and foresight and meditating on future plans to make her tactics flawless.\n\nThe duration of each listed contingency is one instant, unless stated otherwise. The Exalt must know the Charms enhanced by contingencies in order to benefit from them.\n\nThe Solar’s genius hands can outwit even the sharpest eye. This Charm allows her to hide any object small enough to palm. She may appear to swallow the item, fit it under her tongue, hide it up her sleeve, etc. The object vanishes.\n\nIt does not go to Elsewhere. It merely ceases to exist until the Exalt needs it again, at which point she may will it into her hand with just a thought. The Exalt may hide no more than five objects, but each object must be hidden in a separate space.",
+      "rawData": "Proof-Eating Palm\nCost: 1m; Mins: Larceny 4, Essence 2\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Lightning-Hand Sleight\nON MASTER PLAN MEDITATION\nIn each instance of altered evidence, the player is able to \nrespond to the introduction or discovery of evidence, ret-\nroactively changing the narrative. This is not a Creation-\ntime alteration, but rather a retroactive continuity of the \nStoryteller’s narrative or Investigation action results by \nanother player. Literally, as a character discovers some \nevidence of your crime, you can pay contingency points \nto alter the evidence, changing what he found (even if that \nmeans he found nothing).\nDestroying evidence is different from erasing evidence; \ndestroyed evidence may be reconstructed by various \nCharms. Erased evidence is treated as though your Solar \ncarefully covered her tracks. Feel free to gloatingly de-\nscribe how she outsmarted her pursuers by convincing \nan army of ants to right the blades of grass she walked \nover that day, or how she snatched up that single strand \nof hair before it could fall to the floor.\nDistorting evidence causes it to point at another character \nconnected to the crime scene location. The Exalt’s player \ndoes not determine at whom it points; that determination \nis instead made by the player of the detective. If the only \nother character known to have visited the scene is the \ndetective, the evidence will point to his guilt.\nThis Charm models the Solar’s serious attention to detail \nand overqualification for mindgames. Each use should be \ndepicted as the Lawgiver channeling a preternatural sense \nof preparedness and foresight and meditating on future \nplans to make her tactics flawless.\nThe duration of each listed contingency is one instant, \nunless stated otherwise. The Exalt must know the Charms \nenhanced by contingencies in order to benefit from them.\n\nThe Solar’s genius hands can outwit even the sharpest \neye. This Charm allows her to hide any object small enough \nto palm. She may appear to swallow the item, fit it under \nher tongue, hide it up her sleeve, etc. The object vanishes. \nIt does not go to Elsewhere. It merely ceases to exist until \nthe Exalt needs it again, at which point she may will it \ninto her hand with just a thought. The Exalt may hide no \nmore than five objects, but each object must be hidden in \na separate space.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "f23cadd8-3173-3117-9313-4fc717193b8a",
+      "name": "Stealing From Plain Sight Spirit",
+      "ability": "Larceny",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "8a7c12a7-4520-387d-b773-9ce2f7605106",
+        "aecbbfc3-2fd0-386c-a469-26ff2d329fad"
+      ],
+      "cost": "6m",
+      "type": "Supplemental",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "Exalt might swipe a book from a table or take a sword from a soldier’s scabbard. Such a theft cannot be noticed for (Solar’s Essence) minutes unless circumstances call attention to it, such as a soldier attempting to draw his stolen blade.",
+      "rawData": "Stealing From Plain Sight Spirit\nCost: 6m; Mins: Larceny 4, Essence 2\nType: Supplemental\nKeywords: Mute\nDuration: Instant\nPrerequisite Charms: Flawless Pickpocketing  \nTechnique\nLong ago, the Solars stole the implements of their virtue \nfrom beneath the gaze of the gods’ own masters. This \nCharm is similar in all ways to its prerequisite, except that \nit allows the Solar to steal an object from plain sight. The \nExalt might swipe a book from a table or take a sword \nfrom a soldier’s scabbard. Such a theft cannot be noticed \nfor (Solar’s Essence) minutes unless circumstances call \nattention to it, such as a soldier attempting to draw his \nstolen blade.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "e39ad577-af50-322d-8c7f-259199561ece",
+      "name": "Magpie’s Invisible Talon",
+      "ability": "Larceny",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "d071f7c3-d188-33eb-9731-22a360b31745"
+      ],
+      "cost": "1wp",
+      "type": "Supplemental",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Exalt moves with imperceptible speed, manipulating Essence flows to steal an object out of reach. This Charm supplements a normal attempt to steal or pickpocket, save that it gives the Solar’s attempt double 9s and allows her to reach an object (Essence) yards away. She may even steal objects behind glass without disturbing the glass through use of this Charm.",
+      "rawData": "Magpie’s Invisible Talon\nCost: 1wp; Mins: Larceny 5, Essence 2\nType: Supplemental\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Stealing from Plain \nSight Spirit\nThe Exalt moves with imperceptible speed, manipulating \nEssence flows to steal an object out of reach. This Charm \nsupplements a normal attempt to steal or pickpocket, save \nthat it gives the Solar’s attempt double 9s and allows her \nto reach an object (Essence) yards away. She may even \nsteal objects behind glass without disturbing the glass \nthrough use of this Charm.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "26e97d3a-7956-3aba-9e28-4f15dc0dc60d",
+      "name": "Perfect Mirror",
+      "ability": "Larceny",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "ef8b75ca-cb74-359d-864e-376fc9c0f8b1"
+      ],
+      "cost": "—(5m, 1wp)",
+      "type": "Permanent",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Permanent",
+      "fullText": "The Exalt shows only what she wishes to be seen. Discarding all other facets, she becomes a continuous unity of form.\n\nThis Charm upgrades its prerequisite, replacing the cost and allowing the Exalt to disguise herself as a specific person without suffering a penalty for impersonating a specific character, or for changing her body type significantly. In addition to the bonuses associated with Flawlessly Impenetrable Disguise, it also adds (Essence) nonCharm successes to the roll to establish the disguise.\n\nThe impersonation is perfect. It cannot be pierced by mundane or inhuman sensory acuity. Characters are not entitled to attempt to see through the disguise unless the Solar behaves in a grossly inaccurate way. Even so, a witness using Charms or other magic to penetrate the disguise suffer a -4 dice penalty to do so. In addition, should he fail at this attempt, his next attempt suffers an additional -1. This penalty cannot exceed -5.\n\nIn addition to these effects, the Exalt may adapt Essencebased visual dynamics not covered by simple makeup or disguise. Her hair might stand on end and crackle with lightning; she might hover inches off the ground or display the anima of a different kind of Exalt. None of these displays are real. That is, displaying a Fire Aspect’s anima will not actually burn anything, though witnesses will feel the intensity of its heat. She may appear to float, but her feet are still touching the ground.",
+      "rawData": "Perfect Mirror \nCost: —(5m, 1wp); Mins: Larceny 5, Essence 2\nType: Permanent\nKeywords: Mute\nDuration: Permanent\nPrerequisite Charms:  Flawlessly Impenetrable \nDisguise\nThe Exalt shows only what she wishes to be seen. Dis-\ncarding all other facets, she becomes a continuous unity \nof form.\nC H A P T E R  6\nEX3\n320\nThis Charm upgrades its prerequisite, replacing the cost \nand allowing the Exalt to disguise herself as a specific \nperson without suffering a penalty for impersonating a \nspecific character, or for changing her body type signifi-\ncantly. In addition to the bonuses associated with Flaw-\nlessly Impenetrable Disguise, it also adds (Essence) non-\nCharm successes to the roll to establish the disguise. \nThe impersonation is perfect. It cannot be pierced by \nmundane or inhuman sensory acuity. Characters are not \nentitled to attempt to see through the disguise unless the \nSolar behaves in a grossly inaccurate way. Even so, a \nwitness using Charms or other magic to penetrate the \ndisguise suffer a -4 dice penalty to do so. In addition, should \nhe fail at this attempt, his next attempt suffers an addi-\ntional -1. This penalty cannot exceed -5.\nIn addition to these effects, the Exalt may adapt Essence-\nbased visual dynamics not covered by simple makeup or \ndisguise. Her hair might stand on end and crackle with \nlightning; she might hover inches off the ground or display \nthe anima of a different kind of Exalt. None of these dis-\nplays are real. That is, displaying a Fire Aspect’s anima \nwill not actually burn anything, though witnesses will feel \nthe intensity of its heat. She may appear to float, but her \nfeet are still touching the ground.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "1e924e03-21db-3da9-bb32-36da5376c88b",
+      "name": "Fate-Shifting Solar Arete",
+      "ability": "Larceny",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "52aa59b1-9da0-397e-acde-7d0ecab7f7bf",
+        "1bc0b04f-93d6-3e03-b5cc-88a1a76fcd40"
+      ],
+      "cost": "1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Lawgiver adjusts the scales of balance in her favor, and fate is made her accomplice. This Charm enhances any kind of action that is not part of an extended roll. Before rolling, the player chooses a number from 2 to 5. That number is treated like a 10 each time it appears in the subsequent roll.\n\nThe Solar may use this Charm once per full night’s rest.\n\nAn Essence 4+ repurchase allows the Solar to change two different numbers from 2 to 5 into 10s.",
+      "rawData": "Fate-Shifting Solar Arete \nCost: 1wp; Mins: Larceny 5, Essence 3\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Lightning-Hand Sleight, Unshak-\nable Rogue’s Spirit\nThe Lawgiver adjusts the scales of balance in her favor, and \nfate is made her accomplice. This Charm enhances any kind \nof action that is not part of an extended roll. Before rolling, \nthe player chooses a number from 2 to 5. That number is \ntreated like a 10 each time it appears in the subsequent roll. \nThe Solar may use this Charm once per full night’s rest. \nAn Essence 4+ repurchase allows the Solar to change two \ndifferent numbers from 2 to 5 into 10s.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "0d54eb24-9e9f-3486-94e6-2fa63e96a93b",
+      "name": "Skillful Reappropriation (Phantom Sting Search)",
+      "ability": "Larceny",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "e39ad577-af50-322d-8c7f-259199561ece"
+      ],
+      "cost": "6m",
+      "type": "Supplemental",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Exalt can plant evidence on a target’s person infallibly. The mechanic modeling this Charm is identical to a pickpocketing attempt enhanced by Flawless Pickpocketing Technique—with the same rules for supernatural detection—save that it hides an object on the target’s person. Such an action cannot be noticed for (Essence × 10) minutes, unless circumstances call attention to it.\n\nTrying to hide an anchor in an old man’s rucksack will have undesired effects.\n\nIn addition, as long as the object remains on the target’s person, the Exalt can reflexively retrieve the item without contest, so long as she is close enough to touch the target.\n\nThough the Lawgiver does this with incredible speed, to all onlookers it will be obvious that she lifted the object from the target.",
+      "rawData": "Skillful Reappropriation (Phantom Sting Search)\nCost: 6m; Mins: Larceny 5, Essence 3\nType: Supplemental\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Magpie’s Invisible Talon\nThe Exalt can plant evidence on a target’s person infalli-\nbly. The mechanic modeling this Charm is identical to a \npickpocketing attempt enhanced by Flawless Pickpock-\neting Technique—with the same rules for supernatural \ndetection—save that it hides an object on the target’s \nperson. Such an action cannot be noticed for (Essence × \n10) minutes, unless circumstances call attention to it. \nTrying to hide an anchor in an old man’s rucksack will \nhave undesired effects. \nIn addition, as long as the object remains on the target’s \nperson, the Exalt can reflexively retrieve the item without \ncontest, so long as she is close enough to touch the target. \nThough the Lawgiver does this with incredible speed, to \nall onlookers it will be obvious that she lifted the object \nfrom the target.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "b30e2d80-bfd2-3971-b588-3a90b1859eb1",
+      "name": "Reversal of Fortune",
+      "ability": "Larceny",
+      "minAbility": 4,
+      "minEssence": 3,
+      "prerequisites": [
+        "4b301d7f-2a28-3763-bf94-8b5bf68d0dd0"
+      ],
+      "cost": "4m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "With this Charm, the Exalt gains two automatic successes to an Awareness roll to detect any attempt to pickpocket from her person.\n\nUpon successfully noticing an attempted theft with this Charm, the theft is not only thwarted, but the thief is left open to reprisal. If the thief is close enough to touch, the Lawgiver becomes aware of every object on his person that may be stolen (as per the rules of pickpocketing on page 224) and can attempt to steal one of these objects with all of the same advantages as Flawless Pickpocketing Technique.",
+      "rawData": "Reversal of Fortune\nCost: 4m; Mins: Larceny 4, Essence 3\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Flawless Pickpocketing Technique\nStealing from the Lawgiver is a risky proposition at best. \nWith this Charm, the Exalt gains two automatic success-\nes to an Awareness roll to detect any attempt to pickpock-\net from her person. \nUpon successfully noticing an attempted theft with this \nCharm, the theft is not only thwarted, but the thief is left \nopen to reprisal. If the thief is close enough to touch, the \nLawgiver becomes aware of every object on his person \nthat may be stolen (as per the rules of pickpocketing on \npage 224) and can attempt to steal one of these objects \nwith all of the same advantages as Flawless Pickpocket-\ning Technique.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "486959d6-79d2-37df-9e9f-6ef1a41943d2",
+      "name": "Iron Wolves’ Grasp",
+      "ability": "Larceny",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "d071f7c3-d188-33eb-9731-22a360b31745",
+        "b30e2d80-bfd2-3971-b588-3a90b1859eb1"
+      ],
+      "cost": "3m, 4i",
+      "type": "Supplemental",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "This Charm demonstrates the skill of a Lawgiver to steal the very weapon from her foe’s hand. When used, this Charm alters a disarm gambit (see p. 199) in the following ways:\n\n•  The cost of the gambit is replaced by the cost of the Charm.\n\n•  The gambit is considered a reflexive action rather than a combat action, leaving the Exalt free to attack in addition to disarming. Doing so carries no Defense penalty.\n\n• The Lawgiver’s Initiative roll gains double 9s.\n\nOn a success, the Exalt steals her target’s weapon. If the stolen weapon is an artifact, it breaks the target’s attunement and allows the Exalt to commit motes to instantly attune the weapon. If the Exalt cannot or will not pay these motes, the weapon is merely cast aside as if it were disarmed normally.\n\nA Solar who uses whips, lassos, rope darts or other prehensile weaponry may use this Charm at the range of her weapon.",
+      "rawData": "Iron Wolves’ Grasp \nCost: 3m, 4i; Mins: Larceny 5, Essence 3\nType: Supplemental\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Stealing from Plain Sight Spirit, \nReversal of Fortune\nThis Charm demonstrates the skill of a Lawgiver to steal \nthe very weapon from her foe’s hand. When used, \nthis Charm alters a disarm gambit (see p. 199) in the fol-\nlowing ways:\n•  The cost of the gambit is replaced by the cost of the \nCharm.\n•  The gambit is considered a reflexive action rather than \na combat action, leaving the Exalt free to attack in addi-\ntion to disarming. Doing so carries no Defense penalty. \n• The Lawgiver’s Initiative roll gains double 9s.\n\nOn a success, the Exalt steals her target’s weapon. If the \nstolen weapon is an artifact, it breaks the target’s attun-\nement and allows the Exalt to commit motes to instantly \nattune the weapon. If the Exalt cannot or will not pay \nthese motes, the weapon is merely cast aside as if it were \ndisarmed normally.\nA Solar who uses whips, lassos, rope darts or other pre-\nhensile weaponry may use this Charm at the range of her \nweapon.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "8d84ceea-4b67-3fc9-87fb-c00461f0a06f",
+      "name": "Door-Evading Technique",
+      "ability": "Larceny",
+      "minAbility": 4,
+      "minEssence": 3,
+      "prerequisites": [
+        "6fa61bc9-8991-3747-aa7e-c9ecc5f26ceb",
+        "328fb781-1b8a-30fd-a0f5-30282c46dff8"
+      ],
+      "cost": "10m, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "",
+      "rawData": "Door-Evading Technique\nCost: 10m, 1wp; Mins: Larceny 4, Essence 3\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Lock-Opening Touch\nSome doors are not locked by conventional means; some \nare sealed by complex sorcery or mechanisms hidden out \nof sight; still others are bounded by dozens or even hun-\ndreds of locks, making it implausible to pick them all. Yet \nno door may bar the Lawgiver’s entrance. The Exalt \nreaches for the door as if to touch it, and then steps \nforward. When her foot falls, she is on the other side of \nthe portal. The Solar can use this talent to pass through \na locked window, a sewer grate, a dropped portcullis or \neven an archway that drips lightning. This Charm is based \non the Solar’s illimitable skill for infiltration; she cannot \npass through solid walls or reach into a sealed chest and \nfish around.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "5eeb6dee-51a7-31ae-aa86-30cfff345081",
+      "name": "Flashing Ruse Prana",
+      "ability": "Larceny",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "ef8b75ca-cb74-359d-864e-376fc9c0f8b1"
+      ],
+      "cost": "10m, 1wp",
+      "type": "Supplemental",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "With a rending of air, the Solar sweeps away the mask she once wore. This Charm supplements a disguise attempt by reducing the time it takes from five minutes to instant.\n\nWhen used in combination with another Larceny-based disguise Charm, ignore the Willpower cost.",
+      "rawData": "Flashing Ruse Prana\nCost: 10m, 1wp; Mins: Larceny 5, Essence 3\nType: Supplemental\nKeywords: Mute\nDuration: Instant\nPrerequisite Charms:  Flawlessly Impenetrable Disguise\nWith a rending of air, the Solar sweeps away the mask she \nonce wore. This Charm supplements a disguise attempt \nby reducing the time it takes from five minutes to instant. \nWhen used in combination with another Larceny-based \ndisguise Charm, ignore the Willpower cost.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "03523f9b-05b9-3679-8ab4-bf0c4680da96",
+      "name": "Split Deception Method",
+      "ability": "Larceny",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "26e97d3a-7956-3aba-9e28-4f15dc0dc60d"
+      ],
+      "cost": "5m per disguise",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Indefinite",
+      "fullText": "The Lawgiver walks through the valley of the wicked wearing a thousand faces. This Charm allows the Exalt to place a second disguise over the one she is wearing by attempting a second disguise action per the rules on page 224. This attempt may be supplemented by disguise Charms as usual. When she is seen wearing two or more disguises, the player dictates which disguise each witness sees. The Solar may sustain no more disguises than she has dots of Essence.",
+      "rawData": "Split Deception Method\nCost: 5m per disguise; Mins: Larceny 5, Essence 3\nType: Reflexive\nKeywords: None\nDuration: Indefinite\nPrerequisite Charms:  Perfect Mirror\nThe Lawgiver walks through the valley of the wicked \nwearing a thousand faces. This Charm allows the Exalt \nto place a second disguise over the one she is wearing by \nattempting a second disguise action per the rules on page \n224. This attempt may be supplemented by disguise \nCharms as usual. When she is seen wearing two or more \ndisguises, the player dictates which disguise each witness \nsees. The Solar may sustain no more disguises than she \nhas dots of Essence.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "c36bf06e-5763-38c5-ae24-7be17ad2040c",
+      "name": "Null Anima Gloves",
+      "ability": "Larceny",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "486959d6-79d2-37df-9e9f-6ef1a41943d2",
+        "93c55559-017b-3f3f-a0ef-304ea94e9b30",
+        "0d54eb24-9e9f-3486-94e6-2fa63e96a93b"
+      ],
+      "cost": "12m, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Indefinite",
+      "fullText": "The Solar walks among the wicked as a demon and a saint.\n\nGathering all the speed and skill of her hands into the channel of her Essence, her talent is forced out through her skin, manifesting in a burning corona that coats her hands in the fires of her anima.\n\nFor a moment, the gloves suffuse her hands and blaze. For the next thirty seconds or two rounds, whichever comes first, no member of a criminal organization nor creature of darkness may Join Battle against the Lawgiver or roll to attack her. During this time, each of her allies gains +3 automatic successes to any attempt to escape the scene.\n\nAfter this effect ends, her hands continue to blaze. She may mute the effect with just a thought: her Null Anima Gloves fade to invisibility. They are still there, however.\n\nShould she use her hands to block an attack, land a strike, or steal an object, they will flash and hum back into existence, and remain that way until she banishes them. This is merely a visual display, however… Null Anima Gloves convey the following powers:\n\n•  Raiton’s Unerring Claw: Once per full anima progression, she may reroll any Larceny-based action involving her hands.\n\n•  Flashing Whip, Silent Whip: Once per day, she may use a free full Larceny Excellency to enhance an attempt to pickpocket or steal from plain sight.\n\n•  Seize the Day: In combat, she may use a gambit which costs three Initiative to make a (Dexterity + Larceny) based decisive attack against her opponent, with double successes on the Initiative roll. If she succeeds, she regains four Initiative and steals an additional amount from the opponent equal to her Dexterity, adding it to her own total. The Exalt must be close enough to touch her opponent to use this technique and must use her hands to make the attack. Seize the Day can only be used\n\nonce per battle, but is automatically reset when the Solar climbs to 15+ Initiative after landing a decisive attack which returns her to base Initiative.\n\n•  Dream-Ending Gesture: With a curt flash of her hand, the Solar rips away the proof of her foe’s divinity. The Exalt uses a gambit costing five Initiative, making a (Dexterity + Larceny) based decisive attack against her opponent, with double successes on the Initiative roll. If the Exalt’s gambit succeeds, she steals a number of motes equal to her extra successes on the attack, adding them to her peripheral or personal motes. Dream-Ending Gesture can only be used once per scene.\n\n•  Steal Inertia: Once per battle the Exalt may reflexively enact a (Dexterity + Larceny) Clash against an attack.\n\nThis Clash is enhanced by (Essence) automatic successes. If her successes cancel her opponent’s, she can be seen to stop the blow with her blazing, anima-suffused hands, and may automatically respond with a disarm gambit at no cost, using extra successes on the Clash as automatic successes to her gambit’s Initiative roll.\n\n•  Hand-Spear Convocation: Upon stealing an artifact, she experiences a rush of power that surges through her body and floods into her hands, supplying the motes needed to attune the artifact, effectively reducing the cost of attunement to 0. This may only happen once per scene.",
+      "rawData": "Null Anima Gloves\nCost: 12m, 1wp; Mins: Larceny 5, Essence 4 \nType: Reflexive \nKeywords: None \nDuration: Indefinite \nPrerequisite Charms: Iron Wolves’ Grasp, Proof-Eat-\ning Palm, Skillful Reappropriation (Phantom Sting \nSearch)\nThe Solar walks among the wicked as a demon and a saint. \nGathering all the speed and skill of her hands into the \nchannel of her Essence, her talent is forced out through \nher skin, manifesting in a burning corona that coats her \nhands in the fires of her anima.\nFor a moment, the gloves suffuse her hands and blaze. For \nthe next thirty seconds or two rounds, whichever comes \nfirst, no member of a criminal organization nor creature \nof darkness may Join Battle against the Lawgiver or roll \nto attack her. During this time, each of her allies gains +3 \nautomatic successes to any attempt to escape the scene.\nAfter this effect ends, her hands continue to blaze. She \nmay mute the effect with just a thought: her Null Anima \nGloves fade to invisibility. They are still there, however. \nShould she use her hands to block an attack, land a strike, \nor steal an object, they will flash and hum back into exis-\ntence, and remain that way until she banishes them. This \nis merely a visual display, however…\nNull Anima Gloves convey the following powers:\n•  Raiton’s Unerring Claw: Once per full anima progres-\nsion, she may reroll any Larceny-based action involving \nher hands.\n•  Flashing Whip, Silent Whip: Once per day, she may \nuse a free full Larceny Excellency to enhance an attempt \nto pickpocket or steal from plain sight.\n•  Seize the Day: In combat, she may use a gambit which \ncosts three Initiative to make a (Dexterity + Larceny) \nbased decisive attack against her opponent, with double \nsuccesses on the Initiative roll. If she succeeds, she \nregains four Initiative and steals an additional amount \nfrom the opponent equal to her Dexterity, adding it to \nher own total. The Exalt must be close enough to touch \nher opponent to use this technique and must use her \nhands to make the attack. Seize the Day can only be used \nC H A P T E R  6\nEX3\n322\nonce per battle, but is automatically reset when the Solar \nclimbs to 15+ Initiative after landing a decisive attack \nwhich returns her to base Initiative. \n•  Dream-Ending Gesture: With a curt flash of her hand, \nthe Solar rips away the proof of her foe’s divinity. The \nExalt uses a gambit costing five Initiative, making a (Dex-\nterity + Larceny) based decisive attack against her op-\nponent, with double successes on the Initiative roll. If \nthe Exalt’s gambit succeeds, she steals a number of motes \nequal to her extra successes on the attack, adding them \nto her peripheral or personal motes. Dream-Ending \nGesture can only be used once per scene.\n•  Steal Inertia: Once per battle the Exalt may reflexively \nenact a (Dexterity + Larceny) Clash against an attack. \nThis Clash is enhanced by (Essence) automatic success-\nes. If her successes cancel her opponent’s, she can be \nseen to stop the blow with her blazing, anima-suffused \nhands, and may automatically respond with a disarm \ngambit at no cost, using extra successes on the Clash as \nautomatic successes to her gambit’s Initiative roll.\n•  Hand-Spear Convocation: Upon stealing an artifact, \nshe experiences a rush of power that surges through her \nbody and floods into her hands, supplying the motes \nneeded to attune the artifact, effectively reducing the \ncost of attunement to 0. This may only happen once \nper scene.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "969b5785-c2c4-3d01-99f9-b7bc72e611ae",
+      "name": "Night’s Eye Meditation",
+      "ability": "Larceny",
+      "minAbility": 5,
+      "minEssence": 5,
+      "prerequisites": [
+        "c36bf06e-5763-38c5-ae24-7be17ad2040c"
+      ],
+      "cost": "5m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "One turn",
+      "fullText": "The Solar is a master of deception, and is aware of any challenge to her position. Each time a character attempts to counter a Larceny based action or disguise with Investigation or Larceny, the Lawgiver may use this Charm to add 10s on her opponents’ attempts to her own results for one turn. This retroactively makes her disguises harder to pierce and actively makes her sleight-of-hand and pickpocketing harder to notice.",
+      "rawData": "Night’s Eye Meditation\nCost: 5m; Mins: Larceny 5, Essence 5\nType: Reflexive\nKeywords: None\nDuration: One turn\nPrerequisite Charms: Null Anima Gloves\nThe Solar is a master of deception, and is aware of any \nchallenge to her position. Each time a character attempts \nto counter a Larceny based action or disguise with Inves-\ntigation or Larceny, the Lawgiver may use this Charm to \nadd 10s on her opponents’ attempts to her own results for \none turn. This retroactively makes her disguises harder \nto pierce and actively makes her sleight-of-hand and pick-\npocketing harder to notice.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "8ea36a70-6b6a-3ec1-9608-1866747a99f9",
+      "name": "Unbroken Darkness Approach",
+      "ability": "Larceny",
+      "minAbility": 5,
+      "minEssence": 5,
+      "prerequisites": [
+        "7a470f02-7e5f-333a-969c-b17a97435039",
+        "0a7ba9ce-ce3f-345d-9409-2af58380d4b6"
+      ],
+      "cost": "—",
+      "type": "Reflexive",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "",
+      "rawData": "Unbroken Darkness Approach\nCost: —; Mins: Larceny 5, Essence 5\nType: Reflexive\nKeywords: Mute\nDuration: Instant\nPrerequisite Charms: Night’s Eye Meditation\nIn the deepening Age of Sorrows, the Lawgiver shines in \nthe darkness. This Charm allows the Exalt to apply a free \nfull Larceny Excellency to any action once per scene. This \nExcellency has the mute keyword. This Charm also has \nthe special property of muting any Charm the Exalt uses \nthat same instant, if she so chooses. \nLinguistics",
+      "potentiallyProblematicImport": true
+    }
+  ]
+}

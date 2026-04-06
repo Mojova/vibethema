@@ -1,0 +1,891 @@
+{
+  "$schema": "./charm-schema.json",
+  "version": "0.1.0",
+  "ability": "Craft",
+  "type": "solarAbility",
+  "exalt": "solar",
+  "charms": [
+    {
+      "id": "e231ebac-826c-35a8-9163-1bc7ddabd33b",
+      "name": "Tireless Workhorse Method",
+      "ability": "Craft",
+      "minAbility": 2,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Solar expands her mind, body, and spirit to encompass the drain of more difficult tasks. This Charm permanently grants two major project slots for each dot of Essence the Solar possesses.",
+      "rawData": "Tireless Workhorse Method\nCost: —; Mins: Craft 2, Essence 1\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: None\nThe Solar expands her mind, body, and spirit to encom-\npass the drain of more difficult tasks. This Charm perma-\nnently grants two major project slots for each dot of \nEssence the Solar possesses.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "40e21c48-cd9a-3b87-9823-55382b318f05",
+      "name": "Efficient Craftsman Technique",
+      "ability": "Craft",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "e231ebac-826c-35a8-9163-1bc7ddabd33b"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "This Charm permanently reduces the cost of temporary major slots to three silver points.",
+      "rawData": "Efficient Craftsman Technique\nCost: —; Mins: Craft 3, Essence 1\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Tireless Workhorse Method\nThis Charm permanently reduces the cost of temporary \nmajor slots to three silver points.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "8b0c36e5-e6ff-366b-9512-7980590b0999",
+      "name": "Arete-Shifting Prana",
+      "ability": "Craft",
+      "minAbility": 4,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "4m, 1sxp, 1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Lawgiver may glean knowledge from her existing mastery and use it as the foundation for new works. Upon evoking Arete-Shifting Prana, roll (Intelligence + [relevant Craft]). For each success, the Solar may temporarily convert dots from one of her known Crafts into a conceptually related Craft ability—for example, changing armoring into weaponsmithing, or shifting leatherworking into tailoring, or tailoring into tapestry-weaving. Conversions where no logical relationship can be established are impossible, such as converting Craft (Cooking) dots into Craft (Tailoring). These converted dots remain useable for the duration of one basic or major project; they cannot be used to support any higher form of crafting project.",
+      "rawData": "Arete-Shifting Prana\nCost: 4m, 1sxp, 1wp; Mins: Craft 4, Essence 1\nType: Simple\nKeywords: None\nDuration: Instant\nPrerequisite Charms: None\nThe Lawgiver may glean knowledge from her existing \nmastery and use it as the foundation for new works. Upon \nevoking Arete-Shifting Prana, roll (Intelligence + [rele-\nvant Craft]). For each success, the Solar may temporar-\nily convert dots from one of her known Crafts into a con-\nceptually related Craft ability—for example, changing \narmoring into weaponsmithing, or shifting leatherwork-\ning into tailoring, or tailoring into tapestry-weaving. Con-\nversions where no logical relationship can be established \nare impossible, such as converting Craft (Cooking) dots \ninto Craft (Tailoring). These converted dots remain \nuseable for the duration of one basic or major project; \nthey cannot be used to support any higher form of craft-\ning project.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "09777ca9-241b-3110-8419-c7b95b7bdebb",
+      "name": "Supreme Celestial Focus",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "8b0c36e5-e6ff-366b-9512-7980590b0999"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Solar expands her mind and awakens her flesh, unlocking the brilliance that sings in her Essence. This Charm allows the Exalt to raise an additional Craft rating from one to five by paying gold points instead of experience.\n\nThe Exalt may raise up to (Essence) additional Craft ratings in this fashion, but each one after the first costs double the amount of gold points.",
+      "rawData": "Supreme Celestial Focus\nCost: —; Mins: Craft 5, Essence 2\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Arete-Shifting Prana\nThe Solar expands her mind and awakens her flesh, un-\nlocking the brilliance that sings in her Essence. This Charm \nallows the Exalt to raise an additional Craft rating from \none to five by paying gold points instead of experience. \nThe Exalt may raise up to (Essence) additional Craft ratings \nin this fashion, but each one after the first costs double \nthe amount of gold points.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "ead4b61b-3984-3146-b512-a8f6e59a60b8",
+      "name": "Sublime Transference",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "8b0c36e5-e6ff-366b-9512-7980590b0999"
+      ],
+      "cost": "6m",
+      "type": "Simple",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "Meditating calmly for five minutes, the Solar erases all thought and function; her conscious mind recedes to nothingness. During this time, the player may rearrange the Solar’s crafting points in the following way: two silver points can become one gold point; two gold points can become one white point; one white point can become two gold points, and one gold point can become two silver points. However, each use of this Charm only allows the Solar to shift one type of experience to another; in five minutes, spending six motes, she could convert\n\nsilver points to gold, but she would have to activate the Charm again to transfer gold points to white.\n\nThe Exalt may activate this Charm while she is asleep or incapacitated.",
+      "rawData": "Sublime Transference\nCost: 6m; Mins: Craft 5, Essence 2\nType: Simple\nKeywords: Mute\nDuration: Instant\nPrerequisite Charms: Arete-Shifting Prana\nMeditating calmly for five minutes, the Solar erases all \nthought and function; her conscious mind recedes to \nnothingness. During this time, the player may rearrange \nthe Solar’s crafting points in the following way: two silver \npoints can become one gold point; two gold points can \nbecome one white point; one white point can become \ntwo gold points, and one gold point can become two \nsilver points. However, each use of this Charm only allows \nthe Solar to shift one type of experience to another; \nin five minutes, spending six motes, she could convert \nC H A P T E R  6\nEX3\n290\nsilver points to gold, but she would have to activate \nthe Charm again to transfer gold points to white. \nThe Exalt may activate this Charm while she is asleep \nor incapacitated.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "b9b26363-6843-3d3f-8b5a-54b5fe5106fe",
+      "name": "Ages-Echoing Wisdom",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "40e21c48-cd9a-3b87-9823-55382b318f05",
+        "ead4b61b-3984-3146-b512-a8f6e59a60b8"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Solar’s return to Creation is a time of expanding her mind and senses. Through her immaculate Essence, she becomes a conduit to the lost magic of a vanished age.\n\nUpon the purchase of this Charm, the Exalt gains a number of gold points equal to her permanent major slots. This bonus recurs at the end of each story.",
+      "rawData": "Ages-Echoing Wisdom\nCost: —; Mins: Craft 5, Essence 2\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Efficient Craftsman Technique, \nSublime Transference\nThe Solar’s return to Creation is a time of expanding her \nmind and senses. Through her immaculate Essence, she \nbecomes a conduit to the lost magic of a vanished age. \nUpon the purchase of this Charm, the Exalt gains a number \nof gold points equal to her permanent major slots. This \nbonus recurs at the end of each story.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "376b6a55-a4b0-300f-979e-85a470feda01",
+      "name": "Dragon Soul Emergence",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "b9b26363-6843-3d3f-8b5a-54b5fe5106fe"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [
+        "Stackable"
+      ],
+      "duration": "Permanent",
+      "fullText": "With this Charm, the Solar reaches a confluence of ancient wisdom and future enlightenment that increases her ability to encompass greater efforts. Purchasing this Charm grants the Chosen one permanent superior project slot. This Charm may be purchased up to (Essence) times.",
+      "rawData": "Dragon Soul Emergence\nCost: —; Mins: Craft 5, Essence 2\nType: Permanent\nKeywords: Stackable\nDuration: Permanent\nPrerequisite Charms: Ages-Echoing Wisdom\nWith this Charm, the Solar reaches a confluence of \nancient wisdom and future enlightenment that increases \nher ability to encompass greater efforts. Purchasing \nthis Charm grants the Chosen one permanent superior \nproject slot. This Charm may be purchased up to (Essence) \ntimes.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "8641acb2-e918-37e3-82b1-d0e9337b40ba",
+      "name": "Copper Spider Conception",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "376b6a55-a4b0-300f-979e-85a470feda01"
+      ],
+      "cost": "5m, 1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Exalt’s understanding of greater wonders is increased.\n\nShe may use this Charm before beginning a superior project, taking a ten minute dramatic action to conceptualize the task at hand, plan for future stages of the project, and organize necessary materials. This Charm lowers the cost of creating a superior slot by two gold points and two major slots, to a minimum of one major slot and one gold point.",
+      "rawData": "Copper Spider Conception\nCost: 5m, 1wp; Mins: Craft 5, Essence 3\nType: Simple\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Dragon Soul Emergence\nThe Exalt’s understanding of greater wonders is increased. \nShe may use this Charm before beginning a superior \nproject, taking a ten minute dramatic action to concep-\ntualize the task at hand, plan for future stages of the \nproject, and organize necessary materials. This Charm \nlowers the cost of creating a superior slot by two gold \npoints and two major slots, to a minimum of one major \nslot and one gold point.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "872af677-847b-3a04-85fb-e1585aba0a4d",
+      "name": "Clay and Breath Practice",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "b205b627-8929-3ebe-a3eb-36c06180dccd",
+        "40fde542-6c63-3ee2-9749-13f32587c656",
+        "847bb187-c7b2-3b92-b9a4-a97a0c49f51f"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "",
+      "rawData": "Clay and Breath Practice\nCost: —; Mins: Craft 5, Essence 3\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Copper Spider Conception\nAs the Solar works with greater wonders, she achieves \na sublime, renewing focus. On each interval of a supe-\nrior roll, when the Solar rolls more successes than the \nprice to finish (typically ten—see “finishing rolls” on p. \n240), she earns silver points equal to the rating of the \nArtifact under construction plus her current Essence \nscore.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "cdc547c9-5563-3f0a-9ff6-a598e6330958",
+      "name": "Spirit-Gathering Industry",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "6038978d-1eb5-32fa-af71-34f1344a2320"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "",
+      "rawData": "Spirit-Gathering Industry\nCost: —; Mins: Craft 5, Essence 3\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Clay and Breath Practice\nCrafting Artifacts requires an extreme commitment of \none’s own spiritual energy. Husbanding her resources, the \nExalt’s Essence becomes more readily powerful when she \nrises to the task. This Charm permanently reduces the \ncost to finish a superior project by (Essence) gold points, \nto a minimum of three.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "ca2eff00-914a-3fbc-b2d9-b140608b23e9",
+      "name": "Summit-Piercing Touch",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "b9b26363-6843-3d3f-8b5a-54b5fe5106fe"
+      ],
+      "cost": "10m, 1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Indefinite",
+      "fullText": "Through diligence, effort, and connectedness to the Essence of her art, the Solar learns to adapt the unfathomable least wonders of the cosmos to the trades which she has mastered. By using this Charm before she begins a superior project to build a two-dot Artifact, she can place that project in an unused major slot. Motes committed to this Charm remain committed until the project is finished. If she relinquishes commitment, she must create a superior slot to carry the unfinished artifact, or otherwise risk a catastrophic failure of the project. At Essence 5+, she may use this Charm to craft three dot Artifacts.",
+      "rawData": "Summit-Piercing Touch\nCost: 10m, 1wp; Mins: Craft 5, Essence 3\nType: Simple\nKeywords: None\nDuration: Indefinite\nPrerequisite Charms: Ages-Echoing Wisdom\nThrough diligence, effort, and connectedness to the \nEssence of her art, the Solar learns to adapt the unfath-\nomable least wonders of the cosmos to the trades which \nshe has mastered. By using this Charm before she begins \na superior project to build a two-dot Artifact, she can \nplace that project in an unused major slot. Motes com-\nmitted to this Charm remain committed until the project \nis finished. If she relinquishes commitment, she must \ncreate a superior slot to carry the unfinished artifact, or \notherwise risk a catastrophic failure of the project. At \nEssence 5+, she may use this Charm to craft three dot \nArtifacts.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "5373bf1d-9f1d-32b1-a4bb-df84c74755af",
+      "name": "Vice-Miracle Technique",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "ca2eff00-914a-3fbc-b2d9-b140608b23e9"
+      ],
+      "cost": "—",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar crafter is constantly giving form to the wonders that live inside her mind. A Lawgiver with this Charm is\n\nparticularly fecund: once per season she may produce a completely finished two dot Artifact of the player’s choosing (or design). The Solar need not pay gold points to complete the project; the Artifact is already complete; the Storyteller should treat this as a piece of work she designed and completed in the margins of all her other projects, using expertise and efficiency to complete a wonder as an unspoken side project. The Solar earns no craft points for producing Artifacts in such a manner. However, if the player produces this Artifact in response to a problem, a question, or otherwise introduces their new invention as part of a socially-driven stunt that makes their character seem like a miraculous wonder-worker, she earns five gold points. At Essence 5+, this Charm can be used to produce a two or three dot Artifact.\n\nSpecial Activation Rules: This Charm can only be used by a character who has already constructed at least one Artifact rated two or higher, and is in the process of building at least one other.",
+      "rawData": "Vice-Miracle Technique\nCost: —; Mins: Craft 5, Essence 3\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Summit-Piercing Touch\nThe Solar crafter is constantly giving form to the wonders \nthat live inside her mind. A Lawgiver with this Charm is \nC H A R M S\nEX3\n291\nparticularly fecund: once per season she may produce a \ncompletely finished two dot Artifact of the player’s choos-\ning (or design). The Solar need not pay gold points to \ncomplete the project; the Artifact is already complete; the \nStoryteller should treat this as a piece of work she de-\nsigned and completed in the margins of all her other proj-\nects, using expertise and efficiency to complete a wonder \nas an unspoken side project. The Solar earns no craft points \nfor producing Artifacts in such a manner. However, if the \nplayer produces this Artifact in response to a problem, a \nquestion, or otherwise introduces their new invention as \npart of a socially-driven stunt that makes their character \nseem like a miraculous wonder-worker, she earns five gold \npoints. At Essence 5+, this Charm can be used to produce \na two or three dot Artifact. \nSpecial Activation Rules: This Charm can only be used \nby a character who has already constructed at least one \nArtifact rated two or higher, and is in the process of build-\ning at least one other.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "36688ed7-f7c4-393d-b16c-ca2dc2cf2459",
+      "name": "Unwinding Gyre Meditation",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "cdc547c9-5563-3f0a-9ff6-a598e6330958"
+      ],
+      "cost": "10m, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "After successfully completing a superior project for which the Solar earned gold points, the Solar may consume the entire gold point bonus to experience a surge of new potential. Using this Charm voids the Solar’s gold point bonus, but reduces the goal number of the next superior project by (Essence + 5), while adding an additional interval to the roll’s terminus (for extended rolls, see p.\n\n188). Using this Charm also increases the gold point bonus calculation for finishing the project from Artifact Rating\n\n* 2 * remaining terminus to Artifact Rating * 3 * remaining terminus. White points gained through superior projects are unaffected by use of this Charm. This Charm only applies to projects of an identical Artifact rating: if the Exalt voided the bonus from a two dot Artifact, this Charm only applies to the next two dot Artifact she attempts.\n\nThe Exalt may void subsequent bonuses gained with this Charm to increase the Artifact Rating multiplier by one each time (* 3, *4, *5, etc.), reducing the goal number by the current Essence rating (Essence + Essence + 5), and adding an additional terminus (two added instead of one the first time the bonus is voided, three the second time, and so on).",
+      "rawData": "Unwinding Gyre Meditation\nCost: 10m, 1wp; Mins: Craft 5, Essence 4\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Spirit-Gathering Industry\nAfter successfully completing a superior project for which \nthe Solar earned gold points, the Solar may consume the \nentire gold point bonus to experience a surge of new po-\ntential. Using this Charm voids the Solar’s gold point \nbonus, but reduces the goal number of the next superior \nproject by (Essence + 5), while adding an additional in-\nterval to the roll’s terminus (for extended rolls, see p. \n188). Using this Charm also increases the gold point bonus \ncalculation for finishing the project from Artifact Rating \n* 2 * remaining terminus to Artifact Rating * 3 * remain-\ning terminus. White points gained through superior proj-\nects are unaffected by use of this Charm. This Charm only \napplies to projects of an identical Artifact rating: if the \nExalt voided the bonus from a two dot Artifact, this Charm \nonly applies to the next two dot Artifact she attempts. \nThe Exalt may void subsequent bonuses gained with this \nCharm to increase the Artifact Rating multiplier by one \neach time (* 3, *4, *5, etc.), reducing the goal number by \nthe current Essence rating (Essence + Essence + 5), and \nadding an additional terminus (two added instead of one \nthe first time the bonus is voided, three the second time, \nand so on).",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "23bb1f1a-d649-3386-922d-0525c670a129",
+      "name": "God-Forge Within",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "decd4535-cba1-32f9-af1e-ecd24d19f3a7",
+        "1d36c647-53f2-397e-bff5-9305bbbdf4bf"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [
+        "Stackable"
+      ],
+      "duration": "Permanent",
+      "fullText": "",
+      "rawData": "God-Forge Within\nCost: —; Mins: Craft 5, Essence 4\nType: Permanent\nKeywords: Stackable\nDuration: Permanent\nPrerequisite Charms: Spirit-Gathering Industry\nSimilar to Dragon-Soul Emergence, this Charm represents \nthe expansion of the Solar’s physical and spiritual Essence, \nwhich allows her to encompass greater and more difficult \ncreations. This Charm may be purchased (Essence) times. \nEach purchase grants the Exalt two permanent legendary \nproject slots.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "fbc0719c-3cb5-3bd4-9bdb-857dd243d766",
+      "name": "Spirit-Stoking Elevation",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 5,
+      "prerequisites": [
+        "33c45534-1d86-3b27-9599-9a89aac29a08"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "This Charm allows the Solar to replace the experience points costs of certain Charms with an expenditure of white points at a rate of 5wxp:1xp. This Charm supports the costs of Lore Charms such as Flowing Mind Prana and Wyld-Shaping Technique, and hypothetical Charms with experience costs in Occult or Medicine. However, it does not cover experience costs from sorcerous projects or from the Charms of other Abilities.",
+      "rawData": "Spirit-Stoking Elevation\nCost: —; Mins: Craft 5, Essence 5\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Exegesis of the Distilled Form\nThis Charm allows the Solar to replace the experience \npoints costs of certain Charms with an expenditure of \nwhite points at a rate of 5wxp:1xp. This Charm supports \nthe costs of Lore Charms such as Flowing Mind Prana \nand Wyld-Shaping Technique, and hypothetical Charms \nwith experience costs in Occult or Medicine. However, it \ndoes not cover experience costs from sorcerous projects \nor from the Charms of other Abilities.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "31a5c09b-7f6b-34e2-9d15-99fc6aa8adb9",
+      "name": "Sun-Heart Tenacity",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 5,
+      "prerequisites": [],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "",
+      "rawData": "Sun-Heart Tenacity\nCost: —; Mins: Craft 5, Essence 5\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: God-Forge Within\nC H A P T E R  6\nEX3\n292\nCompleting a legendary project provides the Exalt with \nnew insights to the mysteries of the universe. Each time \nthe Solar completes such a project, this Charm provides \nten automatic non-Charm successes to the next superior \nor legendary project she attempts to finish.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "de953f2d-8d04-36f0-854c-51f3979cce38",
+      "name": "Wonder-Forging Genius",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 5,
+      "prerequisites": [
+        "23bb1f1a-d649-3386-922d-0525c670a129",
+        "d63d9cf6-f6b9-3da7-8f56-fddedd4eb5db",
+        "175bf47f-a45e-344e-b374-b5ee66b42847"
+      ],
+      "cost": "—",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "When she has ten or more legendary projects under way, she may use this Charm to complete one of them without further rolls or expenditures of craft points. This Charm has a similar function for Artifacts of a lower rating, so long as each of the ten Artifacts is the same rating.  This Charm may only be used once per story, and may not be used again until at least half of the current projects have been completed. Prematurely abandoned or failed projects do not count as having been completed. Using this Charm awards no craft points; the finished artifact is its own reward.",
+      "rawData": "Wonder-Forging Genius\nCost: —; Mins: Craft 5, Essence 5\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: God-Forge Within, Vice-Miracle \nTechnique\nAs proof of her illimitable soul, the Solar may induct a \nnew infinite god-weapon into the world of mortal matter. \nWhen she has ten or more legendary projects under way, \nshe may use this Charm to complete one of them without \nfurther rolls or expenditures of craft points. This Charm \nhas a similar function for Artifacts of a lower rating, so \nlong as each of the ten Artifacts is the same rating.  This \nCharm may only be used once per story, and may not be \nused again until at least half of the current projects have \nbeen completed. Prematurely abandoned or failed proj-\nects do not count as having been completed. Using this \nCharm awards no craft points; the finished artifact is its \nown reward.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "c0b7d43b-f142-3ef3-8899-3866c6dd970f",
+      "name": "Brass Scales Falling",
+      "ability": "Craft",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Solar’s efforts fleet and flash before her eyes, bringing her closer to an ineffable truth. For each 10 on a Craft roll made without using the Craft Excellency, the Exalt earns a silver point, to a limit of (Essence *2) points. This Charm may be repurchased, increasing the cap to (Essence\n\n* 3).",
+      "rawData": "Brass Scales Falling\nCost: —; Mins: Craft 3, Essence 1\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: None\nThe Solar’s efforts fleet and flash before her eyes, bring-\ning her closer to an ineffable truth. For each 10 on a Craft \nroll made without using the Craft Excellency, the Exalt \nearns a silver point, to a limit of (Essence *2) points. This \nCharm may be repurchased, increasing the cap to (Essence \n* 3).",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "8ed254ac-cd12-3129-8c63-f7d5bb94d933",
+      "name": "Red Anvils Ringing",
+      "ability": "Craft",
+      "minAbility": 4,
+      "minEssence": 1,
+      "prerequisites": [
+        "c0b7d43b-f142-3ef3-8899-3866c6dd970f"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Solar is permanently attuned to the Essence of her workmanship, making her instinctively aware of how her creativity moves the Essence of the world. This greater insight into productivity increases the amount of silver points she may gain from each basic objective by one. For rules on basic objectives, see page 240.",
+      "rawData": "Red Anvils Ringing\nCost: —; Mins: Craft 4, Essence 1\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Brass Scales Falling\nThe Solar is permanently attuned to the Essence of her \nworkmanship, making her instinctively aware of how her \ncreativity moves the Essence of the world. This greater \ninsight into productivity increases the amount of silver \npoints she may gain from each basic objective by one. For \nrules on basic objectives, see page 240.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "62fd4ac1-5c04-3f0d-b13e-38d3d93d98ce",
+      "name": "Chains Fall Away",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 1,
+      "prerequisites": [
+        "f4f3067e-4739-3bd4-ad9b-3b0f59cc3cc6",
+        "95cb9246-4bd2-3743-96b7-a27607af0b66"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "",
+      "rawData": "Chains Fall Away\nCost: —; Mins: Craft 5, Essence 1\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Red Anvils Ringing\nEach time the Solar achieves all three basic objectives on \nany Craft project, she gains one gold point.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "27ad7dae-ae2f-3f4c-a67d-15d02ac88b4e",
+      "name": "Craftsman Needs No Tools",
+      "ability": "Craft",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "6m",
+      "type": "Simple",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "One task",
+      "fullText": "A Solar who has mastered this Charm can work directly with her chosen material, shaping it with hands, breath, and voice. Without the need for tools or a workshop, the Exalt can start basic and major projects as soon as she has the proper ingredients, and can complete such works with blazing speed, often in just minutes or seconds. Using Craftsman Needs No Tools does allow for the Solar to gain craft point bonuses from her handiwork, and can be used equally well in both building and repair projects. Additionally, if the Solar uses tools to assist her work, the cost of the Charm is reduced by two motes. This Charm does not meaningfully speed the completion of superior or legendary projects.",
+      "rawData": "Craftsman Needs No Tools\nCost: 6m; Mins: Craft 3, Essence 1\nType: Simple\nKeywords: Mute\nDuration: One task\nPrerequisite Charms: None\nA Solar who has mastered this Charm can work directly \nwith her chosen material, shaping it with hands, breath, \nand voice. Without the need for tools or a workshop, the \nExalt can start basic and major projects as soon as she has \nthe proper ingredients, and can complete such works with \nblazing speed, often in just minutes or seconds. Using \nCraftsman Needs No Tools does allow for the Solar to gain \ncraft point bonuses from her handiwork, and can be used \nequally well in both building and repair projects. Addi-\ntionally, if the Solar uses tools to assist her work, the cost \nof the Charm is reduced by two motes. This Charm does \nnot meaningfully speed the completion of superior or leg-\nendary projects.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "f06a4c38-d7ed-337f-a2b2-d812fc992d42",
+      "name": "Peerless Paragon of Craft",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "—",
+      "type": "",
+      "keywords": [],
+      "duration": "",
+      "fullText": "Type: Permanent Keywords: None Duration: Permanent Prerequisite Charms: Chains Fall Away, Craftsman Needs No Tools As the Solar works deeper into the soul of her craft, she unlocks wisps and flashes of greater wonders, ancient genius, and dim visions of a lost age. Upon purchasing this Charm, roll a free full (Intelligence + Craft) Excellency and convert successes to silver points. In addition, each 10 on this roll also rewards the Solar with a gold point.\n\nThis roll is repeated at the end of each story.",
+      "rawData": "Peerless Paragon of Craft\nCost: —; Mins: Craft 5, Essence 1\nC H A R M S\nEX3\n293\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Chains Fall Away, Craftsman Needs \nNo Tools\nAs the Solar works deeper into the soul of her craft, she \nunlocks wisps and flashes of greater wonders, ancient \ngenius, and dim visions of a lost age. Upon purchasing this \nCharm, roll a free full (Intelligence + Craft) Excellency \nand convert successes to silver points. In addition, each \n10 on this roll also rewards the Solar with a gold point. \nThis roll is repeated at the end of each story.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "e777d16e-c364-3538-a920-f72cbc8a5531",
+      "name": "Supreme Perfection of Craft",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "f06a4c38-d7ed-337f-a2b2-d812fc992d42",
+        "09777ca9-241b-3110-8419-c7b95b7bdebb"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "Upon purchasing this Charm, the Solar earns one gold point and (Essence + 2) silver points for every Craft Ability she has rated at 5. This bonus recurs each time the Exalt gains a full night’s sleep, but can be earned no more than once per day, nor can it be earned more than once during a period of narrated downtime (for example, if the Storyteller says “It takes a month for your ship to reach its destination,” and the character crafted throughout that month of sailing, she would be eligible for one bonus, not 28 of them).",
+      "rawData": "Supreme Perfection of Craft\nCost: —; Mins: Craft 5, Essence 2\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Peerless Paragon of Craft, Supreme \nCelestial Focus\nUpon purchasing this Charm, the Solar earns one gold \npoint and (Essence + 2) silver points for every Craft Ability \nshe has rated at 5. This bonus recurs each time the Exalt \ngains a full night’s sleep, but can be earned no more than \nonce per day, nor can it be earned more than once during \na period of narrated downtime (for example, if the Story-\nteller says “It takes a month for your ship to reach its \ndestination,” and the character crafted throughout that \nmonth of sailing, she would be eligible for one bonus, not \n28 of them).",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "4642ae30-b44a-3274-9e5b-396f6b670bf9",
+      "name": "Thousand-Forge Hands",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "27ad7dae-ae2f-3f4c-a67d-15d02ac88b4e"
+      ],
+      "cost": "10m, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Exalt’s hands flow with the Essence of a thousand craftsmen; her urge is legion and her well is bottomless.\n\nWhen she creates a superior or legendary slot, she may use this Charm to greatly speed her efforts to begin the project (p. 239). This may be represented as the Exalt thinking, planning, and working with impossible speed.\n\nThough it cannot dictate the speed at which she gathers materials or performs tasks not directly associated with Craft, this Charm guarantees that given all such materials are provided, and all such tasks have been completed, the design and forging work that comes before she can roll to finish takes no longer than (6 - Essence) months for N/A and five dot Artifacts, and no more than (6 Essence) weeks for all else.",
+      "rawData": "Thousand-Forge Hands\nCost: 10m, 1wp; Mins: Craft 5, Essence 2\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Craftsman Needs No Tools\nThe Exalt’s hands flow with the Essence of a thousand \ncraftsmen; her urge is legion and her well is bottomless. \nWhen she creates a superior or legendary slot, she may \nuse this Charm to greatly speed her efforts to begin the \nproject (p. 239). This may be represented as the Exalt \nthinking, planning, and working with impossible speed. \nThough it cannot dictate the speed at which she gathers \nmaterials or performs tasks not directly associated with \nCraft, this Charm guarantees that given all such materi-\nals are provided, and all such tasks have been completed, \nthe design and forging work that comes before she can \nroll to finish takes no longer than (6 - Essence) months \nfor N/A and five dot Artifacts, and no more than (6 - \nEssence) weeks for all else. \nC H A P T E R  6\nEX3\n294",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "dd0a3ace-6e62-3856-b162-5743a9b191a9",
+      "name": "Divine Transcendence of Craft",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "e777d16e-c364-3538-a920-f72cbc8a5531"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "This Charm instantly grants the Solar three white points when purchased, and five additional white points at the end of each story.",
+      "rawData": "Divine Transcendence of Craft\nCost: —; Mins: Craft 5, Essence 3\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Supreme Perfection of Craft\nThis Charm instantly grants the Solar three white points \nwhen purchased, and five additional white points at the \nend of each story.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "c76f439b-18de-322f-ada0-10ffbac0e8d7",
+      "name": "Words-as-Workshop Method",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "27ad7dae-ae2f-3f4c-a67d-15d02ac88b4e",
+        "5373bf1d-9f1d-32b1-a4bb-df84c74755af"
+      ],
+      "cost": "5m, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Mute",
+        "Stackable"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar speaks the implements of her trade into existence. Upon using this Charm, the Exalt describes Artifact tools she needs to complete the present task, be it one of Craft, Lore, Medicine, Occult, or Investigation. The Essence of the world shapes itself into an artifact matching her description, with powers and active Evocations commensurate to the Exalt’s description and the Storyteller’s whims. The Exalt may use said Artifacts without paying an attunement cost, but if she wishes to lend them out, the borrower must pay an attunement cost in order to use them. Such Artifacts can be as simple or complex as needed, and may even have personalities. With each use of this Charm, the Solar may describe up to (Essence) tools, but the Storyteller should be aware of diminishing returns; the overall effectiveness should be based on the player’s stunts and descriptions. In any case, these Artifact assistants allow for unspecified bonuses ranging from non-Charm dice, to the ability to listen for a daiklave’s heartbeat, to holding a patient’s soul in place while the Solar performs continual, complex surgery to fix horrific injury. Using Craftsman Needs No Tools with appropriate created Artifacts may allow the Exalt to work on superior or legendary Artifact projects at inopportune moments, with a stunt. Artifacts created by this Charm vanish in a blaze of Essence as soon as the Exalt is finished using them, or at the end of the scene, whichever comes first.\n\nRepairing and Reforging",
+      "rawData": "Words-as-Workshop Method\nCost: 5m, 1wp; Mins: Craft 5, Essence 3 \nType: Simple \nKeywords: Mute, Stackable \nDuration: Instant \nPrerequisite Charms: Craftsman Needs No Tools, \nVice-Miracle Technique\nThe Solar speaks the implements of her trade into exis-\ntence. Upon using this Charm, the Exalt describes Arti-\nfact tools she needs to complete the present task, be it one \nof Craft, Lore, Medicine, Occult, or Investigation. The \nEssence of the world shapes itself into an artifact match-\ning her description, with powers and active Evocations \ncommensurate to the Exalt’s description and the Story-\nteller’s whims. The Exalt may use said Artifacts without \npaying an attunement cost, but if she wishes to lend them \nout, the borrower must pay an attunement cost in order \nto use them. Such Artifacts can be as simple or complex \nas needed, and may even have personalities. With each \nuse of this Charm, the Solar may describe up to (Essence) \ntools, but the Storyteller should be aware of diminishing \nreturns; the overall effectiveness should be based on the \nplayer’s stunts and descriptions. In any case, these \nArtifact assistants allow for unspecified bonuses ranging \nfrom non-Charm dice, to the ability to listen for a dai-\nklave’s heartbeat, to holding a patient’s soul in place while \nthe Solar performs continual, complex surgery to \nfix horrific injury. Using Craftsman Needs No Tools with \nappropriate created Artifacts may allow the Exalt to \nwork on superior or legendary Artifact projects at inop-\nportune moments, with a stunt. Artifacts created by this \nCharm vanish in a blaze of Essence as soon as the Exalt \nis finished using them, or at the end of the scene, which-\never comes first. \nRepairing and Reforging",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "5ccd8759-3b7f-36ed-a73e-6c247dc55ec4",
+      "name": "Shattering Grasp",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 1,
+      "prerequisites": [
+        "27ad7dae-ae2f-3f4c-a67d-15d02ac88b4e"
+      ],
+      "cost": "6m",
+      "type": "Simple",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "One task",
+      "fullText": "An Exalt with this Charm knows the strengths and weaknesses of her chosen materials and may rend them down with a mixture of light, precise touches and wringing blows. She may rend apart stone with her hands, destroy a door by crossing it with her palms and may disassemble a steel portcullis with her fingertips. The two former examples represent basic tasks, while the latter represents a major project. In any case, she needs no tools to perform such tasks, only an appropriate Craft Ability and a few moments time. Disassembly does not accrue the Exalt any craft points, though if she uses the rent material to build new objects or to repair the ones she has damaged, she may earn craft points accordingly.",
+      "rawData": "Shattering Grasp\nCost: 6m; Mins: Craft 5, Essence 1 \nType: Simple \nKeywords: Mute \nDuration: One task \nPrerequisite Charms: Craftsman Needs No Tools\nAn Exalt with this Charm knows the strengths and weak-\nnesses of her chosen materials and may rend them down \nwith a mixture of light, precise touches and wringing \nblows. She may rend apart stone with her hands, destroy \na door by crossing it with her palms and may disassemble \na steel portcullis with her fingertips. The two former ex-\namples represent basic tasks, while the latter represents \na major project. In any case, she needs no tools to perform \nsuch tasks, only an appropriate Craft Ability and a few \nmoments time. Disassembly does not accrue the Exalt any \ncraft points, though if she uses the rent material to build \nnew objects or to repair the ones she has damaged, she \nmay earn craft points accordingly.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "96a69ac0-2d5d-3da4-9e7d-d84c3435460c",
+      "name": "Durability-Enhancing Technique",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 1,
+      "prerequisites": [
+        "27ad7dae-ae2f-3f4c-a67d-15d02ac88b4e"
+      ],
+      "cost": "5m",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar’s keen understanding of an object allows her treat it with skill and Essence, greatly increasing its durability. The Exalt may temper a blade, reinforce a door, or make a sail fireproof or nearly impenetrable to mundane attacks. She may make an inscription in marble that will not fade even after a hundred years of wind and rain. The Solar spends five minutes to an hour treating an object no larger than (Essence) yards in radius, increasing the difficulty to damage it by two or (Essence), whichever is larger. Objects which are fortuitously protected during the course of a scene, or which prove in some way to raise the Exalt’s social standing, accrue her a silver or gold point ON POINT-GENERATING CHARMS Charms such as Supreme Perfection of Craft only function if the Solar is actively using Craft in each story. A character who sleeps a thousand years will not awaken to an infinity of craft points awaiting her.\n\nLikewise, a character who spends a season lazing about Dajaz and romancing the revelers there should not accrue very many points in general. These awards are specifically furnished for those who are extremely hard working crafters and inventers by nature.\n\nCharacters who also spend many scenes studying, researching, tinkering, or performing sorcerous projects or medical experiments also qualify for these rewards, as long as they use Craft intermittently.\n\nfor basic or major objects, respectively, regardless of whether she built them or not. Durability conferred by this Charm is conferred permanently. The edges of blades strengthened by this technique do not dull after an entire day of hacking, and a reinforced helm may not shatter when struck by the blow of a mace.",
+      "rawData": "Durability-Enhancing Technique\nCost: 5m; Mins: Craft 5, Essence 1 \nType: Simple \nKeywords: None \nDuration: Instant \nPrerequisite Charms: Craftsman Needs No Tools\nThe Solar’s keen understanding of an object allows her \ntreat it with skill and Essence, greatly increasing its du-\nrability. The Exalt may temper a blade, reinforce a door, \nor make a sail fireproof or nearly impenetrable to mundane \nattacks. She may make an inscription in marble that will \nnot fade even after a hundred years of wind and rain. The \nSolar spends five minutes to an hour treating an object no \nlarger than (Essence) yards in radius, increasing the dif-\nficulty to damage it by two or (Essence), whichever is \nlarger. Objects which are fortuitously protected during \nthe course of a scene, or which prove in some way to raise \nthe Exalt’s social standing, accrue her a silver or gold point \nON POINT-GENERATING CHARMS\nCharms such as Supreme Perfection of Craft only \nfunction if the Solar is actively using Craft in each \nstory. A character who sleeps a thousand years will \nnot awaken to an infinity of craft points awaiting her. \nLikewise, a character who spends a season lazing \nabout Dajaz and romancing the revelers there should \nnot accrue very many points in general. These awards \nare specifically furnished for those who are extreme-\nly hard working crafters and inventers by nature. \nCharacters who also spend many scenes studying, \nresearching, tinkering, or performing sorcerous proj-\nects or medical experiments also qualify for these \nrewards, as long as they use Craft intermittently.\nC H A R M S\nEX3\n295\nfor basic or major objects, respectively, regardless of \nwhether she built them or not. Durability conferred by \nthis Charm is conferred permanently. The edges of blades \nstrengthened by this technique do not dull after an entire \nday of hacking, and a reinforced helm may not shatter \nwhen struck by the blow of a mace.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "a94710d6-7e18-36d9-b6c2-4c0d9fc280d8",
+      "name": "Crack-Mending Technique",
+      "ability": "Craft",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "10m, 1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "Crack-Mending Technique depicts a Lawgiver whose talent and touch is such that she can repair even impossibly destroyed things. This Charm can’t restore things that were completely unmade (for example, by powerful sorcery, digestion in a behemoth’s gullet, or immersion in molten rock) but it can remake extremely damaged things like shattered crystal, burnt paper, splintered wood and twisted metal. As the Solar works with the remains of a broken or destroyed object, she may slowly piece it together with word, touch, and Essence over the course of (10 - Essence) hours. If used while under the effect of Craftsman Needs No Tools, this time is reduced to minutes or seconds, and eliminates both the need for tools and in many cases for materials. This Charm can restore magical objects but not metaphorical concepts: it cannot mend a broken heart, nor can it put the magic back into a First Age construct whose magic has fled or faded away. This Charm may lower the difficulty of repairing Artifacts that are fragmented or shattered, while also making such a repair possible, but otherwise does not remove the material requirements or affect the goal number.",
+      "rawData": "Crack-Mending Technique\nCost: 10m, 1wp; Mins: Craft 3, Essence 1 \nType: Simple \nKeywords: None \nDuration: Instant \nPrerequisite Charms: None\nCrack-Mending Technique depicts a Lawgiver whose \ntalent and touch is such that she can repair even impos-\nsibly destroyed things. This Charm can’t restore things \nthat were completely unmade (for example, by powerful \nsorcery, digestion in a behemoth’s gullet, or immersion in \nmolten rock) but it can remake extremely damaged things \nlike shattered crystal, burnt paper, splintered wood and \ntwisted metal. As the Solar works with the remains of a \nbroken or destroyed object, she may slowly piece it to-\ngether with word, touch, and Essence over the course of \n(10 - Essence) hours. If used while under the effect of \nCraftsman Needs No Tools, this time is reduced to minutes \nor seconds, and eliminates both the need for tools and in \nmany cases for materials. This Charm can restore magical \nobjects but not metaphorical concepts: it cannot mend a \nbroken heart, nor can it put the magic back into a First \nAge construct whose magic has fled or faded away. This \nCharm may lower the difficulty of repairing Artifacts that \nare fragmented or shattered, while also making such a \nrepair possible, but otherwise does not remove the mate-\nrial requirements or affect the goal number.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "27c37b67-c5fc-31c4-a3ba-be1f2777a744",
+      "name": "Time Heals Nothing",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 1,
+      "prerequisites": [
+        "a94710d6-7e18-36d9-b6c2-4c0d9fc280d8"
+      ],
+      "cost": "4m, 1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Lawgiver can press aside the veil of time to deliver the world from its ravages. This Charm allows the Exalt to instantly create a major project slot for the purposes of repairs. This slot vanishes when the repair is completed. An Essence 3+ repurchase allows the Solar to alternately pay six motes, one Willpower to create a temporary superior repair slot.",
+      "rawData": "Time Heals Nothing\nCost: 4m, 1wp; Mins: Craft 5, Essence 1 \nType: Simple \nKeywords: None \nDuration: Instant \nPrerequisite Charms: Crack-Mending Technique\nThe Lawgiver can press aside the veil of time to deliver \nthe world from its ravages. This Charm allows the Exalt \nto instantly create a major project slot for the purposes \nof repairs. This slot vanishes when the repair is complet-\ned. An Essence 3+ repurchase allows the Solar to alter-\nnately pay six motes, one Willpower to create a temporary \nsuperior repair slot.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "c5170647-3855-3ec0-951f-7d5d74dcdcb1",
+      "name": "Blood Diamond Sweat",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 1,
+      "prerequisites": [
+        "7bf27962-202d-32a6-afa0-15e52bac76d6"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "",
+      "rawData": "Blood Diamond Sweat\nCost: —; Mins: Craft 5, Essence 1 \nType: Permanent \nKeywords: None \nDuration: Permanent \nPrerequisite Charms: Time Heals Nothing\nAs the Exalt raises her world from ash and ruin, she is \nrenewed by her own labor and sacrifice. This Charm \ndepicts a Solar who draws greater understanding from \nthe restoration of objects than mortal crafters. After com-\npleting a repair, the Exalt gains one additional craft point \nfor every basic objective completed. If she is repairing an \nArtifact, she earns (Artifact’s rating) gold points and one \nwhite point. Legendary Artifacts offer no repair rewards.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "714cc86c-9ca8-39ad-aad3-ee282fb7f829",
+      "name": "Object-Strengthening Touch",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "96a69ac0-2d5d-3da4-9e7d-d84c3435460c"
+      ],
+      "cost": "6m",
+      "type": "Simple",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "One scene",
+      "fullText": "With a bare touch, the Solar can infuse an object of (Essence + 2) yards in radius with hardening Essence, greatly increasing its durability. Using this Charm increases the difficulty to destroy the object by the (Solar’s Essence + 1). If the Solar is holding the object, it becomes nighunbreakable without magic. Objects strengthened with this Charm also become resistant to fire, acid, freezing, and other forms of damage. The benefits of this Charm last only one scene, but they stack with the effects of the prerequisite for that scene. Use of this Charm does not accrue craft points.",
+      "rawData": "Object-Strengthening Touch\nCost: 6m; Mins: Craft 5, Essence 2 \nType: Simple \nKeywords: Mute \nDuration: One scene \nPrerequisite Charms: Durability-Enhancing Technique\nWith a bare touch, the Solar can infuse an object of \n(Essence + 2) yards in radius with hardening Essence, \ngreatly increasing its durability. Using this Charm increas-\nes the difficulty to destroy the object by the (Solar’s Essence \n+ 1). If the Solar is holding the object, it becomes nigh-\nunbreakable without magic. Objects strengthened with \nthis Charm also become resistant to fire, acid, freezing, \nand other forms of damage. The benefits of this Charm \nlast only one scene, but they stack with the effects of the \nprerequisite for that scene. Use of this Charm does not \naccrue craft points.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "f508fd1d-b392-345a-bb15-67e49bce50e3",
+      "name": "Chaos-Resistance Preparation",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "714cc86c-9ca8-39ad-aad3-ee282fb7f829"
+      ],
+      "cost": "5m",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar can reinforce an object so that the Wyld cannot touch it. The Lawgiver spends up to an hour treating an object no more than (Essence) yards in radius. If the object is worn or wielded, it protects itself and the wielder/ wearer from the twisting effects of the Wyld. This protection is limited: in the bordermarches a character can go (Solar’s Essence) days without ill effect. This resistance is halved in the middlemarches, and reduced to hours in the deep Wyld. If the character only has partial protection—say a caravan guard wielding only a treated pike— then this protection is reduced to hours and minutes respectively. Chaos-Resistance Preparation can also be used to treat objects, and like and labeled objects traveling in auspicious arrays stack their protections, allowing groups of treated objects to survive Wyld journeys with the same\n\nbenefits of a character wearing multiple treated items. At Essence 3+, the Exalt may pay fifteen motes, one Willpower to use this Charm on the project scale (p. 239), working for (10 - Stamina) hours to cover a considerable number of goods and vehicles or arms and armor. She may protect the hull of a small trade ship, as well as its rigging and sails, and need not protect the cargo or provisions below decks, or she may protect several wagons, singlehandedly preparing a small caravan for a trip through chaos-tainted lands.",
+      "rawData": "Chaos-Resistance Preparation\nCost: 5m; Mins: Craft 5, Essence 2 \nType: Simple \nKeywords: None \nDuration: Instant \nPrerequisite Charms: Object-Strengthening Touch\nThe Solar can reinforce an object so that the Wyld cannot \ntouch it. The Lawgiver spends up to an hour treating an \nobject no more than (Essence) yards in radius. If the object \nis worn or wielded, it protects itself and the wielder/\nwearer from the twisting effects of the Wyld. This protec-\ntion is limited: in the bordermarches a character can go \n(Solar’s Essence) days without ill effect. This resistance \nis halved in the middlemarches, and reduced to hours in \nthe deep Wyld. If the character only has partial protec-\ntion—say a caravan guard wielding only a treated pike—\nthen this protection is reduced to hours and minutes re-\nspectively. Chaos-Resistance Preparation can also be used \nto treat objects, and like and labeled objects traveling in \nauspicious arrays stack their protections, allowing groups \nof treated objects to survive Wyld journeys with the same \nC H A P T E R  6\nEX3\n296\nbenefits of a character wearing multiple treated items. At \nEssence 3+, the Exalt may pay fifteen motes, one Will-\npower to use this Charm on the project scale (p. 239), \nworking for (10 - Stamina) hours to cover a considerable \nnumber of goods and vehicles or arms and armor. She may \nprotect the hull of a small trade ship, as well as its rigging \nand sails, and need not protect the cargo or provisions \nbelow decks, or she may protect several wagons, single-\nhandedly preparing a small caravan for a trip through \nchaos-tainted lands.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "5ac8b456-0970-33ae-a868-bc487ba5e574",
+      "name": "Breach-Healing Method",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "27c37b67-c5fc-31c4-a3ba-be1f2777a744"
+      ],
+      "cost": "7m",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "One task",
+      "fullText": "With the return of the Solar Exalted comes the return of old magic. The power of the Sun’s Essence flows in Creation once more. With this Charm, the Solar establishes a field of (Essence * 2) yards in radius, in which the Essence of the world is quickened with Solar power, where old things come alive again, and truly wondrous things may happen. Anyone standing in this field gains a nonCharm dice bonus to their Craft, Lore, Occult, and Medicine rolls equal to the Solar’s Essence. In addition, repair and Medicine rolls are made at one less difficulty. The Solar must be attempting to repair an object or treat an injury to use this Charm, and its effect lasts until her work is finished. Characters who stand within the circle of the Solar’s influence see her work with greater clarity and understanding.",
+      "rawData": "Breach-Healing Method\nCost: 7m; Mins: Craft 5, Essence 2\nType: Simple\nKeywords: None\nDuration: One task\nPrerequisite Charms: Time Heals Nothing\nWith the return of the Solar Exalted comes the return of \nold magic. The power of the Sun’s Essence flows in Cre-\nation once more. With this Charm, the Solar establishes \na field of (Essence * 2) yards in radius, in which the \nEssence of the world is quickened with Solar power, where \nold things come alive again, and truly wondrous things \nmay happen. Anyone standing in this field gains a non-\nCharm dice bonus to their Craft, Lore, Occult, and Med-\nicine rolls equal to the Solar’s Essence. In addition, repair \nand Medicine rolls are made at one less difficulty. The \nSolar must be attempting to repair an object or treat an \ninjury to use this Charm, and its effect lasts until her work \nis finished. Characters who stand within the circle of the \nSolar’s influence see her work with greater clarity and \nunderstanding.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "2681b7b0-127d-3779-b423-1435f979e80c",
+      "name": "Design Beyond Limit",
+      "ability": "Craft",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "a94710d6-7e18-36d9-b6c2-4c0d9fc280d8",
+        "4abe3a28-3bb8-396f-8cf4-f32dd43550d6"
+      ],
+      "cost": "10m, 1wp, 3xp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "A Solar who has the power to build an Artifact may also temper it with greater power. To use this Charm, the Exalt must have an Artifact weapon to work with, and the owner of the weapon must have unlocked all of its Evocations.\n\nTypically this means the Artifact has a rating of three or four dots, as Artifacts rated five or N/A usually have no known limit to their number of inactive Evocations. With this Charm, the Exalt spends (10 - Essence) hours reforging the weapon in her workshop. When she is finished, the weapon gains one new Emerald, Sapphire, and Adamant Evocation. Each of these Evocations is inactive and must still be learned. If the weapon does not belong to the Solar, the experience points cost can be paid by the weapon’s owner. This Charm may not be used twice on the same weapon until the added Evocations have been mastered. The nature of added Evocations will reflect the wielder’s spirit, the weapon’s attitude and character, and the forger’s design.",
+      "rawData": "Design Beyond Limit\nCost: 10m, 1wp, 3xp; Mins: Craft 4, Essence 2\nType: Simple\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Crack-Mending Technique, Crafts-\nman Needs No Tools\nA Solar who has the power to build an Artifact may also \ntemper it with greater power. To use this Charm, the Exalt \nmust have an Artifact weapon to work with, and the owner \nof the weapon must have unlocked all of its Evocations. \nTypically this means the Artifact has a rating of three or \nfour dots, as Artifacts rated five or N/A usually have no \nknown limit to their number of inactive Evocations. With \nthis Charm, the Exalt spends (10 - Essence) hours reforg-\ning the weapon in her workshop. When she is finished, \nthe weapon gains one new Emerald, Sapphire, and \nAdamant Evocation. Each of these Evocations is inactive \nand must still be learned. If the weapon does not belong \nto the Solar, the experience points cost can be paid by the \nweapon’s owner. This Charm may not be used twice on \nthe same weapon until the added Evocations have been \nmastered. The nature of added Evocations will reflect the \nwielder’s spirit, the weapon’s attitude and character, and \nthe forger’s design.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "7c789376-467f-3929-9dcf-0e99406e3f57",
+      "name": "The Art of Permanence",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "f508fd1d-b392-345a-bb15-67e49bce50e3"
+      ],
+      "cost": "6m, 1wxp",
+      "type": "Supplemental",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "A Solar who uses this Charm can invest her works with magic, causing them to endure forever. Candles spun by her hands burn forever, and a horse wearing shoes from her forge need never be shod again. This Charm only affects basic and major projects, and does not prevent created items from being destroyed by direct attack or overwhelming traumatic damage such as being caught in an explosion or buried under a mountain. In addition, such objects are indelibly marked by the Solar’s touch. If she claims to be the builder of a torch that never ceases burning, or a roof that never leaks, characters instinctively know it to be true without needing further proof. Such objects may also render the Exalt’s identity known to beings with particular Investigation or Occult magic. If she encounters her own works from a past life, the Lawgiver will automatically recognize them as her own.",
+      "rawData": "The Art of Permanence\nCost: 6m, 1wxp; Mins: Craft 5, Essence 3\nType: Supplemental\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Chaos-Resistance Preparation\nA Solar who uses this Charm can invest her works with \nmagic, causing them to endure forever. Candles spun by \nher hands burn forever, and a horse wearing shoes from \nher forge need never be shod again. This Charm only \naffects basic and major projects, and does not prevent \ncreated items from being destroyed by direct attack or \noverwhelming traumatic damage such as being caught in \nan explosion or buried under a mountain. In addition, \nsuch objects are indelibly marked by the Solar’s touch. If \nshe claims to be the builder of a torch that never ceases \nburning, or a roof that never leaks, characters instinctive-\nly know it to be true without needing further proof. Such \nobjects may also render the Exalt’s identity known to \nbeings with particular Investigation or Occult magic. If \nshe encounters her own works from a past life, the Law-\ngiver will automatically recognize them as her own.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "35eb8772-da5c-3aee-9304-3c2d45cac0d7",
+      "name": "Realizing the Form Supernal",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "5ac8b456-0970-33ae-a868-bc487ba5e574"
+      ],
+      "cost": "5m, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The First Age was raised by the hands of the Solar Exalted, and they alone can restore its lost glories. When using Breach-Healing Method to repair an Artifact, the Solar may use this Charm to lower the repair difficulty by one.\n\nThe moment she touches the damaged Artifact, the goal number to repair it is reduced by her (Intelligence * Essence)—the Artifact is seen to partially reform, its shattered parts flying together in her hands. This can fully restore certain objects. This Charm may be used once per story, but may be reset by completing an Artifact repair without it.",
+      "rawData": "Realizing the Form Supernal\nCost: 5m, 1wp; Mins: Craft 5, Essence 3\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Breach-Healing Method\nThe First Age was raised by the hands of the Solar Exalted, \nand they alone can restore its lost glories. When using \nBreach-Healing Method to repair an Artifact, the Solar \nmay use this Charm to lower the repair difficulty by one. \nThe moment she touches the damaged Artifact, the goal \nnumber to repair it is reduced by her (Intelligence * \nEssence)—the Artifact is seen to partially reform, its shat-\ntered parts flying together in her hands. This can fully \nrestore certain objects. This Charm may be used once per \nstory, but may be reset by completing an Artifact repair \nwithout it.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "fcdf64ca-0d10-36a6-a8d6-00aaccbeb45f",
+      "name": "Celestial Reforging Technique",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [],
+      "cost": "10m, 1wp, 3xp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "",
+      "fullText": "Duration: Instant Prerequisite Charms: Design Beyond Limit Carrying a daiklave or other Artifact weapon into her forge, the Solar may enact a working of hammer and flame, blood and Essence, to coax and reshape the nature of an Exalted weapon, reshaping its current active Evocations.\n\nThis process takes (10 - Essence) hours, and allows the weapon’s owner’s player to change the weapon’s current active Evocations. If the Solar does not own the weapon she is reforging, the owner can pay the experience point cost of the Charm’s activation. This Charm may only be used on a particular weapon once per story.\n\nPower",
+      "rawData": "Celestial Reforging Technique\nCost: 10m, 1wp, 3xp; Mins: Craft 5, Essence 3\nType: Simple\nKeywords: None\nC H A R M S\nEX3\n297\nDuration: Instant\nPrerequisite Charms: Design Beyond Limit\nCarrying a daiklave or other Artifact weapon into her \nforge, the Solar may enact a working of hammer and flame, \nblood and Essence, to coax and reshape the nature of an \nExalted weapon, reshaping its current active Evocations. \nThis process takes (10 - Essence) hours, and allows the \nweapon’s owner’s player to change the weapon’s current \nactive Evocations. If the Solar does not own the weapon \nshe is reforging, the owner can pay the experience point \ncost of the Charm’s activation. This Charm may only be \nused on a particular weapon once per story.   \nPower",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "e089a0f9-ec2b-3efd-9f09-17d02774ecaa",
+      "name": "Flawless Handiwork Method",
+      "ability": "Craft",
+      "minAbility": 1,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "6m",
+      "type": "Supplemental",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar capitalizes on her own genius. Her hands and Essence flow in tune with the spirit of her craft, turning even the shoddiest materials into sublime masterworks.\n\nCraft rolls supplemented by this Charm reroll 10s until 10s fail to appear. At Craft 3+, this Charm may be repurchased, allowing the Exalt to also reroll 6s until 6s fail to appear.",
+      "rawData": "Flawless Handiwork Method\nCost: 6m; Mins: Craft 1, Essence 1\nType: Supplemental\nKeywords: None\nDuration: Instant\nPrerequisite Charms: None\nThe Solar capitalizes on her own genius. Her hands and \nEssence flow in tune with the spirit of her craft, turning \neven the shoddiest materials into sublime masterworks. \nCraft rolls supplemented by this Charm reroll 10s until \n10s fail to appear. At Craft 3+, this Charm may be repur-\nchased, allowing the Exalt to also reroll 6s until 6s fail \nto appear.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "542f0dca-d55d-3706-9604-05e8f140b957",
+      "name": "Triumph-Forging Eye",
+      "ability": "Craft",
+      "minAbility": 2,
+      "minEssence": 1,
+      "prerequisites": [
+        "e089a0f9-ec2b-3efd-9f09-17d02774ecaa"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Exalt sees forward to her success and approaches a problem with an unerring clarity of vision. Once per week, the Exalt may apply a free full Craft Excellency to any one roll.",
+      "rawData": "Triumph-Forging Eye\nCost: —; Mins: Craft 2, Essence 1\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Flawless Handiwork Method\nThe Exalt sees forward to her success and approaches \na problem with an unerring clarity of vision. Once per \nweek, the Exalt may apply a free full Craft Excellency to \nany one roll.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "47370b0d-9279-3202-8835-32ac1f707f1a",
+      "name": "Supreme Masterwork Focus",
+      "ability": "Craft",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "e089a0f9-ec2b-3efd-9f09-17d02774ecaa"
+      ],
+      "cost": "6m",
+      "type": "Supplemental",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "By shearing away all distractions, the Exalt may recognize the strongest elements of her design as she brings them forth, enhancing them to the betterment of the entire project. This Charm allows the Solar to supplement (Attribute + Craft) rolls for basic and major projects with double 9s. At Craft 5, Essence 2+, it may be repurchased, allowing the Exalt to alternatively spend five motes, one Willpower, and one gold point to supplement a basic, major, or superior project roll with double 8s. At Craft 5, Essence 3+, it may be repurchased a third time, allowing the Exalt to pay two motes and one white point to grant any one (Attribute + Craft) roll double 7s",
+      "rawData": "Supreme Masterwork Focus\nCost: 6m; Mins: Craft 3, Essence 1\nType: Supplemental\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Flawless Handiwork Method\nBy shearing away all distractions, the Exalt may recognize the \nstrongest elements of her design as she brings them forth, en-\nhancing them to the betterment of the entire project. This \nCharm allows the Solar to supplement (Attribute + Craft) rolls \nfor basic and major projects with double 9s. At Craft 5, Essence \n2+, it may be repurchased, allowing the Exalt to alternatively \nspend five motes, one Willpower, and one gold point to sup-\nplement a basic, major, or superior project roll with double \n8s. At Craft 5, Essence 3+, it may be repurchased a third time, \nallowing the Exalt to pay two motes and one white point to \ngrant any one (Attribute + Craft) roll double 7s",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "b03d24ea-d0a0-317b-8ae3-def45870d65a",
+      "name": "Bright-Forging Prana",
+      "ability": "Craft",
+      "minAbility": 3,
+      "minEssence": 2,
+      "prerequisites": [
+        "e089a0f9-ec2b-3efd-9f09-17d02774ecaa"
+      ],
+      "cost": "—",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Lawgiver reaches beyond herself to touch the creative energy that lies just beyond her reach. This Charm may be used once per story, allowing the Solar the use of (Essence or three, whichever is greater) Craft Charms she has yet to learn. The Solar does not need to meet the Essence minimums for these Charms, though she must still meet the Ability minimum. Also, she must know the prerequisite of each Charm she wishes to use. Charms enabled by Bright-Forging Prana do count as the prerequisites of other Charms the Solar might enable through use of this Charm. Once Bright-Forging Prana has been used, the Solar must pay the activation cost of each Charm.\n\nCharms enabled by Bright-Forging Prana may be used for the rest of the story, but only on the project they were initially employed for. Bright-Forging Prana does not function to give the Solar automatic craft point bonuses from Charms such as Peerless Paragon of Craft.",
+      "rawData": "Bright-Forging Prana\nCost: —; Mins: Craft 3, Essence 2\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Flawless Handiwork Method\nThe Lawgiver reaches beyond herself to touch the cre-\native energy that lies just beyond her reach. This Charm \nmay be used once per story, allowing the Solar the use of \n(Essence or three, whichever is greater) Craft Charms she \nhas yet to learn. The Solar does not need to meet the \nEssence minimums for these Charms, though she must \nstill meet the Ability minimum. Also, she must know the \nprerequisite of each Charm she wishes to use. Charms \nenabled by Bright-Forging Prana do count as the prereq-\nuisites of other Charms the Solar might enable through \nuse of this Charm. Once Bright-Forging Prana has been \nused, the Solar must pay the activation cost of each Charm. \nCharms enabled by Bright-Forging Prana may be used for \nthe rest of the story, but only on the project they were ini-\ntially employed for. Bright-Forging Prana does not func-\ntion to give the Solar automatic craft point bonuses from \nCharms such as Peerless Paragon of Craft.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "6467008a-6417-3839-bc9f-890fc38423ce",
+      "name": "Experiential Conjuring of True Void",
+      "ability": "Craft",
+      "minAbility": 3,
+      "minEssence": 2,
+      "prerequisites": [
+        "e089a0f9-ec2b-3efd-9f09-17d02774ecaa"
+      ],
+      "cost": "4m, 4s/g/wxp",
+      "type": "Reflexive",
+      "keywords": [
+        "Salient"
+      ],
+      "duration": "Instant",
+      "fullText": "Through tapping the elemental, refined forces of her own experience, the Solar may access the most pristine and formless center of her own Essence, from which all things may be derived. This Charm may be used after an (Attribute + Craft) roll, and grants one automatic non-Charm success and (Essence) non-Charm dice. This Charm may not be used on basic projects. At Essence 3+, the dice bonus for this Charm is increased to (Intelligence + Essence).",
+      "rawData": "Experiential Conjuring of True Void\nCost: 4m, 4s/g/wxp; Mins: Craft 3, Essence 2\nType: Reflexive\nKeywords: Salient\nDuration: Instant\nPrerequisite Charms: Flawless Handiwork Method\nThrough tapping the elemental, refined forces of her own \nexperience, the Solar may access the most pristine and \nformless center of her own Essence, from which all things \nmay be derived. This Charm may be used after an (Attri-\nbute + Craft) roll, and grants one automatic non-Charm \nsuccess and (Essence) non-Charm dice. This Charm may \nnot be used on basic projects. At Essence 3+, the dice bonus \nfor this Charm is increased to (Intelligence + Essence).",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "c8b0900f-beb2-31db-8f48-f8fad7d378d1",
+      "name": "Unbroken Image Focus",
+      "ability": "Craft",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "6467008a-6417-3839-bc9f-890fc38423ce"
+      ],
+      "cost": "3m + 1s/g/wxp per success",
+      "type": "Reflexive",
+      "keywords": [
+        "Salient",
+        "C H A P T E R 6"
+      ],
+      "duration": "Instant",
+      "fullText": "After making an (Attribute + Craft) roll, this Charm may be invoked to add a supernatural burst of precision, skill, and inspiration to the Solar’s hands. This Charm allows the Exalt to purchase a number of additional non-Charm successes equal to ([her Essence] + successes) on the initial roll. This Charm does not factor in “double numbers” effects from other Charms. If the Lawgiver is using a double 9s effect, and rolls three 9s and no other successes, she would be able to purchase (Essence + 3) successes, not (Essence + 6).",
+      "rawData": "Unbroken Image Focus\nCost: 3m + 1s/g/wxp per success; Mins: Craft 4, Essence 2\nType: Reflexive\nKeywords: Salient\nC H A P T E R  6\nEX3\n298\nDuration: Instant\nPrerequisite Charms: Experiential Conjuring of True Void\nAfter making an (Attribute + Craft) roll, this Charm may \nbe invoked to add a supernatural burst of precision, skill, \nand inspiration to the Solar’s hands. This Charm allows \nthe Exalt to purchase a number of additional non-Charm \nsuccesses equal to ([her Essence] + successes) on the initial \nroll. This Charm does not factor in “double numbers” \neffects from other Charms. If the Lawgiver is using a double \n9s effect, and rolls three 9s and no other successes, she \nwould be able to purchase (Essence + 3) successes, not \n(Essence + 6).",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "dd47b165-b1f4-35fe-a290-b91e92925c18",
+      "name": "First Movement of the Demiurge",
+      "ability": "Craft",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "6467008a-6417-3839-bc9f-890fc38423ce"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "This Charm permanently enhances its prerequisite. The Solar’s genius inspires her to greater heights, making her aware of patterns and possibilities unforeseen by mortals.\n\nFor every three of a kind successes (ex: three sevens, three eights, etc.), the player may choose one non-success die and convert it to a 10, adding two successes to the result.\n\nIf Flawless Handiwork Method is used, 10s created in this fashion are also rerolled until 10s fail to appear.",
+      "rawData": "First Movement of the Demiurge\nCost: —; Mins: Craft 4, Essence 2\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Experiential Conjuring of True Void\nThis Charm permanently enhances its prerequisite. The \nSolar’s genius inspires her to greater heights, making her \naware of patterns and possibilities unforeseen by mortals. \nFor every three of a kind successes (ex: three sevens, three \neights, etc.), the player may choose one non-success die \nand convert it to a 10, adding two successes to the result. \nIf Flawless Handiwork Method is used, 10s created in this \nfashion are also rerolled until 10s fail to appear.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "763d6ea6-837a-36ff-9593-4de05e540dd6",
+      "name": "Essence-Forging Kata",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "c8b0900f-beb2-31db-8f48-f8fad7d378d1"
+      ],
+      "cost": "2m per mote, 1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "One day",
+      "fullText": "The Solar channels Essence through her hands and tools to make the final product of her work a matter of legend.\n\nPowering this Charm requires a dramatic action lasting at least five minutes, in which the Exalt meditates on future tasks, steadies her mind, feels the weight of her tools, readies her forge for the day, and other similar preparatory actions. While this Charm is active, every two motes committed discounts the cost of the Craft Excellency by one.",
+      "rawData": "Essence-Forging Kata\nCost: 2m per mote, 1wp; Mins: Craft 5, Essence 3\nType: Simple\nKeywords: None\nDuration: One day\nPrerequisite Charms: Unbroken Image Focus\nThe Solar channels Essence through her hands and tools \nto make the final product of her work a matter of legend. \nPowering this Charm requires a dramatic action lasting \nat least five minutes, in which the Exalt meditates \non future tasks, steadies her mind, feels the weight of \nher tools, readies her forge for the day, and other similar \npreparatory actions. While this Charm is active, every \ntwo motes committed discounts the cost of the Craft \nExcellency by one.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "44b9f910-5a22-3784-a80d-8344582c9fa9",
+      "name": "Mind-Expanding Meditation",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "763d6ea6-837a-36ff-9593-4de05e540dd6"
+      ],
+      "cost": "1sxp per cap increase, 1wxp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Lawgiver is a master of her trade, and uses the work she pours into her craft to inspire her towards new and greater achievements. This Charm may be invoked before an (Attribute + Craft) roll, allowing the Solar to raise her dice cap at a rate of one silver point per die, to a limit of her current Craft rating.",
+      "rawData": "Mind-Expanding Meditation\nCost: 1sxp per cap increase, 1wxp; Mins: Craft 5, Essence 3\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Essence-Forging Kata\nThe Lawgiver is a master of her trade, and uses the work \nshe pours into her craft to inspire her towards new and \ngreater achievements. This Charm may be invoked before \nan (Attribute + Craft) roll, allowing the Solar to raise her \ndice cap at a rate of one silver point per die, to a limit of \nher current Craft rating.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "1f9a8d4f-3ad9-3a58-b528-3673857a31b7",
+      "name": "Inspiration-Renewing Vision",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "763d6ea6-837a-36ff-9593-4de05e540dd6",
+        "1062a0d1-333f-3c57-ac85-559ec4dbda50"
+      ],
+      "cost": "12m, 1wp, 2wxp",
+      "type": "Supplemental",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "A moment of creative satori allows the Solar to cleanse her creative vision of all flaws, perfectly attuning her Essence to that of the unborn wonder she wishes to birth.\n\nThis Charm can be used to supplement a superior or legendary Craft roll, so that it does not count toward the project’s terminus. This Charm can be used once per story, but can be reset by completing a superior or legendary project with a goal number of 50+ without use of this Charm.",
+      "rawData": "Inspiration-Renewing Vision\nCost: 12m, 1wp, 2wxp; Mins: Craft 5, Essence 3\nType: Supplemental\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Essence-Forging Kata, Supreme \nMasterwork Focus (x2)\nA moment of creative satori allows the Solar to cleanse \nher creative vision of all flaws, perfectly attuning her \nEssence to that of the unborn wonder she wishes to birth. \nThis Charm can be used to supplement a superior or leg-\nendary Craft roll, so that it does not count toward the \nproject’s terminus. This Charm can be used once per story, \nbut can be reset by completing a superior or legendary \nproject with a goal number of 50+ without use of \nthis Charm.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "352b4592-3b29-330b-8efe-4f7a14ed9353",
+      "name": "Divine Inspiration Technique",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "dd47b165-b1f4-35fe-a290-b91e92925c18",
+        "4e72da4c-07e5-33a7-9833-8c73fe75ccc0",
+        "936dfcf6-186e-3e27-b223-b719b2fe9b3a"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "",
+      "rawData": "Divine Inspiration Technique\nCost: —; Mins: Craft 5, Essence 3\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: First Movement of the Demiurge, \nSupreme Masterwork Focus (x2)\nEach time she uses her talents to build or repair, the Exalt \ncomes closer to the core truth of her existence. For every \nthree successes earned on a Craft roll, the Solar earns an \nadditional non-Charm die. This effect is recursive; if gen-\nerated non-Charm dice create at least three successes, \nanother die is generated.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "b9cc9139-4a87-34ff-af8b-03ff83dfcc00",
+      "name": "Horizon-Unveiling Insight",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "1f9a8d4f-3ad9-3a58-b528-3673857a31b7"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "This Charm expands the Lawgiver’s already illimitable mind, allowing her to experience Essence flows in patterns that stabilize and adapt the form of any legendary project she undertakes. This Charm permanently raises the terminus of superior and legendary projects to seven.",
+      "rawData": "Horizon-Unveiling Insight\nCost: —; Mins: Craft 5, Essence 4\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Inspiration-Renewing Vision\nThis Charm expands the Lawgiver’s already illimitable \nmind, allowing her to experience Essence flows in \npatterns that stabilize and adapt the form of any legend-\nary project she undertakes. This Charm permanently \nraises the terminus of superior and legendary projects \nto seven.\nC H A R M S\nEX3\n299",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "ff537e0e-a72b-3ffe-8f26-66192fda09ac",
+      "name": "Holistic Miracle Understanding",
+      "ability": "Craft",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "352b4592-3b29-330b-8efe-4f7a14ed9353"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Solar shapes wonders from the very fabric of the world. This Charm enhances the prerequisite; if the nonCharm dice generated by the initial roll turn up three or more successes, the new non-Charm dice are augmented by an additional three non-Charm dice.\n\nDodge",
+      "rawData": "Holistic Miracle Understanding\nCost: —; Mins: Craft 5, Essence 4\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Divine Inspiration Technique\nThe Solar shapes wonders from the very fabric of the \nworld. This Charm enhances the prerequisite; if the non-\nCharm dice generated by the initial roll turn up three or \nmore successes, the new non-Charm dice are augmented \nby an additional three non-Charm dice.\nDodge",
+      "potentiallyProblematicImport": false
+    }
+  ]
+}

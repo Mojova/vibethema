@@ -1,0 +1,193 @@
+{
+  "$schema": "./charm-schema.json",
+  "version": "0.1.0",
+  "ability": "Righteous Devil Style",
+  "type": "martialArts",
+  "exalt": "solar",
+  "charms": [
+    {
+      "id": "704dfd9d-0cb2-3dae-9609-11456ca29798",
+      "name": "Shattering Discord Cacophony",
+      "ability": "Righteous Devil Style",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "02872ea1-16b5-3db6-9841-f8087eb093ac",
+        "f82ae754-b84a-373b-a28b-859aa3623ff0",
+        "b4646294-0d51-31bf-8334-ebfb9ecf230d"
+      ],
+      "cost": "10m, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Decisive-only",
+        "Mastery",
+        "Terrestrial"
+      ],
+      "duration": "Until the enemy’s next turn",
+      "fullText": "An eerie calm chills the Nightingale’s voice as she moves through countless scales of song, seeking to find the one deadly note that will unravel the Essence of her foe. The martial artist makes a difficulty 4 kiai gambit against an enemy. Every success on the Initiative roll delays that enemy’s next turn by one tick. The enemy’s physical form begins to decohere, his features become blurry and amorphous, trailing behind him in streaks as his very existence threatens to dissolve into nothing more than a few notes of music. Any decisive attack made against that enemy before he acts also adds one die to its raw damage for each success rolled on the Nightingale’s Initiative roll.\n\nIf he’s incapacitated, the target’s body dissolves in a cacophony of disparate noises as his heartsong is ripped apart note by note, leaving only silence behind.\n\nMastery: The martial artist may breathe in the ruin of a destroyed enemy’s heartsong, making it a part of her own.\n\nThis restores a number of motes equal to that character’s Essence, and provides the Nightingale with any knowledge she could have obtained with a read intentions action against that character.\n\nTerrestrial: Only up to (Performance) successes on the Dragon-Blood’s Initiative roll are counted for determining how many dice of damage are added to her ally’s attacks.\n\nRighteous Devil Style The Righteous Devil is a figure of burning fury and solemn judgment, a wandering hero who protects the innocent and banishes the wicked into a fiery hell of their own making. Students of the style master the firewand (p. 589), wielding these exotic weapons with a deadly precision that’s more art than archery. However, the heart of the Righteous Devil style is not in its fiery attacks, but in the judgment that precedes them. When the strong and powerful use their positions to oppress those beneath them, when the selfish put their own needs above those of the community, when the once-righteous turn from their ideals to pursue their own desires—these are the crimes which the Righteous Devil judges most harshly, and his verdict is spoken in cleansing flames. Many students of this style have a Principle encompassing this code of ethics, though there are some who turn against the moral teachings of their sifus, or who simply learn the martial techniques of the style with no heed for the ethics behind them.\n\nRighteous Devil Weapons: Righteous Devil style uses firewands, as well as any other flame-discharge weapons.\n\nArmor: Righteous Devil style is compatible with light and medium armor.",
+      "rawData": "Shattering Discord Cacophony\nCost: 10m, 1wp; Mins: Martial Arts 5, Essence 3; \nType: Simple \nKeywords: Decisive-only, Mastery, Terrestrial \nDuration: Until the enemy’s next turn \nPrerequisite Charms: Aria of Victory, Harmony in Op-\nposition Stance, Resounding Songbird’s Cry\nAn eerie calm chills the Nightingale’s voice as she moves \nthrough countless scales of song, seeking to find the one \ndeadly note that will unravel the Essence of her foe. The \nmartial artist makes a difficulty 4 kiai gambit against an \nenemy. Every success on the Initiative roll delays that \nenemy’s next turn by one tick. The enemy’s physical form \nbegins to decohere, his features become blurry and \namorphous, trailing behind him in streaks as his very \nexistence threatens to dissolve into nothing more than a \nfew notes of music. Any decisive attack made against that \nenemy before he acts also adds one die to its raw damage \nfor each success rolled on the Nightingale’s Initiative roll. \nIf he’s incapacitated, the target’s body dissolves in a \ncacophony of disparate noises as his heartsong is ripped \napart note by note, leaving only silence behind. \nMastery: The martial artist may breathe in the ruin of a \ndestroyed enemy’s heartsong, making it a part of her own. \nThis restores a number of motes equal to that character’s \nEssence, and provides the Nightingale with any knowledge \nshe could have obtained with a read intentions action \nagainst that character.\nTerrestrial: Only up to (Performance) successes on the \nDragon-Blood’s Initiative roll are counted for determining \nhow many dice of damage are added to her ally’s attacks. \nRighteous Devil Style\nThe Righteous Devil is a figure of burning fury and solemn \njudgment, a wandering hero who protects the innocent \nand banishes the wicked into a fiery hell of their own \nmaking. Students of the style master the firewand (p. 589), \nwielding these exotic weapons with a deadly precision \nthat’s more art than archery. However, the heart of the \nRighteous Devil style is not in its fiery attacks, but in the \njudgment that precedes them. When the strong and \npowerful use their positions to oppress those beneath \nthem, when the selfish put their own needs above those \nof the community, when the once-righteous turn from \ntheir ideals to pursue their own desires—these are the \ncrimes which the Righteous Devil judges most harshly, \nand his verdict is spoken in cleansing flames. Many \nstudents of this style have a Principle encompassing this \ncode of ethics, though there are some who turn against \nthe moral teachings of their sifus, or who simply learn the \nmartial techniques of the style with no heed for the ethics \nbehind them.\nRighteous Devil Weapons: Righteous Devil style uses \nfirewands, as well as any other flame-discharge weapons.\nArmor: Righteous Devil style is compatible with light and \nmedium armor.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "7890e77c-e98d-397d-a571-bee3f3fabe72",
+      "name": "Blossom of Inevitable Demise",
+      "ability": "Righteous Devil Style",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "3m",
+      "type": "Supplemental",
+      "keywords": [
+        "Dual"
+      ],
+      "duration": "Instant",
+      "fullText": "Drawing in a quick breath, the Righteous Devil tastes the wickedness of a world in need of judgment. As she exhales, pulling down hard on the trigger, she burns that world clean with fire. Blossom of Inevitable Demise applies double 10s on the damage roll of a decisive attack. It can also extend the range of a firewand attack to medium, although doing so still requires an aim action as usual (p. 195).",
+      "rawData": "Blossom of Inevitable Demise\nCost: 3m; Mins: Martial Arts 3, Essence 1 \nType: Supplemental \nKeywords: Dual \nDuration: Instant \nPrerequisite Charms: None\nDrawing in a quick breath, the Righteous Devil tastes the \nwickedness of a world in need of judgment. As she exhales, \npulling down hard on the trigger, she burns that world \nclean with fire. Blossom of Inevitable Demise applies double \n10s on the damage roll of a decisive attack. It can also \nextend the range of a firewand attack to medium, although \ndoing so still requires an aim action as usual (p. 195).",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "3be22e58-4bf6-3522-9ec0-03f419f78cb2",
+      "name": "Cloud of Ebon Devils",
+      "ability": "Righteous Devil Style",
+      "minAbility": 2,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "2m",
+      "type": "Supplemental",
+      "keywords": [
+        "Mastery"
+      ],
+      "duration": "Instant",
+      "fullText": "Ebon grains of firedust stream from the stylist’s hands as she moves like lightning, sighting and reloading faster than her enemies can blink. When the stylist aims with a firewand, she may also reload it (and/or draw it), without needing to take a separate action. If there are any enemies at close range to her, she must succeed on a (Wits + Martial Arts) roll at difficulty 2 to successfully execute this maneuver. On a failed roll, she successfully loads the weapon, but does not gain the advantages of aiming.\n\nEnemies whom she has successfully intimidated or chastised with social actions during that fight do not count for this restriction (even if they spent Willpower to resist).\n\nMastery: Cloud of Ebon Devils can be used to supplement a Join Battle roll, in which case it allows the Righteous Devil to reflexively aim and draw or ready a weapon before any character acts in the fight.",
+      "rawData": "Cloud of Ebon Devils\nCost: 2m; Mins: Martial Arts 2, Essence 1 \nType: Supplemental \nKeywords: Mastery \nDuration: Instant \nPrerequisite Charms: None\nEbon grains of firedust stream from the stylist’s hands as \nshe moves like lightning, sighting and reloading faster \nthan her enemies can blink. When the stylist aims with a \nfirewand, she may also reload it (and/or draw it), without \nneeding to take a separate action. If there are any enemies \nat close range to her, she must succeed on a (Wits + Martial \nArts) roll at difficulty 2 to successfully execute this \nmaneuver. On a failed roll, she successfully loads the \nweapon, but does not gain the advantages of aiming. \nEnemies whom she has successfully intimidated or \nchastised with social actions during that fight do not count \nfor this restriction (even if they spent Willpower to resist). \nMastery: Cloud of Ebon Devils can be used to supplement \na Join Battle roll, in which case it allows the Righteous \nDevil to reflexively aim and draw or ready a weapon before \nany character acts in the fight.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "158cf10c-c00e-3d95-b044-1eb314a9ac6f",
+      "name": "Kiss of the Sun Concentration",
+      "ability": "Righteous Devil Style",
+      "minAbility": 2,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "3m",
+      "type": "Supplemental",
+      "keywords": [
+        "Dual",
+        "Mastery",
+        "M A R T I A L A R T S A N D S O R C E R Y"
+      ],
+      "duration": "Instant",
+      "fullText": "Sighting along the flows of Essence that connect her weapon with its mark, the Righteous Devil sends her will down a fine line of possibility, transforming it into inevitability. Kiss of the Sun Concentration adds any dice from aiming to the post-soak damage of a withering attack, or converts them to a single die added to the raw damage of a decisive attack. Disarm gambits, or any other gambit that could benefit from superhuman precision, add the full amount of aim dice to their Initiative roll instead of a single die.\n\nMastery: When used with a decisive attack, the full amount of aim dice are added to the raw damage of he attack.\n\nWithering attacks and precision-based gambits convert the aim dice to automatic successes on the damage roll.",
+      "rawData": "Kiss of the Sun Concentration\nCost: 3m; Mins: Martial Arts 2, Essence 1 \nType: Supplemental \nKeywords: Dual, Mastery \nM A R T I A L  A R T S  A N D  S O R C E R Y\nEX3\n451\nDuration: Instant \nPrerequisite Charms: None\nSighting along the flows of Essence that connect her \nweapon with its mark, the Righteous Devil sends her will \ndown a fine line of possibility, transforming it into \ninevitability. Kiss of the Sun Concentration adds any dice \nfrom aiming to the post-soak damage of a withering attack, \nor converts them to a single die added to the raw damage \nof a decisive attack. Disarm gambits, or any other gambit \nthat could benefit from superhuman precision, add the \nfull amount of aim dice to their Initiative roll instead of a \nsingle die.\nMastery: When used with a decisive attack, the full amount \nof aim dice are added to the raw damage of he attack. \nWithering attacks and precision-based gambits convert \nthe aim dice to automatic successes on the damage roll.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "1368de13-8cc7-33c7-a143-742812160f8e",
+      "name": "Righteous Devil Form",
+      "ability": "Righteous Devil Style",
+      "minAbility": 3,
+      "minEssence": 2,
+      "prerequisites": [
+        "7890e77c-e98d-397d-a571-bee3f3fabe72",
+        "3be22e58-4bf6-3522-9ec0-03f419f78cb2",
+        "f0c8f5c0-8495-30dc-acf4-8fab41683276"
+      ],
+      "cost": "5m",
+      "type": "Simple",
+      "keywords": [
+        "Form"
+      ],
+      "duration": "One scene",
+      "fullText": "The first time the Righteous Devil enters this form in a fight, she may roll (Charisma + Presence + Essence) to intimidate all enemies or inspire them with an emotion of shame, guilt, or remorse as appropriate to their sins.\n\nAffected enemies take a penalty equal to the stylist’s Charisma on disengage, withdraw, or Stealth-based actions unless they pay Willpower to resist. Additionally, at the beginning of each turn, the Righteous Devil may reflexively aim against any enemy whose Resolve was overcome by the activation of this form, or by a similar influence roll made in combat (even if he resisted).\n\nAdditionally, while in this form, the Righteous Devil can use firewands effectively in close combat, using the butt or handle of a flame weapon to effectively bludgeon enemies. When used in this way, they are treated as medium weapon with the bashing, martial arts, and shield tags. Firewands with an affixed bayonet instead have the lethal tag. While this use is not compatible with effects that specifically modify ranged attacks, such as the range extension of Blossom of Inevitable Demise, it can still benefit from other Charms of this or other staff or spearcompatible styles.\n\nSpecial activation rules: Whenever the stylist successfully lands a decisive attack after taking an aim action on her previous turn, she may reflexively activate Righteous Devil Form.",
+      "rawData": "Righteous Devil Form\nCost: 5m; Mins: Martial Arts 3, Essence 2 \nType: Simple \nKeywords: Form \nDuration: One scene \nPrerequisite Charms: Blossom of Inevitable Demise, \nCloud of Ebon Devils, Kiss of the Sun Concentration\nCreation itself seems to hold its breath as the stylist cloaks \nherself in the majestic and terrible stillness of the \nRighteous Devil Form. An inescapable gravity seems to \nexude from her confident, unwavering posture, sending \nthe innocent scurrying away to safety and calling the \nunjust to reap the whirlwind of judgment they’ve sown. \nThe first time the Righteous Devil enters this form in a \nfight, she may roll (Charisma + Presence + Essence) to \nintimidate all enemies or inspire them with an emotion \nof shame, guilt, or remorse as appropriate to their sins. \nAffected enemies take a penalty equal to the stylist’s \nCharisma on disengage, withdraw, or Stealth-based \nactions unless they pay Willpower to resist. Additionally, \nat the beginning of each turn, the Righteous Devil may \nreflexively aim against any enemy whose Resolve was \novercome by the activation of this form, or by a similar \ninfluence roll made in combat (even if he resisted).\nAdditionally, while in this form, the Righteous Devil can \nuse firewands effectively in close combat, using the butt \nor handle of a flame weapon to effectively bludgeon \nenemies. When used in this way, they are treated as \nmedium weapon with the bashing, martial arts, and shield \ntags. Firewands with an affixed bayonet instead have the \nlethal tag. While this use is not compatible with effects \nthat specifically modify ranged attacks, such as the range \nextension of Blossom of Inevitable Demise, it can still \nbenefit from other Charms of this or other staff or spear-\ncompatible styles. \nSpecial activation rules: Whenever the stylist successfully \nlands a decisive attack after taking an aim action on \nher previous turn, she may reflexively activate Righteous \nDevil Form.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "1ab183ea-951b-3b33-a2bd-24333458976a",
+      "name": "Azure Abacus Meditation",
+      "ability": "Righteous Devil Style",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "e58154cd-eb0c-33a9-a3fc-d12ba06aece1",
+        "d5f204b3-28e3-3dc1-828d-f9db55e17e7c"
+      ],
+      "cost": "4m, 1wp",
+      "type": "Supplemental",
+      "keywords": [
+        "Terrestrial",
+        "Withering-only"
+      ],
+      "duration": "Instant",
+      "fullText": "Terrestrial: A Dragon-Blood always treat enemies as having at least light cover with this Charm, preventing her from fully negating soak.",
+      "rawData": "Azure Abacus Meditation\nCost: 4m, 1wp; Mins: Martial Arts 5, Essence 2 \nType: Supplemental \nKeywords: Terrestrial, Withering-only \nDuration: Instant \nPrerequisite Charms: Righteous Devil Form\nClosing her eyes, the Righteous Devil perceives the ebb \nand flow of Essence around her through a mandala of blue \nrings, nine notched discs of silver-blue light that spin around \nher foes in her mind’s eye. If her anima banner is at the \nbonfire level, this azure abacus becomes visible to all within \nits light, the silvery rings orbiting around the stylist and \naligning as she lines up a shot. Firing through this reticule \nmandala hones in on an enemy’s weakest point, granting \nbenefits commensurate to the enemy’s level of cover. \n• Enemies that do not benefit from cover lose all soak \nagainst the attack, except for that provided by Charms \nand other magical effects. Artifact armor is not considered \na magical effect. \n• Enemies under light cover halve their mundane soak \nagainst the attack.\n• Enemies under heavy cover subtract -1 from their \nmundane soak for every extra success on the attack roll, \nbut not below half their full value.\n• Enemies under full cover are unaffected.\nAzure Abacus Meditation may only be used once per scene, \nunless reset by successfully landing a decisive attack \nagainst an enemy under light or heavy cover and then \nbuilding up to Initiative 12+.  \nTerrestrial: A Dragon-Blood always treat enemies as \nhaving at least light cover with this Charm, preventing \nher from fully negating soak.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "b1bbe263-bf4b-30ce-a8d4-75a7031fcd5c",
+      "name": "Burning Judgment Halo",
+      "ability": "Righteous Devil Style",
+      "minAbility": 4,
+      "minEssence": 3,
+      "prerequisites": [
+        "9c24507b-85c9-3ab1-a888-5a2c19b55642",
+        "f8a1e81f-47be-372a-b1f0-e98e3596821c",
+        "6b9c7350-1c57-3b16-b530-d11310a1828c",
+        "98de30e1-29cf-36f1-bb84-650ed70c6d3f"
+      ],
+      "cost": "5m, 4i",
+      "type": "Simple",
+      "keywords": [
+        "Perilous",
+        "Terrestrial"
+      ],
+      "duration": "Instant",
+      "fullText": "The flames created by this Charm will continue to burn for as long as the Righteous Devil remains at their center.\n\nOnce she takes a movement action to move from that point, they will continue to burn for a single round more, then die down on her next turn. Moving through the blaze created by this Charm never damages the stylist—the devil walks through hell unscathed.\n\nTerrestrial: The fires created by this Charm only last until the Dragon-Blood’s next turn, unless she pays an additional four Initiative to renew it at the start of each of her turns.",
+      "rawData": "Burning Judgment Halo\nCost: 5m, 4i; Mins: Martial Arts 4, Essence 3 \nType: Simple \nKeywords: Perilous, Terrestrial \nDuration: Instant \nPrerequisite Charms: Righteous Devil Form\nC H A P T E R  7\nEX3\n452\nThose who’d raise a hand against the Righteous Devil \nmust walk through the fire of their own iniquities to do \nso. Pointing the tip of her firewand at the ground, the \nstylist draws the Burning Judgment Halo, a ring of flames \nthat encompasses all characters at close range to her, with \nthe traits of a bonfire (p. 230). It is not necessary to create \nthe full circle of flame—if the stylist is standing between \na brutal slaver and his victims, she may choose to create \nonly a semi-circle of fire, for example.\nThe flames created by this Charm will continue to burn \nfor as long as the Righteous Devil remains at their center. \nOnce she takes a movement action to move from that point, \nthey will continue to burn for a single round more, then \ndie down on her next turn. Moving through the blaze \ncreated by this Charm never damages the stylist—the devil \nwalks through hell unscathed.\nTerrestrial: The fires created by this Charm only last \nuntil the Dragon-Blood’s next turn, unless she pays an \nadditional four Initiative to renew it at the start of each \nof her turns.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "0f6e07f3-6aeb-3fa0-9aa9-a76cf7c565dc",
+      "name": "Phoenix Flies on Golden Wings",
+      "ability": "Righteous Devil Style",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "1368de13-8cc7-33c7-a143-742812160f8e"
+      ],
+      "cost": "3m",
+      "type": "Supplemental",
+      "keywords": [
+        "Dual"
+      ],
+      "duration": "Instant",
+      "fullText": "A halo of gold and cobalt Essence rings the tip of the firewand’s barrel as the Righteous Devil sights a foe, sending six golden wings spiraling forward to speed the tongue of flame towards him. This Charm boosts the damage of an attack based on the distance it’s made from, adding +4 against an enemy at close range, +3 against an enemy at short range (and so on, if magic is used to extended the range of the attack). This bonus is added as successes on a withering attack or dice on a decisive attack.",
+      "rawData": "Phoenix Flies on Golden Wings\nCost: 3m; Mins: Martial Arts 4, Essence 2 \nType: Supplemental \nKeywords: Dual \nDuration: Instant \nPrerequisite Charms: Righteous Devil Form\nA halo of gold and cobalt Essence rings the tip of the \nfirewand’s barrel as the Righteous Devil sights a foe, \nsending six golden wings spiraling forward to speed the \ntongue of flame towards him. This Charm boosts the \ndamage of an attack based on the distance it’s made from, \nadding +4 against an enemy at close range, +3 against an \nenemy at short range (and so on, if magic is used to \nextended the range of the attack). This bonus is added \nas successes on a withering attack or dice on a decisive \nattack.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "c0bcd924-6768-3a5d-bcad-9d49129c6069",
+      "name": "Dancing Devil Trigger Finger",
+      "ability": "Righteous Devil Style",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "ed5c323a-efe3-34d3-9a9d-8aa45894133d",
+        "b5346573-0230-3c43-9758-63ab36cb36f3",
+        "e835a5b7-de14-3b39-9719-78391035a636",
+        "e995eae2-4a2e-33e3-ad42-f30d8bbca88e"
+      ],
+      "cost": "10m, 3i, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Decisive-only",
+        "Perilous",
+        "Terrestrial"
+      ],
+      "duration": "Instant",
+      "fullText": "Special activation rules: Dancing Devil Trigger Finger can only be used once per fight, unless reset by upholding an Intimacy that represents dedication to Righteous Devil style’s philosophy or a similar code of ethics.\n\nTerrestrial: A Dragon-Blood must divide her Initiative evenly among all targeted enemies when rolling damage, and cannot assign more than (Essence + 3) damage to any enemy. Any points of Initiative that cannot be assigned over this maximum are not wasted, but converted to motes after she resets to base Initiative.",
+      "rawData": "Dancing Devil Trigger Finger\nCost: 10m, 3i, 1wp; Mins: Martial Arts 5, Essence 3 \nType: Simple \nKeywords: Decisive-only, Perilous, Terrestrial \nDuration: Instant \nPrerequisite Charms: Phoenix Flies on Golden Wings\nFire seems to take on a wrathful life of its own as it pours \nfrom the barrel of the Righteous Devil’s weapon, flaring \noff into howling, winged devils of fire that spiral hungrily \ntowards her foes. Dancing Devil Trigger Finger allows the \nstylist to apply a decisive attack against all enemies in a \nninety-degree arc. She may catch up to one enemy at close \nrange, two enemies at short range, and three enemies at \nmedium range (if extended using Blossom of Inevitable \nDemise), but only if they are positioned on the battlefield \nso that this targeting makes sense. She makes a single \ndecisive attack roll, rolling damage separately against \neach enemy. \nSpecial activation rules: Dancing Devil Trigger Finger \ncan only be used once per fight, unless reset by upholding \nan Intimacy that represents dedication to Righteous Devil \nstyle’s philosophy or a similar code of ethics.\nTerrestrial: A Dragon-Blood must divide her Initiative \nevenly among all targeted enemies when rolling damage, \nand cannot assign more than (Essence + 3) damage to any \nenemy. Any points of Initiative that cannot be assigned \nover this maximum are not wasted, but converted to motes \nafter she resets to base Initiative.",
+      "potentiallyProblematicImport": true
+    }
+  ]
+}

@@ -1,0 +1,284 @@
+{
+  "$schema": "./charm-schema.json",
+  "version": "0.1.0",
+  "ability": "Steel Devil Style",
+  "type": "martialArts",
+  "exalt": "solar",
+  "charms": [
+    {
+      "id": "8143debe-efaa-33cb-b766-0e1d4eec64a4",
+      "name": "Invoking the Chimera’s Coils",
+      "ability": "Steel Devil Style",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "3e675fa5-cc0d-357d-9430-61c54b946393",
+        "75e6dc74-aa06-3053-9f31-3ca320f57a28",
+        "3b852b96-689d-31dc-82de-778693184333",
+        "7d65d1d1-caf0-370d-8f2f-4f0e8df71046",
+        "84692035-853e-34fb-9dc4-038948236714",
+        "3e8969ac-fda8-356c-bc16-6478a6709cbb",
+        "dca55667-af15-3296-8135-b4949d12530d",
+        "76ae0b52-4562-3cb6-8e51-844ca0e46594",
+        "3fec88ac-a8e7-33c9-8769-e155391c0252",
+        "b4eb48df-635d-309a-aae3-962cf80d2bf2",
+        "9cf4c858-f0fb-3da1-84e9-1f4bc9581b9b",
+        "e6831cc3-a6ee-39a3-847a-9c4a02b93cca"
+      ],
+      "cost": "— (+8m, 1wp)",
+      "type": "Permanent",
+      "keywords": [
+        "Mastery",
+        "Terrestrial"
+      ],
+      "duration": "Permanent",
+      "fullText": "While in this transformed state, the Dreaming Pearl Courtesan may fly, floating effortlessly on her gold-veined fins, and adds her Essence to her natural soak. She retains these benefits even if her Initiative falls below 15+, or if her -2 health levels are healed—those conditions are needed only to invoke the transformation, not to sustain it. In addition, her transformation unlocks additional benefits when using the Charms of this style:\n\n• Demure Carp Feint: Internalizing the grace of this Charm, the martial artist no longer treats the bonuses it provides as successes added by Charms.\n\n• Elegant Weapon Repertoire: Instead of enchanting props to serve as weapons, the martial artist may use this Charm to attack with dream-like ephemera of any form she can imagine, treated as a light artifact weapon with the tag of her choice (from the four options) and a +3 bonus to its damage.\n\n• Pearlescent Filigree Defense: Armor enchanted by this Charm gains the traits of medium artifact armor, but with no mobility penalty.\n\n• Flurry of August Leaves: The martial artist may convert up to her (Appearance) extra successes on an attack roll supplemented by this Charm to dice added to the damage roll.\n\n• Vindictive Concubine’s Pillow Book: Every die that comes up a doubled success on the damage roll allows the martial artist to reroll a failed die.\n\n• Fragrant Petal Fascination Kata: The Initiative stolen by this Charm is set equal to the martial artist’s (Essence), and she may gain up to (Appearance x 2) points of\n\nInitiative from an activation. Characters must enter a Decision Point to resist the influence, calling upon a Major or Defining Intimacy that represents temperance, asceticism, or rejection of beauty to resist.\n\n• Seven Storms Escape Prana: This Charm can now be used to supplement any movement action, allowing the martial artist to dissolve into pastel fumes as she becomes a vortex of swirling light and vapor. She disappears, then reappears at her destination, without crossing the intervening space, and with no regard for any barriers or hazards in her way.\n\nHowever, there is a danger in baring the truth of one’s soul in this esoteric apotheosis. Some have been so caught up in their ecstatic bliss that they forget they were ever mortal, vanishing from the world. If the martial artist suffers any damage (even bashing) to any -4 health level while in this form, she loses all hold on reality. She vanishes from Creation in a flash of pearlescent light, never to be seen again except in fragmentary, half-remembered dreams.\n\nMastery: The martial artist rolls (Appearance + Performance) the first time she uses this Charm in a fight.\n\nThis is treated both as a Join Battle roll that adds to her total Initiative, as well as an instill roll against all enemies that can witness her. Those whose Resolve is overcome form a Major Tie of obsessive fascination towards her.\n\nTerrestrial: A Dragon-Blood who has assumed this form must maintain an Initiative rating of 11+ to maintain the transformation, lest she return to her human form. If her Initiative is reset by making a decisive attack, then she is given a grace period until the end of her next turn, but if she does not return to Initiative 11+ by its end, this Charm ends. Once it has ended, she cannot use it again for the rest of the fight.\n\nSteel Devil Style The Steel Devils are the unquestioned masters of twin blades, staining both battlefields and dueling grounds red with the blood of slain foes. The motions of the style have all the elegance and grace of a ceremonial dance from afar, but those who face the Steel Devil up close see only the impossible speed with which her weapons slice through the air, cutting off every vector of defense and bringing down death with a thousand blows. Some claim that the masters of Steel Devil style learn to concentrate their fighting skill in one hand, and to contain their killing intent in the other.\n\nSteel Devil Weapons: Steel Devil style can be used with paired, dual wielded swords. Otherwise, the stylist cannot use any Charms of this style to enhance her attacks or parries. Unarmed attacks are not compatible with this style.\n\nArmor: Steel Devil style is compatible with light and medium armor.",
+      "rawData": "Invoking the Chimera’s Coils\nCost: — (+8m, 1wp); Mins: Martial Arts 5, Essence 3 \nType: Permanent \nKeywords: Mastery, Terrestrial \nDuration: Permanent \nPrerequisite Charms: Seven Storms Escape Prana, \nVindictive Concubine’s Pillow Book\nMastering the Dreaming Pearl Courtesan style means \nmastering the countless layers of veils and facades that \nC H A P T E R  7\nEX3\n460\npeople place between themselves and the world. Students \nlearn to insinuate themselves behind these veils and pierce \nthrough these facades to see the pearl of truth at their \nvictim’s heart, the fragile, vulnerable thing that is the self. \nBut there is a deeper wisdom in the Dreaming Pearl \nCourtesan’s enlightenment. When she must, she may cast \noff her own veils of selfhood, revealing the dreaming pearl \nthat is her true Essence, a dread and beautiful truth to \nbehold. In order to use this Charm, the martial artist must \nbe in the Dreaming Pearl Courtesan Form, and must either \nhave Initiative 15+, or have all of her -2 health levels filled \nwith damage. With these conditions met, she may commit \nthe cost of this Charm at the start of her turn to Invoke the \nChimera’s Coils. Her neck lengthens up towards the heavens \nas she grows up to five times her normal height, while her \nhead becomes that of a delicate, gold-beaked foal. Four sets \nof spiraling gazelle’s horns adorn her brow, and her arms \nand legs vanish while opalescent fins like those of a carp \nhold her new form aloft in the air. Countless eyes run down \neither side of her narrow snout and continue down her \nback, ranging from the size of small pearls to that of goose \neggs, blazing like sapphires in the noonday sun. \nWhile in this transformed state, the Dreaming Pearl \nCourtesan may fly, floating effortlessly on her gold-veined \nfins, and adds her Essence to her natural soak. She retains \nthese benefits even if her Initiative falls below 15+, or if \nher -2 health levels are healed—those conditions are \nneeded only to invoke the transformation, not to sustain \nit. In addition, her transformation unlocks additional \nbenefits when using the Charms of this style:\n• Demure Carp Feint: Internalizing the grace of this \n Charm, the martial artist no longer treats the bonuses it \n provides as successes added by Charms.    \n• Elegant Weapon Repertoire: Instead of enchanting \n props to serve as weapons, the martial artist may use \n this Charm to attack with dream-like ephemera of any \n form she can imagine, treated as a light artifact weapon \n with the tag of her choice (from the four options) and a \n +3 bonus to its damage.  \n• Pearlescent Filigree Defense: Armor enchanted by \n this Charm gains the traits of medium artifact armor, \n but with no mobility penalty.   \n• Flurry of August Leaves: The martial artist may convert \n up to her (Appearance) extra successes on an attack roll \n supplemented by this Charm to dice added to the damage \n roll. \n• Vindictive Concubine’s Pillow Book: Every die that \n comes up a doubled success on the damage roll allows \n the martial artist to reroll a failed die.   \n• Fragrant Petal Fascination Kata: The Initiative stolen \n by this Charm is set equal to the martial artist’s (Essence), \n and she may gain up to (Appearance x 2) points of \n\n Initiative from an activation. Characters must enter a \n Decision Point to resist the influence, calling upon a \n Major or Defining Intimacy that represents temperance, \n asceticism, or rejection of beauty to resist.  \n• Seven Storms Escape Prana: This Charm can now be \n used to supplement any movement action, allowing the \n martial artist to dissolve into pastel fumes as she becomes \n a vortex of swirling light and vapor. She disappears, then \n reappears at her destination, without crossing the \n intervening space, and with no regard for any barriers \n or hazards in her way. \nHowever, there is a danger in baring the truth of one’s soul \nin this esoteric apotheosis. Some have been so caught up \nin their ecstatic bliss that they forget they were ever mortal, \nvanishing from the world. If the martial artist suffers any \ndamage (even bashing) to any -4 health level while in this \nform, she loses all hold on reality. She vanishes from \nCreation in a flash of pearlescent light, never to be seen \nagain except in fragmentary, half-remembered dreams. \nMastery: The martial artist rolls (Appearance + \nPerformance) the first time she uses this Charm in a fight. \nThis is treated both as a Join Battle roll that adds to her \ntotal Initiative, as well as an instill roll against all enemies \nthat can witness her. Those whose Resolve is overcome \nform a Major Tie of obsessive fascination towards her. \nTerrestrial: A Dragon-Blood who has assumed this form \nmust maintain an Initiative rating of 11+ to maintain the \ntransformation, lest she return to her human form. If her \nInitiative is reset by making a decisive attack, then she is \ngiven a grace period until the end of her next turn, but if \nshe does not return to Initiative 11+ by its end, this Charm \nends. Once it has ended, she cannot use it again for the \nrest of the fight.\nSteel Devil Style\nThe Steel Devils are the unquestioned masters of twin \nblades, staining both battlefields and dueling grounds red \nwith the blood of slain foes. The motions of the style have \nall the elegance and grace of a ceremonial dance from \nafar, but those who face the Steel Devil up close see only \nthe impossible speed with which her weapons slice \nthrough the air, cutting off every vector of defense and \nbringing down death with a thousand blows. Some claim \nthat the masters of Steel Devil style learn to concentrate \ntheir fighting skill in one hand, and to contain their killing \nintent in the other.\nSteel Devil Weapons: Steel Devil style can be used \nwith paired, dual wielded swords. Otherwise, the stylist \ncannot use any Charms of this style to enhance her attacks \nor parries. Unarmed attacks are not compatible with \nthis style.\nArmor: Steel Devil style is compatible with light and \nmedium armor.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "4791b650-b666-3cad-8c16-b9f94d95c65a",
+      "name": "Naked Fang Draw",
+      "ability": "Steel Devil Style",
+      "minAbility": 2,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "5m",
+      "type": "Supplemental",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Exalt grasps a blade in each hand and makes a lightning speed draw—a technique designed for ending a fight before it starts. This Charm supplements a Join Battle roll made with any Ability, adding (Essence or two, whichever is greater) successes to the result, and allowing the Exalt to shift successes from her Initiative pool directly into that of her Offhand Charge. In addition, if her result beats that of all of her opponents, she gains one automatic point of Charge.",
+      "rawData": "Naked Fang Draw\nCost: 5m; Mins: Martial Arts 2, Essence 1 \nType: Supplemental \nKeywords: None \nDuration: Instant \nPrerequisite Charms: None\nThe Exalt grasps a blade in each hand and makes a lightning \nspeed draw—a technique designed for ending a fight before \nit starts. This Charm supplements a Join Battle roll made \nwith any Ability, adding (Essence or two, whichever is \ngreater) successes to the result, and allowing the Exalt to \nshift successes from her Initiative pool directly into that of \nher Offhand Charge. In addition, if her result beats that of \nall of her opponents, she gains one automatic point of Charge.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "c6be6091-2e50-3f4c-8c34-0e2d4d0921b5",
+      "name": "Double Attack Technique",
+      "ability": "Steel Devil Style",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "3m",
+      "type": "Simple",
+      "keywords": [
+        "Terrestrial",
+        "Withering-only",
+        "…WHAT?",
+        "Invoking the Chimera’s Coils is a strange Charm.",
+        "Monstrous transformations",
+        "divine auras",
+        "the potential",
+        "threat of unwanted enlightenment—this type of thing is",
+        "the high-water mark for how strange martial arts can",
+        "get. Other styles might feature powerful capstones that",
+        "reach similar levels of esoteric effects and bizarre",
+        "powers",
+        "but those are exceptions rather than the norm.",
+        "WHAT IS THE OFFHAND CHARGE?",
+        "Warriors using Steel Devil style store Initiative in their",
+        "offhand weapon. This stored Initiative is called Charge.",
+        "Charge cannot be withered away",
+        "cannot be used for",
+        "decisive attacks without specific",
+        "and is used to",
+        "create a damage bonus on certain . In order to",
+        "increase her Charge",
+        "the Exalt must do successful",
+        "withering damage. She may then reflexively move up to",
+        "(Essence or two",
+        "whichever is greater) Initiative to her",
+        "Offhand Charge. This is the secret of Steel Devil style."
+      ],
+      "duration": "",
+      "fullText": "The Exalt cannot store more than (Dexterity + Essence) Charge unless stated otherwise in a Charm’s text.\n\nDuration: Instant Prerequisite Charms: Naked Fang Draw Moving with deceptive speed and feinting strikes, the Exalt slashes with one blade and strikes with another.\n\nThis Charm creates a normal withering attack that has a chance to land an additional second strike. On a hit, if the threshold successes meet or exceed the target’s Defense, this is treated as landing a second attack. If both attacks land, however, only a single damage pool is created and a single damage roll is made. On a successful double attack, add (the Exalt’s Dexterity + [Charge/2, rounded down]) to the attack’s base damage. Note that both attacks incur onslaught penalties (p. 194)—a strike against a Parry of 5 would only need to generate four extra successes to penetrate the resulting rating of Parry 4. Likewise, the successes used landing the second attack are not calculated as extra successes when determining damage.\n\nTerrestrial: When used by a Terrestrial, this Charm’s base damage is increased by (2 + [Charge/2, rounded down]).",
+      "rawData": "Double Attack Technique\nCost: 3m; Mins: Martial Arts 3, Essence 1 \nType: Simple \nKeywords: Terrestrial, Withering-only \n…WHAT?\nInvoking the Chimera’s Coils is a strange Charm. \nMonstrous transformations, divine auras, the potential \nthreat of unwanted enlightenment—this type of thing is \nthe high-water mark for how strange martial arts can \nget. Other styles might feature powerful capstones that \nreach similar levels of esoteric effects and bizarre \npowers, but those are exceptions rather than the norm.\nWHAT IS THE OFFHAND CHARGE?\nWarriors using Steel Devil style store Initiative in their \noffhand weapon. This stored Initiative is called Charge. \nCharge cannot be withered away, cannot be used for \ndecisive attacks without specific Charms, and is used to \ncreate a damage bonus on certain Charms. In order to \nincrease her Charge, the Exalt must do successful \nwithering damage. She may then reflexively move up to \n(Essence or two, whichever is greater) Initiative to her \nOffhand Charge. This is the secret of Steel Devil style. \nThe Exalt cannot store more than (Dexterity + Essence) \nCharge unless stated otherwise in a Charm’s text.\nC H A P T E R  7\nEX3\n462\nDuration: Instant \nPrerequisite Charms: Naked Fang Draw\nMoving with deceptive speed and feinting strikes, the \nExalt slashes with one blade and strikes with another. \nThis Charm creates a normal withering attack that has \na chance to land an additional second strike. On a hit, if \nthe threshold successes meet or exceed the target’s \nDefense, this is treated as landing a second attack. If both \nattacks land, however, only a single damage pool is created \nand a single damage roll is made. On a successful double \nattack, add (the Exalt’s Dexterity + [Charge/2, rounded \ndown]) to the attack’s base damage. Note that both attacks \nincur onslaught penalties (p. 194)—a strike against a Parry \nof 5 would only need to generate four extra successes to \npenetrate the resulting rating of Parry 4. Likewise, the \nsuccesses used landing the second attack are not calculated \nas extra successes when determining damage.\nTerrestrial: When used by a Terrestrial, this Charm’s base \ndamage is increased by (2 + [Charge/2, rounded down]).",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "0eaa23ae-fe86-3513-bff2-964dd4e759cf",
+      "name": "Triple Attack Technique",
+      "ability": "Steel Devil Style",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "a5188a03-fdbb-31a5-b448-a99586565114",
+        "e913e0ab-d8ad-3f9e-ad95-2c008208010d"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [
+        "Mastery",
+        "Terrestrial",
+        "Withering-only"
+      ],
+      "duration": "Permanent",
+      "fullText": "Terrestrial: When used by a Terrestrial, this Charm’s base damage is increased by the Exalt’s (Dexterity + [Charge/2, rounded down]).\n\nMastery: Reroll (Essence) non-successes on the attack’s damage roll.",
+      "rawData": "Triple Attack Technique\nCost: —; Mins: Martial Arts 5, Essence 3 \nType: Permanent \nKeywords: Mastery, Terrestrial, Withering-only \nDuration: Permanent \nPrerequisite Charms: Double Attack Technique\nMoving with blazing speed, the Steel Devil makes three \nattacks in succession. This Charm upgrades Double Attack \nTechnique, allowing extra successes from the second blow \nto roll over the target’s Defense again and create a third \nattack. If Triple Attack Technique is successful, add \n(Dexterity + Charge) to the attack’s base damage. This \nCharm can trigger Steel Devil Strike and Empty Mind \nStrike in an identical fashion to Double Attack Technique.\nTerrestrial: When used by a Terrestrial, this Charm’s \nbase damage is increased by the Exalt’s (Dexterity + \n[Charge/2, rounded down]).\nMastery: Reroll (Essence) non-successes on the attack’s \ndamage roll.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "f53fa861-92ad-3c7b-a497-ab665143b397",
+      "name": "Steel Devil Strike",
+      "ability": "Steel Devil Style",
+      "minAbility": 4,
+      "minEssence": 1,
+      "prerequisites": [
+        "c6be6091-2e50-3f4c-8c34-0e2d4d0921b5"
+      ],
+      "cost": "5m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Decisive-only",
+        "Mastery"
+      ],
+      "duration": "Instant",
+      "fullText": "The ultimate killing technique of this style is a swift, hidden strike that occurs directly after a successful use of Double Attack Technique. This Charm can only be triggered when the damage done by Double Attack Technique is equal to or greater than the amount of Offhand Charge capacity that has yet to be filled with Charge. If this occurs, the Exalt may pay the cost to launch a decisive attack with (Essence) automatic successes, which ignores hardness and uses only the Initiative gained from Double Attack Technique’s withering damage as base damage. If this attack is successful, all of the Initiative expended in making it is lost.\n\nMastery: When in Steel Devil Form, if the Exalt successfully damages an opponent with Steel Devil Strike, he gains a point of temporary Willpower.",
+      "rawData": "Steel Devil Strike\nCost: 5m, 1wp; Mins: Martial Arts 4, Essence 1 \nType: Reflexive \nKeywords: Decisive-only, Mastery \nDuration: Instant \nPrerequisite Charms: Double Attack Technique\nThe ultimate killing technique of this style is a swift, hidden \nstrike that occurs directly after a successful use of Double \nAttack Technique. This Charm can only be triggered when \nthe damage done by Double Attack Technique is equal to \nor greater than the amount of Offhand Charge capacity \nthat has yet to be filled with Charge. If this occurs, the \nExalt may pay the cost to launch a decisive attack with \n(Essence) automatic successes, which ignores hardness \nand uses only the Initiative gained from Double Attack \nTechnique’s withering damage as base damage. If this \nattack is successful, all of the Initiative expended in making \nit is lost. \nMastery: When in Steel Devil Form, if the Exalt \nsuccessfully damages an opponent with Steel Devil Strike, \nhe gains a point of temporary Willpower.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "cd174c45-2efe-3cca-b6a3-8e2b69e3a3f5",
+      "name": "Steel Devil Form",
+      "ability": "Steel Devil Style",
+      "minAbility": 5,
+      "minEssence": 1,
+      "prerequisites": [
+        "36c2e511-43bb-3797-bac1-3f48702b39c5",
+        "3751f150-ef3c-3a17-8663-e6c72771bba9",
+        "f8cb1378-f4ad-3337-8848-f4787f93d704",
+        "92604e05-85d2-3dbb-bcd4-177ef1a3916a"
+      ],
+      "cost": "7m",
+      "type": "Simple",
+      "keywords": [
+        "Form"
+      ],
+      "duration": "One scene",
+      "fullText": "",
+      "rawData": "Steel Devil Form\nCost: 7m; Mins: Martial Arts 5, Essence 1 \nType: Simple \nKeywords: Form \nDuration: One scene \nPrerequisite Charms: Steel Devil Strike\nSpinning her blades into an underhand or overhand grip \nand drawing them in alongside her arms, the Steel Devil \ncoils her body in an attitude of lethal readiness. Assuming \nthis form automatically increases the Exalt’s Offhand \nCharge capacity by two, so that it becomes (Dexterity + \nEssence + 2). In addition, while the Exalt is in this stance, \neach time she crashes an opponent, her Offhand Charge’s \ncapacity increases by one for the rest of the scene—but this \nbenefit may occur no more than once for any single crashed \nopponent. In addition, using this stance allows the Steel \nDevil to ignore penalties for attacking with the off-hand. \nLastly, this Charm reduces the cost of Double Attack \nTechnique by one mote and Steel Devil Strike by two.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "fc4d56ce-6a83-34a4-b612-eb5e0f2329eb",
+      "name": "Sonic Slash",
+      "ability": "Steel Devil Style",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "3d0fdf79-98a3-388a-9889-a319f79a464f"
+      ],
+      "cost": "5m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Decisive-only",
+        "Terrestrial"
+      ],
+      "duration": "Instant",
+      "fullText": "After successfully using the prerequisite, the Exalt’s Offhand Charge surges. When she moves forward in a response to the opponent moving away, she may activate this Charm reflexively at the end of her motion. Crossing her blades, the Steel Devil draws them apart with impossible speed, blistering the air with a razor-sharp arc of force that hits all targets in front of her out to medium range with a decisive attack that has damage equal to her current Charge. This attack does not include the Exalt’s current Initiative, nor does it reduce her to base Initiative.\n\nTerrestrial: A Terrestrial’s Sonic Slash only reaches out to short range.",
+      "rawData": "Sonic Slash\nCost: 5m, 1wp; Mins: Martial Arts 5, Essence 3 \nType: Reflexive \n\nKeywords: Decisive-only, Terrestrial \nDuration: Instant \nPrerequisite Charms: Seconds Between Strife\nAfter successfully using the prerequisite, the Exalt’s \nOffhand Charge surges. When she moves forward in a \nresponse to the opponent moving away, she may activate \nthis Charm reflexively at the end of her motion. Crossing \nher blades, the Steel Devil draws them apart with impossible \nspeed, blistering the air with a razor-sharp arc of force that \nhits all targets in front of her out to medium range with a \ndecisive attack that has damage equal to her current \nCharge. This attack does not include the Exalt’s current \nInitiative, nor does it reduce her to base Initiative.\nTerrestrial: A Terrestrial’s Sonic Slash only reaches out \nto short range.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "df7523f0-eec2-35d6-958e-3384d2043d38",
+      "name": "Dual-Slaying Stance",
+      "ability": "Steel Devil Style",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "97c7b1e5-d44f-312a-9104-3ad3c31cfedd",
+        "49b0ac73-ad42-3df2-b9e9-a2dbd06ccdb2"
+      ],
+      "cost": "5m, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Form",
+        "Terrestrial"
+      ],
+      "duration": "One scene",
+      "fullText": "While in this stance, the Exalt’s Parry is increased by two, and it cannot fall below two, no matter how many times she’s attacked. In addition, on any turn on which she foregoes an attack, she may react to any attack she attempts to parry with a decisive counterattack that has a base damage equal to her current Charge. This counterattack may be augmented with the Exalt’s Initiative—the Exalt may reflexively devote up to (Essence x2) from her Initiative pool to the damage of each successful counterattack. If she successfully damages a foe with such a strike, she does not return to base Initiative, nor is her Charge affected—only any spent Initiative is lost. Lastly, this form allows the Steel Devil to ignore penalties for attacking with the off-hand.\n\nTerrestrial: A Terrestrial may augment counterattacks with up to (Essence) Initiative.",
+      "rawData": "Dual-Slaying Stance\nCost: 5m, 1wp; Mins: Martial Arts 5, Essence 2 \nType: Simple \nKeywords: Form, Terrestrial \nDuration: One scene \nPrerequisite Charms: Steel Devil Form\nConsidered the lesser of two forms, Dual Slaying Stance \nprovides an offense that is passive but no less terrifying. \nWhile in this stance, the Exalt’s Parry is increased by two, \nand it cannot fall below two, no matter how many times \nshe’s attacked. In addition, on any turn on which she \nforegoes an attack, she may react to any attack she attempts \nto parry with a decisive counterattack that has a base \ndamage equal to her current Charge. This counterattack \nmay be augmented with the Exalt’s Initiative—the Exalt \nmay reflexively devote up to (Essence x2) from her Initiative \npool to the damage of each successful counterattack. If she \nsuccessfully damages a foe with such a strike, she does not \nreturn to base Initiative, nor is her Charge affected—only \nany spent Initiative is lost. Lastly, this form allows the Steel \nDevil to ignore penalties for attacking with the off-hand.\nTerrestrial: A Terrestrial may augment counterattacks \nwith up to (Essence) Initiative.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "e4eba360-04a7-32d6-968b-2d2a2a76a798",
+      "name": "Iron Lotus Unfurling",
+      "ability": "Steel Devil Style",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "83fa6d2a-842e-3a7e-b3bc-59da1f0ec95e"
+      ],
+      "cost": "5m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Counterattack",
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "After performing Twin-Blade Defense’s Cross-Blade Catch, the Steel Devil may pay five motes, one Willpower to twist her blades apart with supersonic force, disarming her opponent and hurling his weapon two range bands hence.\n\nThis Charm is modeled as a disarm gambit (p. 199) with double 9s on the Initiative roll. If it succeeds, the Exalt may pay three motes to unleash a point blank Sonic Slash, adding two automatic successes to the attack roll and (Essence) damage dice to the attack’s base damage. The Exalt must know the Sonic Slash Charm to use this attack.",
+      "rawData": "Iron Lotus Unfurling \nCost: 5m, 1wp; Mins: Martial Arts 5, Essence 3 \nType: Reflexive \nKeywords: Counterattack, Decisive-only \nDuration: Instant \nPrerequisite Charms: Twin-Blade Defense\nAfter performing Twin-Blade Defense’s Cross-Blade Catch, \nthe Steel Devil may pay five motes, one Willpower to twist \nher blades apart with supersonic force, disarming her \nopponent and hurling his weapon two range bands hence. \nThis Charm is modeled as a disarm gambit (p. 199) with \ndouble 9s on the Initiative roll. If it succeeds, the Exalt may \npay three motes to unleash a point blank Sonic Slash, adding \ntwo automatic successes to the attack roll and (Essence) \ndamage dice to the attack’s base damage. The Exalt must \nknow the Sonic Slash Charm to use this attack.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "57ad64ba-4c55-3376-a7ea-b03bbd7a2158",
+      "name": "Empty Mind Strike",
+      "ability": "Steel Devil Style",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "cd174c45-2efe-3cca-b6a3-8e2b69e3a3f5"
+      ],
+      "cost": "4m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "This Charm is an attack similar to Steel Devil Strike, occurring after Double Attack Technique. This Charm can only be triggered when the damage done by Double Attack Technique is equal to or greater than the amount of Offhand Charge capacity that has yet to be filled with Charge. However, unlike Steel Devil Strike, this attack expends Charge instead of gathered Initiative to create the attack’s damage pool. In addition, if the Steel Devil expends all her Charge in this attack, the damage roll gains (Essence) bonus dice. Alternately, the Exalt may choose to use this attack after unleashing a Steel Devil Strike that does at least half her current Charge (rounded down) in successful damage.",
+      "rawData": "Empty Mind Strike\nCost: 4m, 1wp; Mins: Martial Arts 5, Essence 2 \nType: Reflexive \nKeywords: Decisive-only \nDuration: Instant \nPrerequisite Charms: Steel Devil Form\nThis Charm is an attack similar to Steel Devil Strike, \noccurring after Double Attack Technique. This Charm \ncan only be triggered when the damage done by Double \nAttack Technique is equal to or greater than the amount \nof Offhand Charge capacity that has yet to be filled with \nCharge. However, unlike Steel Devil Strike, this attack \nexpends Charge instead of gathered Initiative to create \nthe attack’s damage pool. In addition, if the Steel Devil \nexpends all her Charge in this attack, the damage roll gains \n(Essence) bonus dice. Alternately, the Exalt may choose \nto use this attack after unleashing a Steel Devil Strike that \ndoes at least half her current Charge (rounded down) in \nsuccessful damage.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "607fea99-339f-3744-8d6b-36d4771e9115",
+      "name": "Dervish Blade Frenzy",
+      "ability": "Steel Devil Style",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "57ad64ba-4c55-3376-a7ea-b03bbd7a2158"
+      ],
+      "cost": "12m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Mastery",
+        "Withering-only"
+      ],
+      "duration": "Instant",
+      "fullText": "If the Exalt lands a damaging Steel Devil Strike followed by a damaging Empty Mind Strike, she may use this Charm, wrenching her blades free to pause for a moment in a harmony of carnage and serenity, before unleashing a furious onslaught of strikes. Invoking this Charm automatically adds one point of Charge to the Exalt’s Offhand Charge and allows her to immediately attack the same target with Triple Attack Technique, regardless of whether she has learned it. If she has, she is able to attack with a Quadruple Attack Technique, which uses Triple Attack’s damage bonus and adds (Essence or three, whichever is lower) automatic successes to the post soak damage roll.\n\nMastery: Dervish Blade Frenzy can chain into Steel Devil Strike or Empty Mind Strike.",
+      "rawData": "Dervish Blade Frenzy\nCost: 12m, 1wp; Mins: Martial Arts 5, Essence 3 \nType: Reflexive \nKeywords: Mastery, Withering-only \nDuration: Instant \nPrerequisite Charms: Empty Mind Strike\nIf the Exalt lands a damaging Steel Devil Strike followed by a \ndamaging Empty Mind Strike, she may use this Charm, \nwrenching her blades free to pause for a moment in a harmony \nof carnage and serenity, before unleashing a furious onslaught \nof strikes. Invoking this Charm automatically adds one point of \nCharge to the Exalt’s Offhand Charge and allows her to \nimmediately attack the same target with Triple Attack Technique, \nregardless of whether she has learned it. If she has, she is able \nto attack with a Quadruple Attack Technique, which uses Triple \nAttack’s damage bonus and adds (Essence or three, whichever \nis lower) automatic successes to the post soak damage roll.\nMastery: Dervish Blade Frenzy can chain into Steel Devil \nStrike or Empty Mind Strike.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "b3072f53-7d1c-384e-b376-63a9cc48b744",
+      "name": "Whirling Guillotine Dance",
+      "ability": "Steel Devil Style",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "607fea99-339f-3744-8d6b-36d4771e9115",
+        "e4eba360-04a7-32d6-968b-2d2a2a76a798",
+        "fc4d56ce-6a83-34a4-b612-eb5e0f2329eb"
+      ],
+      "cost": "10m, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Form",
+        "Mastery"
+      ],
+      "duration": "One scene",
+      "fullText": "The Steel Devil enters the stance of 108 Sharp Deaths. In his mind, he sees angles of incoming attacks that haven’t even been launched yet, and every jugular lies exposed.\n\nEntering this form combines the effects of both Steel Devil Form and Dual-Slaying Stance.\n\nMastery: The Steel Devil may reflexively enter this stance upon crashing someone with Double Attack Technique or one of its variants, and gains one point to his current Charge as well as his Offhand Charge capacity.\n\nSorcery Across Creation, sorcerers are known and feared as figures of great and dangerous power, said to be capable of slaying a man with a gesture or calling up storms with a glance.\n\nThe magic of sorcery is fundamentally different from Solar Charms. A Solar Charm is an expression of the Solar’s own Essence through supreme mastery of skill. Sorcery is the art of shaping the Essence of the world itself, willing it into accordance with the sorcerer’s whims. To work sorcery is to command essential forces, consort with strange spirits, and call up impossible wonders.\n\nSpells and Sorcerous Workings The powers of sorcery are divided into spells and sorcerous workings. A spell is a discrete power with a defined cost and effects. Sorcerous workings, on the other hand, are\n\ngreat feats and projects. Workings require considerable time and effort to complete, and their expansive scope often requires the Storyteller and the sorcerer’s player to work together in defining its precise effects.\n\nThe Three Circles Sorcery is divided into three circles of understanding and power. In the Old Realm, these were called the Terrestrial Circle, the Celestial Circle, and the Solar Circle—for only the Solar Exalted could master the last. Realm-trained sorcerers sometimes speak of these as the Emerald, Sapphire, and Adamant Circles, though the last is spoken of only in legends and rumors since the disappearance of the Sun’s Chosen.\n\nSolar Exalted must begin by mastering the Terrestrial Circle, then progress into higher circles of understanding.\n\nThe Lunar and Sidereal Exalted may master the Terrestrial and Celestial Circles, but the final secrets of the Solar Circle elude them. Dragon-Blooded, Liminal Exalted, and mortals are only capable of initiating into the Terrestrial Circle. The Abyssal Exalted command similar raw power to their Solar counterparts, but focus on the dread secrets of necromancy.\n\nBecoming a Sorcerer Sorcery is a mountaintop of enlightenment to which many paths lead. Most sorcerers are guided along their path by an instructor—promising young talents receive instruction from master sorcerers of the Realm at the Heptagram Academy, while others are taught by demons, elementals, or stranger things yet. A few sorcerers forge their own path—following contemplative or meditative disciplines that purify and enlighten the mind, mastering relics or domains of power, or seeking out lost libraries and ancient grimoires. All paths demand effort, dedication, and the willingness to abandon old views and deeply-held beliefs.\n\nThose who attain sorcerous enlightenment see the world through new eyes, gaining a deeper insight into the nature of all things. For the Solar Exalted, this is expressed by learning the Terrestrial Circle Sorcery Charm (p. 360).\n\nOther Exalted have their own equivalents.\n\nSorcerous Motes and the Shape Sorcery Action When a sorcerer turns her skin to bronze, calls up a fiery kraken from the molten depths of the earth, or bind the greatest demons of Hell, she is not drawing upon her own Essence. Sorcery manipulates the energies of the world around the sorcerer, shaping it into patterns and matrices that achieve her ends. When a sorcerer casts a spell, the motes that power it are not drawn from her own Essence pools. Instead, she must take shape sorcery actions to manipulate the flow of Essence around her and channel sorcerous motes into the casting of the spell.\n\nTo take a shape sorcery action, the sorcerer must first declare the spell she is attempting to cast, and then roll (Intelligence + Occult). Each success contributes one sorcerous mote to the casting of the spell. If this is sufficient to meet the spell’s cost, it is cast immediately. If not, the sorcerer must continue focusing Essence into the spell in subsequent rounds. She may choose to take additional shape sorcery actions, rolling and adding successes towards the total, until she has enough to cast the spell. Once she has reached the total, she unleashes it immediately and reflexively.\n\nThe shape sorcery action itself is a combat action which cannot be included in a flurry. A sorcerer can pause in the act of gathering sorcerous motes to perform other actions, such as attacking or disengaging from an enemy, but loses three sorcerous motes at the end of every round where no sorcerous motes were gathered. If she uses a ritual that allows her to reflexively gather sorcerous motes for a turn, this counts as if she had used a shape sorcery action— sorcerer-assassins often find such techniques efficacious in their chosen trade, allowing them to fluidly switch between fighting and shaping spells.\n\nIf the sorcerer begins casting a different spell from the one she has started shaping, then her current spell is prematurely aborted, and all gathered sorcerous motes disperse and are lost. If she simply stops gathering motes, she will continue losing three sorcerous motes per round until she has none remaining, at which point the spell is lost.\n\nSome spells require an extended period of shaping Essence to cast, generally on the order of hours or longer. Keeping track of the accumulation of sorcerous motes in these cases is less relevant than the time invested in the spell, and so they are simply noted as having a cost of “Ritual.” Additional Spell Casting Rules\n\n• Willpower: Most spells cost at least one point of Willpower, as it takes a significant investment of the sorcerer’s will to grasp and wield the Essence of the cosmos. This cost must be paid up front, when the sorcerer first begins shaping the spell. If the spell is cast successfully, the realization of the sorcerer’s design fulfills her, restoring one point of Willpower spent to fuel the spell. If the spell is lost, aborted, or countered, then all spent Willpower is simply lost.",
+      "rawData": "Whirling Guillotine Dance\nCost: 10m, 1wp; Mins: Martial Arts 5, Essence 3 \nType: Simple \nKeywords: Form, Mastery \nDuration: One scene \nPrerequisite Charms: Dervish Blade Frenzy, Iron \nLotus Unfurling, Sonic Slash\nThe Steel Devil enters the stance of 108 Sharp Deaths. In \nhis mind, he sees angles of incoming attacks that haven’t \neven been launched yet, and every jugular lies exposed. \nEntering this form combines the effects of both Steel Devil \nForm and Dual-Slaying Stance. \nMastery: The Steel Devil may reflexively enter this stance \nupon crashing someone with Double Attack Technique \nor one of its variants, and gains one point to his current \nCharge as well as his Offhand Charge capacity. \nSorcery\nAcross Creation, sorcerers are known and feared as figures \nof great and dangerous power, said to be capable of slaying \na man with a gesture or calling up storms with a glance. \nThe magic of sorcery is fundamentally different from Solar \nCharms. A Solar Charm is an expression of the Solar’s \nown Essence through supreme mastery of skill. Sorcery \nis the art of shaping the Essence of the world itself, willing \nit into accordance with the sorcerer’s whims. To work \nsorcery is to command essential forces, consort with \nstrange spirits, and call up impossible wonders.\nSpells and Sorcerous Workings\nThe powers of sorcery are divided into spells and sorcerous \nworkings. A spell is a discrete power with a defined cost \nand effects. Sorcerous workings, on the other hand, are \n\ngreat feats and projects. Workings require considerable \ntime and effort to complete, and their expansive scope \noften requires the Storyteller and the sorcerer’s player to \nwork together in defining its precise effects. \nThe Three Circles\nSorcery is divided into three circles of understanding and \npower. In the Old Realm, these were called the Terrestrial \nCircle, the Celestial Circle, and the Solar Circle—for only \nthe Solar Exalted could master the last. Realm-trained \nsorcerers sometimes speak of these as the Emerald, \nSapphire, and Adamant Circles, though the last is spoken \nof only in legends and rumors since the disappearance of \nthe Sun’s Chosen.\nSolar Exalted must begin by mastering the Terrestrial \nCircle, then progress into higher circles of understanding. \nThe Lunar and Sidereal Exalted may master the Terrestrial \nand Celestial Circles, but the final secrets of the Solar \nCircle elude them. Dragon-Blooded, Liminal Exalted, and \nmortals are only capable of initiating into the Terrestrial \nCircle. The Abyssal Exalted command similar raw power \nto their Solar counterparts, but focus on the dread secrets \nof necromancy.\nBecoming a Sorcerer\nSorcery is a mountaintop of enlightenment to which many \npaths lead. Most sorcerers are guided along their path by \nan instructor—promising young talents receive instruction \nfrom master sorcerers of the Realm at the Heptagram \nAcademy, while others are taught by demons, elementals, \nor stranger things yet. A few sorcerers forge their own \npath—following contemplative or meditative disciplines \nthat purify and enlighten the mind, mastering relics or \ndomains of power, or seeking out lost libraries and ancient \ngrimoires. All paths demand effort, dedication, and the \nwillingness to abandon old views and deeply-held beliefs. \nThose who attain sorcerous enlightenment see the world \nthrough new eyes, gaining a deeper insight into the nature \nof all things. For the Solar Exalted, this is expressed by \nlearning the Terrestrial Circle Sorcery Charm (p. 360). \nOther Exalted have their own equivalents.\nSorcerous Motes and the Shape Sorcery Action\nWhen a sorcerer turns her skin to bronze, calls up a fiery \nkraken from the molten depths of the earth, or bind the \ngreatest demons of Hell, she is not drawing upon her own \nEssence. Sorcery manipulates the energies of the world \naround the sorcerer, shaping it into patterns and matrices \nthat achieve her ends. When a sorcerer casts a spell, the \nmotes that power it are not drawn from her own Essence \npools. Instead, she must take shape sorcery actions to \nmanipulate the flow of Essence around her and channel \nsorcerous motes into the casting of the spell.\nTo take a shape sorcery action, the sorcerer must first declare \nthe spell she is attempting to cast, and then roll (Intelligence \n+ Occult). Each success contributes one sorcerous mote to \nthe casting of the spell. If this is sufficient to meet the spell’s \ncost, it is cast immediately. If not, the sorcerer must continue \nfocusing Essence into the spell in subsequent rounds. She \nmay choose to take additional shape sorcery actions, rolling \nand adding successes towards the total, until she has enough \nto cast the spell. Once she has reached the total, she \nunleashes it immediately and reflexively.\nThe shape sorcery action itself is a combat action which \ncannot be included in a flurry. A sorcerer can pause in the \nact of gathering sorcerous motes to perform other actions, \nsuch as attacking or disengaging from an enemy, but loses \nthree sorcerous motes at the end of every round where \nno sorcerous motes were gathered. If she uses a ritual that \nallows her to reflexively gather sorcerous motes for a turn, \nthis counts as if she had used a shape sorcery action—\nsorcerer-assassins often find such techniques efficacious \nin their chosen trade, allowing them to fluidly switch \nbetween fighting and shaping spells.\nIf the sorcerer begins casting a different spell from the one \nshe has started shaping, then her current spell is prematurely \naborted, and all gathered sorcerous motes disperse and \nare lost. If she simply stops gathering motes, she will \ncontinue losing three sorcerous motes per round until she \nhas none remaining, at which point the spell is lost.\nSome spells require an extended period of shaping Essence \nto cast, generally on the order of hours or longer. Keeping \ntrack of the accumulation of sorcerous motes in these \ncases is less relevant than the time invested in the spell, \nand so they are simply noted as having a cost of “Ritual.”\nAdditional Spell Casting Rules\n• Willpower: Most spells cost at least one point of \n Willpower, as it takes a significant investment of the \n sorcerer’s will to grasp and wield the Essence of the \n cosmos. This cost must be paid up front, when the \n sorcerer first begins shaping the spell. If the spell is cast \n successfully, the realization of the sorcerer’s design \n fulfills her, restoring one point of Willpower spent \n to fuel the spell. If the spell is lost, aborted, or countered, \n then all spent Willpower is simply lost.",
+      "potentiallyProblematicImport": false
+    }
+  ]
+}

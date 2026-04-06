@@ -1,0 +1,452 @@
+{
+  "$schema": "./charm-schema.json",
+  "version": "0.1.0",
+  "ability": "Crane Style",
+  "type": "martialArts",
+  "exalt": "solar",
+  "charms": [
+    {
+      "id": "f62d5616-16d0-3a0e-8604-9d7ef7f2a240",
+      "name": "Umbra Noose Execution",
+      "ability": "Crane Style",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "55a54ff8-b260-3583-b0c5-68d23e6f0528",
+        "3494c7b0-d69e-3766-b3d6-2720efc0bc75",
+        "c98bbb82-b09e-30ac-9ad4-b82c96bc9460",
+        "a865693a-a25b-32bc-9542-6f7555410d4f"
+      ],
+      "cost": "5m, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Decisive-only",
+        "Mastery"
+      ],
+      "duration": "Instant",
+      "fullText": "Mastery: In addition to inflicting damage, the next five motes the opponent spends during the scene are funneled away by his traitor shadow and given to the Ebon Shadow stylist. The stylist may only spend these motes to pay for Ebon Shadow style Charms, and vanish at the end of the scene if still unused.\n\nCrane Style Crane style is a defensive style, emulating the grace of the crane in avoiding the blows of an enemy. Its student learns not just to fight with physical blows, but to empathize with her enemy, speaking or debating with him in an attempt to bring the fight to an end without violence.\n\nHowever, those who mistake the Crane master’s restraint for weakness find themselves quickly meeting the ground.\n\nWhen she must, a student of this style can unleash devastating counterattacks, flowing with the force of an enemy’s blow so she can strike back in turn.\n\nCrane Weapons: Crane style practitioners typically dual wield a war fan and hook sword, using the fan for defense while disarming enemies with the sword. Unarmed attacks usually consist of graceful kicks, but a Crane stylist lacking his usual weapons might use one hand to deliver rapid chops while holding back the other for powerful lunges and sweeping blows.\n\nArmor: Crane style is incompatible with armor.\n\nComplementary Abilities: Many Crane stylists use Presence, Performance, or Socialize in combat to sway their opponents into peaceful resolution or compromise, and later Charms of this style empower such efforts.",
+      "rawData": "Umbra Noose Execution\nCost: 5m, 1wp; Mins: Martial Arts 5, Essence 3 \nType: Simple \nKeywords: Decisive-only, Mastery \nDuration: Instant \nPrerequisite Charms: Shadow Body Dissolution, \nThroat-Slitting Shadow Atemi\nMoving her hands through lightning-quick strikes to an \nenemy’s shadow, the martial artist corrupts it with her \nown Essence, warping it into a weapon of silent murder \nthat betrays its master. When the martial artist makes an \nunexpected attack against an enemy, she may unleash the \nUmbra Noose Execution, a decisive attack that warps the \nenemy’s shadow into a razor-edged chain that coils around \nits master’s neck, raising him into the air. The umbra noose \nadds a number of dice equal to the total successes she \nreceived on her Stealth roll to the raw damage of the attack \n(to a maximum of [Essence x 2]).\nMastery: In addition to inflicting damage, the next five \nmotes the opponent spends during the scene are funneled \naway by his traitor shadow and given to the Ebon Shadow \nstylist. The stylist may only spend these motes to pay for \nEbon Shadow style Charms, and vanish at the end of the \nscene if still unused.\nCrane Style\nCrane style is a defensive style, emulating the grace of the \ncrane in avoiding the blows of an enemy. Its student learns \nnot just to fight with physical blows, but to empathize \nwith her enemy, speaking or debating with him in an \nattempt to bring the fight to an end without violence. \nHowever, those who mistake the Crane master’s restraint \nfor weakness find themselves quickly meeting the ground. \nWhen she must, a student of this style can unleash \ndevastating counterattacks, flowing with the force of an \nenemy’s blow so she can strike back in turn. \nCrane Weapons: Crane style practitioners typically dual \nwield a war fan and hook sword, using the fan for defense \nwhile disarming enemies with the sword. Unarmed attacks \nusually consist of graceful kicks, but a Crane stylist lacking \nhis usual weapons might use one hand to deliver rapid \nchops while holding back the other for powerful lunges \nand sweeping blows.\nArmor: Crane style is incompatible with armor.\nComplementary Abilities: Many Crane stylists use \nPresence, Performance, or Socialize in combat to sway \ntheir opponents into peaceful resolution or compromise, \nand later Charms of this style empower such efforts.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "40bc2e9c-3db9-3f20-b5d2-c69a127662e0",
+      "name": "Empowering Justice Redirection",
+      "ability": "Crane Style",
+      "minAbility": 2,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "3m",
+      "type": "Supplemental",
+      "keywords": [
+        "Mastery",
+        "Withering-only"
+      ],
+      "duration": "Instant",
+      "fullText": "Crane stylists do not initiate hostilities—they end them.\n\nEmpowering Justice Redirection can supplement any attack against an enemy who has attacked the martial artist or a character she is protecting with a defend other action during the current or previous round. It adds one success to the attack roll, and one die to the post-soak damage of the attack. This increases to two successes and two post-soak dice of damage if the provoking attack successfully landed.\n\nMastery: The dice of damage added by this Charm are converted to automatic successes.",
+      "rawData": "Empowering Justice Redirection\nCost: 3m; Mins: Martial Arts 2, Essence 1 \nType: Supplemental \nKeywords: Mastery, Withering-only \nDuration: Instant \nPrerequisite Charms: None\nC H A P T E R  7\nEX3\n444\nCrane stylists do not initiate hostilities—they end them. \nEmpowering Justice Redirection can supplement any \nattack against an enemy who has attacked the martial \nartist or a character she is protecting with a defend other \naction during the current or previous round. It adds one \nsuccess to the attack roll, and one die to the post-soak \ndamage of the attack. This increases to two successes and \ntwo post-soak dice of damage if the provoking attack \nsuccessfully landed. \nMastery: The dice of damage added by this Charm are \nconverted to automatic successes.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "611d6ac1-23e7-3dbe-9b5d-e9fe2ac1defd",
+      "name": "Fluttering Cry of Warning",
+      "ability": "Crane Style",
+      "minAbility": 2,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [
+        "Mastery",
+        "Uniform"
+      ],
+      "duration": "Until next turn",
+      "fullText": "The sheltering wings of the Crane stylist shield her allies from the aggression of their enemies. Fluttering Cry of Warning adds +2 Parry whenever the martial artist parries an attack directed at an ally protected by one of her defend other actions until her next turn. Additionally, an enemy who overcomes the Crane stylist’s Parry and chooses to attack her ward rather than the martial artist must pay a point of Initiative to do so.\n\nMastery: Fluttering Cry of Warning allows the martial artist to take a defend other action reflexively, even if it is not her turn.",
+      "rawData": "Fluttering Cry of Warning\nCost: 3m; Mins: Martial Arts 2, Essence 1 \nType: Reflexive \nKeywords: Mastery, Uniform \nDuration: Until next turn \nPrerequisite Charms: None\nThe sheltering wings of the Crane stylist shield her allies \nfrom the aggression of their enemies. Fluttering Cry of \nWarning adds +2 Parry whenever the martial artist parries \nan attack directed at an ally protected by one of her defend \nother actions until her next turn. Additionally, an enemy \nwho overcomes the Crane stylist’s Parry and chooses to \nattack her ward rather than the martial artist must pay a \npoint of Initiative to do so.\nMastery: Fluttering Cry of Warning allows the martial \nartist to take a defend other action reflexively, even if it is \nnot her turn.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "d07c4044-bbd8-3986-ae95-fb42190d10be",
+      "name": "Crane Form",
+      "ability": "Crane Style",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "38d87217-aac7-3cc0-b270-102d988364c8",
+        "611d6ac1-23e7-3dbe-9b5d-e9fe2ac1defd"
+      ],
+      "cost": "8m",
+      "type": "Simple",
+      "keywords": [
+        "Form"
+      ],
+      "duration": "One scene",
+      "fullText": "The crane embodies not violence, but elegance. The martial artist takes on its peaceful demeanor as she enters the stance of the Crane Form, presenting a defense that carries no hint of hostile intent, nor any sign of weakness. While in Crane Form, the martial artist adds +1 Parry, and if she is wearing clothing with long, flowing sleeves, her garment will never be torn or stained in combat. In addition, the Initiative cost for the martial artist to take a full defense action is reduced by one point.\n\nWhile taking a full defense action, the martial artist may respond to any attack against her with a withering or decisive counterattack. Likewise, taking a defend other action allows her to respond to any attack against her ward with a counterattack.\n\nSpecial activation rules: Whenever the martial artist successfully defends against an attack that causes her attacker’s current Initiative to fall below her own, she may reflexively activate Crane Form. If she took a full defense or defend other action on her last turn, this potentially allows her to make a counterattack, if the conditions above are met.",
+      "rawData": "Crane Form\nCost: 8m; Mins: Martial Arts 4, Essence 2 \nType: Simple \nKeywords: Form \nDuration: One scene \nPrerequisite Charms: Empowering Justice Redirec-\ntion, Fluttering Cry of Warning \nThe crane embodies not violence, but elegance. The martial \nartist takes on its peaceful demeanor as she enters the \nstance of the Crane Form, presenting a defense that carries \nno hint of hostile intent, nor any sign of weakness. While \nin Crane Form, the martial artist adds +1 Parry, and if she \nis wearing clothing with long, flowing sleeves, her garment \nwill never be torn or stained in combat. In addition, the \nInitiative cost for the martial artist to take a full defense \naction is reduced by one point.\nWhile taking a full defense action, the martial artist may \nrespond to any attack against her with a withering or \ndecisive counterattack. Likewise, taking a defend other \naction allows her to respond to any attack against her ward \nwith a counterattack.\nSpecial activation rules: Whenever the martial artist \nsuccessfully defends against an attack that causes her \nattacker’s current Initiative to fall below her own, she may \nreflexively activate Crane Form. If she took a full defense \nor defend other action on her last turn, this potentially \nallows her to make a counterattack, if the conditions above \nare met.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "1b7d95a4-0fd6-34cd-9e15-f51b921d5651",
+      "name": "Crossed Wings Denial",
+      "ability": "Crane Style",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "d07c4044-bbd8-3986-ae95-fb42190d10be"
+      ],
+      "cost": "6m, 4i",
+      "type": "Reflexive",
+      "keywords": [
+        "Decisive-only",
+        "Terrestrial"
+      ],
+      "duration": "Until next turn",
+      "fullText": "The perfection of the martial artist’s defense is like the beauty of the crane, so absolute in its calm refinement that seemingly nothing could ever disturb it. The martial artist makes a (Wits + Martial Arts) roll that cannot be enhanced by magic, and banks all successes. Until her next turn, she may spend successes to add to her Parry on a one-for-one basis. Alternatively, she may expend a success after successfully blocking an attack to respond with a decisive counterattack.\n\nTerrestrial: A Dragon-Blood must expend two successes to add +1 to her Parry. The cost to make counterattacks is unchanged.",
+      "rawData": "Crossed Wings Denial\nCost: 6m, 4i; Mins: Martial Arts 5, Essence 2 \nType: Reflexive \nKeywords: Decisive-only, Terrestrial \nDuration: Until next turn \nPrerequisite Charms: Crane Form\nThe perfection of the martial artist’s defense is like the \nbeauty of the crane, so absolute in its calm refinement that \nseemingly nothing could ever disturb it. The martial artist \nmakes a (Wits + Martial Arts) roll that cannot be enhanced \nby magic, and banks all successes. Until her next turn, she \nmay spend successes to add to her Parry on a one-for-one \nbasis. Alternatively, she may expend a success after \nsuccessfully blocking an attack to respond with a decisive \ncounterattack.\nTerrestrial: A Dragon-Blood must expend two successes \nto add +1 to her Parry. The cost to make counterattacks is \nunchanged.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "07da0a28-efa1-38e3-92a1-233d2888591b",
+      "name": "Feather-Stirred Arrow Deflection",
+      "ability": "Crane Style",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "1b7d95a4-0fd6-34cd-9e15-f51b921d5651"
+      ],
+      "cost": "2m (+1wp)",
+      "type": "Reflexive",
+      "keywords": [
+        "Terrestrial",
+        "Uniform"
+      ],
+      "duration": "Instant",
+      "fullText": "With a mighty beat of its wings, the crane shames feathers bound to arrow shafts. Whenever the martial artist could validly make a counterattack in response to a ranged attack, she may use Feather-Stirred Arrow Deflection to extend the counterattack’s range to equal the maximum range of the original attack, sending arrows or spears back at the foes who cast them. Making a counterattack against a foe at extreme range requires a stunt describing how the martial artist accomplishes this feat.\n\nAdditionally, the martial artist may pay a point of Willpower when she uses this Charm to direct her ranged counterattack at an enemy other than the one who originally attacked her, as long as her chosen target is within the expanded range of the counter.\n\nM A R T I A L  A R T S  A N D  S O R C E R Y Terrestrial: A Dragon-Blood cannot make counterattacks at greater than long range.",
+      "rawData": "Feather-Stirred Arrow Deflection\nCost: 2m (+1wp); Mins: Martial Arts 5, Essence 3 \nType: Reflexive \nKeywords: Terrestrial, Uniform \nDuration: Instant \nPrerequisite Charms: Crossed Wings Denial\nWith a mighty beat of its wings, the crane shames feathers \nbound to arrow shafts. Whenever the martial artist could \nvalidly make a counterattack in response to a ranged attack, \nshe may use Feather-Stirred Arrow Deflection to extend \nthe counterattack’s range to equal the maximum range of \nthe original attack, sending arrows or spears back at the \nfoes who cast them. Making a counterattack against a foe \nat extreme range requires a stunt describing how the \nmartial artist accomplishes this feat.\nAdditionally, the martial artist may pay a point of Willpower \nwhen she uses this Charm to direct her ranged \ncounterattack at an enemy other than the one who \noriginally attacked her, as long as her chosen target is \nwithin the expanded range of the counter.\nM A R T I A L  A R T S  A N D  S O R C E R Y\nEX3\n445\nTerrestrial: A Dragon-Blood cannot make counterattacks \nat greater than long range.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "b9e1dc06-2409-3d07-8d3f-0a1e53f9874e",
+      "name": "Wings Spread to Sky",
+      "ability": "Crane Style",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "252f0984-b1e3-3978-88a7-dc92be577ec7",
+        "bca96651-081f-3fc3-9da5-25d50f7ecf74",
+        "1c6b96f0-d129-310a-800b-a52bff456505",
+        "4b11cd0f-285a-32ca-a863-458ec8c6f3f0",
+        "a45dbf0d-8f4a-3381-a2ca-7f45663a25a6"
+      ],
+      "cost": "4m",
+      "type": "Reflexive",
+      "keywords": [
+        "Dual"
+      ],
+      "duration": "Instant",
+      "fullText": "If the martial artist ends her movement in mid-air or on a structure that could not support her weight, she may retain a stable footing there until her next turn. If she then uses a movement action to descend or alight on a viable footing, she suffers no impairment. Otherwise—for example, if she uses Wings Spread to Sky a second time to soar upward and attack an aerial foe—she falls gracefully to the earth at the end of her turn. She (and anyone with her) still takes falling damage, but may ignore up to (Dexterity) range bands of descent for purpose of calculating it. This Charm can be used reflexively to mitigate the damage from a fall in this manner, even if the martial artist was not in flight beforehand.",
+      "rawData": "Wings Spread to Sky\nCost: 4m; Mins: Martial Arts 5, Essence 3 \nType: Reflexive \nKeywords: Dual \nDuration: Instant \nPrerequisite Charms: Crossed Wings Denial\nMajestic and beautiful as the soaring crane, the martial \nartist leaps into the air, flying on the invisible currents of \nEssence that flow through it. Wings Spread to Sky may \nsupplement any movement action, allowing the martial \nartist to fly through the air to complete the movement. If \nthe martial artist is protecting a character with a defend \nother action, she may choose to carry him along with her, \nif he is willing and she has at least one hand free to carry \nhim (or stunts around this limitation). On the offense, \nif the Crane stylist uses this flight to close the distance \nbefore making a decisive attack, she doubles 10s on the \ndamage roll. \nIf the martial artist ends her movement in mid-air or on \na structure that could not support her weight, she may \nretain a stable footing there until her next turn. If she then \nuses a movement action to descend or alight on a viable \nfooting, she suffers no impairment. Otherwise—for \nexample, if she uses Wings Spread to Sky a second time \nto soar upward and attack an aerial foe—she falls gracefully \nto the earth at the end of her turn. She (and anyone with \nher) still takes falling damage, but may ignore up to \n(Dexterity) range bands of descent for purpose of \ncalculating it. This Charm can be used reflexively to \nmitigate the damage from a fall in this manner, even if the \nmartial artist was not in flight beforehand.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "c12765cd-eaee-3af5-90e3-0f71827aea4b",
+      "name": "Humbling Enlightenment Commentary",
+      "ability": "Crane Style",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "d07c4044-bbd8-3986-ae95-fb42190d10be"
+      ],
+      "cost": "1m, 1wp",
+      "type": "Supplemental",
+      "keywords": [
+        "Decisive-only",
+        "Mastery",
+        "Terrestrial"
+      ],
+      "duration": "Instant",
+      "fullText": "The grace of the crane inspires those who bear witness to it. Humbling Enlightenment Commentary adds any stunt dice awarded to a decisive attack to its damage roll as well, as long as the stunt is based on verbally analyzing the enemy’s fighting style or the conflict as a whole in the style of an illustrative lesson or parable. If the damage of the attack exceeds the enemy’s Resolve, the martial artist may count it as an automatically successful instill action to build a positive Minor Tie to a group or a Principle representing a philosophical or ethical belief, based on the stunted commentary. If the enemy spends Willpower to resist or already possesses the Intimacy the martial artist is trying to create, he loses (the Crane stylist’s Charisma) Initiative (which the martial artist does not gain) as his attention is split between physical and philosophical conflict.\n\nTerrestrial: A Dragon-Blood can only use this Charm to enhance counterattacks granted by Crane Form or Crossed Wings Deflection.\n\nMastery: If the martial artist herself possesses the Intimacy she wishes to instill in her enemy with Humbling Enlightenment Commentary, she adds its rating in bonus dice to the attack roll.",
+      "rawData": "Humbling Enlightenment Commentary\nCost: 1m, 1wp; Mins: Martial Arts 4, Essence 2 \nType: Supplemental \nKeywords: Decisive-only, Mastery, Terrestrial \nDuration: Instant \nPrerequisite Charms: Crane Form\nThe grace of the crane inspires those who bear witness to \nit. Humbling Enlightenment Commentary adds any stunt \ndice awarded to a decisive attack to its damage roll as well, \nas long as the stunt is based on verbally analyzing the \nenemy’s fighting style or the conflict as a whole in the style \nof an illustrative lesson or parable. If the damage of the \nattack exceeds the enemy’s Resolve, the martial artist may \ncount it as an automatically successful instill action to build \na positive Minor Tie to a group or a Principle representing \na philosophical or ethical belief, based on the stunted \ncommentary. If the enemy spends Willpower to resist or \nalready possesses the Intimacy the martial artist is trying \nto create, he loses (the Crane stylist’s Charisma) Initiative \n(which the martial artist does not gain) as his attention is \nsplit between physical and philosophical conflict.\nTerrestrial: A Dragon-Blood can only use this Charm to \nenhance counterattacks granted by Crane Form or Crossed \nWings Deflection.\nMastery: If the martial artist herself possesses the \nIntimacy she wishes to instill in her enemy with Humbling \nEnlightenment Commentary, she adds its rating in bonus \ndice to the attack roll.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "c9a5244a-41f6-336a-b919-a62407f3ab43",
+      "name": "Kindly Sifu’s Quill",
+      "ability": "Crane Style",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "5db68cd8-08f9-3ff6-9913-172535b4d955",
+        "a16a25ba-51d3-32c9-9222-3795caaf6036"
+      ],
+      "cost": "5m",
+      "type": "Supplemental",
+      "keywords": [
+        "Decisive-only",
+        "Mastery"
+      ],
+      "duration": "Instant",
+      "fullText": "Mastery: At Essence 3+, exploiting an Intimacy improves the damage bonus of this Charm based on the Intimacy’s rating: Double 9s if it is Minor, 8s if it is Major, and 7s if it is Defining.",
+      "rawData": "Kindly Sifu’s Quill\nCost: 5m; Mins: Martial Arts 5, Essence 2 \nType: Supplemental \nKeywords: Decisive-only, Mastery \nDuration: Instant \nPrerequisite Charms: Humbling Enlightenment Com-\nmentary\nGentle masters write their lessons in bruises, not wounds. \nKindly Sifu’s Quill applies the double 10s rule to a decisive \ndamage roll, and causes decisive attacks to always deal \nbashing damage. An enemy who has an Intimacy as \ndescribed in Humbling Enlightenment Commentary takes \na penalty to his Defense against the attack as though it \nwere his Resolve, as long as the attack is stunted in a way \nthat includes dialogue or actions that exploit this \nvulnerability.\nMastery: At Essence 3+, exploiting an Intimacy improves \nthe damage bonus of this Charm based on the Intimacy’s \nrating: Double 9s if it is Minor, 8s if it is Major, and 7s if \nit is Defining.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "b96e6416-ab63-3eb8-8eb6-dd4ea5c789a7",
+      "name": "Mournful Crane’s Cry",
+      "ability": "Crane Style",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "35c127c2-f677-3d11-a09b-b08905180617"
+      ],
+      "cost": "3m",
+      "type": "Supplemental",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "deliver it:\n\n• Feather-Strewn Path (Unarmed): The martial artist’s unarmed counterattacks turn the momentum of her foe’s attacks against him, tossing him up to two range bands horizontally in any direction at the conclusion of the attack and knocking him prone (assuming it succeeds).\n\nThe Feather-Strewn Path is a gentle one, and enemies flung by it suffer no further damage when they touch down.\n\n• Beak Spears Frog (Hook Sword): Using a hook sword to counter with a disarm gambit, the martial artist applies double 9s to the Initiative roll, and halves the Initiative cost of the gambit.\n\n• Fluttering Wing Flourish (War Fan): Catching an enemy’s weapon on the edge of her war fan, the martial artist sends it back to its master. Instead of making a counterattack, the martial artist rebounds the original attack back on the character who made it. She may still enhance the redirected attack with the Charms of this style, but not any others. This doesn’t actually protect her from the attack, it merely allows her to return its fury to her attacker.",
+      "rawData": "Mournful Crane’s Cry\nCost: 3m; Mins: Martial Arts 4, Essence 2 \nType: Supplemental \nKeywords: Decisive-only \nDuration: Instant \nPrerequisite Charms: Humbling Enlightenment Com-\nmentary\nViolence begets violence. If there is to be an end to the \nsuffering and sorrow which afflicts the world, something \nmust stop this cycle. Drawing the hostile Essence and \nkilling intent of an attack into his defense, the Crane stylist \nweave an intricate kata to break the flow of her opponent’s \naggression. Mournful Crane’s Cry enhances a counterattack, \nproviding a varying effect based on the weapon used to \ndeliver it:\nC H A P T E R  7\nEX3\n446\n• Feather-Strewn Path (Unarmed): The martial artist’s \nunarmed counterattacks turn the momentum of her foe’s \nattacks against him, tossing him up to two range bands \nhorizontally in any direction at the conclusion of the \nattack and knocking him prone (assuming it succeeds). \nThe Feather-Strewn Path is a gentle one, and enemies \nflung by it suffer no further damage when they touch \ndown. \n• Beak Spears Frog (Hook Sword): Using a hook sword \nto counter with a disarm gambit, the martial artist applies \ndouble 9s to the Initiative roll, and halves the Initiative \ncost of the gambit.\n• Fluttering Wing Flourish (War Fan): Catching an \nenemy’s weapon on the edge of her war fan, the martial \nartist sends it back to its master. Instead of making a \ncounterattack, the martial artist rebounds the original \nattack back on the character who made it. She may still \nenhance the redirected attack with the Charms of this \nstyle, but not any others. This doesn’t actually protect her \nfrom the attack, it merely allows her to return its fury to \nher attacker.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "4da23cf8-13df-3656-8b55-a85d6f5c729e",
+      "name": "Wisdom of the Celestial Crane",
+      "ability": "Crane Style",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "bfd8eb53-8a59-30e0-b4b9-0612aeaaac77",
+        "c9a5244a-41f6-336a-b919-a62407f3ab43",
+        "b96e6416-ab63-3eb8-8eb6-dd4ea5c789a7",
+        "b9e1dc06-2409-3d07-8d3f-0a1e53f9874e"
+      ],
+      "cost": "7m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Decisive-only",
+        "Mastery",
+        "Terrestrial"
+      ],
+      "duration": "Instant",
+      "fullText": "The crane is sacred in its beauty, a bird of celestial splendor and serene repose. Such are the virtues that the Crane master may teach to her disciples with the final move of this style. Wisdom of the Celestial Crane can be used when the martial artist makes a decisive counterattack in response to an enemy’s decisive attack. Gambits, as well as the attacks of battle groups and trivial opponents, do not provide the opportunity to use this Charm. The martial artist adds her enemy’s Initiative to the raw damage of the attack in addition to her own. Incapacitating an enemy with Wisdom of the Celestial Crane is always nonfatal, and allows the martial artist to choose any of her opponent’s Intimacies that fit the criteria set out in Humbling Enlightenment Commentary, and strengthen it to Defining intensity. Alternatively, she may leave her foe with a Defining Tie of love towards all Creation.\n\nSpecial activation rules: Wisdom of the Celestial Crane can only be used once per combat, unless reset by going three rounds without being hit by an attack or making an attack (not including counterattacks).\n\nM A R T I A L  A R T S  A N D  S O R C E R Y Terrestrial: A Dragon-Blood cannot add more bonus dice to the raw damage of the attack than her current Initiative with this Charm.\n\nMastery: If the martial artist successfully defends against the attack that triggers the counterattack, then his enemy loses all Initiative and is crashed.\n\nSilver-Voiced Nightingale Style Silver-Voiced Nightingale style is an esoteric art, focusing on the use of the stylist’s voice in both song and warfare.\n\nThrough rigorous training in breath control, circular breathing, and long, sustained chants, students of this style learn to fight with kiais, powerful shouts with the strength to kill. They are also consummate performers, singing on the battlefield to strengthen the morale of their allies and shatter that of their enemies. While the style’s appellation honors the eponymous martial artist who created it in the distant past, the full title is only remembered by those of the Exalted with memories of past lives in the First Age, or who lived through it themselves. In most dojos across Creation, it is known only as Nightingale style.\n\nNightingale Weapons: Nightingale style attacks are made unarmed, each strike accompanied by a powerful shout.\n\nFor Essence-users, the style is unique in not relying upon either weapons or unarmed strikes—instead, its practitioners learn to deliver powerful kiai attacks through the force of their voice alone, enabled through mastering the first Charm of this style.\n\nArmor: Silver-Voiced Nightingale style is compatible with light armor.\n\nComplementary Abilities: Performance is essential to Nightingale stylists, as many of the style’s Charms revolve around using it to take social actions in battle.",
+      "rawData": "Wisdom of the Celestial Crane\nCost: 7m, 1wp; Mins: Martial Arts 5, Essence 4 \nType: Reflexive \nKeywords: Decisive-only, Mastery, Terrestrial \nDuration: Instant \nPrerequisite Charms: Feather-Stirred Arrow Deflec-\ntion, Kindly Sifu’s Quill, Mournful Crane’s Cry, Wings \nSpread to Sky\nThe crane is sacred in its beauty, a bird of celestial splendor \nand serene repose. Such are the virtues that the Crane \nmaster may teach to her disciples with the final move of \nthis style. Wisdom of the Celestial Crane can be used when \nthe martial artist makes a decisive counterattack in \nresponse to an enemy’s decisive attack. Gambits, as well \nas the attacks of battle groups and trivial opponents, do \nnot provide the opportunity to use this Charm. The martial \nartist adds her enemy’s Initiative to the raw damage of \nthe attack in addition to her own. Incapacitating an enemy \nwith Wisdom of the Celestial Crane is always nonfatal, \nand allows the martial artist to choose any of her opponent’s \nIntimacies that fit the criteria set out in Humbling \nEnlightenment Commentary, and strengthen it to Defining \nintensity. Alternatively, she may leave her foe with a \nDefining Tie of love towards all Creation.\nSpecial activation rules: Wisdom of the Celestial Crane \ncan only be used once per combat, unless reset by going \nthree rounds without being hit by an attack or making an \nattack (not including counterattacks). \nM A R T I A L  A R T S  A N D  S O R C E R Y\nEX3\n447\nTerrestrial: A Dragon-Blood cannot add more bonus \ndice to the raw damage of the attack than her current \nInitiative with this Charm. \nMastery: If the martial artist successfully defends against \nthe attack that triggers the counterattack, then his enemy \nloses all Initiative and is crashed.\nSilver-Voiced Nightingale Style\nSilver-Voiced Nightingale style is an esoteric art, focusing \non the use of the stylist’s voice in both song and warfare. \nThrough rigorous training in breath control, circular \nbreathing, and long, sustained chants, students of this style \nlearn to fight with kiais, powerful shouts with the strength \nto kill. They are also consummate performers, singing on \nthe battlefield to strengthen the morale of their allies and \nshatter that of their enemies. While the style’s appellation \nhonors the eponymous martial artist who created it in the \ndistant past, the full title is only remembered by those of \nthe Exalted with memories of past lives in the First Age, or \nwho lived through it themselves. In most dojos across \nCreation, it is known only as Nightingale style.  \nNightingale Weapons: Nightingale style attacks are made \nunarmed, each strike accompanied by a powerful shout. \nFor Essence-users, the style is unique in not relying upon \neither weapons or unarmed strikes—instead, its \npractitioners learn to deliver powerful kiai attacks through \nthe force of their voice alone, enabled through mastering \nthe first Charm of this style.\nArmor: Silver-Voiced Nightingale style is compatible with \nlight armor.\nComplementary Abilities: Performance is essential to \nNightingale stylists, as many of the style’s Charms revolve \naround using it to take social actions in battle.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "97e11a4b-67d0-385b-906e-015773c2ca56",
+      "name": "Voice of the Night Bird",
+      "ability": "Crane Style",
+      "minAbility": 2,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [
+        "Mastery"
+      ],
+      "duration": "Permanent",
+      "fullText": "The nightingale is no bird of prey, to swoop down with curved beak and cruel talons. Its greatest virtue is its song— and with that song, the students of Nightingale style give voice to their victory. This Charm allows the martial artist to make kiais, unleashing forceful waves of sound that strike her enemies like physical blows. A kiai has the traits of a mundane light weapon with the bashing and thrown (short) tags, save she rolls its attacks with Martial Arts (Silver-Voiced Nightingale style) rather than Thrown. The martial artist may flurry a kiai attack with Performancebased influence without the usual flurry penalties, as long as the content of the social influence is woven into the lyrics or emotional tenor of her song.\n\nMastery: The martial artist’s kiai has the traits of a light artifact weapon.",
+      "rawData": "Voice of the Night Bird\nCost: —; Mins: Martial Arts 2, Essence 1 \nType: Permanent \nKeywords: Mastery \nDuration: Permanent \nPrerequisite Charms: None\nThe nightingale is no bird of prey, to swoop down with \ncurved beak and cruel talons. Its greatest virtue is its song—\nand with that song, the students of Nightingale style give \nvoice to their victory. This Charm allows the martial artist \nto make kiais, unleashing forceful waves of sound that \nstrike her enemies like physical blows. A kiai has the traits \nof a mundane light weapon with the bashing and thrown \n(short) tags, save she rolls its attacks with Martial Arts \n(Silver-Voiced Nightingale style) rather than Thrown. The \nmartial artist may flurry a kiai attack with Performance-\nbased influence without the usual flurry penalties, as long \nas the content of the social influence is woven into the \nlyrics or emotional tenor of her song.\nMastery: The martial artist’s kiai has the traits of a light \nartifact weapon.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "5023bad8-5ed2-3863-aee8-b1e6c10abed5",
+      "name": "Inspiring Battle Hymn",
+      "ability": "Crane Style",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "71c9c03b-2033-3396-ac11-ab9f034a3fac",
+        "b3e3217c-bed3-3eee-a7df-f0edaa9cef64",
+        "099b94df-8bfb-359c-bcbe-608bb7afdb8e",
+        "109f01bc-e23b-3602-98d6-2dc493a475bc"
+      ],
+      "cost": "5m",
+      "type": "Supplemental",
+      "keywords": [
+        "Mastery"
+      ],
+      "duration": "Instant",
+      "fullText": "Mastery: If the martial artist wins Join Battle, she may gain a single point of temporary Willpower, or grant it to an ally who also won Join Battle. This can raise characters above their permanent Willpower.",
+      "rawData": "Inspiring Battle Hymn\nCost: 5m; Mins: Martial Arts 3, Essence 1 \nType: Supplemental \nKeywords: Mastery \nDuration: Instant \nPrerequisite Charms: Voice of the Night Bird\nAs battle breaks out, the Nightingale raise her voice in a \nsong that promises triumph, steeling the hearts of her allies \nso that they may fight more fiercely. Inspiring Battle Hymn \nrerolls all 1s on the Join Battle roll of the martial artist and \nall allies capable of hearing her. Characters who received \nthis benefit add +1 Resolve against threats, supernatural fear, \nor similar forms of influence for the duration of the fight. \nMastery: If the martial artist wins Join Battle, she may \ngain a single point of temporary Willpower, or grant it to \nan ally who also won Join Battle. This can raise characters \nabove their permanent Willpower.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "29296bf3-f923-3842-aab8-0390eb2b0e8d",
+      "name": "Terrifying Battle Shriek",
+      "ability": "Crane Style",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "97e11a4b-67d0-385b-906e-015773c2ca56"
+      ],
+      "cost": "4m",
+      "type": "Simple",
+      "keywords": [
+        "Mastery"
+      ],
+      "duration": "Instant",
+      "fullText": "The Nightingale’s voice rings out in a deafening overture or in mocking lyrics, promising a horrible death to her SILVER-VOICED NIGHTINGALE REMIX Silver-Voiced Nightingale style, as written, assumes that its stylists must sing to use its Charms. However, over the ages, offshoot branches and deviant schools of this style have developed that use other forms of musical performance. If you want to fight as a sanxian player who draws razor-sharp winds forth with each pluck of the strings, a flute-player whose scales burst eardrums and shatter bones, or a freestyle poet whose rhymes sear themselves into the skin of his enemies as characters writ in fire—go for it!\n\nfoes. The martial artist rolls (Charisma + Performance) to intimidate a single enemy. A successful influence roll strikes fear into the enemy’s heart, forcing him to take a movement action on his next turn to move away from the martial artist or hide from her, if possible. Very weak or cowardly opponents may surrender or retreat entirely.\n\nUnlike other Simple Charms, Terrifying Battle Shriek may be placed in a flurry, and benefits from being used against enemies who have been hit with a kiai attack on the same turn. The target of this Charm is treated as having a Minor Tie of fear towards the martial artist if he has been hit with a kiai on the same turn, or a Major Tie if the kiai attack was decisive.\n\nMastery: An enemy who yields to the Nightingale’s influence and retreats or cowers from her loses Initiative equal to her (Charisma/2). She does not gain this Initiative.",
+      "rawData": "Terrifying Battle Shriek\nCost: 4m; Mins: Martial Arts 3, Essence 1 \nType: Simple \nKeywords: Mastery \nDuration: Instant \nPrerequisite Charms: Voice of the Night Bird\nThe Nightingale’s voice rings out in a deafening overture \nor in mocking lyrics, promising a horrible death to her \nSILVER-VOICED NIGHTINGALE REMIX\nSilver-Voiced Nightingale style, as written, assumes that \nits stylists must sing to use its Charms. However, over \nthe ages, offshoot branches and deviant schools of this \nstyle have developed that use other forms of musical \nperformance. If you want to fight as a sanxian player \nwho draws razor-sharp winds forth with each pluck of \nthe strings, a flute-player whose scales burst eardrums \nand shatter bones, or a freestyle poet whose rhymes \nsear themselves into the skin of his enemies as \ncharacters writ in fire—go for it!\nC H A P T E R  7\nEX3\n448\nfoes. The martial artist rolls (Charisma + Performance) \nto intimidate a single enemy. A successful influence roll \nstrikes fear into the enemy’s heart, forcing him to take a \nmovement action on his next turn to move away from the \nmartial artist or hide from her, if possible. Very weak or \ncowardly opponents may surrender or retreat entirely. \nUnlike other Simple Charms, Terrifying Battle Shriek may \nbe placed in a flurry, and benefits from being used against \nenemies who have been hit with a kiai attack on the same \nturn. The target of this Charm is treated as having a Minor \nTie of fear towards the martial artist if he has been hit \nwith a kiai on the same turn, or a Major Tie if the kiai \nattack was decisive. \nMastery: An enemy who yields to the Nightingale’s \ninfluence and retreats or cowers from her loses Initiative \nequal to her (Charisma/2). She does not gain this Initiative.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "a666a1c7-0bd1-3b28-970b-8a7486990908",
+      "name": "Silver-Voiced Nightingale Form",
+      "ability": "Crane Style",
+      "minAbility": 4,
+      "minEssence": 1,
+      "prerequisites": [
+        "5023bad8-5ed2-3863-aee8-b1e6c10abed5",
+        "8e1bb15f-f3e9-3a22-90c7-075d5606af3f",
+        "3a161b7a-4134-3d82-93d6-af8f1b43a4a5",
+        "fe0c846b-e69d-3322-8837-24d3742becb4"
+      ],
+      "cost": "8m",
+      "type": "Simple",
+      "keywords": [
+        "Form"
+      ],
+      "duration": "One scene",
+      "fullText": "Special activation rules: Whenever the Nightingale successfully overcomes a non-trivial enemy’s Resolve with Performance-based influence relevant to an ongoing fight, she may reflexively activate Silver-Voiced Nightingale Form. She gains Initiative from any characters who pay Willpower to resist the initial influence roll, as described above.",
+      "rawData": "Silver-Voiced Nightingale Form\nCost: 8m; Mins: Martial Arts 4, Essence 1; \nType: Simple \nKeywords: Form \nDuration: One scene \nPrerequisite Charms: Inspiring Battle Hymn, Terrify-\ning Battle Shriek\nStanding straight and pitching her voice to reach all \nlisteners, the Nightingale begins a song that rings out with \nexquisite clarity, a melody in perfect synchronization with \nher every movement. This perfect harmony of music and \nmotion adds +1 to her Evasion, while the circular breathing \nused to maintain her song in the midst of battle adds her \nPerformance to the raw damage of her withering kiai \nattacks. Finally, whenever an enemy pays Willpower to \nresist a Performance-based influence roll made by the \nNightingale, she gains three points of Initiative.\nSpecial activation rules: Whenever the Nightingale \nsuccessfully overcomes a non-trivial enemy’s Resolve with \nPerformance-based influence relevant to an ongoing \nfight, she may reflexively activate Silver-Voiced Nightingale \nForm. She gains Initiative from any characters who \npay Willpower to resist the initial influence roll, as \ndescribed above.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "b26fec8a-951e-385b-8670-1c7a4735e7a0",
+      "name": "Hearing the Heart’s Song",
+      "ability": "Crane Style",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "a666a1c7-0bd1-3b28-970b-8a7486990908"
+      ],
+      "cost": "5m, 2i",
+      "type": "Reflexive",
+      "keywords": [
+        "Mastery",
+        "Perilous",
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "Honing her senses, the Nightingale hears the music of her foe’s heart, catching a strain of melody that betrays his intent to attack. Hearing the Heart’s Song adds (the martial artist’s Performance/2, round up) to her Evasion against a decisive attack. If she successfully defends against the attack, she gleans insights into her enemy’s heart, making a reflexive read intentions action against his Guile and adding her (boosted) Evasion in non-Charm bonus dice.\n\nMastery: Successfully reading an enemy’s intentions with this Charm allows the martial artist to steal one point of Initiative from him for each extra success on her roll.",
+      "rawData": "Hearing the Heart’s Song\nCost: 5m, 2i; Mins: Martial Arts 4, Essence 2 \nType: Reflexive \nKeywords: Mastery, Perilous, Decisive-only \nDuration: Instant \nPrerequisite Charms: Silver-Voiced Nightingale Form\nHoning her senses, the Nightingale hears the music of \nher foe’s heart, catching a strain of melody that betrays \nhis intent to attack. Hearing the Heart’s Song adds (the \nmartial artist’s Performance/2, round up) to her Evasion \nagainst a decisive attack. If she successfully defends \nagainst the attack, she gleans insights into her enemy’s \nheart, making a reflexive read intentions action against \nhis Guile and adding her (boosted) Evasion in non-Charm \nbonus dice. \nMastery: Successfully reading an enemy’s intentions with \nthis Charm allows the martial artist to steal one point of \nInitiative from him for each extra success on her roll.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "4a09e215-df7c-3f29-9548-c0b574fba73a",
+      "name": "Harmony in Opposition Stance",
+      "ability": "Crane Style",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "b57db28c-987b-3867-9e55-c44f8c9f676c",
+        "28239ea9-ed58-3975-a5eb-075130d659c7",
+        "895a448f-caa1-31a9-a6f1-c5c0cf72739d",
+        "0ff8549b-ff7a-357a-9ae4-60f94be24ee8",
+        "211ea64d-fc38-36e0-b88f-21dcf25d40cb",
+        "2aeddb98-72f2-35a3-91fa-9ebd7fa19e0a",
+        "a00a2f7a-1644-38a1-a7fe-1d31ac90cd24"
+      ],
+      "cost": "4m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Terrestrial"
+      ],
+      "duration": "One scene",
+      "fullText": "The martial artist may choose to synchronize her movements to those of a different enemy as a miscellaneous action, which cannot be placed in a flurry. If she incapacitates the enemy she is synchronized with, or causes him to flee, surrender, or otherwise become removed from combat through influence rolls, then she may reflexively designate a new enemy.\n\nTerrestrial: A Dragon-Blood must activate this as a Simple Charm. Successfully defending against an attack made by an enemy whose intentions she has successfully read this scene or in the preceding one gives her an opportunity to activate it reflexively against that attacker. The Essence minimum of this Charm becomes 3 for Dragon-Blooded.",
+      "rawData": "Harmony in Opposition Stance\nCost: 4m, 1wp; Mins: Martial Arts 5, Essence 2 \nType: Reflexive \nKeywords: Terrestrial \nDuration: One scene \nPrerequisite Charms: Hearing the Heart’s Song\nActing with preternatural timing and the grace of a trained \ndancer, the Nightingale moves in perfect counterpoint to \nan enemy, mimicking the rhythm of his movements and \npredicting his every attack. When the martial artist uses \nHarmony in Opposition Stance, she chooses a single enemy \nto synchronize her movements with. She may always apply \nher full Evasion against attacks made by the chosen enemy, \nignoring all penalties, and applies double 9s on rolls to \nrush him or disengage from him. Finally, whenever the \nchosen enemy gains Initiative, the martial artist gains a \nsingle point of Initiative, unless he gained that Initiative \nby attacking her.\nThe martial artist may choose to synchronize her \nmovements to those of a different enemy as a miscellaneous \naction, which cannot be placed in a flurry. If she \nincapacitates the enemy she is synchronized with, or \ncauses him to flee, surrender, or otherwise become \nremoved from combat through influence rolls, then she \nmay reflexively designate a new enemy. \nTerrestrial: A Dragon-Blood must activate this as a Simple \nCharm. Successfully defending against an attack made by \nan enemy whose intentions she has successfully read this \nscene or in the preceding one gives her an opportunity to \nactivate it reflexively against that attacker. The Essence \nminimum of this Charm becomes 3 for Dragon-Blooded.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "fa4feab8-7d03-3672-ac33-079ab623820e",
+      "name": "Haunting Heart-Rending Melody",
+      "ability": "Crane Style",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "eea117a4-9e21-3222-92c1-b071b5c910a1",
+        "9c1d3276-1237-35d4-90a4-4473bacc15fc",
+        "3ad15bd6-c97b-33e6-bf7a-9781821fe63c",
+        "85c0d3a3-77ab-3140-ab47-c349a2b85772"
+      ],
+      "cost": "1m, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Terrestrial"
+      ],
+      "duration": "Instant",
+      "fullText": "Terrestrial: A Dragon-Blood gains no bonus successes when using this Charm.",
+      "rawData": "Haunting Heart-Rending Melody\nCost: 1m, 1wp; Mins: Martial Arts 4, Essence 2 \nType: Simple \nKeywords: Terrestrial \nDuration: Instant \nPrerequisite Charms: Silver-Voiced Nightingale Form\nM A R T I A L  A R T S  A N D  S O R C E R Y\nEX3\n449\nSinging a stirring melody that rouses passion and deep \nemotions, the Nightingale suffuses each note with the \nresonant hum of aural Essence. The martial artist rolls \n(Charisma + Performance) to inspire all enemies who can \nhear her with sorrow, regret, despair, or some other \nemotion that would impede their will to fight. She is not \nhindered by targeting multiple enemies and adds her \nEssence in bonus successes to the roll. An enemy who \nyields to these emotions takes a -3 penalty to Defense \nagainst any kiai attacks the martial artist makes, as long \nas she stunts them in a way that exploits the inspired \nemotion. Once an enemy has paid Willpower to resist this \ninfluence, he remains immune to it for the remainder of \nthe scene. \nUnlike other Simple Charms, Haunting Heart-Rending \nMelody may be placed in a flurry.\nTerrestrial: A Dragon-Blood gains no bonus successes \nwhen using this Charm.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "9209b728-f057-316c-b494-258a24d2f3eb",
+      "name": "Resounding Songbird’s Cry",
+      "ability": "Crane Style",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "e360564e-4f49-37b7-8de2-20435d2f4821",
+        "5b952120-d163-3913-976b-dc9302e70217",
+        "c797a284-df42-3572-8272-7bd450a125da",
+        "da8e5abc-f04a-3da1-9345-85bef4582b53",
+        "1e247035-e7b0-3810-87dd-dcd853d57a5f"
+      ],
+      "cost": "3m, 2i",
+      "type": "Simple",
+      "keywords": [
+        "Terrestrial"
+      ],
+      "duration": "Instant",
+      "fullText": "Special activation rules: Resounding Songbird’s Cry can only be used once per fight, unless reset by landing a decisive kiai attack and then building up to Initiative 10+.\n\nTerrestrial: A Dragon-Blood cannot use the Shattering Echo Refrain.",
+      "rawData": "Resounding Songbird’s Cry\nCost: 3m, 2i; Mins: Martial Arts 5, Essence 3 \nType: Simple \nKeywords: Terrestrial \nDuration: Instant \nPrerequisite Charms: Haunting Heart-Rending \nMelody\nThrowing back her head and closing her eyes tight, the \nNightingale shrieks out an awful cry. Glass and crystal \nshatter spectacularly, metal warps, and enemies bleed \nfrom the ears as her devastating crescendo rises to its \nconclusion. Resounding Songbird’s Cry applies a sonic \nenvironmental hazard against all enemies within short \nrange of the martial artist. The hazard has damage 2B and \na difficulty of (the martial artist’s Essence + 2), resisted \nwith (Stamina + Resistance). Stunting the hazard to destroy \nscenery such as large stained glass windows, crystal \nchandeliers, or similar can render the damage inflicted \nby this hazard lethal. \nOn the turn after using Resounding Songbird’s Cry to \nunleash an environmental hazard, the martial artist may \nuse this Charm a second time at no cost to make a \nwithering kiai attack that is dispersed through the \nlingering sonic resonance of the initial cry, known as the \nShattering Echo Refrain. The attack is rolled against all \nenemies who failed their roll to resist the hazard, and \ndoubles up to (the martial artist’s Charisma) 9s. \nSpecial activation rules: Resounding Songbird’s Cry can \nonly be used once per fight, unless reset by landing a \ndecisive kiai attack and then building up to Initiative 10+. \nTerrestrial: A Dragon-Blood cannot use the Shattering \nEcho Refrain.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "5737331d-7726-31bf-bd0b-708ca0577e02",
+      "name": "Flashing Blade Harmony",
+      "ability": "Crane Style",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "f2d4f5d0-afba-3a1f-883c-b31d6bfa895d",
+        "b25779e9-0ee5-39d1-b160-b72c013ed7cd"
+      ],
+      "cost": "4m",
+      "type": "Reflexive",
+      "keywords": [
+        "Dual",
+        "Mastery"
+      ],
+      "duration": "Instant",
+      "fullText": "If the martial artist makes a kiai against an enemy who has already been hit by one or more of her allies’ attacks that benefitted from Flashing Blade Harmony in the same round, the resonance of the multiple attacks combines to create a devastating vibration. She adds one die to the post-soak damage of the kiai for each such attack, and applies double 10s or double 9s on her own damage roll, as appropriate to the attack type. She does not need to activate Flashing Blade Harmony to gain this benefit on her own attack.\n\nMastery: The martial artist may transfer up to (Essence) points of Initiative to an ally when she enhances his decisive attack with Flashing Blade Harmony.",
+      "rawData": "Flashing Blade Harmony\nCost: 4m; Mins: Martial Arts 4, Essence 2 \nType: Reflexive \nKeywords: Dual, Mastery \nDuration: Instant \nPrerequisite Charms: Silver-Voiced Nightingale Form\nHumming deeply in her throat, the Nightingale causes an \nally’s weapon to resonate with vibrations of Essence, \nredoubling the force of his attacks. Whenever an ally within \nshort range of the Nightingale makes a decisive attack, \nshe may use Flashing Blade Harmony to apply the double \n10s rule to the damage roll. Withering attacks benefit \nfrom double 9s.\nIf the martial artist makes a kiai against an enemy who has \nalready been hit by one or more of her allies’ attacks that \nbenefitted from Flashing Blade Harmony in the same round, \nthe resonance of the multiple attacks combines to create \na devastating vibration. She adds one die to the post-soak \ndamage of the kiai for each such attack, and applies double \n10s or double 9s on her own damage roll, as appropriate \nto the attack type. She does not need to activate Flashing \nBlade Harmony to gain this benefit on her own attack.\nMastery: The martial artist may transfer up to (Essence) \npoints of Initiative to an ally when she enhances his \ndecisive attack with Flashing Blade Harmony.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "6d5a4292-2bbc-3eea-9f4b-3519f83b8b92",
+      "name": "Aria of Victory",
+      "ability": "Crane Style",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "e42120ae-e4cd-30bf-9482-f3da7d45a965",
+        "7d7df27b-036e-3cb7-993d-baad387b9fe9",
+        "9a9f8130-31e9-31df-947d-7d7288ed5372",
+        "0853861f-c309-327a-88cf-125dbd43b364",
+        "f82127a5-c9ae-383a-b097-4cf1cfae82a4"
+      ],
+      "cost": "8m, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Perilous",
+        "Terrestrial"
+      ],
+      "duration": "One scene",
+      "fullText": "Terrestrial: A Dragon-Blood must pay four motes for each round after the first she wishes to maintain the effects of this Charm, in addition to its committed cost.",
+      "rawData": "Aria of Victory\nCost: 8m, 1wp; Mins: Martial Arts 5, Essence 3 \nType: Simple \nKeywords: Perilous, Terrestrial \nDuration: One scene \nPrerequisite Charms: Flashing Blade Harmony\nSinging softly in a minor key, the Nightingale’s voice \ncuts through the clangor of the battlefield, stilling the \nhearts and calming the nerves of her allies. Then, shifting \ninto a major key with a triumphant flourish, her voice \nswells with glory and wrath, a battle-anthem to turn the \ntide of wars. The martial artist and all allies who can hear \nthe song gain a single point of Willpower at the start of \neach turn, which must be spent to resist influence or add \na success to an action before their next turn. This can raise \ncharacters above their permanent Willpower. This bonus \nWillpower disappears after one turn if unused.\nTerrestrial: A Dragon-Blood must pay four motes for \neach round after the first she wishes to maintain the effects \nof this Charm, in addition to its committed cost. \nC H A P T E R  7\nEX3\n450",
+      "potentiallyProblematicImport": true
+    }
+  ]
+}

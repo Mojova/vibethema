@@ -1,0 +1,383 @@
+{
+  "$schema": "./charm-schema.json",
+  "version": "0.1.0",
+  "ability": "Awareness",
+  "type": "solarAbility",
+  "exalt": "solar",
+  "charms": [
+    {
+      "id": "e68e39a3-a06c-3f7a-9ffe-41aa16f31ba8",
+      "name": "Sensory Acuity Prana",
+      "ability": "Awareness",
+      "minAbility": 2,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "5m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "One scene",
+      "fullText": "A breath of Essence seals the five senses into a more perfect form. The Solar’s senses are heightened and attuned to minute motions and sounds, dim and noisy conditions.\n\nShe can differentiate between subtle tastes and textures with only the slightest variation. Thus sharpened, it is more difficult for characters to escape her notice, or to deceive her hunting senses. For the rest of the scene, the Exalt’s Awareness rolls benefit from double 9s. If the effect of any Unsurpassed (Sense) Discipline applies, reroll 6s until they cease to appear. Use of Sensory Acuity Prana comes without the danger of sensory overload; the Charm helps the Solar manage her senses more effectively.",
+      "rawData": "Sensory Acuity Prana \nCost: 5m; Mins: Awareness 2, Essence 1\nType: Reflexive\nKeywords: None\nDuration: One scene\nPrerequisite Charms: None\nA breath of Essence seals the five senses into a more perfect \nform. The Solar’s senses are heightened and attuned to \nminute motions and sounds, dim and noisy conditions. \nShe can differentiate between subtle tastes and textures \nwith only the slightest variation. Thus sharpened, it is \nmore difficult for characters to escape her notice, or to \ndeceive her hunting senses. For the rest of the scene, the \nExalt’s Awareness rolls benefit from double 9s. If the effect \nof any Unsurpassed (Sense) Discipline applies, reroll 6s \nuntil they cease to appear. Use of Sensory Acuity Prana \ncomes without the danger of sensory overload; the Charm \nhelps the Solar manage her senses more effectively.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "0ec191de-60dc-33c8-89d6-77267362325f",
+      "name": "Surprise Anticipation Method",
+      "ability": "Awareness",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "e68e39a3-a06c-3f7a-9ffe-41aa16f31ba8"
+      ],
+      "cost": "—",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "Upon learning this technique, the Solar’s senses guard her from threats she is not consciously aware of. Whenever the Solar is in danger—even if she is not consciously aware of the threat—her relevant senses will home in on the source of danger, enhancing her Awareness to make the threat known to her. Surprise Anticipation Method has two functions. First: for every 9 she rolls on an Awareness check to reveal a hidden enemy, trap, or any source of harm not readily apparent, she gains a single mote of Essence, and for every 10 she gains two. This charge of Essence can only be used to offset the cost of activating Awareness Charms to reveal a threat. Motes returned in this fashion may retroactively lower the cost committed to Awareness Charms of a scene or longer duration, both lowering the committed cost and returning the discounted mote(s) to the Solar’s mote pool. Second: her senses function even when she is asleep or Incapacitated, allowing her to use any of her Awareness Charms subconsciously. A threat revealed to the Solar while she is asleep or unconscious automatically revives her, allowing her to defend herself.",
+      "rawData": "Surprise Anticipation Method\nCost: —; Mins: Awareness 3, Essence 1\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Sensory Acuity Prana\nUpon learning this technique, the Solar’s senses guard her \nfrom threats she is not consciously aware of. Whenever \nthe Solar is in danger—even if she is not consciously aware \nof the threat—her relevant senses will home in on the \nsource of danger, enhancing her Awareness to make the \nthreat known to her. Surprise Anticipation Method has \ntwo functions. First: for every 9 she rolls on an Awareness \ncheck to reveal a hidden enemy, trap, or any source of \nharm not readily apparent, she gains a single mote of \nEssence, and for every 10 she gains two. This charge of \nEssence can only be used to offset the cost of activating \nAwareness Charms to reveal a threat. Motes returned in \nthis fashion may retroactively lower the cost committed \nto Awareness Charms of a scene or longer duration, both \nlowering the committed cost and returning the discount-\ned mote(s) to the Solar’s mote pool. Second: her senses \nfunction even when she is asleep or Incapacitated, allow-\ning her to use any of her Awareness Charms subconscious-\nly. A threat revealed to the Solar while she is asleep or \nunconscious automatically revives her, allowing her to \ndefend herself.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "39315bb5-9937-3a16-8a0d-e975f79c03fc",
+      "name": "Keen Sight Technique",
+      "ability": "Awareness",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "e68e39a3-a06c-3f7a-9ffe-41aa16f31ba8"
+      ],
+      "cost": "3m or 6m, 1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "One scene",
+      "fullText": "The Solar’s visual acuity is heightened to several times that of a normal mortal. This Charm represents an array of mechanical benefits: the Solar may perform difficulty 2 or 3 sight-based actions without a roll. She gains an additional two dice to notice hidden persons or devices, to catch sleight of hand and see through disguises. In dim conditions, she sees as well as in broad daylight. Deeper visual hindrances such as dense smoke or fog represent less of a struggle: reduce the difficulty of seeing in such conditions by 1, and remove the -1 penalty to detect hidden threats in such environments. These effects reflect the Exalt’s ability to notice and process hundreds of minute details, as well as to focus and manage light sources more effectively. The Solar’s visual range is also increased: she can see tiny details at 100 yards, quickly count masses of troops, and notice threats well in advance of her position.\n\nSpecial activation rules: The player may choose to activate Keen Sight Technique by paying six motes, one willpower. Doing so sets the duration of this Charm to Indefinite. Despite being Simple type Charms, each Keen (Sense) Technique can be activated simultaneously by paying the full cost of each. In addition, these Charms are compatible with Sensory Acuity Prana as well as with each other.",
+      "rawData": "Keen Sight Technique\nCost: 3m or 6m, 1wp; Mins: Awareness 3, Essence 1\nType: Simple\nKeywords: None\nDuration: One scene\nPrerequisite Charms: Sensory Acuity Prana\nThe Solar’s visual acuity is heightened to several times \nthat of a normal mortal. This Charm represents an array \nof mechanical benefits: the Solar may perform difficulty \n2 or 3 sight-based actions without a roll. She gains an ad-\nditional two dice to notice hidden persons or devices, to \ncatch sleight of hand and see through disguises. In dim \nconditions, she sees as well as in broad daylight. Deeper \nvisual hindrances such as dense smoke or fog represent \nless of a struggle: reduce the difficulty of seeing in such \nconditions by 1, and remove the -1 penalty to detect hidden \nthreats in such environments. These effects reflect the \nExalt’s ability to notice and process hundreds of minute \ndetails, as well as to focus and manage light sources more \neffectively. The Solar’s visual range is also increased: she \ncan see tiny details at 100 yards, quickly count masses of \ntroops, and notice threats well in advance of her position.\nSpecial activation rules: The player may choose to ac-\ntivate Keen Sight Technique by paying six motes, one will-\npower. Doing so sets the duration of this Charm to Indef-\ninite. Despite being Simple type Charms, each Keen (Sense) \nTechnique can be activated simultaneously by paying the \nfull cost of each. In addition, these Charms are compatible \nwith Sensory Acuity Prana as well as with each other.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "85cb7385-8778-37df-8eba-35ae3ee9afba",
+      "name": "Unswerving Eye Method",
+      "ability": "Awareness",
+      "minAbility": 4,
+      "minEssence": 1,
+      "prerequisites": [
+        "13827083-1acb-3309-a54c-78edc1c86cb4",
+        "879a1cdd-a20b-36fc-9dcd-be8b38501a02",
+        "bebf7bdb-a84b-3019-b542-54f4915fb30f",
+        "1b0f4588-028d-3114-86d1-6f6d9de6c531"
+      ],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Iron Wolf’s gaze cannot be misdirected, and her focus cannot be dissuaded. Even the greatest feats of stealth pale before her genius eyes. When a character attempts to hide from the Solar, steal from her, or cheat her with a quick motion, revert (Essence) of his double successes— typically 10s, but 9s under the effect of double 9s and so on—to single successes. This effect can even contest magic that is considered impossible to notice. The benefit of this Charm only applies to the Solar—it is her eye which is unswerving. The player can choose to activate this Charm after the opposing roll has been made.",
+      "rawData": "Unswerving Eye Method\nCost: 3m; Mins: Awareness 4, Essence 1\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Keen Sight Technique\nON SURPRISE ANTICIPATION METHOD\nThat’s not a typo. This is a Reflexive Charm with no \ncost. Surprise Anticipation Method represents a Solar \nwho has honed her senses to a near psychic degree. \nThey act on her behalf to reveal threats to her. Re-\nmember, though, Charms are not actors—it is simply \neasier to communicate the idea to the player in terms \nof what a Charm does. In reality, Charms only repre-\nsent the naturally enhanced proclivities of the char-\nacter in question, pre-existing, validated by the play-\ner’s investment of experience points. \nC H A P T E R  6\nEX3\n268\nThe Iron Wolf’s gaze cannot be misdirected, and her focus \ncannot be dissuaded. Even the greatest feats of stealth \npale before her genius eyes. When a character attempts \nto hide from the Solar, steal from her, or cheat her with a \nquick motion, revert (Essence) of his double successes—\ntypically 10s, but 9s under the effect of double 9s and so \non—to single successes. This effect can even contest magic \nthat is considered impossible to notice. The benefit of this \nCharm only applies to the Solar—it is her eye which is un-\nswerving. The player can choose to activate this Charm \nafter the opposing roll has been made.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "fdedbfe2-ddb2-32cd-a317-2f6e1b76b39b",
+      "name": "Keen Taste and Smell Technique",
+      "ability": "Awareness",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "e68e39a3-a06c-3f7a-9ffe-41aa16f31ba8"
+      ],
+      "cost": "3m or 6m, 1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "One scene",
+      "fullText": "The Exalt’s senses of taste and smell are capable of flawless identification of flavors, textures, and scent profiles.\n\nThis Charm represents an array of mechanical benefits, as well as two distinct functions of the senses taste and smell. The Solar can recognize an individual by scent alone, and she can tell older scents from new ones, enabling her to tell how recently an individual was present.\n\nAdd +2 successes to Survival rolls to hunt for food, track a character, or find water, using her sense of smell. This Charm automatically extends the range of these actions to (Essence * 200) yards.\n\nThis Charm also creates a library of scents which your character can reference. Upon learning this Charm, the library is populated with the scents of any Major or Defining Intimacy the character may have, but it can also include scents outside the confines of intimacies if the Storyteller deems them reasonable, including any scent the character has encountered in the last 24 hours, the smell of a favorite food or drink, or scents linked to strong memories such as love or pain. Entries in a Solar’s scent library can be used to aid in Investigation and Survival rolls, as well as in the smell-based Awareness Charms further up the tree.\n\nThis Charm also creates a taste index. Similar to the scent library, the taste index allows the Exalt to immediately recognize any taste she has experienced within the realm of reason. The Solar can identify obscure, complex, or similar flavors and she can deconstruct a meal she has eaten to its basic ingredients, so long as she has experienced most of the flavors at some point in time. The taste index isn’t populated the same way as the scent library; most characters do not have Major or Defining intimacies for flavors. Rather, the Solar may perfectly recognize any flavor the Storyteller considers reasonable. If the charac-\n\nter has been a master chef all of her life, her palate is going to be considerably more robust than that of an islander with little contact with the outside world. Conversely, those who have lived or traveled in remote locations may have had access to rare and exotic food, drink, and poison.\n\nThis Charm follows the special activation rules of Keen Sight Technique (p. 267).",
+      "rawData": "Keen Taste and Smell Technique\nCost: 3m or 6m, 1wp; Mins: Awareness 3, Essence 1\nType: Simple\nKeywords: None\nDuration: One scene\nPrerequisite Charms: Sensory Acuity Prana\nThe Exalt’s senses of taste and smell are capable of flaw-\nless identification of flavors, textures, and scent profiles. \nThis Charm represents an array of mechanical benefits, \nas well as two distinct functions of the senses taste and \nsmell. The Solar can recognize an individual by scent \nalone, and she can tell older scents from new ones, en-\nabling her to tell how recently an individual was present. \nAdd +2 successes to Survival rolls to hunt for food, track \na character, or find water, using her sense of smell. This \nCharm automatically extends the range of these actions \nto (Essence * 200) yards. \nThis Charm also creates a library of scents which your \ncharacter can reference. Upon learning this Charm, the \nlibrary is populated with the scents of any Major or Defin-\ning Intimacy the character may have, but it can also include \nscents outside the confines of intimacies if the Storyteller \ndeems them reasonable, including any scent the character \nhas encountered in the last 24 hours, the smell of a favorite \nfood or drink, or scents linked to strong memories such as \nlove or pain. Entries in a Solar’s scent library can be used \nto aid in Investigation and Survival rolls, as well as in the \nsmell-based Awareness Charms further up the tree.\nThis Charm also creates a taste index. Similar to the scent \nlibrary, the taste index allows the Exalt to immediately \nrecognize any taste she has experienced within the realm \nof reason. The Solar can identify obscure, complex, or \nsimilar flavors and she can deconstruct a meal she has \neaten to its basic ingredients, so long as she has experi-\nenced most of the flavors at some point in time. The taste \nindex isn’t populated the same way as the scent library; \nmost characters do not have Major or Defining intimacies \nfor flavors. Rather, the Solar may perfectly recognize any \nflavor the Storyteller considers reasonable. If the charac-\nC H A R M S\nEX3\n269\nter has been a master chef all of her life, her palate is going \nto be considerably more robust than that of an islander \nwith little contact with the outside world. Conversely, \nthose who have lived or traveled in remote locations may \nhave had access to rare and exotic food, drink, and poison.\nThis Charm follows the special activation rules of Keen \nSight Technique (p. 267).",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "5d72cef5-a2dd-380f-b976-3fbf9ff8b77f",
+      "name": "Genius Palate Summation",
+      "ability": "Awareness",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "fdedbfe2-ddb2-32cd-a317-2f6e1b76b39b"
+      ],
+      "cost": "2m",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar’s sense of taste is so intense that she can analyze the emotions that went into preparing a meal or beverage. In a bit of overcooked meat, she might sense the cook’s turmoil; that his mind is not on his work. In a sip of soup salted with arsenic, she might sense the cool, murderous intent of one who is not her normal chef. This Charm acts as an automatically successful read intentions action to determine the emotional state of the one who prepared a meal or poured a drink. The Solar need only sample a single bite of a meal or take a single sip of a drink to gain this understanding.",
+      "rawData": "Genius Palate Summation\nCost: 2m; Mins: Awareness 3, Essence 1\nType: Simple\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Keen Taste and Smell Technique\nThe Solar’s sense of taste is so intense that she can analyze \nthe emotions that went into preparing a meal or bever-\nage. In a bit of overcooked meat, she might sense the cook’s \nturmoil; that his mind is not on his work. In a sip of soup \nsalted with arsenic, she might sense the cool, murderous \nintent of one who is not her normal chef. This Charm acts \nas an automatically successful read intentions action to \ndetermine the emotional state of the one who prepared a \nmeal or poured a drink. The Solar need only sample a \nsingle bite of a meal or take a single sip of a drink to gain \nthis understanding.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "37cae119-3b64-3040-b392-cd4575ad0ef8",
+      "name": "Foe-Scenting Method",
+      "ability": "Awareness",
+      "minAbility": 4,
+      "minEssence": 1,
+      "prerequisites": [
+        "fdedbfe2-ddb2-32cd-a317-2f6e1b76b39b"
+      ],
+      "cost": "0m or 2m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The keen nose of the Iron Wolf seeks out those who would attempt to hide. Before an Awareness roll to detect unseen characters, the Solar’s nose automatically counts heads, telling her how many people are in the room, or are within medium range of her. If any scents belong to a person in her scent library, she automatically identifies him. For any unknown, she can further make generally accurate discernments about what kind of being each scent belongs to. Beasts, for example, smell different than humans, as do the undead and spirits. If a scent is not in her library, she can still form a general idea about the creature it belongs to. At this point, the player can choose to pay two motes to enhance the Lawgiver’s sense of smell, aiding her in scenting the direction and distance of each target.\n\nThis adds one automatic success to an Awareness roll to uncover hidden targets, and to Join Battle if necessary.\n\nAt Awareness 5+, Essence 3+, the Solar can detect dematerialized spirits with this Charm.",
+      "rawData": "Foe-Scenting Method\nCost: 0m or 2m; Mins: Awareness 4, Essence 1\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Keen Taste and Smell Technique\nThe keen nose of the Iron Wolf seeks out those who would \nattempt to hide. Before an Awareness roll to detect unseen \ncharacters, the Solar’s nose automatically counts heads, \ntelling her how many people are in the room, or are within \nmedium range of her. If any scents belong to a person in \nher scent library, she automatically identifies him. For any \nunknown, she can further make generally accurate dis-\ncernments about what kind of being each scent belongs \nto. Beasts, for example, smell different than humans, as \ndo the undead and spirits. If a scent is not in her library, \nshe can still form a general idea about the creature it \nbelongs to. At this point, the player can choose to pay two \nmotes to enhance the Lawgiver’s sense of smell, aiding \nher in scenting the direction and distance of each target. \nThis adds one automatic success to an Awareness roll to \nuncover hidden targets, and to Join Battle if necessary. \nAt Awareness 5+, Essence 3+, the Solar can detect dema-\nterialized spirits with this Charm.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "c0c2620c-2493-3d5e-bd65-eb2d31f66563",
+      "name": "Keen Hearing and Touch Technique",
+      "ability": "Awareness",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "e68e39a3-a06c-3f7a-9ffe-41aa16f31ba8"
+      ],
+      "cost": "3m or 6m, 1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "One scene",
+      "fullText": "The Lawgiver listens with the intensity of an owl, and feels movement in the world like a spider feels a touch against its web. The Exalt may identify fabrics and minerals she knows with a cursory touch, and can hear at frequencies several times lower than a human. She can listen clearly to conversations through thick stone walls, hear creatures burrowing in the ground, ants marching on the branches above her head, and other, similar feats. For many actions that would require success on a roll at difficulty 2, the Solar can succeed without a roll. For more difficult actions, the difficulty is lowered by 1, and the Solar gains one automatic success. If she has a specialty that can be logically applied to the roll, the difficulty drops to 1. For example, a Solar who is unfamiliar with art crime will find it more difficult to identify a faked painting by touch than a Solar with an Investigation specialty in detecting forgeries. These benefits do not apply to detecting opponents in stealth.\n\nThis Charm follows the special activation rules of Keen Sight Technique (p. 267).",
+      "rawData": "Keen Hearing and Touch Technique\nCost: 3m or 6m, 1wp; Mins: Awareness 3, Essence 1\nType: Simple\nKeywords: None\nDuration: One scene\nPrerequisite Charms: Sensory Acuity Prana\nThe Lawgiver listens with the intensity of an owl, and \nfeels movement in the world like a spider feels a touch \nagainst its web. The Exalt may identify fabrics and min-\nerals she knows with a cursory touch, and can hear at fre-\nquencies several times lower than a human. She can listen \nclearly to conversations through thick stone walls, hear \ncreatures burrowing in the ground, ants marching on the \nbranches above her head, and other, similar feats. For \nmany actions that would require success on a roll at dif-\nficulty 2, the Solar can succeed without a roll. For more \ndifficult actions, the difficulty is lowered by 1, and the Solar \ngains one automatic success. If she has a specialty that \ncan be logically applied to the roll, the difficulty drops to \n1. For example, a Solar who is unfamiliar with art crime \nwill find it more difficult to identify a faked painting by \ntouch than a Solar with an Investigation specialty in de-\ntecting forgeries. These benefits do not apply to detecting \nopponents in stealth.\nThis Charm follows the special activation rules of Keen \nSight Technique (p. 267).",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "7344e6a9-2db5-3b79-8aad-f4a0ed96a1a0",
+      "name": "Studied Ear Espial",
+      "ability": "Awareness",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "c0c2620c-2493-3d5e-bd65-eb2d31f66563"
+      ],
+      "cost": "1m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Lawgiver’s ears are attuned to the passage of motion.\n\nAnything which disturbs the stillness is hers to notice.\n\nWhen a character attempts to move in stealth, the Solar gains +3 dice to spot him.",
+      "rawData": "Studied Ear Espial\nCost: 1m; Mins: Awareness 3, Essence 1\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Keen Hearing and Touch Technique\nThe Lawgiver’s ears are attuned to the passage of motion. \nAnything which disturbs the stillness is hers to notice. \nWhen a character attempts to move in stealth, the Solar \ngains +3 dice to spot him.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "112a55eb-bc66-301f-b981-99e1bf799870",
+      "name": "Eyeless Harbinger Awareness",
+      "ability": "Awareness",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "c0c2620c-2493-3d5e-bd65-eb2d31f66563"
+      ],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "One scene",
+      "fullText": "The Solar’s sense of touch is attuned to movement in the world around her. When a hidden character attempts to move across a surface connected to one the Solar is touching, he accrues an additional -2 penalty to his Stealth roll, in addition to the regular -3 penalty detailed on page 204.\n\nThis Charm functions within short range of the Solar. She can touch a tree trunk and feel something moving in the lowest branches, sense footsteps approaching her in a pitch black hallway, and other, similar feats. If the target is within range of the Solar’s extended touch upon rolling Join Battle, the Exalt gains three non-Charm dice to her Join Battle roll so long as she cannot see her opponent.\n\nIf the Exalt has learned Unsurpassed Hearing and Touch Discipline, she can feel such movements out to medium range, and can determine the size, shape, and velocity of her target. She can feel a siaka circling beneath her ship, and she can differentiate between a gecko or an assassin lizard climbing down a wall she’s leaning against.",
+      "rawData": "Eyeless Harbinger Awareness\nCost: 3m; Mins: Awareness 3, Essence 1\nType: Reflexive\nKeywords: None\nDuration: One scene\nPrerequisite Charms: Keen Hearing and Touch \nTechnique\nThe Solar’s sense of touch is attuned to movement in the \nworld around her. When a hidden character attempts to \nmove across a surface connected to one the Solar is touch-\ning, he accrues an additional -2 penalty to his Stealth roll, \nin addition to the regular -3 penalty detailed on page 204. \nC H A P T E R  6\nEX3\n270\nThis Charm functions within short range of the Solar. She \ncan touch a tree trunk and feel something moving in the \nlowest branches, sense footsteps approaching her in a \npitch black hallway, and other, similar feats. If the target \nis within range of the Solar’s extended touch upon rolling \nJoin Battle, the Exalt gains three non-Charm dice to her \nJoin Battle roll so long as she cannot see her opponent.\nIf the Exalt has learned Unsurpassed Hearing and Touch \nDiscipline, she can feel such movements out to medium \nrange, and can determine the size, shape, and velocity of \nher target. She can feel a siaka circling beneath her ship, \nand she can differentiate between a gecko or an assassin \nlizard climbing down a wall she’s leaning against.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "01828587-4039-36ed-8b3d-f82af03bb491",
+      "name": "Awakening Eye",
+      "ability": "Awareness",
+      "minAbility": 4,
+      "minEssence": 1,
+      "prerequisites": [
+        "6dfed389-b9d5-3509-8da8-a0849c5a3f73"
+      ],
+      "cost": "5m, 1wp",
+      "type": "Supplemental",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "At the confluence of mastered senses, the Solar feels second sight growing in her heart. In the moment battle begins, her Awakening Eye reads the flow of Initiative and makes her aware of attacks that will happen in the near future.\n\nThis Charm supplements a Join Battle roll with a free full (Perception + Awareness) Excellency, and by creating a cascading reroll of 10s. For every 10 rolled, reroll one nonsuccess. Non-successes which reroll 10s provoke more rerolls until a 10 fails to appear in the result. In addition, mark down how many non-successes became successes during the reroll process; every rerolled success adds one to a pool of automatic successes the Solar may use to detect hidden opponents until combat ends. These bonus successes are depleted when the Exalt uses them, though she may choose when and how many successes to use, spreading a number of successes over a number of attempts.",
+      "rawData": "Awakening Eye\nCost: 5m, 1wp; Mins: Awareness 4, Essence 1\nType: Supplemental\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Any two Keen (Sense) Techniques\nAt the confluence of mastered senses, the Solar feels second \nsight growing in her heart. In the moment battle begins, \nher Awakening Eye reads the flow of Initiative and makes \nher aware of attacks that will happen in the near future. \nThis Charm supplements a Join Battle roll with a free full \n(Perception + Awareness) Excellency, and by creating a \ncascading reroll of 10s. For every 10 rolled, reroll one non-\nsuccess. Non-successes which reroll 10s provoke more \nrerolls until a 10 fails to appear in the result. In addition, \nmark down how many non-successes became successes \nduring the reroll process; every rerolled success adds one \nto a pool of automatic successes the Solar may use to detect \nhidden opponents until combat ends. These bonus suc-\ncesses are depleted when the Exalt uses them, though she \nmay choose when and how many successes to use, spread-\ning a number of successes over a number of attempts.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "802f9a08-8706-3b15-9252-34324c4420ca",
+      "name": "Inner Eye Focus",
+      "ability": "Awareness",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "85cb7385-8778-37df-8eba-35ae3ee9afba"
+      ],
+      "cost": "4m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "With flawless gaze and unswerving eye, the Exalt’s vision corrects itself, eating away impurities and anomalies to give her the most perfect view. When contesting a Stealth or Larceny action against the character, this Charm can be used to create a cascading reroll, eliminating non-successes from the Awareness roll as the Solar’s vision corrects itself. After an Awareness roll, record successes and reroll (Essence) non-successes. For each of these dice that turns up a success, reroll another die until the cascade fails to produce any successes. Dice rerolled by Sensory Acuity Prana are not included in the cascade. This Charm may also be used in Join Battle against an opponent the Lawgiver can see.",
+      "rawData": "Inner Eye Focus\nCost: 4m; Mins: Awareness 5, Essence 2\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Unswerving Eye Method\nWith flawless gaze and unswerving eye, the Exalt’s vision \ncorrects itself, eating away impurities and anomalies to \ngive her the most perfect view. When contesting a Stealth \nor Larceny action against the character, this Charm can \nbe used to create a cascading reroll, eliminating non-suc-\ncesses from the Awareness roll as the Solar’s vision cor-\nrects itself. After an Awareness roll, record successes and \nreroll (Essence) non-successes. For each of these dice that \nturns up a success, reroll another die until the cascade \nfails to produce any successes. Dice rerolled by Sensory \nAcuity Prana are not included in the cascade. This Charm \nmay also be used in Join Battle against an opponent the \nLawgiver can see.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "6fd09677-0b67-3ca7-badd-1ad69f0b5d98",
+      "name": "Scent-Honing Prana",
+      "ability": "Awareness",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "37cae119-3b64-3040-b392-cd4575ad0ef8"
+      ],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Lawgiver knows the scent of her kith with the warmth of a lioness, the smell of her enemies with the familiarity of a shark. This Charm adds automatic successes to an Awareness roll to detect hidden characters based on their level of intimacy with the Solar. Minor Intimacies add 1 success, while Major and Defining Intimacies add 2 and 3 respectively. The Solar need not suspect that one of her Ties is hiding nearby; Scent-Honing Prana automatically lends itself to applicable rolls without the Solar knowing, though the player may always choose to disregard its use.",
+      "rawData": "Scent-Honing Prana\nCost: 3m; Mins: Awareness 5, Essence 2\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Foe-Scenting Method\nThe Lawgiver knows the scent of her kith with the warmth \nof a lioness, the smell of her enemies with the familiarity \nof a shark. This Charm adds automatic successes to an \nAwareness roll to detect hidden characters based on their \nlevel of intimacy with the Solar. Minor Intimacies add 1 \nsuccess, while Major and Defining Intimacies add 2 and 3 \nrespectively. The Solar need not suspect that one of her \nTies is hiding nearby; Scent-Honing Prana automatically \nlends itself to applicable rolls without the Solar knowing, \nthough the player may always choose to disregard its use.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "3f3010b5-d963-3cf5-ba46-fadcf4a980d3",
+      "name": "Knowing Beyond Silence",
+      "ability": "Awareness",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "7344e6a9-2db5-3b79-8aad-f4a0ed96a1a0"
+      ],
+      "cost": "2m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "Even the least sounds fail to escape the Lawgiver’s notice.\n\nWhen attempting to seek out a hidden character with her Awareness, all 1s rolled by her target act as 10s rolled by the Exalt, and all her target’s 2s act as 9s. These 9s are explicitly doubled by Sensory Acuity Prana. Knowing Beyond Silence can be activated after the hiding character’s dice roll.\n\nThis Charm can be used to enhance a Join Battle roll against a character whom the Exalt is listening for but cannot see.\n\nSPACE-SAVING CONCESSION DEVELOPER 5, ESSENCE 3 Multiple Charms are considered to have the following special activation rules: When a Solar is confronted with multiple concealed enemies, her senses are further heightened. The Awareness Excellency and each Reflexive Awareness Charm with an instant duration— except for Blink and Roused Dragon Detection—can have their durations extended to one turn by paying an extra two motes upon activation. If such Charms are combined, a single two mote surcharge extends all of them.",
+      "rawData": "Knowing Beyond Silence\nCost: 2m; Mins: Awareness 4, Essence 2\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Studied Ear Espial\nEven the least sounds fail to escape the Lawgiver’s notice. \nWhen attempting to seek out a hidden character with her \nAwareness, all 1s rolled by her target act as 10s rolled by the \nExalt, and all her target’s 2s act as 9s. These 9s are explic-\nitly doubled by Sensory Acuity Prana. Knowing Beyond \nSilence can be activated after the hiding character’s dice roll. \nThis Charm can be used to enhance a Join Battle roll against \na character whom the Exalt is listening for but cannot see. \nSPACE-SAVING CONCESSION  \nDEVELOPER 5, ESSENCE 3 \nMultiple Charms are considered to have the following \nspecial activation rules: When a Solar is confronted with \nmultiple concealed enemies, her senses are further \nheightened. The Awareness Excellency and each Re-\nflexive Awareness Charm with an instant duration—\nexcept for Blink and Roused Dragon Detection—can \nhave their durations extended to one turn by paying an \nextra two motes upon activation. If such Charms are \ncombined, a single two mote surcharge extends all \nof them.\nC H A R M S\nEX3\n271",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "6ef1007d-55e8-35a5-852c-ec1929438ba8",
+      "name": "Living Pulse Perception",
+      "ability": "Awareness",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "112a55eb-bc66-301f-b981-99e1bf799870"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Exalt feels the air current around her, and senses even the slightest disruption. In an enclosed space, such as a burial chamber, or a place where high walls or dense foliage stifle gusts of wind, the Exalt can feel the presence of a hidden person displacing the air around her. Add one automatic success to an Awareness roll to detect or Join Battle against such a character.",
+      "rawData": "Living Pulse Perception\nCost: —; Mins: Awareness 4, Essence 2\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Eyeless Harbinger Awareness\nThe Exalt feels the air current around her, and senses even \nthe slightest disruption. In an enclosed space, such as a \nburial chamber, or a place where high walls or dense foliage \nstifle gusts of wind, the Exalt can feel the presence of a \nhidden person displacing the air around her. Add one au-\ntomatic success to an Awareness roll to detect or Join \nBattle against such a character.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "69d1ee37-21b4-36ac-831f-ec727e5c02ff",
+      "name": "Roused Dragon Detection",
+      "ability": "Awareness",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "3f3010b5-d963-3cf5-ba46-fadcf4a980d3",
+        "6ef1007d-55e8-35a5-852c-ec1929438ba8"
+      ],
+      "cost": "1m, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "When fighting blind, the Solar’s second sight rises to see through the Essence of the world, momentarily revealing her target’s location and allowing her to strike. During combat, the Exalt may use this Charm on her turn to strike at a hidden foe within range. If this attack is successful, it does not knock her opponent out of stealth unless he’s incapacitated by the blow. Instead, it forces him to change hiding places, making him subject to the penalty for moving in Stealth (p. 204). If the target can find a different hiding place without changing range bands, this does not use up his movement action for the turn.",
+      "rawData": "Roused Dragon Detection\nCost: 1m, 1wp; Mins: Awareness 5, Essence 2\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Knowing Beyond Silence, Living \nPulse Perception\nWhen fighting blind, the Solar’s second sight rises to see \nthrough the Essence of the world, momentarily reveal-\ning her target’s location and allowing her to strike. During \ncombat, the Exalt may use this Charm on her turn to \nstrike at a hidden foe within range. If this attack is suc-\ncessful, it does not knock her opponent out of stealth \nunless he’s incapacitated by the blow. Instead, it forces \nhim to change hiding places, making him subject to the \npenalty for moving in Stealth (p. 204). If the target can \nfind a different hiding place without changing range \nbands, this does not use up his movement action for \nthe turn.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "431eca61-c46f-3f5a-adf7-c62f339f0b5a",
+      "name": "Unsurpassed Sight Discipline",
+      "ability": "Awareness",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "39315bb5-9937-3a16-8a0d-e975f79c03fc"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "This Charm permanently upgrades its prerequisite.\n\nThe Exalt has the eyes of the steeliest raptor. She can spot a field mouse a mile away, read a letter at a hundred yards, and critique the mating habits of insects. In zero visibility environments—such as a silt cloud in the belly of a sunken ship—she sees as if she were in a dense fog, using the rules of Keen Sight Technique. She may pick a face out of a crowd with a casual glance, predict a flash flood by counting distant raindrops, and tell if someone is alive by seeing the blood flow through his skin.\n\nSpecial activation rules: When Keen Sight Technique is active, any sight-based Awareness Charm is reduced in cost by one mote, to a minimum of one. If the character has learned all three Unsurpassed (Sense) Discipline and activates all three Keen (Sense) Techniques, this discount applies to any Awareness Charm.",
+      "rawData": "Unsurpassed Sight Discipline\nCost: —; Mins: Awareness 5, Essence 3\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Keen Sight Technique\nThis Charm permanently upgrades its prerequisite. \nThe Exalt has the eyes of the steeliest raptor. She can \nspot a field mouse a mile away, read a letter at a hundred \nyards, and critique the mating habits of insects. In \nzero visibility environments—such as a silt cloud in the \nbelly of a sunken ship—she sees as if she were in a dense \nfog, using the rules of Keen Sight Technique. She may \npick a face out of a crowd with a casual glance, predict \na flash flood by counting distant raindrops, and tell \nif someone is alive by seeing the blood flow through \nhis skin. \nSpecial activation rules: When Keen Sight Technique is \nactive, any sight-based Awareness Charm is reduced in \ncost by one mote, to a minimum of one. If the character \nhas learned all three Unsurpassed (Sense) Discipline and \nactivates all three Keen (Sense) Techniques, this discount \napplies to any Awareness Charm.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "e7586d73-9d4b-36fc-ba35-4c27f2735ea0",
+      "name": "Blink",
+      "ability": "Awareness",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "92071510-4e4d-3abe-a26b-029e6103cf6a"
+      ],
+      "cost": "1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "With but a thought, the Solar can impel her senses toward greater form. The player may reroll any Awareness roll, maintaining the effects of any Charms she paid for on the initial roll and activating any Charms she wishes to pay for to enhance her second attempt.",
+      "rawData": "Blink\nCost: 1wp; Mins: Awareness 5, Essence 3\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Inner Eye Focus\nCast down into the darkness, the Lawgiver has known an \nabsence of sensation greater than the deepest abyss. The \nwicked cannot hide; their shadows avail them nothing. \nWith but a thought, the Solar can impel her senses toward \ngreater form. The player may reroll any Awareness roll, \nmaintaining the effects of any Charms she paid for on the \ninitial roll and activating any Charms she wishes to pay \nfor to enhance her second attempt.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "4074ba08-d418-3b9f-93d9-7baa0bd14fef",
+      "name": "Unsurpassed Taste and Smell Discipline",
+      "ability": "Awareness",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "fdedbfe2-ddb2-32cd-a317-2f6e1b76b39b"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "This Charm permanently upgrades its prerequisite. The Solar can track her prey’s scent with the unerring accuracy of a bloodhound, or find her victim’s scent with the methodical sipping of a serpent. The Exalt adds her Perception or a minimum of 2 automatic successes to any Survival-based rolls to track a character or hunt for food or water using her sense of smell, and extends her range for doing so to (half her Essence rounded up) miles. She also gains the ability to scent moods, making an automatically successful scent-based read intentions action to determine a target’s disposition.\n\nShe can add scentless, tasteless subjects to her scent library and taste index. She can also add items to her taste index by merely smelling them, as well as reference those tastes by smell alone. With a harmless drop on her tongue, she can identify a poison she has tasted, and she can detect a tasteless poison by the way it dilutes a drink or acts as an unknown ingredient in a meal whose flavors are well known to her.\n\nIn addition, bleeding characters (those with a wound penalty of -1 or greater) and characters who are severely injured (-4 wound penalty) are easier to find. Add 1 or 2 dice to an Awareness roll against the target’s Stealth.\n\nThis Charm follows the special activation rules of Unsurpassed Sight Discipline (p. 271), discounting the cost of taste and smell effects instead of those which enhance sight.",
+      "rawData": "Unsurpassed Taste and Smell Discipline\nCost: —; Mins: Awareness 5, Essence 3\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Keen Taste and Smell Technique\nThis Charm permanently upgrades its prerequisite. The \nSolar can track her prey’s scent with the unerring accura-\ncy of a bloodhound, or find her victim’s scent with the me-\nthodical sipping of a serpent. The Exalt adds her Percep-\ntion or a minimum of 2 automatic successes to any \nSurvival-based rolls to track a character or hunt for food \nor water using her sense of smell, and extends her range \nfor doing so to (half her Essence rounded up) miles. She \nalso gains the ability to scent moods, making an automati-\ncally successful scent-based read intentions action to de-\ntermine a target’s disposition.\nShe can add scentless, tasteless subjects to her scent library \nand taste index. She can also add items to her taste index \nby merely smelling them, as well as reference those tastes \nby smell alone. With a harmless drop on her tongue, she can \nidentify a poison she has tasted, and she can detect a taste-\nless poison by the way it dilutes a drink or acts as an unknown \ningredient in a meal whose flavors are well known to her. \nIn addition, bleeding characters (those with a wound \npenalty of -1 or greater) and characters who are severely \ninjured (-4 wound penalty) are easier to find. Add 1 or 2 \ndice to an Awareness roll against the target’s Stealth.\nC H A P T E R  6\nEX3\n272\nThis Charm follows the special activation rules of \nUnsurpassed Sight Discipline (p. 271), discounting the \ncost of taste and smell effects instead of those which \nenhance sight.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "072203d8-6942-3554-9996-d5a1cf064315",
+      "name": "Unsurpassed Hearing and Touch Discipline",
+      "ability": "Awareness",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "c0c2620c-2493-3d5e-bd65-eb2d31f66563"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "This Charm permanently upgrades its prerequisite. The Lawgiver can listen in on a whispered conversation a mile away in still air, or in noisy conditions, such as a raging battlefield, out to long range. She can hear a thunderstorm burgeoning, an army decamping, a tyrant lizard roaring, and other loud noises at (Essence * 5) miles. She can read by passing her fingers over a page and feeling the ink beneath her fingertips. This Charm also confers the following techniques to the Solar:\n\nConjure Image: For one mote, the Exalt can visualize an object she is touching, in sections no larger than a horse’s head. She can identify a familiar face in a pitch black crypt, but might need several activations to visualize the fossil skeleton of an ancient behemoth in a lightless cavern.\n\nSense Current: For one mote, the Exalt can feel the lightest motion of air, orienting herself to the exit in even the most lightless of conditions.\n\nRead the Web: For five motes committed, the Exalt can listen in on a conversation behind a thick door, just by touching a connecting wall or surface. She feels the vibrations in her fingertips, and her senses translate them to words she can hear. This is a scene length effect, and its range can be extended up to (Essence x100) yards by running a wire from the Exalt’s fingertips into a chamber where her targets are speaking.\n\nSound from Stillness Meditation: For six motes, one Willpower, the Solar can take a Simple action lasting five minutes to filter Creation, listening for specific sounds or conversations that have already happened. The Exalt draws audio from the vibrations of sounds stored in her surroundings—usually rocks and trees—and may listen for noises or conversations that happened up to (Essence x5) hours prior to her arrival with a difficulty 5 Awareness roll. For the duration of the technique, the Solar must remain still, listening intently as she filters out the garbled static and unwanted sounds to reach the reverberations she’s search-\n\ning for. As this technique only lasts five minutes, the Solar can only glean up to half that amount in useful audio.\n\nUnsurpassed Hearing and Touch follows the special activation rules of Unsurpassed Sight Discipline (p. 271), discounting the cost of hearing and touch effects instead of those which enhance sight. This Charm can never discount the cost of its own techniques.",
+      "rawData": "Unsurpassed Hearing and Touch Discipline\nCost: —; Mins: Awareness 5, Essence 3\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Keen Hearing and Touch \nTechnique\nThis Charm permanently upgrades its prerequisite. The \nLawgiver can listen in on a whispered conversation a mile \naway in still air, or in noisy conditions, such as a raging \nbattlefield, out to long range. She can hear a thunderstorm \nburgeoning, an army decamping, a tyrant lizard roaring, \nand other loud noises at (Essence * 5) miles. She can read \nby passing her fingers over a page and feeling the ink \nbeneath her fingertips. This Charm also confers the fol-\nlowing techniques to the Solar:\nConjure Image: For one mote, the Exalt can visualize \nan object she is touching, in sections no larger than a \nhorse’s head. She can identify a familiar face in a pitch \nblack crypt, but might need several activations to visu-\nalize the fossil skeleton of an ancient behemoth in a light-\nless cavern. \nSense Current: For one mote, the Exalt can feel the light-\nest motion of air, orienting herself to the exit in even the \nmost lightless of conditions. \nRead the Web: For five motes committed, the Exalt can \nlisten in on a conversation behind a thick door, just by \ntouching a connecting wall or surface. She feels the vibra-\ntions in her fingertips, and her senses translate them to \nwords she can hear. This is a scene length effect, and its \nrange can be extended up to (Essence x100) yards by \nrunning a wire from the Exalt’s fingertips into a chamber \nwhere her targets are speaking. \nSound from Stillness Meditation: For six motes, one \nWillpower, the Solar can take a Simple action lasting five \nminutes to filter Creation, listening for specific sounds or \nconversations that have already happened. The Exalt draws \naudio from the vibrations of sounds stored in her surround-\nings—usually rocks and trees—and may listen for noises \nor conversations that happened up to (Essence x5) hours \nprior to her arrival with a difficulty 5 Awareness roll. For \nthe duration of the technique, the Solar must remain still, \nlistening intently as she filters out the garbled static and \nunwanted sounds to reach the reverberations she’s search-\nC H A R M S\nEX3\n273\ning for. As this technique only lasts five minutes, the Solar \ncan only glean up to half that amount in useful audio.\nUnsurpassed Hearing and Touch follows the special ac-\ntivation rules of Unsurpassed Sight Discipline (p. 271), \ndiscounting the cost of hearing and touch effects instead \nof those which enhance sight. This Charm can never dis-\ncount the cost of its own techniques.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "13fa6c5e-ddd4-36b5-8599-b83888e1d72b",
+      "name": "Dedicated Unerring Ear",
+      "ability": "Awareness",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "072203d8-6942-3554-9996-d5a1cf064315"
+      ],
+      "cost": "3m per exchange",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Indefinite",
+      "fullText": "The Lawgivers can listen across vast spaces for the sound of a favored voice. The Exalt must have activated Keen Hearing and Touch Technique in order to use this Charm.\n\nUpon doing so, the Exalt becomes aware any time she is addressed by someone for whom she holds a Major or Defining positive Intimacy, no matter how far away he is.\n\nSo long as she’s on the same plane of existence as they are, the Solar can hear the words of her favored people clearly, as if they were in the same room, so long as they are addressing their speech to her. This Charm’s duration is Indefinite: each time a character addresses the Solar, she has an instant in which she feels a tingle in the base of her skull, telling her to tune her hearing and listen. Upon activating the Charm, she can hear everything her compatriot wishes to say to her, until the character has been silent for ten seconds or longer. The cost of this Charm cannot be reduced by its prerequisite.",
+      "rawData": "Dedicated Unerring Ear\nCost: 3m per exchange; Mins: Awareness 5, Essence 4\nType: Reflexive\nKeywords: None\nDuration: Indefinite\nPrerequisite Charms: Unsurpassed Hearing and Touch \nDiscipline\nThe Lawgivers can listen across vast spaces for the sound \nof a favored voice. The Exalt must have activated Keen \nHearing and Touch Technique in order to use this Charm. \nUpon doing so, the Exalt becomes aware any time she is \naddressed by someone for whom she holds a Major or \nDefining positive Intimacy, no matter how far away he is. \nSo long as she’s on the same plane of existence as they are, \nthe Solar can hear the words of her favored people clearly, \nas if they were in the same room, so long as they are ad-\ndressing their speech to her. This Charm’s duration is In-\ndefinite: each time a character addresses the Solar, she \nhas an instant in which she feels a tingle in the base of her \nskull, telling her to tune her hearing and listen. Upon ac-\ntivating the Charm, she can hear everything her compa-\ntriot wishes to say to her, until the character has been \nsilent for ten seconds or longer. The cost of this Charm \ncannot be reduced by its prerequisite.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "0b7b0f1d-4f09-3b63-91da-122b4ecef29f",
+      "name": "Eye of the Unconquered Sun",
+      "ability": "Awareness",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [],
+      "cost": "10m, 1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "One turn",
+      "fullText": "When this Charm is used, the Solar’s Caste Mark blazes like a tiny sun, cancelling any Essence-muting magic the Solar may be using, and removing her from stealth. Eyes blazing white, Caste Mark burning, her gaze shines a wide beam of light across everything she searches, twin lamps moving over the terrain out to long range. Everything caught in her stare is subject to the following effects:\n\n•  All magical and mundane Stealth effects are cancelled.\n\nSolid walls and other opaque objects grow transparent as the Lawgiver’s gaze passes over them, rendering all forms of Stealth automatically unsuccessful.\n\n•  Fog lifts, smoke parts, and clouds dissolve under the Solar’s intense focus.\n\n•  Dematerialized spirits are forced to materialize, at full cost of the Materialize Charm, or as much of the cost as they can pay.\n\n•  All disguise magic is stripped. Mundane disguises tatter and melt away.\n\n•  Shapeshifters are forced back into natural form, resplendent destinies are temporarily forced into dormancy, personas (p. 400) are suppressed, and other innate or native transformative magics of the Exalted are similarly deactivated.\n\nThe only way to avoid Eye of the Unconquered Sun is to successfully dodge the Solar’s gaze by applying Evasion against the Solar’s Awareness roll. The Solar’s Awareness roll is enhanced by (Essence) dice, and any 1s rolled are rerolled until 1s fail to appear.\n\nEvery character within long range of the Solar who fails to dodge when she uses Eye of the Unconquered Sun is subject to the above effects.\n\nThe range of this Charm is extended to extreme range by Unsurpassed Sight Discipline, however, this Charm does not depend on eyesight and may be learned and employed by a blind Exalt. Anyone spotted by Eye of the Unconquered Sun automatically knows it; a bright white glare piercing through a fortress wall or an airship hull is impossible to miss.\n\nBrawl",
+      "rawData": "Eye of the Unconquered Sun\nCost: 10m, 1wp; Mins: Awareness 5, Essence 4\nType: Simple\nKeywords: None\nDuration: One turn\nPrerequisite Charms: Awakening Eye + Any 3 non-Ex-\ncellency Awareness Charms\nSolars are the legacy of the Unconquered Sun. It is their \ndestiny to see the world through this age of darkness. \nWhen this Charm is used, the Solar’s Caste Mark blazes \nlike a tiny sun, cancelling any Essence-muting magic the \nSolar may be using, and removing her from stealth. Eyes \nblazing white, Caste Mark burning, her gaze shines a wide \nbeam of light across everything she searches, twin lamps \nmoving over the terrain out to long range. Everything \ncaught in her stare is subject to the following effects:\n•  All magical and mundane Stealth effects are cancelled. \nSolid walls and other opaque objects grow transparent \nas the Lawgiver’s gaze passes over them, rendering all \nforms of Stealth automatically unsuccessful.\n•  Fog lifts, smoke parts, and clouds dissolve under the \nSolar’s intense focus.\n•  Dematerialized spirits are forced to materialize, at full \ncost of the Materialize Charm, or as much of the cost as \nthey can pay.\n•  All disguise magic is stripped. Mundane disguises tatter \nand melt away.\n•  Shapeshifters are forced back into natural form, resplen-\ndent destinies are temporarily forced into dormancy, \npersonas (p. 400) are suppressed, and other innate or \nnative transformative magics of the Exalted are simi-\nlarly deactivated.\nThe only way to avoid Eye of the Unconquered Sun is to \nsuccessfully dodge the Solar’s gaze by applying Evasion \nagainst the Solar’s Awareness roll. The Solar’s Awareness \nroll is enhanced by (Essence) dice, and any 1s rolled are \nrerolled until 1s fail to appear.\nEvery character within long range of the Solar who fails \nto dodge when she uses Eye of the Unconquered Sun is \nsubject to the above effects. \nThe range of this Charm is extended to extreme range by \nUnsurpassed Sight Discipline, however, this Charm does \nnot depend on eyesight and may be learned and employed \nby a blind Exalt. Anyone spotted by Eye of the Uncon-\nquered Sun automatically knows it; a bright white glare \npiercing through a fortress wall or an airship hull is im-\npossible to miss. \nBrawl",
+      "potentiallyProblematicImport": false
+    }
+  ]
+}

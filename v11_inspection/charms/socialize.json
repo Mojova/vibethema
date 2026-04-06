@@ -1,0 +1,820 @@
+{
+  "$schema": "./charm-schema.json",
+  "version": "0.1.0",
+  "ability": "Socialize",
+  "type": "solarAbility",
+  "exalt": "solar",
+  "charms": [
+    {
+      "id": "cfa04538-cdda-32da-8bd5-8aabf5aabcef",
+      "name": "Mastery of Small Manners",
+      "ability": "Socialize",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "5m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "One scene",
+      "fullText": "The Solar attunes herself to the patterns of social interaction, allowing Essence to guide her responses. While this Charm is active, the Exalt adapts to the expectations of a host culture, and is able to instinctively and reflexively follow its customs, behaving appropriately for the situation at hand. This Charm does not grant the Exalt perfect understanding of a society, but covers greetings, eating and gift customs, and flirtation mores. This Charm eliminates all penalties incurred by unfamiliarity with cultural expectations and group dynamics, and prevents a character from committing any major faux pas. In addition, those who hold positive Intimacies for the culture the Solar has attuned herself to gain a temporary positive Minor Tie of respect or admiration for the Solar, while those who hold negative Intimacies for foreigners or outsiders have that Intimacy temporarily lowered by one level of intensity.",
+      "rawData": "Mastery of Small Manners\nCost: 5m; Mins: Socialize 3, Essence 1\nType: Reflexive\nKeywords: None\nDuration: One scene\nPrerequisite Charms: None\nThe Solar attunes herself to the patterns of social inter-\naction, allowing Essence to guide her responses. While \nthis Charm is active, the Exalt adapts to the expectations \nof a host culture, and is able to instinctively and reflex-\nively follow its customs, behaving appropriately for the \nsituation at hand. This Charm does not grant the Exalt \nperfect understanding of a society, but covers greetings, \neating and gift customs, and flirtation mores. This Charm \neliminates all penalties incurred by unfamiliarity with \ncultural expectations and group dynamics, and prevents \na character from committing any major faux pas. In ad-\ndition, those who hold positive Intimacies for the culture \nthe Solar has attuned herself to gain a temporary positive \nMinor Tie of respect or admiration for the Solar, while \nthose who hold negative Intimacies for foreigners or out-\nsiders have that Intimacy temporarily lowered by one \nlevel of intensity.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "e134481d-4a33-37f3-9e58-c5d48ac11d44",
+      "name": "Motive-Discerning Technique",
+      "ability": "Socialize",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "3m",
+      "type": "Supplemental",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "This Charm supplements a read intentions action (p. 218), applying the double 9s rule to the Solar’s roll. In addition, the Exalt may substitute Wits for Perception when she is reading the intentions of a person with whom she is speaking.\n\nA Socialize 4+ repurchase enhances this Charm’s performance. When the Solar discerns the intentions of her target, the player may speculate on the existence of one of the target’s related Intimacies. If the player is correct, the Solar becomes aware of that Intimacy as per Cunning Insight Technique.\n\nA Socialize 5 repurchase enhances this Charm when it is used to speculate about a target’s Intimacy; if the player’s first speculation is incorrect, the player may inquire about the existence of a second Intimacy.",
+      "rawData": "Motive-Discerning Technique\nCost: 3m; Mins: Socialize 3, Essence 1\nType: Supplemental\nKeywords: Mute\nDuration: Instant\nPrerequisite Charms: None\nThis Charm supplements a read intentions action (p. 218), \napplying the double 9s rule to the Solar’s roll. In addition, \nthe Exalt may substitute Wits for Perception when she \nis reading the intentions of a person with whom she is \nspeaking. \nA Socialize 4+ repurchase enhances this Charm’s perfor-\nmance. When the Solar discerns the intentions of her \ntarget, the player may speculate on the existence of one \nof the target’s related Intimacies. If the player is correct, \nthe Solar becomes aware of that Intimacy as per Cunning \nInsight Technique.\nC H A P T E R  6\nEX3\n394\nA Socialize 5 repurchase enhances this Charm when it is \nused to speculate about a target’s Intimacy; if the player’s \nfirst speculation is incorrect, the player may inquire about \nthe existence of a second Intimacy.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "9ac9bc5b-5351-37cd-9381-c5e23045d6af",
+      "name": "Quicksilver Falcon’s Eye",
+      "ability": "Socialize",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "e134481d-4a33-37f3-9e58-c5d48ac11d44"
+      ],
+      "cost": "1m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "One turn",
+      "fullText": "With a supernaturally keen sense for social interaction, the Lawgiver can gauge a character’s response to any social influence. She can even tell conspirators from rivals at a glance. With this Charm the Solar can intuit when a character applies Resolve or Guile against social influence actions and when he doesn’t. When she makes an argument she believes her target will readily accept, but he applies his Resolve, she senses his hesitation.\n\nWhen he applies his Guile to occlude his intentions, she knows he’s hiding something. When characters engaged in an argument seem to disagree yet she sees no application of Resolve, this is a clear sign of a sham performance.",
+      "rawData": "Quicksilver Falcon’s Eye\nCost: 1m; Mins: Socialize 3, Essence 1\nType: Reflexive\nKeywords: None\nDuration: One turn\nPrerequisite Charms: Motive-Discerning Technique\nWith a supernaturally keen sense for social interaction, \nthe Lawgiver can gauge a character’s response to any \nsocial influence. She can even tell conspirators from \nrivals at a glance. With this Charm the Solar can intuit \nwhen a character applies Resolve or Guile against social \ninfluence actions and when he doesn’t. When she makes \nan argument she believes her target will readily accept, \nbut he applies his Resolve, she senses his hesitation. \nWhen he applies his Guile to occlude his intentions, \nshe knows he’s hiding something. When characters \nengaged in an argument seem to disagree yet she sees \nno application of Resolve, this is a clear sign of a sham \nperformance.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "91673d54-2eaa-3c32-8a33-3361e6654b28",
+      "name": "Umbral Eyes Focus",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 1,
+      "prerequisites": [
+        "9ac9bc5b-5351-37cd-9381-c5e23045d6af"
+      ],
+      "cost": "2m",
+      "type": "Supplemental",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "At a glance, the Exalt can tell when an Intimacy she has created or modified with an instill action has changed in intensity. This Charm supplements a read intentions action to discern the intensity of all such Intimacies, supplying one automatic success and two bonus dice.",
+      "rawData": "Umbral Eyes Focus\nCost: 2m; Mins: Socialize 5, Essence 1\nType: Supplemental\nKeywords: Mute\nDuration: Instant\nPrerequisite Charms: Quicksilver Falcon’s Eye\nAt a glance, the Exalt can tell when an Intimacy she has \ncreated or modified with an instill action has changed in \nintensity. This Charm supplements a read intentions action \nto discern the intensity of all such Intimacies, supplying \none automatic success and two bonus dice.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "0cd8b08e-30bf-3b4e-bb73-ebbd4fef878d",
+      "name": "Humble Servant Approach",
+      "ability": "Socialize",
+      "minAbility": 4,
+      "minEssence": 1,
+      "prerequisites": [
+        "e134481d-4a33-37f3-9e58-c5d48ac11d44"
+      ],
+      "cost": "1m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "When taking a read intentions action to discover what a target wants from her, the Solar may reflexively activate this Charm, applying a -2 penalty to the target’s Guile. In order to use this Charm, the Solar needs to have already succeeded at a read intentions action against the target in the scene, reading his intentions while he was interacting with someone other than the Solar.",
+      "rawData": "Humble Servant Approach\nCost: 1m; Mins: Socialize 4, Essence 1\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Motive-Discerning Technique\nWhen taking a read intentions action to discover what a \ntarget wants from her, the Solar may reflexively activate \nthis Charm, applying a -2 penalty to the target’s Guile. In \norder to use this Charm, the Solar needs to have already \nsucceeded at a read intentions action against the target in \nthe scene, reading his intentions while he was interacting \nwith someone other than the Solar.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "eee9c680-cca7-34b9-9229-683870668e32",
+      "name": "Shadow Over Day",
+      "ability": "Socialize",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "1m or 2m",
+      "type": "Reflexive",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar flenses herself of emotion and expression, shedding her façade to become inscrutable. The Solar may reflexively raise her Guile by one point. At Essence 2+, the Solar may pay two motes for two points of Guile.",
+      "rawData": "Shadow Over Day\nCost: 1m or 2m; Mins: Socialize 3, Essence 1\nType: Reflexive\nKeywords: Mute\nDuration: Instant\nPrerequisite Charms: None\nThe Solar flenses herself of emotion and expression, \nshedding her façade to become inscrutable. The Solar \nmay reflexively raise her Guile by one point. At Essence \n2+, the Solar may pay two motes for two points of \nGuile.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "a2ad10c7-d9ee-3449-8a92-18997bac04d4",
+      "name": "Night Passes Over",
+      "ability": "Socialize",
+      "minAbility": 4,
+      "minEssence": 1,
+      "prerequisites": [
+        "eee9c680-cca7-34b9-9229-683870668e32"
+      ],
+      "cost": "2m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar may reflexively ignore all penalties to her Guile from fatigue, surprise or other emotional states.\n\nThis Charm does not remove penalties incurred through physical injury or from being observed by hidden characters.",
+      "rawData": "Night Passes Over\nCost: 2m; Mins: Socialize 4, Essence 1\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Shadow Over Day\nThe Solar may reflexively ignore all penalties to her Guile \nfrom fatigue, surprise or other emotional states. \nThis Charm does not remove penalties incurred \nthrough physical injury or from being observed by hidden \ncharacters.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "e63933a1-0a2c-3044-88a0-fd09a6b3dfc1",
+      "name": "Intent-Tracing Stare",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 1,
+      "prerequisites": [
+        "e134481d-4a33-37f3-9e58-c5d48ac11d44",
+        "eee9c680-cca7-34b9-9229-683870668e32"
+      ],
+      "cost": "1m",
+      "type": "Reflexive",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar becomes preternaturally aware of the social scene, able to read invisible subtexts and sense the intensifying focus of another’s scrutiny. Each time the Solar or a character within five feet is the target of a read intentions action, the Exalt feels a tingle at the base of her skull telling her to activate this Charm. Upon doing so, she can discern not only who the target of the action is, but who is watching them. The Solar must be aware of the initiate to notice him—this Charm does not grant the ability to spot hidden characters, though it does allow the Exalt to reflexively apply a (Perception + Awareness) check to try to notice hidden initiates.",
+      "rawData": "Intent-Tracing Stare\nCost: 1m; Mins: Socialize 5, Essence 1\nType: Reflexive\nKeywords: Mute\nDuration: Instant\nPrerequisite Charms: Motive-Discerning Technique, \nShadow Over Day\nThe Solar becomes preternaturally aware of the social \nscene, able to read invisible subtexts and sense the inten-\nsifying focus of another’s scrutiny. Each time the Solar or \na character within five feet is the target of a read inten-\ntions action, the Exalt feels a tingle at the base of her skull \ntelling her to activate this Charm. Upon doing so, she can \ndiscern not only who the target of the action is, but who \nis watching them. The Solar must be aware of the initiate \nto notice him—this Charm does not grant the ability to \nspot hidden characters, though it does allow the Exalt to \nreflexively apply a (Perception + Awareness) check to try \nto notice hidden initiates.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "ee445562-e379-33d5-80ff-93eb18b28975",
+      "name": "Culture Hero Approach",
+      "ability": "Socialize",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "cfa04538-cdda-32da-8bd5-8aabf5aabcef"
+      ],
+      "cost": "3m",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "This Charm allows the Solar to make a special read intentions action while observing an unfamiliar ritual to discern its purpose. This action has a difficulty of the obscurity of the ritual, and can be lowered by a relevant Lore rating.\n\nFor example, an expert on the Skullstone Archipelago could interpret the ritual of bone and ivory more easily than someone who has never visited Onyx. This Charm can also pick up ritual subtexts: an expert in cults might recognize a demon-worshiping dance disguised as a harvest ritual. Basic success on this roll tells the Solar the meaning of the ritual. For every two additional successes, she understands an additional one-sentence fact about the ritual. If she is expected to perform the ritual, each fact she uncovers in this manner amounts to a single automatic success on a Performance roll to participate.",
+      "rawData": "Culture Hero Approach\nCost: 3m; Mins: Socialize 4, Essence 2\nType: Simple\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Mastery of Small Manners\n\nThis Charm allows the Solar to make a special read inten-\ntions action while observing an unfamiliar ritual to discern \nits purpose. This action has a difficulty of the obscurity \nof the ritual, and can be lowered by a relevant Lore rating. \nFor example, an expert on the Skullstone Archipelago \ncould interpret the ritual of bone and ivory more easily \nthan someone who has never visited Onyx. This Charm \ncan also pick up ritual subtexts: an expert in cults might \nrecognize a demon-worshiping dance disguised as a \nharvest ritual. Basic success on this roll tells the Solar the \nmeaning of the ritual. For every two additional successes, \nshe understands an additional one-sentence fact about \nthe ritual. If she is expected to perform the ritual, each \nfact she uncovers in this manner amounts to a single au-\ntomatic success on a Performance roll to participate.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "6cf46e6f-fd92-38ec-8abb-12886a42b9c4",
+      "name": "Unimpeachable Discourse Technique",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "cfa04538-cdda-32da-8bd5-8aabf5aabcef"
+      ],
+      "cost": "3m",
+      "type": "Supplemental",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar is the guardian of her thoughts. If she’s in a situation where Mastery of Small Manners would apply, she may use this Charm to supplement a persuade or instill action that speaks to group policy, changing cultural attitudes or steering future courses. This Charm ensures that her arguments are logical and extremely well thought out: reroll all 1s until 1s fail to appear, and deny the benefits of the Solar’s 1s to the magic of her enemies.",
+      "rawData": "Unimpeachable Discourse Technique\nCost: 3m; Mins: Socialize 5, Essence 2\nType: Supplemental\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Mastery of Small Manners\nThe Solar is the guardian of her thoughts. If she’s in a sit-\nuation where Mastery of Small Manners would apply, she \nmay use this Charm to supplement a persuade or instill \naction that speaks to group policy, changing cultural at-\ntitudes or steering future courses. This Charm ensures \nthat her arguments are logical and extremely well thought \nout: reroll all 1s until 1s fail to appear, and deny the ben-\nefits of the Solar’s 1s to the magic of her enemies.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "12321d76-1769-3539-b475-665f96650241",
+      "name": "Indecent Proposal Method",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "6cf46e6f-fd92-38ec-8abb-12886a42b9c4"
+      ],
+      "cost": "4m",
+      "type": "Supplemental",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "The silver-tongued charisma of the Solar Exalted allows them to say things others would normally suffer to speak.\n\nThis Charm supplements an instill, persuade, or bargain action. It does not aid the Solar’s persuasion in gaining acceptance, but it does guarantee that her offer will sound delightful, charming, or at least a necessary evil coming from her lips. This prevents any Intimacy toward her from being decreased as a result of her persuasion. This Charm affects everyone who witnesses the social action, even if they were not the targets.  Characters must pay a point of temporary Willpower in order to take offense.",
+      "rawData": "Indecent Proposal Method\nCost: 4m; Mins: Socialize 5, Essence 2\nType: Supplemental\nKeywords: Mute\nDuration: Instant\nPrerequisite Charms: Unimpeachable Discourse Technique\nThe silver-tongued charisma of the Solar Exalted allows \nthem to say things others would normally suffer to speak. \nThis Charm supplements an instill, persuade, or bargain \naction. It does not aid the Solar’s persuasion in gaining \nacceptance, but it does guarantee that her offer will sound \ndelightful, charming, or at least a necessary evil coming \nfrom her lips. This prevents any Intimacy toward her from \nbeing decreased as a result of her persuasion. This Charm \naffects everyone who witnesses the social action, even if \nthey were not the targets.  Characters must pay a point of \ntemporary Willpower in order to take offense.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "8d01baf9-b3b9-3e53-987c-c3bfaa6d1cdd",
+      "name": "Dauntless Assayer Method",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "e134481d-4a33-37f3-9e58-c5d48ac11d44"
+      ],
+      "cost": "5m",
+      "type": "Reflexive",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "Upon failing a read intentions action, the Solar may use this Charm to reset her attempt, allowing her to try again.\n\nIf the player describes a stunt in which the Solar re-engages her target—perhaps by spilling a drink on him, or posing lost beside a road as his carriage rolls up—then the cost of this Charm is reduced by a number of motes equal to the stunt level.",
+      "rawData": "Dauntless Assayer Method\nCost: 5m; Mins: Socialize 5, Essence 2\nType: Reflexive\nKeywords: Mute\nDuration: Instant\nPrerequisite Charms: Motive-Discerning Technique\nUpon failing a read intentions action, the Solar may use \nthis Charm to reset her attempt, allowing her to try again. \nIf the player describes a stunt in which the Solar re-en-\ngages her target—perhaps by spilling a drink on him, or \nposing lost beside a road as his carriage rolls up—then the \ncost of this Charm is reduced by a number of motes equal \nto the stunt level.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "4c329655-4c74-39a4-b30f-0a213ce89d27",
+      "name": "Preeminent Gala Knife",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "8d01baf9-b3b9-3e53-987c-c3bfaa6d1cdd"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Lawgiver is a master of social theatre, drawing strength from her success like prayer from the cup of the gods.\n\nEach time she succeeds at a read intentions action, defends her Guile, or succeeds at a Socialize action with a difficulty of 0 or higher, she gains two motes of Essence. The Solar may not gain more motes of Essence than she has used activating Socialize Charms in the scene.",
+      "rawData": "Preeminent Gala Knife\nCost: —; Mins: Socialize 5, Essence 2\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Dauntless Assayer Method\nThe Lawgiver is a master of social theatre, drawing strength \nfrom her success like prayer from the cup of the gods. \nEach time she succeeds at a read intentions action, defends \nher Guile, or succeeds at a Socialize action with a diffi-\nculty of 0 or higher, she gains two motes of Essence. The \nSolar may not gain more motes of Essence than she has \nused activating Socialize Charms in the scene.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "6f63ef4f-95d1-3ef5-8f02-eea98e4318b7",
+      "name": "Wise-Eyed Courtier Method",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "0cd8b08e-30bf-3b4e-bb73-ebbd4fef878d"
+      ],
+      "cost": "6m",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Exalt can master the social currents that surround her to gain a greater understanding of the situation. The Solar makes a read intentions action with (Essence) automatic successes, applying a single roll against the Guile of all targets in the scene of whom she is aware. Success reveals surface attitudes, (“She is nervous and impatient about something”), emotions (“He is angry at her”), and Ties (“Those two are besotted with one another”), revealing this information at a glance. The Solar can also discern what her targets want from one another (“He is trying to seduce her; she wants to buy his horse”).\n\nThis Charm does not read minds—rather, it models the skill of a Lawgiver who can read the thousandfold nuances of social interaction with breathtaking ease. Failing to read a target’s intentions with this Charm does not count as failing a read intentions action for the purposes of a reset. The Solar may only use this Charm once per scene, but she may reuse it if the scene changes significantly in some way.",
+      "rawData": "Wise-Eyed Courtier Method\nCost: 6m; Mins: Socialize 5, Essence 2\nType: Simple\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Humble Servant Approach\nThe Exalt can master the social currents that surround \nher to gain a greater understanding of the situation. The \nSolar makes a read intentions action with (Essence) au-\ntomatic successes, applying a single roll against the Guile \nof all targets in the scene of whom she is aware. Success \nreveals surface attitudes, (“She is nervous and impatient \nabout something”), emotions (“He is angry at her”), and \nTies (“Those two are besotted with one another”), reveal-\ning this information at a glance. The Solar can also discern \nwhat her targets want from one another (“He is trying to \nseduce her; she wants to buy his horse”). \nThis Charm does not read minds—rather, it models the \nskill of a Lawgiver who can read the thousandfold nuances \nof social interaction with breathtaking ease. Failing to \nread a target’s intentions with this Charm does not count \nas failing a read intentions action for the purposes of a \nreset. The Solar may only use this Charm once per scene, \nbut she may reuse it if the scene changes significantly in \nsome way. \nC H A P T E R  6\nEX3\n396",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "facb3c05-f848-3cc8-8d6d-444cbf415a3a",
+      "name": "Discretionary Gesture",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "e63933a1-0a2c-3044-88a0-fd09a6b3dfc1"
+      ],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "Through a sharp movement, a pointed glance, a whisper or a command to silence, the Lawgiver can raise the Guile of another. When the Solar perceives an ally being targeted by a Guile-piercing effect, she may use this Charm to reflexively raise his Guile. This Charm is facilitated by the urgency of the Lawgiver’s stunt: if she glares or makes a cutting gesture, her ally’s Guile is raised by a single point.\n\nIf she distracts him from speaking through means both dubious and clever, his Guile is raised by two. If she slaps him full on in the face, his Guile is raised by three.",
+      "rawData": "Discretionary Gesture\nCost: 3m; Mins: Socialize 5, Essence 2\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Intent-Tracing Stare\nThrough a sharp movement, a pointed glance, a whisper \nor a command to silence, the Lawgiver can raise the Guile \nof another. When the Solar perceives an ally being tar-\ngeted by a Guile-piercing effect, she may use this Charm \nto reflexively raise his Guile. This Charm is facilitated by \nthe urgency of the Lawgiver’s stunt: if she glares or makes \na cutting gesture, her ally’s Guile is raised by a single point. \nIf she distracts him from speaking through means both \ndubious and clever, his Guile is raised by two. If she slaps \nhim full on in the face, his Guile is raised by three.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "36734ff8-64cd-315f-8c9e-128b1203ff9b",
+      "name": "Deep-Eyed Soul Gazing",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "e63933a1-0a2c-3044-88a0-fd09a6b3dfc1"
+      ],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "After successfully defending herself through an application of Guile, the Solar’s next read intentions action against the initiate gains (Essence) dice and one automatic success.\n\nThis advantage vanishes at the end of the scene.",
+      "rawData": "Deep-Eyed Soul Gazing\nCost: 3m; Mins: Socialize 5, Essence 2\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Intent-Tracing Stare\nAfter successfully defending herself through an applica-\ntion of Guile, the Solar’s next read intentions action against \nthe initiate gains (Essence) dice and one automatic success. \nThis advantage vanishes at the end of the scene.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "d0105f29-75a4-3469-9683-197a0e3064d1",
+      "name": "Easily-Discarded Presence Method",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "eee9c680-cca7-34b9-9229-683870668e32"
+      ],
+      "cost": "3m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "When the Exalt defends herself against a read intentions action, she may activate this Charm to make the initiate believe he saw through her Guile. Instead of seeing the Exalt’s true motives, he sees cluelessness, failure, or pursuit of vice, and disregards her for the rest of the scene.",
+      "rawData": "Easily-Discarded Presence Method\nCost: 3m, 1wp; Mins: Socialize 5, Essence 2\nType: Reflexive\nKeywords: Mute\nDuration: Instant\nPrerequisite Charms: Shadow Over Day\nWhen the Exalt defends herself against a read intentions \naction, she may activate this Charm to make the initiate \nbelieve he saw through her Guile. Instead of seeing the \nExalt’s true motives, he sees cluelessness, failure, or pursuit \nof vice, and disregards her for the rest of the scene.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "c0cdc60a-4e35-3d47-a078-54fbdccc3425",
+      "name": "Guarded Thoughts Meditation",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "eee9c680-cca7-34b9-9229-683870668e32"
+      ],
+      "cost": "4m",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Indefinite",
+      "fullText": "The Exalt shrouds her mind, concealing her inner thoughts behind fivefold walls. This Charm indefinitely raises her Guile by three points.",
+      "rawData": "Guarded Thoughts Meditation\nCost: 4m; Mins: Socialize 5, Essence 2\nType: Simple\nKeywords: None\nDuration: Indefinite\nPrerequisite Charms: Shadow Over Day\n\nThe Exalt shrouds her mind, concealing her inner thoughts \nbehind fivefold walls. This Charm indefinitely raises her \nGuile by three points.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "4c5e6ab0-e147-382d-a9f7-7c32b4ced63c",
+      "name": "Penumbra Self Meditation",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "c0cdc60a-4e35-3d47-a078-54fbdccc3425"
+      ],
+      "cost": "3m per Intimacy",
+      "type": "Simple",
+      "keywords": [
+        "Stackable"
+      ],
+      "duration": "Indefinite",
+      "fullText": "Through concentration and practice, the Solar sheds a piece of her soul into the lightless blaze of her anima, dimming it. From that point onward, no read intentions action can uncover it. The Solar must meditate for an hour in order to bury a single Intimacy in this fashion. The Solar may eclipse as many Intimacies as she can afford to hide. Note that this Charm does not make it impossible to notice a Solar’s overt tendencies—her Intimacies can still be revealed through her own actions.",
+      "rawData": "Penumbra Self Meditation\nCost: 3m per Intimacy; Mins: Socialize 5, Essence 2\nType: Simple\nKeywords: Stackable\nDuration: Indefinite\nPrerequisite Charms: Guarded Thoughts Meditation\nThrough concentration and practice, the Solar sheds a \npiece of her soul into the lightless blaze of her anima, \ndimming it. From that point onward, no read intentions \naction can uncover it. The Solar must meditate for an hour \nin order to bury a single Intimacy in this fashion. The \nSolar may eclipse as many Intimacies as she can afford to \nhide. Note that this Charm does not make it impossible \nto notice a Solar’s overt tendencies—her Intimacies can \nstill be revealed through her own actions.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "62836361-19b0-388d-b5fc-6db0196e3191",
+      "name": "Inverted Ego Mask",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "4c5e6ab0-e147-382d-a9f7-7c32b4ced63c"
+      ],
+      "cost": "2m, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "When her soul is glimpsed, the Solar may twist the very perceptions of her subject. The Solar may invoke this Charm when a character pierces her Guile, supplying a false purpose for her true motives. If the initiate inquires as to one of her Intimacies, and manages to uncover one, she may also use this Charm to misdirect his interpretation, changing the context of a Tie or the wording of a Principle to mislead him. This causes the initiate to make incorrect assumptions about the Solar’s loyalties, interests or objectives, causing his social influence against her to be less effective or completely implausible. For example, he might discern that she is a devotee of the Immaculate Faith when in reality she holds the Order in contempt. His persuasion to get her to aid the Order by informing on her fellow Solars would then experience a boost in her Resolve, rather than a weakening. Though this Charm is paid instantly, the Solar’s false Intimacy lingers until the end of the story. She is not compelled by this Intimacy and may freely act against it, nor is her Resolve lowered through its exploitation. However, should she experience Limit Break before the end of the story, the Intimacy becomes real, capable of influencing her until the story ends.",
+      "rawData": "Inverted Ego Mask\nCost: 2m, 1wp; Mins: Socialize 5, Essence 2\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Penumbra Self Meditation\nWhen her soul is glimpsed, the Solar may twist the very \nperceptions of her subject. The Solar may invoke this \nCharm when a character pierces her Guile, supplying a \nfalse purpose for her true motives. If the initiate inquires \nas to one of her Intimacies, and manages to uncover one, \nshe may also use this Charm to misdirect his interpreta-\ntion, changing the context of a Tie or the wording of a \nPrinciple to mislead him. This causes the initiate to make \nincorrect assumptions about the Solar’s loyalties, interests \nor objectives, causing his social influence against her to be \nless effective or completely implausible. For example, he \nmight discern that she is a devotee of the Immaculate Faith \nwhen in reality she holds the Order in contempt. His per-\nsuasion to get her to aid the Order by informing on her \nfellow Solars would then experience a boost in her Resolve, \nrather than a weakening. Though this Charm is paid in-\nstantly, the Solar’s false Intimacy lingers until the end of \nthe story. She is not compelled by this Intimacy and may \nfreely act against it, nor is her Resolve lowered through its \nexploitation. However, should she experience Limit Break \nbefore the end of the story, the Intimacy becomes real, \ncapable of influencing her until the story ends.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "54578fde-51f4-3bbc-87e4-f23c583331c7",
+      "name": "Cunning Insight Technique",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "1bd78e8f-e405-3e16-9473-46ff9bb39a08"
+      ],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "This Charm does not guarantee success, but allows the Solar to piece together a clearer picture of a target by association or at least elimination. Intimacies guessed correctly become known to the Solar without a doubt.",
+      "rawData": "Cunning Insight Technique\nCost: 3m; Mins: Socialize 5, Essence 3\nType: Reflexive\nKeywords: None \nDuration: Instant\nPrerequisite Charms: Unimpeachable Discourse Technique\nAny time a Lawgiver witnesses another character dispute \nor reject a claim—typically a successful application of \nResolve against a social influence action—she may activate \nthis Charm, allowing the player to speculate on one of the \ncharacter’s attached Intimacies. For example, a Solar who \nwitnesses a magistrate refusing to take a bribe might guess \nthat he values justice. The Storyteller then must truthful-\nly affirm or deny the accuracy of the player’s speculation. \nThis Charm does not guarantee success, but allows the \nSolar to piece together a clearer picture of a target by as-\nsociation or at least elimination. Intimacies guessed cor-\nrectly become known to the Solar without a doubt.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "020a5188-c673-3f16-846d-6b5c60d38b8a",
+      "name": "Doubt-Sowing Contention Method",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "54578fde-51f4-3bbc-87e4-f23c583331c7"
+      ],
+      "cost": "6m, 1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "Sometimes a Solar must act quickly to prevent a disastrous incident. When she suspects a character intends to make a social influence roll she disagrees with, the Solar may use this Charm to prevent her target from making a social influence roll. Roll a (Manipulation + Socialize) persuade action, adding (Essence) automatic successes. If the roll succeeds, the target’s intended social action—be it to persuade, bargain, threaten, instill, or read intentions—is treated as if it has already failed and must be reset (p. 223).\n\nThis Charm is capable of defining influence without employing an Intimacy, but carries no inherent power to lower a target’s Resolve on its own. This influence costs three Willpower to resist in a Decision Point and requires a Defining Intimacy to reject. Once a character has been hit with this Charm, if he successfully resets his social action or he pays Willpower to resist, this Charm can no longer prevent him from attempting the social influence he was initially denied. The Solar may however prevent him from taking other social actions through continued use. All uses of this Charm are reset when a new story begins.",
+      "rawData": "Doubt-Sowing Contention Method\nCost: 6m, 1wp; Mins: Socialize 5, Essence 3\nType: Simple\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Cunning Insight Technique\nSometimes a Solar must act quickly to prevent a disastrous \nincident. When she suspects a character intends to make \na social influence roll she disagrees with, the Solar may \nuse this Charm to prevent her target from making a social \ninfluence roll. Roll a (Manipulation + Socialize) persuade \naction, adding (Essence) automatic successes. If the roll \nsucceeds, the target’s intended social action—be it to per-\nsuade, bargain, threaten, instill, or read intentions—is \ntreated as if it has already failed and must be reset (p. 223). \nThis Charm is capable of defining influence without em-\nploying an Intimacy, but carries no inherent power to lower \na target’s Resolve on its own. This influence costs three \nWillpower to resist in a Decision Point and requires a De-\nfining Intimacy to reject. Once a character has been hit \nwith this Charm, if he successfully resets his social action \nor he pays Willpower to resist, this Charm can no longer \nprevent him from attempting the social influence he was \ninitially denied. The Solar may however prevent him from \ntaking other social actions through continued use. All uses \nof this Charm are reset when a new story begins.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "e263603e-1b45-3b4d-87e7-fbc07b7c0c0e",
+      "name": "Effective Counterargument",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "6cf46e6f-fd92-38ec-8abb-12886a42b9c4"
+      ],
+      "cost": "6m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Counterattack"
+      ],
+      "duration": "Instant",
+      "fullText": "Once per scene, the Solar may intercede in a persuade action she is witnessing in order to change the target’s\n\nmind. After the initiate has rolled his persuasion but before Resolve is applied, the Solar may make a (Wits + Socialize) roll to persuade the subject to reject the initiate’s influence. For every two successes she gains on this roll, the target’s Resolve is boosted by one.",
+      "rawData": "Effective Counterargument\nCost: 6m, 1wp; Mins: Socialize 5, Essence 3\nType: Reflexive\nKeywords: Counterattack\nDuration: Instant\nPrerequisite Charms: Unimpeachable Discourse Technique\nOnce per scene, the Solar may intercede in a persuade \naction she is witnessing in order to change the target’s \nC H A P T E R  6\nEX3\n398\nmind. After the initiate has rolled his persuasion but before \nResolve is applied, the Solar may make a (Wits + Social-\nize) roll to persuade the subject to reject the initiate’s in-\nfluence. For every two successes she gains on this roll, the \ntarget’s Resolve is boosted by one.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "c22302d1-e4c0-3a5b-9a88-e8d5f7f50102",
+      "name": "Wise Counsel (Flashing Soul Reform)",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "e263603e-1b45-3b4d-87e7-fbc07b7c0c0e"
+      ],
+      "cost": "1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The words of the Lawgiver turn the wheels of the world.\n\nWhen the Solar advises another character on social etiquette or group or cultural policy, roll ([Charisma or Manipulation] + Socialize) dice and add her successes as bonus dice that the target may use to enhance a Socialize roll, or to increase his Guile or Resolve for a single tick at a rate of two successes per point. The target of this assistance may spread this bonus out over the course of several scenes and multiple actions, or he may choose to use all of the dice at once. If the target applies any part of this bonus to an action, any positive Intimacy he has for the Lawgiver is increased in intensity and if one does not exist he gains one automatically.",
+      "rawData": "Wise Counsel (Flashing Soul Reform)\nCost: 1wp; Mins: Socialize 5, Essence 3\nType: Simple\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Effective Counterargument\nThe words of the Lawgiver turn the wheels of the world. \nWhen the Solar advises another character on social eti-\nquette or group or cultural policy, roll ([Charisma or Ma-\nnipulation] + Socialize) dice and add her successes as \nbonus dice that the target may use to enhance a Socialize \nroll, or to increase his Guile or Resolve for a single tick at \na rate of two successes per point. The target of this assis-\ntance may spread this bonus out over the course of several \nscenes and multiple actions, or he may choose to use all \nof the dice at once. If the target applies any part of this \nbonus to an action, any positive Intimacy he has for the \nLawgiver is increased in intensity and if one does not exist \nhe gains one automatically.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "9d2f50bc-5c88-3dda-8b86-15f0c7d7a162",
+      "name": "Endless Obsession Feint",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "c22302d1-e4c0-3a5b-9a88-e8d5f7f50102"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "This Charm embodies the awe-inspiring resonance of the Solar Exalted, whose very presence shapes the flow of nations. This Charm is triggered by a Solar’s success in a social scene, where through social influence she achieves a significant objective. She might broker an alliance, arrange a wedding, cancel an assassination or convince the local Guild to decrease opium production. Any objective success she attains at the expense of another social actor in the scene leaves that character in a state of obsession. The Lawgiver is an enigma, and though he can’t remember the substance of her arguments, her casual wit haunts his dreams. For (Essence) days the character suffers a -2 dice penalty to all Bureaucracy, Craft, Investigation, Linguistics, Lore, Occult, Performance and Socialize rolls, with 1s on these rolls each counting as -1 success. When this obsession wears off, the target automatically develops a positive or negative Intimacy for the Solar, depending on how the days went. This effect may apply to multiple characters in the same scene.",
+      "rawData": "Endless Obsession Feint\nCost: —; Mins: Socialize 5, Essence 3\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Wise Counsel (Flashing Soul \nReform)\nThis Charm embodies the awe-inspiring resonance of the \nSolar Exalted, whose very presence shapes the flow of \nnations. This Charm is triggered by a Solar’s success in a \nsocial scene, where through social influence she achieves \na significant objective. She might broker an alliance, \narrange a wedding, cancel an assassination or convince \nthe local Guild to decrease opium production. Any objec-\ntive success she attains at the expense of another social \nactor in the scene leaves that character in a state of obses-\nsion. The Lawgiver is an enigma, and though he can’t re-\nmember the substance of her arguments, her casual wit \nhaunts his dreams. For (Essence) days the character suffers \na -2 dice penalty to all Bureaucracy, Craft, Investigation, \nLinguistics, Lore, Occult, Performance and Socialize rolls, \nwith 1s on these rolls each counting as -1 success. When \nthis obsession wears off, the target automatically devel-\nops a positive or negative Intimacy for the Solar, depend-\ning on how the days went. This effect may apply to mul-\ntiple characters in the same scene.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "cf6d3729-fcf6-389a-8783-feabb33408e0",
+      "name": "Aspersions Cast Aside",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "6cf46e6f-fd92-38ec-8abb-12886a42b9c4"
+      ],
+      "cost": "5m",
+      "type": "Reflexive",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "The Lawgiver is ever blameless. With this Charm she can cast aside all 1s and 2s after making a Socialize roll, forcing them onto a target within five feet. This target must then make a (Wits + Socialize) roll with a difficulty of the Solar’s Essence to keep his composure, with foisted 2s replacing the lowest successes (typically 7s) and 1s replacing the next digit up (usually 8s). The Solar gains these successes to her initial roll, while her target appears to be the one who said something ridiculous, upset his wine cup into the gravy bowl, or so on. The Solar may use his Charm in response to another Solar using Aspersions Cast Aside, but may not direct the impending botch back at the initiate.",
+      "rawData": "Aspersions Cast Aside\nCost: 5m; Mins: Socialize 5, Essence 3\nType: Reflexive\nKeywords: Mute\nDuration: Instant\nPrerequisite Charms: Unimpeachable Discourse \nTechnique\nThe Lawgiver is ever blameless. With this Charm she can \ncast aside all 1s and 2s after making a Socialize roll, forcing \nthem onto a target within five feet. This target must then \nmake a (Wits + Socialize) roll with a difficulty of the Solar’s \nEssence to keep his composure, with foisted 2s replacing \nthe lowest successes (typically 7s) and 1s replacing \nthe next digit up (usually 8s). The Solar gains these \nsuccesses to her initial roll, while her target appears to \nbe the one who said something ridiculous, upset his wine \ncup into the gravy bowl, or so on. The Solar may use \nhis Charm in response to another Solar using Aspersions \nCast Aside, but may not direct the impending botch back \nat the initiate.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "b7cdf81f-122b-3abd-952f-e4fcbd256f1b",
+      "name": "Asp Bites Its Tail",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "cf6d3729-fcf6-389a-8783-feabb33408e0",
+        "e263603e-1b45-3b4d-87e7-fbc07b7c0c0e"
+      ],
+      "cost": "4m",
+      "type": "Reflexive",
+      "keywords": [
+        "Counterattack",
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "When the Solar’s name is impugned, she may turn those claims back on her accuser. When the Solar witnesses another character attempting a social action intended to harm the Solar’s reputation or convince others to take action against her, she may invoke this Charm, rolling ([Charisma or Manipulation] + Socialize). If this roll gains more successes than the aggressor’s, then the aggressor’s claim is turned back against himself. If he were using an instill action to convince someone that the Solar is untrustworthy, the target would be instilled with an Intimacy of distrust for him instead. If he were trying to persuade the prince to have the Exalt taken into custody, he himself would be arrested. This consequence always follows in a way that make sense in the context of the scene, i.e. the target’s accusations come off as suspicious, or he accidentally incriminates himself while trying to incriminate the Solar.",
+      "rawData": "Asp Bites Its Tail\nCost: 4m; Mins: Socialize 5, Essence 3\nType: Reflexive\nKeywords: Counterattack, Mute \nDuration: Instant\nPrerequisite Charms: Aspersions Cast Aside, Effective \nCounterargument\nWhen the Solar’s name is impugned, she may turn those \nclaims back on her accuser. When the Solar witnesses \nanother character attempting a social action intended to \nharm the Solar’s reputation or convince others to take \naction against her, she may invoke this Charm, rolling \n([Charisma or Manipulation] + Socialize). If this roll gains \nmore successes than the aggressor’s, then the aggressor’s \nclaim is turned back against himself. If he were using an \ninstill action to convince someone that the Solar is un-\ntrustworthy, the target would be instilled with an Inti-\nmacy of distrust for him instead. If he were trying to per-\nsuade the prince to have the Exalt taken into custody, he \nhimself would be arrested. This consequence always \nfollows in a way that make sense in the context of the \nscene, i.e. the target’s accusations come off as suspicious, \nor he accidentally incriminates himself while trying to \nincriminate the Solar.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "d5353d88-1a2a-3504-9e8f-9912f38bd0dd",
+      "name": "Fete-Watcher Stance",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "6f63ef4f-95d1-3ef5-8f02-eea98e4318b7"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Lawgiver is the guardian of the peace. With this Charm she empowers herself to grant pre-emptive powers to her allies and subordinates. Any time the Exalt uses read intentions to notice hostile intentions which might result in violence, she gains three non-Charm dice to her Awareness for detecting a trap or assassination attempt, as well as three non-Charm dice to her next Join Battle roll. She may also confer this bonus to her allies through discreet warning at least one round before any hostile action occurs.",
+      "rawData": "Fete-Watcher Stance\nCost: —; Mins: Socialize 5, Essence 3\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Wise-Eyed Courtier Method\n\nThe Lawgiver is the guardian of the peace. With this \nCharm she empowers herself to grant pre-emptive powers \nto her allies and subordinates. Any time the Exalt uses \nread intentions to notice hostile intentions which might \nresult in violence, she gains three non-Charm dice to her \nAwareness for detecting a trap or assassination attempt, \nas well as three non-Charm dice to her next Join Battle \nroll. She may also confer this bonus to her allies through \ndiscreet warning at least one round before any hostile \naction occurs.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "4c36917c-2964-3ea2-9aca-89f63d0d599e",
+      "name": "Seen and Seeing Method",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "36734ff8-64cd-315f-8c9e-128b1203ff9b"
+      ],
+      "cost": "2m, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "When the Exalt successfully defends her motives or Intimacies through an application of Guile, she may reflexively make a read intentions action against the initiate, and if she pierces his Guile she gains a point of temporary Willpower. The Solar may only use this Charm to respond to actions she is aware of. The Solar may use this Charm against a character even if she has already failed to read his intentions in the scene.\n\nA repurchase of this Charm allows the Exalt to notice a read intentions action from a source she is unaware of, reflexively ignoring the -2 penalty and noticing the general direction from which the action is being made. She may even attempt to discern the motives of a character she cannot perceive—even one on another plane of existence— but will only pick up the surface emotions of a character she can’t actually see.\n\nAn Essence 4+ repurchase allows the Solar to respond to a read intentions action with one of her own, even if the target pierces her Guile.",
+      "rawData": "Seen and Seeing Method\nCost: 2m, 1wp; Mins: Socialize 5, Essence 3\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Deep-Eyed Soul Gazing\nWhen the Exalt successfully defends her motives or In-\ntimacies through an application of Guile, she may reflex-\nively make a read intentions action against the initiate, \nand if she pierces his Guile she gains a point of temporary \nWillpower. The Solar may only use this Charm to respond \nto actions she is aware of. The Solar may use this Charm \nagainst a character even if she has already failed to read \nhis intentions in the scene. \nA repurchase of this Charm allows the Exalt to notice a \nread intentions action from a source she is unaware of, \nreflexively ignoring the -2 penalty and noticing the general \ndirection from which the action is being made. She may \neven attempt to discern the motives of a character she \ncannot perceive—even one on another plane of existence—\nbut will only pick up the surface emotions of a character \nshe can’t actually see.\nAn Essence 4+ repurchase allows the Solar to respond to \na read intentions action with one of her own, even if the \ntarget pierces her Guile.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "55b8c3cc-5164-3013-9131-531674c25728",
+      "name": "Face-Charming Prana",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "4c36917c-2964-3ea2-9aca-89f63d0d599e"
+      ],
+      "cost": "6m",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar bares her soul to another, inviting him to read her intentions. This Charm is a special Socializebased persuade action made as if it were exploiting a Defining Intimacy. Success causes the target to attempt a read intentions action on the Solar. Resisting this influence in a Decision Point costs the target two Willpower.",
+      "rawData": "Face-Charming Prana\nCost: 6m; Mins: Socialize 5, Essence 3\nType: Simple\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Seen and Seeing Method\nThe Solar bares her soul to another, inviting him to \nread her intentions. This Charm is a special Socialize-\nbased persuade action made as if it were exploiting \n a Defining Intimacy. Success causes the target to attempt \na read intentions action on the Solar. Resisting this \ninfluence in a Decision Point costs the target two Will-\npower.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "194e61dc-efd0-3383-95ed-0b68db53a42e",
+      "name": "Selfsame Master Procurer",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "68da780e-3f68-33c8-bf52-4002bdb4749e"
+      ],
+      "cost": "4m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "",
+      "rawData": "Selfsame Master Procurer\nCost: 4m, 1wp; Mins: Socialize 5, Essence 3\nType: Reflexive\nKeywords: Mute\nDuration: Instant\nPrerequisite Charms: Easily-Discarded Presence Method\nSimilar to its prerequisite, this Charm compels the initi-\nate to a certain belief upon failing a read intentions action. \nInstead of seeing the Lawgiver’s true motives, the target \nsees her as a route through which he can achieve his goal \nfor the scene. This Charm allows the Solar to gain the \nconfidence of her mark. By acting as a facilitator she may \nbe privy to a number of secrets her target would other-\nwise not disclose.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "1be5521f-8a3a-35b2-8137-5886ffa295dc",
+      "name": "Soul-Void Kata",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "55b8c3cc-5164-3013-9131-531674c25728",
+        "62836361-19b0-388d-b5fc-6db0196e3191"
+      ],
+      "cost": "4m, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "Upon defending her Intimacies or her motives with an application of Guile, the Solar may activate this Charm.\n\nDoing so convinces the target he has seen into the Solar’s motives for a moment, but when his gaze returns he finds himself staring into an empty, indescribable gulf of mist and lights. This leaves the target character completely hypnotized and inert. During this time he cannot be socially influenced, and will remain in this hypnotic state for the rest of the scene, unless harshly shaken or worse.",
+      "rawData": "Soul-Void Kata\nCost: 4m, 1wp; Mins: Socialize 5, Essence 3\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Face-Charming Prana, Inverted \nEgo Mask\nUpon defending her Intimacies or her motives with an \napplication of Guile, the Solar may activate this Charm. \nDoing so convinces the target he has seen into the Solar’s \nmotives for a moment, but when his gaze returns he finds \nhimself staring into an empty, indescribable gulf of \nmist and lights. This leaves the target character com-\npletely hypnotized and inert. During this time he cannot \nbe socially influenced, and will remain in this hypnotic \nstate for the rest of the scene, unless harshly shaken \nor worse.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "8ce5c4e1-b5e3-3e42-9cda-7d7cf189d3b6",
+      "name": "Knowing the Soul’s Price",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "4c36917c-2964-3ea2-9aca-89f63d0d599e",
+        "77ffda4b-ef54-3e43-ab3c-0ecc07691b1f"
+      ],
+      "cost": "10m, 1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "With a glance the Solar discerns those passions that sit hidden in the soul of her subject, desires for which he’d take great personal risks or engage in behavior he would normally resist. This Charm is a read intentions action with (Essence) automatic successes, rerolling 5s and 6s until 5s and 6s fail to appear. If successful, the Solar learns her target’s price—that is, what will motivate him to undertake some specific task. The subject’s price might be the recovery of a lost possession, sex with an unachievable object of desire, aid in a personal endeavor, simple flattery and so on. If the Exalt knows Cunning Insight\n\nTechnique, she may activate it in an attempt to confirm up to (Essence) Intimacies suggested by the subject’s price.",
+      "rawData": "Knowing the Soul’s Price\nCost: 10m, 1wp; Mins: Socialize 5, Essence 3\nType: Simple\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Seen and Seeing Method, Wise-\nEyed Courtier Method\nWith a glance the Solar discerns those passions that sit \nhidden in the soul of her subject, desires for which he’d \ntake great personal risks or engage in behavior he would \nnormally resist. This Charm is a read intentions action \nwith (Essence) automatic successes, rerolling 5s and 6s \nuntil 5s and 6s fail to appear. If successful, the Solar \nlearns her target’s price—that is, what will motivate him \nto undertake some specific task. The subject’s price might \nbe the recovery of a lost possession, sex with an unachiev-\nable object of desire, aid in a personal endeavor, simple \nflattery and so on. If the Exalt knows Cunning Insight \nC H A P T E R  6\nEX3\n400\nTechnique, she may activate it in an attempt to confirm \nup to (Essence) Intimacies suggested by the subject’s price.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "02d1a0f2-89c9-335f-8534-7753a662afd1",
+      "name": "Understanding the Court",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "ee445562-e379-33d5-80ff-93eb18b28975",
+        "8ce5c4e1-b5e3-3e42-9cda-7d7cf189d3b6"
+      ],
+      "cost": "20m, 1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "With this Charm the Solar gains a near-total understanding of a court. The Solar must spend (10 - Essence) days in the court observing its members before activating the Charm. Doing so synthesizes everything she has witnessed, discarding unimportant memories and magnifying the intensity of details which she may not have initially noticed.\n\nThe Exalt gains a mind-map of the relations between the court’s subjects. She discerns the strongest Tie each holds for the next, and the chief Principle relevant to each’s purpose for attending court. These Intimacies come to her through understanding the social dynamics of her subjects.\n\nShe not only perceives an Intimacy of respect or fondness between two members, but she sees how their banter creates its own positive Intimacy in other members. Her mind can draw out the interplay of connected Intimacies in this fashion as far as the Storyteller deems relevant.\n\nIn addition, she perfectly recalls any customary roles or procedures performed by members of the court, even if that seems irrelevant. She might notice that one member takes leave at the same hour every day to walk in the sun, while remembering how another member drinks her tea— both how she holds the cup and what taste she favors.\n\nOverall, she is able to predict the movement, placement, mores and usual attitudes of her subjects perfectly, and has a strong understanding of their values and goals. This Charm also reveals the influences, Principles, and Ties of absent major players—observed members of the court hold Intimacies for members who are not present, whose role and impact the Exalt can guess by recalling conversations and comparing the Ties each member holds for the absentee.",
+      "rawData": "Understanding the Court\nCost: 20m, 1wp; Mins: Socialize 5, Essence 3\nType: Simple\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Culture Hero Approach, Knowing \nthe Soul’s Price\nWith this Charm the Solar gains a near-total understand-\ning of a court. The Solar must spend (10 - Essence) days \nin the court observing its members before activating the \nCharm. Doing so synthesizes everything she has witnessed, \ndiscarding unimportant memories and magnifying the in-\ntensity of details which she may not have initially noticed. \nThe Exalt gains a mind-map of the relations between the \ncourt’s subjects. She discerns the strongest Tie each holds \nfor the next, and the chief Principle relevant to each’s \npurpose for attending court. These Intimacies come to her \nthrough understanding the social dynamics of her subjects. \nShe not only perceives an Intimacy of respect or fondness \nbetween two members, but she sees how their banter \ncreates its own positive Intimacy in other members. Her \nmind can draw out the interplay of connected Intimacies \nin this fashion as far as the Storyteller deems relevant. \nIn addition, she perfectly recalls any customary roles or \nprocedures performed by members of the court, even if \nthat seems irrelevant. She might notice that one member \ntakes leave at the same hour every day to walk in the sun, \nwhile remembering how another member drinks her tea—\nboth how she holds the cup and what taste she favors. \nOverall, she is able to predict the movement, placement, \nmores and usual attitudes of her subjects perfectly, and \nhas a strong understanding of their values and goals. This \nCharm also reveals the influences, Principles, and Ties of \nabsent major players—observed members of the court \nhold Intimacies for members who are not present, whose \nrole and impact the Exalt can guess by recalling conver-\nsations and comparing the Ties each member holds for \nthe absentee.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "0e6c4c83-136a-3b30-809b-ff238f990fdd",
+      "name": "Unbound Social Mastery",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "02d1a0f2-89c9-335f-8534-7753a662afd1"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "When driven to action, the Solar brings the experience of timeless ages. Her wisdom is the torch that lights the world.\n\nOnce per scene the Solar may invoke a free full Socialize Excellency. This power may be reset by achieving a legendary social goal such that she vents a point of Limit .",
+      "rawData": "Unbound Social Mastery\nCost: —; Mins: Socialize 5, Essence 3\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Understanding the Court\nWhen driven to action, the Solar brings the experience of \ntimeless ages. Her wisdom is the torch that lights the world. \nOnce per scene the Solar may invoke a free full Socialize \nExcellency. This power may be reset by achieving a legend-\nary social goal such that she vents a point of Limit .",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "d8f3de66-bb88-3cb7-bc49-6ad332e21aac",
+      "name": "Heart-Eclipsing Shroud",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "62836361-19b0-388d-b5fc-6db0196e3191"
+      ],
+      "cost": "—(10m, 1wp)",
+      "type": "Permanent",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Permanent",
+      "fullText": "The Exalt creates a new persona with a set of false Intimacies she can use to change the way she thinks and acts.\n\nThese Intimacies are purchased as a permanent effect, but the Solar must activate them by taking a dramatic action lasting four or more hours, in which she cloisters herself in a place of solitude and meditates or talks herself into her new persona. Upon entering her new persona, she gains her new Intimacies and temporarily voids her true Intimacies, and gains the following benefits:\n\nWhile this Charm is active, the Solar can act against her true Intimacies without eroding them or having to roll to gain Limit at the end of a scene. Furthermore, the Exalt cannot be impressed or persuaded by her true Intimacies—as if she were another person.\n\nThe Solar may use her persona’s Intimacies to void social influence against her, but doing so causes her to drag the affected Intimacy or Intimacies into her next persona change, or back to her true set of Intimacies, resulting in confusion as her identities begin to overlap and she begins to think competing thoughts in different voices.\n\nHeart-Eclipsing Shroud can be purchased (Essence) times, to create (Essence) personas. Motes spent activating this effect are not committed: reverting to her true Intimacies or changing to another persona requires that she use the Charm again.\n\nSOCIETAL INFLUENCE AND GROUP DYNAMICS Many Socialize Charms describe functioning to change policy, or having an effect on a character’s standing in a particular culture. These Charms apply equally to small groups such as “The local fishermen,” “Members of the Guild hall,” “The Nimble Raiton Company,” and so on.\n\nKeep in mind that small groups have their own distinct cultures and rituals and that these terms do not refer exclusively to the politics and mores of nations. Charms such as Understanding the Court work equally well in a tea shop where peasants congregate as they do in the palace of Chiaroscuro’s Tri-Khan.\n\nSpecial rules: Upon purchase, the player creates a persona with a number of Intimacies. The player can invest it with as many or as few Ties as needed, but must create a number of new Principles equal to the number of Principles held by the Solar. When creating these Intimacies, the player should think of the persona as a different character with its own thoughts, feelings, and ideas. It is recommended that the player give the persona its own character concept to be reflected in the persona’s Intimacies. The player should aim for a concept and Intimacies which will serve the Solar in her desired social milieu.",
+      "rawData": "Heart-Eclipsing Shroud\nCost: —(10m, 1wp); Mins: Socialize 5, Essence 3 \nType: Permanent \nKeywords: Mute \nDuration: Permanent \nPrerequisite Charms: Inverted Ego Mask\nThe Exalt creates a new persona with a set of false Inti-\nmacies she can use to change the way she thinks and acts. \nThese Intimacies are purchased as a permanent effect, \nbut the Solar must activate them by taking a dramatic \naction lasting four or more hours, in which she cloisters \nherself in a place of solitude and meditates or talks herself \ninto her new persona. Upon entering her new persona, \nshe gains her new Intimacies and temporarily voids her \ntrue Intimacies, and gains the following benefits:\nWhile this Charm is active, the Solar can act against her \ntrue Intimacies without eroding them or having to roll to \ngain Limit at the end of a scene. Furthermore, the Exalt \ncannot be impressed or persuaded by her true Intima-\ncies—as if she were another person.\nThe Solar may use her persona’s Intimacies to void social \ninfluence against her, but doing so causes her to drag the \naffected Intimacy or Intimacies into her next persona \nchange, or back to her true set of Intimacies, resulting in \nconfusion as her identities begin to overlap and she begins \nto think competing thoughts in different voices. \nHeart-Eclipsing Shroud can be purchased (Essence) times, \nto create (Essence) personas. Motes spent activating this \neffect are not committed: reverting to her true Intimacies \nor changing to another persona requires that she use the \nCharm again. \nSOCIETAL INFLUENCE AND GROUP DYNAMICS\nMany Socialize Charms describe functioning to change \npolicy, or having an effect on a character’s standing in a \nparticular culture. These Charms apply equally to small \ngroups such as “The local fishermen,” “Members of the \nGuild hall,” “The Nimble Raiton Company,” and so on. \nKeep in mind that small groups have their own distinct \ncultures and rituals and that these terms do not refer \nexclusively to the politics and mores of nations. Charms \nsuch as Understanding the Court work equally well in a \ntea shop where peasants congregate as they do in the \npalace of Chiaroscuro’s Tri-Khan. \n\nSpecial rules: Upon purchase, the player creates a persona \nwith a number of Intimacies. The player can invest it with \nas many or as few Ties as needed, but must create a number \nof new Principles equal to the number of Principles held \nby the Solar. When creating these Intimacies, the player \nshould think of the persona as a different character with \nits own thoughts, feelings, and ideas. It is recommended \nthat the player give the persona its own character concept \nto be reflected in the persona’s Intimacies. The player \nshould aim for a concept and Intimacies which will serve \nthe Solar in her desired social milieu.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "7e29418d-ea62-3687-875a-871ad46abe2d",
+      "name": "Hundred-Faced Stranger",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "d8f3de66-bb88-3cb7-bc49-6ad332e21aac"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "This Charm permanently upgrades all purchases of HeartEclipsing Shroud, allowing the player to assign Abilities and specialties to each persona with the following rules:\n\n•  Assign the persona’s favored Abilities—ten which can be placed anywhere.\n\n•  Count the Solar’s dots in Integrity or Presence, Bureaucracy or Linguistics, Ride or Sail, Socialize, and one Dawn Caste Ability. This is the number of Ability dots the player may assign to the persona’s character sheet. The persona cannot have a Craft, Lore, Occult or a Dawn Caste Ability rated higher than the Solar’s own, and may not have a higher number of total dots spread across Dawn Abilities than the Solar has.  At least half the dots (rounded up) must go into Eclipse or Zenith Abilities.\n\n•  Halve the Solar’s total experience (round down) and grant this as bonus experience to the persona. This experience cannot be used to change the persona’s Attributes, increase her Willpower or purchase Charms or Merits, but can be used to upgrade Abilities using favored and nonfavored prices. Where the persona shares Abilities with the Solar, it automatically knows Charms the Solar already knows. With the exception of Craft, Lore, and Occult it may also learn Abilities the Exalt does not herself know.\n\n•  Assign specialties: three that line up with the persona’s concept. Additional specialties cost three experience points each.\n\nPlease note: The Solar inherits these traits upon using the prerequisites to change personas. The first time a Solar undertakes this transition, she does not automatically possess all of the allotted Abilities afforded by this Charm. Immediately after creation, the persona only has access to those traits it shares with the Solar. All other Abilities and specialties must be acquired by spending the normal amount of training time learning them while wearing the persona’s guise. Any outstanding dots in requisite Zenith and Eclipse Abilities must be trained first.\n\nNaturally this requires that the Solar spend a considerable amount of time as her alternate self.\n\nOnce a persona becomes active, it grows along with the Solar, gaining one experience point for every two the Solar accrues. Experience points gained while in the guise of the persona contribute their full amount to the Solar’s experience total, not the persona’s.",
+      "rawData": "Hundred-Faced Stranger\nCost: —; Mins: Socialize 5, Essence 3\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Heart-Eclipsing Shroud\nThis Charm permanently upgrades all purchases of Heart-\nEclipsing Shroud, allowing the player to assign Abilities \nand specialties to each persona with the following rules:\n•  Assign the persona’s favored Abilities—ten which can \nbe placed anywhere.\n•  Count the Solar’s dots in Integrity or Presence, Bureau-\ncracy or Linguistics, Ride or Sail, Socialize, and one Dawn \nCaste Ability. This is the number of Ability dots the player \nmay assign to the persona’s character sheet. The persona \ncannot have a Craft, Lore, Occult or a Dawn Caste Ability \nrated higher than the Solar’s own, and may not have a \nhigher number of total dots spread across Dawn Abili-\nties than the Solar has.  At least half the dots (rounded \nup) must go into Eclipse or Zenith Abilities.\n•  Halve the Solar’s total experience (round down) and grant \nthis as bonus experience to the persona. This experience \ncannot be used to change the persona’s Attributes, in-\ncrease her Willpower or purchase Charms or Merits, but \ncan be used to upgrade Abilities using favored and non-\nfavored prices. Where the persona shares Abilities with \nthe Solar, it automatically knows Charms the Solar already \nknows. With the exception of Craft, Lore, and Occult it \nmay also learn Abilities the Exalt does not herself know. \n•  Assign specialties: three that line up with the persona’s \nconcept. Additional specialties cost three experience \npoints each.\nPlease note: The Solar inherits these traits upon using \nthe prerequisites to change personas. The first time a \nSolar undertakes this transition, she does not automati-\ncally possess all of the allotted Abilities afforded by this \nCharm. Immediately after creation, the persona only has \naccess to those traits it shares with the Solar. All other \nAbilities and specialties must be acquired by spending \nthe normal amount of training time learning them while \nwearing the persona’s guise. Any outstanding dots in req-\nuisite Zenith and Eclipse Abilities must be trained first. \nNaturally this requires that the Solar spend a consider-\nable amount of time as her alternate self.\nOnce a persona becomes active, it grows along with the \nSolar, gaining one experience point for every two the Solar \naccrues. Experience points gained while in the guise of \nthe persona contribute their full amount to the Solar’s \nexperience total, not the persona’s.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "90cc45d2-c8fd-39ea-9539-deacdbf8cc97",
+      "name": "Legend Mask Methodology",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "7e29418d-ea62-3687-875a-871ad46abe2d"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "This Charm permanently upgrades all purchases of HeartEclipsing Shroud. The player can now purchase Charms for each persona using the experience granted by this Charm’s prerequisite, paying favored or non-favored prices as the persona’s character sheet dictates. With this Charm, the persona may learn Solar Charms the Exalt does not herself know.\n\nKnowledge of this Charm increases the Solar’s deep mental and spiritual investment in her many personas. When she shifts into such a persona, she becomes increasingly vulnerable to her created passions. While in the guise of a persona, each time the Solar vents a point of Limit through an epic defense of one of her persona’s Principles or Ties, the corresponding Intimacy is copied to her list of true Intimacies, temporarily voiding the strongest opposing Intimacy or the strongest Intimacy which is antithetical to her persona’s character concept. The voided Intimacy cannot be restored until the transferred Intimacy has been eroded away, but the Exalt is as compelled by this Defining Intimacy as any other, and acting in accordance with it may cause her personality to transform even further.\n\nSpecial activation rules: This Charm retroactively lowers the cost of Flawlessly Impenetrable Disguise to three motes when it is activated during the four hour dramatic action described in Heart-Eclipsing Shroud. If Perfect Mirror is used during that time, ignore that Charm’s Willpower cost.\n\nPERSONAS AND LIMIT BREAK If the Solar reaches Limit Break while in the guise of a persona, she cannot change personas or revert to her normal Intimacies until the Limit Break has completed.",
+      "rawData": "Legend Mask Methodology\nCost: —; Mins: Socialize 5, Essence 3\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Hundred-Faced Stranger\nThis Charm permanently upgrades all purchases of Heart-\nEclipsing Shroud. The player can now purchase Charms \nfor each persona using the experience granted by this \nCharm’s prerequisite, paying favored or non-favored prices \nas the persona’s character sheet dictates. With this Charm, \nthe persona may learn Solar Charms the Exalt does not \nherself know. \nKnowledge of this Charm increases the Solar’s deep mental \nand spiritual investment in her many personas. When she \nshifts into such a persona, she becomes increasingly vul-\nnerable to her created passions. While in the guise of a \npersona, each time the Solar vents a point of Limit through \nan epic defense of one of her persona’s Principles or Ties, \nthe corresponding Intimacy is copied to her list of true \nIntimacies, temporarily voiding the strongest opposing \nIntimacy or the strongest Intimacy which is antithetical \nto her persona’s character concept. The voided Intimacy \ncannot be restored until the transferred Intimacy has been \neroded away, but the Exalt is as compelled by this Defin-\ning Intimacy as any other, and acting in accordance with \nit may cause her personality to transform even further.\nSpecial activation rules: This Charm retroactively lowers \nthe cost of Flawlessly Impenetrable Disguise to three motes \nwhen it is activated during the four hour dramatic action \ndescribed in Heart-Eclipsing Shroud. If Perfect Mirror is \nused during that time, ignore that Charm’s Willpower cost. \nPERSONAS AND LIMIT BREAK\nIf the Solar reaches Limit Break while in the guise of a \npersona, she cannot change personas or revert to her \nnormal Intimacies until the Limit Break has completed.\nC H A P T E R  6\nEX3\n402",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "514f8fa3-67eb-3e94-92d6-46f979bfa4c8",
+      "name": "Friend of a Friend Approach",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "6051bc97-4e72-36b5-9b05-98ccc5d1c12f"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Solar is a world-walker of some renown, and her good standing precedes her. Upon encountering a perfect stranger who has a positive Major or Defining Tie to a character who has a positive Defining Tie to the Solar, the stranger gains an automatic Minor Tie of respect for the Lawgiver.\n\nThis automatic Intimacy is contingent on the stranger’s awareness of his friend’s Defining Tie to the Solar, as well as his recognition that the Lawgiver is who she claims to be.\n\nThis automatic Minor Tie is fragile and can be destroyed instantly upon meeting if the Solar is offensive or demanding.",
+      "rawData": "Friend of a Friend Approach\nCost: —; Mins: Socialize 5, Essence 3\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Any four Essence 3+ Socialize \nCharms\nThe Solar is a world-walker of some renown, and her good \nstanding precedes her. Upon encountering a perfect strang-\ner who has a positive Major or Defining Tie to a character \nwho has a positive Defining Tie to the Solar, the stranger \ngains an automatic Minor Tie of respect for the Lawgiver. \nThis automatic Intimacy is contingent on the stranger’s \nawareness of his friend’s Defining Tie to the Solar, as well as \nhis recognition that the Lawgiver is who she claims to be. \nThis automatic Minor Tie is fragile and can be destroyed in-\nstantly upon meeting if the Solar is offensive or demanding.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "d536dcf7-0d4d-39af-b658-35e12211b0ad",
+      "name": "Venomous Rumors Technique",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "02d1a0f2-89c9-335f-8534-7753a662afd1"
+      ],
+      "cost": "10m, 1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Lawgiver may cast the wicked from the fetes of the righteous, or turn the knives of thieves against their king.\n\nThe Solar speaks against a group member for whom she holds at least a Minor negative Intimacy, accusing her target of some major betrayal, dereliction or perversion.\n\nThe player rolls a single ([Charisma or Manipulation] + Socialize) instill action against the Resolve of all present group members, ignoring the penalty for group persuasion. To characters whose Resolve is beaten by this roll, the Lawgiver’s claim appears to be true: when the target interacts with affected characters, his social actions are penalized by twice the Solar’s Essence score in dice, with botches inevitably reflecting the truth of the Solar’s words. Affected characters may pay one Willpower to resist this influence, but that still does not remove the curse. The target must either present direct evidence with a successful persuade action to each individual member in order to cancel the effect, or leave the group for (Solar’s Essence) days—when he returns he’ll no longer suffer the Charm’s penalty, but will still suffer the effects of the group turned against him, which he can counter with normal influence. This Charm can only be used on a single character once per story.",
+      "rawData": "Venomous Rumors Technique\nCost: 10m, 1wp; Mins: Socialize 5, Essence 4\nType: Simple\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Understanding the Court\nThe Lawgiver may cast the wicked from the fetes of the \nrighteous, or turn the knives of thieves against their king. \nThe Solar speaks against a group member for whom she \nholds at least a Minor negative Intimacy, accusing her \ntarget of some major betrayal, dereliction or perversion. \nThe player rolls a single ([Charisma or Manipulation] + \nSocialize) instill action against the Resolve of all present \ngroup members, ignoring the penalty for group persua-\nsion. To characters whose Resolve is beaten by this \nroll, the Lawgiver’s claim appears to be true: when the \ntarget interacts with affected characters, his social actions \nare penalized by twice the Solar’s Essence score in dice, \nwith botches inevitably reflecting the truth of the Solar’s \nwords. Affected characters may pay one Willpower to \nresist this influence, but that still does not remove the \ncurse. The target must either present direct evidence with \na successful persuade action to each individual member \nin order to cancel the effect, or leave the group for (Solar’s \nEssence) days—when he returns he’ll no longer suffer the \nCharm’s penalty, but will still suffer the effects of the group \nturned against him, which he can counter with normal \ninfluence. This Charm can only be used on a single char-\nacter once per story.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "a2099f35-a315-3a11-a7b6-21b6ab94b9e1",
+      "name": "Even-Touched Prophet",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "0e6c4c83-136a-3b30-809b-ff238f990fdd"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Lawgiver speaks from wisdom granted to her by the very fabric of the world. Once per scene she may use this Charm to apply the double 8s rule to a single Socializebased action. This Charm may be reset by overturning social influence made against another character on the Defining level.",
+      "rawData": "Even-Touched Prophet\nCost: —; Mins: Socialize 5, Essence 4\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Unbound Social Mastery\nThe Lawgiver speaks from wisdom granted to her by the \nvery fabric of the world. Once per scene she may use this \nCharm to apply the double 8s rule to a single Socialize-\nbased action. This Charm may be reset by overturning \nsocial influence made against another character on the \nDefining level.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "5552432e-5362-3c22-81db-b4a20a45c5b2",
+      "name": "Elusive Dream Defense",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "a2099f35-a315-3a11-a7b6-21b6ab94b9e1"
+      ],
+      "cost": "1m, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "One scene",
+      "fullText": "Like day that turns to night, the Solar sinks into herself and becomes a perfect cipher. Once per story, the Solar may use this Charm to add her Resolve to her Guile, or her Guile to her Resolve. While this Charm is active, exploiting her Intimacies does not lower her Resolve, nor may she call upon an Intimacy to raise her Resolve.",
+      "rawData": "Elusive Dream Defense\nCost: 1m, 1wp; Mins: Socialize 5, Essence 4\nType: Reflexive\nKeywords: None\nDuration: One scene\nPrerequisite Charms: Even-Touched Prophet\nLike day that turns to night, the Solar sinks into herself \nand becomes a perfect cipher. Once per story, the Solar \nmay use this Charm to add her Resolve to her Guile, or \nher Guile to her Resolve. While this Charm is active, ex-\nploiting her Intimacies does not lower her Resolve, nor \nmay she call upon an Intimacy to raise her Resolve.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "09bd7ff2-040f-3f72-b9c0-018b645cff10",
+      "name": "Draw the Curtain",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "90cc45d2-c8fd-39ea-9539-deacdbf8cc97"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Solar’s inner self rises closer to the surface. This Charm can be purchased to upgrade one of the personas enhanced by Legend Mask Methodology, granting it an additional 25% of the Solar’s experience points and increasing its experience gain to two for every three the Solar earns. However, purchasing this Charm grants the persona a new Limit Trigger in addition to the Solar’s own. Draw the Curtain can be repurchased once for each persona the Solar wishes to enhance.",
+      "rawData": "Draw the Curtain\nCost: —; Mins: Socialize 5, Essence 4\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Legend Mask Methodology\nThe Solar’s inner self rises closer to the surface. This \nCharm can be purchased to upgrade one of the personas \nenhanced by Legend Mask Methodology, granting it an \nadditional 25% of the Solar’s experience points and in-\ncreasing its experience gain to two for every three the \nSolar earns. However, purchasing this Charm grants the \npersona a new Limit Trigger in addition to the Solar’s \nown. Draw the Curtain can be repurchased once for each \npersona the Solar wishes to enhance.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "392184a9-271b-3e5e-b1a0-785643b1e23e",
+      "name": "At Your Service",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 5,
+      "prerequisites": [
+        "09bd7ff2-040f-3f72-b9c0-018b645cff10",
+        "8ce5c4e1-b5e3-3e42-9cda-7d7cf189d3b6"
+      ],
+      "cost": "10m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "Upon gazing into her subject’s heart’s desires, the Solar may reflexively transform into an all new persona. The Solar becomes a new character, shaped by the ambitions of her subject. If he needed a pirate captain, she might imbue herself with Sail, Larceny and relevant Intimacies\n\ntoward anarchy and a love of plunder. The Solar creates this new persona by taking from the traits and Charms of personas created by Heart-Eclipsing Shroud. The persona she devises must have an equal number of traits and Charms as her strongest persona—one which has been enhanced by Draw the Curtain—but may borrow aspects from her true character sheet. If the Solar uses any Larceny Charms to change her appearance at the moment she activates this Charm, her subject is completely incapable of perceiving this change. He may wonder vaguely why that person vanished so suddenly, but will be more concerned with the new figure standing before him, as if they were cut from his dreams to make his wishes come true.",
+      "rawData": "At Your Service\nCost: 10m, 1wp; Mins: Socialize 5, Essence 5\nType: Reflexive\nKeywords: Mute\nDuration: Instant\nPrerequisite Charms: Draw the Curtain, Knowing the \nSoul’s Price\nUpon gazing into her subject’s heart’s desires, the Solar \nmay reflexively transform into an all new persona. The \nSolar becomes a new character, shaped by the ambitions \nof her subject. If he needed a pirate captain, she might \nimbue herself with Sail, Larceny and relevant Intimacies \n\ntoward anarchy and a love of plunder. The Solar creates \nthis new persona by taking from the traits and Charms of \npersonas created by Heart-Eclipsing Shroud. The persona \nshe devises must have an equal number of traits and \nCharms as her strongest persona—one which has been \nenhanced by Draw the Curtain—but may borrow aspects \nfrom her true character sheet. If the Solar uses any Larceny \nCharms to change her appearance at the moment she ac-\ntivates this Charm, her subject is completely incapable of \nperceiving this change. He may wonder vaguely why that \nperson vanished so suddenly, but will be more concerned \nwith the new figure standing before him, as if they were \ncut from his dreams to make his wishes come true.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "b417895a-b980-3d8c-8de0-b5ac45dc9cf5",
+      "name": "Fugue-Empowered Other",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 5,
+      "prerequisites": [
+        "09bd7ff2-040f-3f72-b9c0-018b645cff10"
+      ],
+      "cost": "1 Limit",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "With this Charm, the Exalt can draw deeply from her psyche to uplift the Essence of one of her inner selves. Activating this Charm allows the Lawgiver to borrow the Ability rating of one of her personas for a single tick, and she may activate any Charms from that Ability which her persona has learned. Limit Break suffered as a result of Fugue-Empowered Other gives the Solar access to the full Charms and Abilities of her persona for the rest of the scene, but when her Virtue Flaw concludes, she will be genuinely confused as to who she is, without immediately realizing it. The Storyteller should represent this by randomly shuffling the Intimacies of the Solar and her persona.",
+      "rawData": "Fugue-Empowered Other \nCost: 1 Limit; Mins: Socialize 5, Essence 5\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Draw the Curtain\nWith this Charm, the Exalt can draw deeply from her psyche \nto uplift the Essence of one of her inner selves. Activating \nthis Charm allows the Lawgiver to borrow the Ability rating \nof one of her personas for a single tick, and she may acti-\nvate any Charms from that Ability which her persona has \nlearned. Limit Break suffered as a result of Fugue-Empow-\nered Other gives the Solar access to the full Charms and \nAbilities of her persona for the rest of the scene, but when \nher Virtue Flaw concludes, she will be genuinely confused \nas to who she is, without immediately realizing it. The Sto-\nryteller should represent this by randomly shuffling the \nIntimacies of the Solar and her persona.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "ddb20840-cc02-331b-92a2-1cfdc7d4446f",
+      "name": "Soul Reprisal",
+      "ability": "Socialize",
+      "minAbility": 5,
+      "minEssence": 5,
+      "prerequisites": [
+        "b417895a-b980-3d8c-8de0-b5ac45dc9cf5"
+      ],
+      "cost": "16m, 1wp, 20xp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "Once the Lawgivers were driven into the darkness beyond the edge of death. No longer. Upon being struck down, the Solar grasps the light of her divinity before it can flee and is drawn into her next incarnation without ever leaving her body. Instead she sheds her entire current set of Intimacies, Abilities and Charms, inheriting the traits, Charms and Intimacies of one of her personas. This Charm is activated the moment her last health box is checked off: her anima blazes to iconic one last time, and then is vented back to dim. When it goes, roll (Stamina) dice with one automatic success, restoring an equal number of health levels. From that moment onward the Solar is a new person, and remembers her last incarnation as if it were a persona created by Heart-Eclipsing Shroud. This Charm can only be invoked once per story. Using it changes the Solar’s iconic anima manifestation permanently. This Charm’s anima display cannot be muted by any means.\n\nStealth",
+      "rawData": "Soul Reprisal \nCost: 16m, 1wp, 20xp; Mins: Socialize 5, Essence 5\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Fugue-Empowered Other\nOnce the Lawgivers were driven into the darkness beyond \nthe edge of death. No longer. Upon being struck down, \nthe Solar grasps the light of her divinity before it can flee \nand is drawn into her next incarnation without ever leaving \nher body. Instead she sheds her entire current set of In-\ntimacies, Abilities and Charms, inheriting the traits, \nCharms and Intimacies of one of her personas. This Charm \nis activated the moment her last health box is checked off: \nher anima blazes to iconic one last time, and then is vented \nback to dim. When it goes, roll (Stamina) dice with one \nautomatic success, restoring an equal number of health \nlevels. From that moment onward the Solar is a new person, \nand remembers her last incarnation as if it were a persona \ncreated by Heart-Eclipsing Shroud. This Charm can only \nbe invoked once per story. Using it changes the Solar’s \niconic anima manifestation permanently. This Charm’s \nanima display cannot be muted by any means. \nStealth",
+      "potentiallyProblematicImport": false
+    }
+  ]
+}

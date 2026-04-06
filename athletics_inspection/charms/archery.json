@@ -1,0 +1,492 @@
+{
+  "$schema": "./charm-schema.json",
+  "version": "0.1.0",
+  "ability": "Archery",
+  "type": "solarAbility",
+  "exalt": "solar",
+  "charms": [
+    {
+      "id": "2beecfc7-d5dc-3bef-b279-40b1469cce0a",
+      "name": "Wise Arrow",
+      "ability": "Archery",
+      "minAbility": 2,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "1m",
+      "type": "Supplemental",
+      "keywords": [
+        "Uniform"
+      ],
+      "duration": "Instant",
+      "fullText": "With skill and effort, the Exalt guides her arrow to its mark. The Exalt may use this Charm to supplement a withering or decisive attack, reducing the benefits of cover. The defense bonus of heavy and light cover is reduced by one, while characters under no cover suffer a -1 penalty to their normal Defense.\n\nIn addition, after taking an aim action, the Solar may activate this Charm to strike an opponent in full cover. The Exalt shoots along an arc or angle that perfectly matches her opponent’s position. So long as there is some opening where an arrow can get through, Wise Arrow treats a character in full cover as if he merely has +3 Defense.",
+      "rawData": "Wise Arrow\nCost: 1m; Mins: Archery 2, Essence 1\nType: Supplemental\nKeywords: Uniform\nDuration: Instant\nPrerequisite Charms: None\nWith skill and effort, the Exalt guides her arrow to its \nmark. The Exalt may use this Charm to supplement a \nwithering or decisive attack, reducing the benefits of \ncover. The defense bonus of heavy and light cover is \nreduced by one, while characters under no cover suffer a \n-1 penalty to their normal Defense.\nIn addition, after taking an aim action, the Solar may ac-\ntivate this Charm to strike an opponent in full cover. The \nExalt shoots along an arc or angle that perfectly matches \nher opponent’s position. So long as there is some opening \nwhere an arrow can get through, Wise Arrow treats a \ncharacter in full cover as if he merely has +3 Defense.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "1423e6d6-f305-31c8-8128-13827e88ae85",
+      "name": "Sight Without Eyes",
+      "ability": "Archery",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "2beecfc7-d5dc-3bef-b279-40b1469cce0a"
+      ],
+      "cost": "1m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "One tick",
+      "fullText": "The Exalt opens her eyes not to the visual world, but to the world of Essence, sensing her target in that fashion.\n\nShe may make an Archery attack without penalties for visual conditions. Smoke, fog, and pitch darkness are no longer a problem for her, though other factors such as high winds and cover still apply against the attack.\n\nAt Archery 5+, Essence 3+, the Solar can momentarily see through cover, perceiving her targets as silhouettes the colors of bright anima.",
+      "rawData": "Sight Without Eyes\nCost: 1m; Mins: Archery 3, Essence 1\nType: Reflexive\nKeywords: None\nDuration: One tick\nPrerequisite Charms: Wise Arrow\nThe Exalt opens her eyes not to the visual world, but \nto the world of Essence, sensing her target in that fashion. \nShe may make an Archery attack without penalties for \nvisual conditions. Smoke, fog, and pitch darkness are \nno longer a problem for her, though other factors such as \nhigh winds and cover still apply against the attack. \nC H A P T E R  6\nEX3\n256\nAt Archery 5+, Essence 3+, the Solar can momentarily see \nthrough cover, perceiving her targets as silhouettes the \ncolors of bright anima.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "cb145481-1831-37ae-a2f8-f68f155076ba",
+      "name": "Blood Without Balance",
+      "ability": "Archery",
+      "minAbility": 4,
+      "minEssence": 1,
+      "prerequisites": [
+        "1423e6d6-f305-31c8-8128-13827e88ae85"
+      ],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "Drawing upon the perfect moment to shoot, the Solar sees nothing but her target. Upon becoming the beneficiary of a distract gambit (p. 200), if the Solar’s new Initiative would allow her to act immediately, she may use this Charm to fire a ranged decisive attack from up to long range without an aim action. In addition, if the Lawgiver has under seven Initiative, the base damage of this attack gains (Essence) bonus dice.",
+      "rawData": "Blood Without Balance\nCost: 3m; Mins: Archery 4, Essence 1\nType: Reflexive\nKeywords: Decisive-only\nDuration: Instant\nPrerequisite Charms: Sight Without Eyes\nDrawing upon the perfect moment to shoot, the Solar sees \nnothing but her target. Upon becoming the beneficiary of \na distract gambit (p. 200), if the Solar’s new Initiative \nwould allow her to act immediately, she may use this \nCharm to fire a ranged decisive attack from up to long \nrange without an aim action. In addition, if the Lawgiver \nhas under seven Initiative, the base damage of this attack \ngains (Essence) bonus dice.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "fa028118-f713-37cb-95e0-1874e489499d",
+      "name": "Force Without Fire",
+      "ability": "Archery",
+      "minAbility": 4,
+      "minEssence": 1,
+      "prerequisites": [
+        "1423e6d6-f305-31c8-8128-13827e88ae85"
+      ],
+      "cost": "3m",
+      "type": "Supplemental",
+      "keywords": [
+        "Withering-only"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar nocks an arrow with purpose, sending a tremulous pulse through her surroundings as she gathers hurricane force into her bowstring. The Solar makes a withering attack from short or close range, and a pulverizing bolt of force surrounds her arrow as it leaps from her bow.\n\nIf the attack does at least as much damage as her target’s Stamina, that Initiative is lost rather than transferred to the Solar, and the target is knocked down and back an entire range band. This force is sufficient to end a rush against any target.",
+      "rawData": "Force Without Fire\nCost: 3m; Mins: Archery 4, Essence 1\nType: Supplemental\nKeywords: Withering-only\nDuration: Instant\nPrerequisite Charms: Sight Without Eyes\nThe Solar nocks an arrow with purpose, sending a trem-\nulous pulse through her surroundings as she gathers hur-\nricane force into her bowstring. The Solar makes a with-\nering attack from short or close range, and a pulverizing \nbolt of force surrounds her arrow as it leaps from her bow. \nIf the attack does at least as much damage as her target’s \nStamina, that Initiative is lost rather than transferred to \nthe Solar, and the target is knocked down and back an \nentire range band. This force is sufficient to end a rush \nagainst any target.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "35ddc0ad-5013-3571-8858-dad0ec4310af",
+      "name": "Trance of Unhesitating Speed",
+      "ability": "Archery",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "2beecfc7-d5dc-3bef-b279-40b1469cce0a"
+      ],
+      "cost": "4m, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar strums her bow and fills the air with sharp notes.\n\nThis Charm allows the Exalt to attack multiple targets, or a single target multiple times, by spreading her total current Initiative between decisive attacks. Each attack must contain at least three Initiative, and extra Initiative must be spread as evenly as possible between shots. For example, an Exalt with 11 Initiative attacking three targets could make two decisive attacks with four raw damage,\n\nand a third with only three. In addition, each 10 she rolls on an attack increases the base damage of that attack by one. The Exalt’s Initiative does not reset until she has completed every attack, and she may not make more attacks than she has ammunition or Dexterity. This attack can be made without an aim action.",
+      "rawData": "Trance of Unhesitating Speed\nCost: 4m, 1wp; Mins: Archery 3, Essence 1\nType: Simple\nKeywords: Decisive-only\nDuration: Instant\nPrerequisite Charms: Wise Arrow\nThe Solar strums her bow and fills the air with sharp notes. \nThis Charm allows the Exalt to attack multiple targets, or \na single target multiple times, by spreading her total \ncurrent Initiative between decisive attacks. Each attack \nmust contain at least three Initiative, and extra Initiative \nmust be spread as evenly as possible between shots. For \nexample, an Exalt with 11 Initiative attacking three targets \ncould make two decisive attacks with four raw damage, \nC H A R M S\nEX3\n257\nand a third with only three. In addition, each 10 she rolls \non an attack increases the base damage of that attack by \none. The Exalt’s Initiative does not reset until she has \ncompleted every attack, and she may not make more \nattacks than she has ammunition or Dexterity. This attack \ncan be made without an aim action.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "77830bd6-392a-3664-97ff-63bd8eda7b98",
+      "name": "Phantom Arrow Technique",
+      "ability": "Archery",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "1m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "Palming a mote of Essence, the Lawgiver pulls a thorn from her heart and fires it at the breast of her enemy. With this Charm, the Solar may continue firing her bow even when she has run out of arrows.\n\nIn addition, once per scene, the Exalt may suffuse a phantom or physical arrow with the import of one of her Intimacies. Doing so gives her attack a number of nonCharm bonus dice equal to the Intimacy’s strength, but also temporarily numbs her to that Intimacy. She may not use this attack again until she has spent significant effort in restoring or remembering the Intimacy, or in the case of a negative Intimacy, has been reminded of her motivation for her ire.\n\nAdamant Arrow Technique: At Essence 3+, the Solar may infuse a single phantom or physical arrow per scene with her enduring Essence. So long as she lives, the arrow cannot be destroyed or pulled from the target. Such arrows can be moved by cutting away the base into which they have landed—a tree can still be cut down, a wall still reduced to rubble—but the arrow will remain inviolate.\n\nOnly the Solar who fired this arrow, or one blessed with her permission, may remove it from its resting place.",
+      "rawData": "Phantom Arrow Technique\nCost: 1m; Mins: Archery 3, Essence 1\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: None\nPalming a mote of Essence, the Lawgiver pulls a thorn \nfrom her heart and fires it at the breast of her enemy. With \nthis Charm, the Solar may continue firing her bow even \nwhen she has run out of arrows. \nIn addition, once per scene, the Exalt may suffuse a \nphantom or physical arrow with the import of one of her \nIntimacies. Doing so gives her attack a number of non-\nCharm bonus dice equal to the Intimacy’s strength, but \nalso temporarily numbs her to that Intimacy. She may not \nuse this attack again until she has spent significant effort \nin restoring or remembering the Intimacy, or in the case \nof a negative Intimacy, has been reminded of her motiva-\ntion for her ire.\nAdamant Arrow Technique: At Essence 3+, the Solar \nmay infuse a single phantom or physical arrow per scene \nwith her enduring Essence. So long as she lives, the arrow \ncannot be destroyed or pulled from the target. Such arrows \ncan be moved by cutting away the base into which they \nhave landed—a tree can still be cut down, a wall still \nreduced to rubble—but the arrow will remain inviolate. \nOnly the Solar who fired this arrow, or one blessed with \nher permission, may remove it from its resting place.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "e40a9666-3b7f-3262-a096-b9b93c4a52e1",
+      "name": "Fiery Arrow Attack",
+      "ability": "Archery",
+      "minAbility": 4,
+      "minEssence": 1,
+      "prerequisites": [
+        "77830bd6-392a-3664-97ff-63bd8eda7b98"
+      ],
+      "cost": "2m",
+      "type": "Supplemental",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "Charging her arrow with Essence, the Exalt fires a heavy shot that rends the air as it passes onto her target, lighting the arrow on fire. If the arrow strikes flammable materials, a violent blaze instantly seeks to consume the struck object. This fire is natural, and may spread to surrounding objects or cause combustible materials to explode. When used in a decisive attack against a target, it adds one automatic success to the damage roll. If the attack does at least three health levels of damage, the target catches on fire, and must contend with (Solar’s Essence) lethal dice of damage every turn until he’s able to extinguish himself.",
+      "rawData": "Fiery Arrow Attack\nCost: 2m; Mins: Archery 4, Essence 1\nType: Supplemental\nKeywords: Decisive-only\nDuration: Instant\nPrerequisite Charms: Phantom Arrow Technique\nCharging her arrow with Essence, the Exalt fires a heavy \nshot that rends the air as it passes onto her target, light-\ning the arrow on fire. If the arrow strikes flammable ma-\nterials, a violent blaze instantly seeks to consume the \nstruck object. This fire is natural, and may spread to sur-\nrounding objects or cause combustible materials to \nexplode. When used in a decisive attack against a target, \nit adds one automatic success to the damage roll. If the \nattack does at least three health levels of damage, the \ntarget catches on fire, and must contend with (Solar’s \nEssence) lethal dice of damage every turn until he’s able \nto extinguish himself.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "27c00322-fff7-3db4-838c-d890170a442d",
+      "name": "There Is No Wind",
+      "ability": "Archery",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "1423e6d6-f305-31c8-8128-13827e88ae85"
+      ],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [
+        "Dual"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar graces her shot with unerring precision and fires it along a flow of Essence, causing it to slice through the air between the arrow and its mark. Her attack ignores penalties from non-visual conditions such as high winds, bad weather, flawed ammunition, and so on. In addition, her withering attack accuracy is calculated as if it were made from short range regardless of the distance she’s firing from. With appropriate Awareness Charms, the Solar may use this Charm to make attacks from extreme long range.",
+      "rawData": "There Is No Wind\nCost: 3m; Mins: Archery 5, Essence 2\nType: Reflexive\nKeywords: Dual\nDuration: Instant\nPrerequisite Charms: Sight Without Eyes\nThe Solar graces her shot with unerring precision and \nfires it along a flow of Essence, causing it to slice through \nthe air between the arrow and its mark. Her attack ignores \npenalties from non-visual conditions such as high winds, \nbad weather, flawed ammunition, and so on. In addition, \nher withering attack accuracy is calculated as if it were \nmade from short range regardless of the distance she’s \nfiring from. With appropriate Awareness Charms, the \nSolar may use this Charm to make attacks from extreme \nlong range.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "8e97e8d6-d808-3e5b-8ad6-aee3b7ad6fd3",
+      "name": "Accuracy Without Distance",
+      "ability": "Archery",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "fa028118-f713-37cb-95e0-1874e489499d"
+      ],
+      "cost": "1m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar extends her anima through her hands and into her weapons, joining archer, target and arrow into a single being. As long as she is making an Archery-based attack, this Charm allows the Solar to complete an aim action instantly, and converts the subsequent three bonus dice into automatic non-Charm successes. An Essence 5+ repurchase allows the Solar to fire a withering version of this attack against a crashed opponent. This attack rolls damage even if the attack roll generated no successes. This effect may only be used on a target once per crash period.",
+      "rawData": "Accuracy Without Distance\nCost: 1m, 1wp; Mins: Archery 5, Essence 2\nType: Reflexive\nKeywords: Decisive-only\nDuration: Instant\nPrerequisite Charms: Force Without Fire\nThe Solar extends her anima through her hands and into \nher weapons, joining archer, target and arrow into a single \nbeing. As long as she is making an Archery-based attack, \nthis Charm allows the Solar to complete an aim action in-\nstantly, and converts the subsequent three bonus dice into \nautomatic non-Charm successes. An Essence 5+ repur-\nchase allows the Solar to fire a withering version of this \nattack against a crashed opponent. This attack rolls damage \neven if the attack roll generated no successes. This effect \nmay only be used on a target once per crash period.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "5158f95b-6a9c-3629-83ad-1c0b4c80a622",
+      "name": "Arrow Storm Technique",
+      "ability": "Archery",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "35ddc0ad-5013-3571-8858-dad0ec4310af"
+      ],
+      "cost": "5m, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "Seething with remonstrative ire, the Solar palms a storm of Essence and fills the sky with demonstrative fire. With this attack, the Solar unleashes a barrage of arrows around a focus, striking up to (Essence * 3) targets up to medium range from her initial target. Roll a single attack against the defenses of every target, and then apply damage.\n\nThese extra decisive attacks carry a base damage of her Perception—divvy up her current Initiative evenly among the remaining shots to determine the total raw damage of each attack. Arrows reaching out to medium range from her initial target are expressly allowed to ignore the range limitations of her weapon without penalty. The Exalt’s Initiative does not reset until every damage roll has been completed.",
+      "rawData": "Arrow Storm Technique\nCost: 5m, 1wp; Mins: Archery 5, Essence 2\nType: Simple\nKeywords: Decisive-only\nDuration: Instant\nPrerequisite Charms: Trance of Unhesitating Speed\nSeething with remonstrative ire, the Solar palms a storm \nof Essence and fills the sky with demonstrative fire. With \nthis attack, the Solar unleashes a barrage of arrows around \na focus, striking up to (Essence * 3) targets up to medium \nrange from her initial target. Roll a single attack against \nthe defenses of every target, and then apply damage. \nC H A P T E R  6\nEX3\n258\nThese extra decisive attacks carry a base damage of her Per-\nception—divvy up her current Initiative evenly among the \nremaining shots to determine the total raw damage of each \nattack. Arrows reaching out to medium range from her initial \ntarget are expressly allowed to ignore the range limitations \nof her weapon without penalty. The Exalt’s Initiative does \nnot reset until every damage roll has been completed.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "2d284561-fb61-3b24-9be7-64a02e83f72f",
+      "name": "Flashing Vengeance Draw",
+      "ability": "Archery",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "35ddc0ad-5013-3571-8858-dad0ec4310af"
+      ],
+      "cost": "3m",
+      "type": "Supplemental",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "To invite the wrath of the Lawgiver is to invoke one’s own doom. The Solar gains (Essence) automatic successes to her Join Battle result, and if she acts before her target, her first attack is unblockable. Flashing Vengeance Draw is expressly permitted to be used in combination with Charms that boost Join Battle results, so long as they are not based in Melee, Thrown, or Brawl.",
+      "rawData": "Flashing Vengeance Draw\nCost: 3m; Mins: Archery 5, Essence 2\nType: Supplemental\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Trance of Unhesitating Speed\nTo invite the wrath of the Lawgiver is to invoke one’s own \ndoom. The Solar gains (Essence) automatic successes to \nher Join Battle result, and if she acts before her target, her \nfirst attack is unblockable. Flashing Vengeance Draw is \nexpressly permitted to be used in combination with \nCharms that boost Join Battle results, so long as they are \nnot based in Melee, Thrown, or Brawl.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "07bc56ba-4367-3fb3-9361-9a583e93d01b",
+      "name": "Hunter’s Swift Answer",
+      "ability": "Archery",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "2d284561-fb61-3b24-9be7-64a02e83f72f"
+      ],
+      "cost": "5m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Uniform"
+      ],
+      "duration": "Instant",
+      "fullText": "The Lawgiver suffers no impunities; with terrific speed and ferocious import, she may answer the blades of her transgressors. When the Solar succeeds at a disengage action, she may unleash a withering or decisive Archery attack from close range, even if she has already attacked that turn. This attack must be directed at the one she broke away from.",
+      "rawData": "Hunter’s Swift Answer\nCost: 5m, 1wp; Mins: Archery 5, Essence 2\nType: Reflexive\nKeywords: Uniform\nDuration: Instant\nPrerequisite Charms: Flashing Vengeance Draw\nThe Lawgiver suffers no impunities; with terrific speed \nand ferocious import, she may answer the blades of her \ntransgressors. When the Solar succeeds at a disengage \naction, she may unleash a withering or decisive Archery \nattack from close range, even if she has already attacked \nthat turn. This attack must be directed at the one she broke \naway from.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "99ed2755-6068-32d3-b2ed-cd1cedf17012",
+      "name": "Immaculate Golden Bow",
+      "ability": "Archery",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "77830bd6-392a-3664-97ff-63bd8eda7b98"
+      ],
+      "cost": "5m, 1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "One scene",
+      "fullText": "Honing her skill and focusing her will, the Exalt births a stunning varicolored bow from her palm. This Charm creates a weapon with stats identical to a powerbow, described on page 598. The weapon is made of solidified Essence forged in all the colors of Solar anima, and glows like a torch.\n\nFor additional purchases, players may add custom Evocations to Immaculate Golden Bow. Players should work with their Storyteller to create Evocations that fit the character’s personality or iconic anima manifestation. In addition, Immaculate Golden Bow has the following power:\n\nSky-Eater’s Crest: For four motes, Immaculate Golden Bow is transformed for a single turn, growing wings, spines, fins, or other appendages appropriate to the Exalt’s iconic manifestation, providing a barrier of heavy cover against ranged attacks.",
+      "rawData": "Immaculate Golden Bow\nCost: 5m, 1wp; Mins: Archery 4, Essence 2\nType: Simple\nKeywords: None\nDuration: One scene\nPrerequisite Charms: Phantom Arrow Technique\nHoning her skill and focusing her will, the Exalt births a \nstunning varicolored bow from her palm. This Charm creates \na weapon with stats identical to a powerbow, described on \npage 598. The weapon is made of solidified Essence forged \nin all the colors of Solar anima, and glows like a torch.\nFor additional purchases, players may add custom Evoca-\ntions to Immaculate Golden Bow. Players should work \nwith their Storyteller to create Evocations that fit the char-\nacter’s personality or iconic anima manifestation. In ad-\ndition, Immaculate Golden Bow has the following power: \nSky-Eater’s Crest: For four motes, Immaculate Golden \nBow is transformed for a single turn, growing wings, spines, \nfins, or other appendages appropriate to the Exalt’s iconic \nmanifestation, providing a barrier of heavy cover against \nranged attacks.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "d0d4e297-3314-3fb7-8c31-abbcdd1bdfd5",
+      "name": "Dazzling Flare Attack",
+      "ability": "Archery",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "e40a9666-3b7f-3262-a096-b9b93c4a52e1"
+      ],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar shoots from her heart; the arrow is part of her.\n\nAs such, she can sometimes reach out and draw her Essence across an arrow in flight, causing it to flash and flare, surging toward its target like a smite from the sun.\n\nThis Charm can only be activated on an attack supplemented by Fiery Arrow Attack; when the attack generates at least one 10, this Charm adds one automatic success to the attack, and for each 10 in the attack roll it adds one die to the attack’s raw damage. As the name suggests, Dazzling Flare Attack goes off like a spectacular flare that can be seen for miles—every target using shadows for cover within two range bands must roll Stealth, with a -2 success penalty to the attempt, or be revealed.",
+      "rawData": "Dazzling Flare Attack\nCost: 3m; Mins: Archery 5, Essence 2\nType: Reflexive\nKeywords: Decisive-only\nDuration: Instant\nPrerequisite Charms: Fiery Arrow Attack\nThe Solar shoots from her heart; the arrow is part of her. \nAs such, she can sometimes reach out and draw her \nEssence across an arrow in flight, causing it to flash and \nflare, surging toward its target like a smite from the sun. \nThis Charm can only be activated on an attack supple-\nmented by Fiery Arrow Attack; when the attack generates \nat least one 10, this Charm adds one automatic success to \nthe attack, and for each 10 in the attack roll it adds one \ndie to the attack’s raw damage. As the name suggests, Daz-\nzling Flare Attack goes off like a spectacular flare that can \nbe seen for miles—every target using shadows for cover \nwithin two range bands must roll Stealth, with a -2 success \npenalty to the attempt, or be revealed.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "3513eb39-94f9-30bd-8d20-01cc25210368",
+      "name": "Seven Omens Shot",
+      "ability": "Archery",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "8e97e8d6-d808-3e5b-8ad6-aee3b7ad6fd3"
+      ],
+      "cost": "3m, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "Clearing her mind of all thoughts, the Solar focuses only on the arrow drawn back against her bowstring, feeling for the flow of Essence she needs to make an incredible shot.\n\nThe Solar must take a special “long aim” action—an aim action lasting three rounds—against a single target in order to use this Charm. Invoking Seven Omens Shot converts the normal +3 bonus dice from aiming into three automatic non-Charm successes and adds any extra successes on the attack roll to the attack’s raw damage.\n\nAccuracy Without Distance can shorten the action by a single round, but may only add a single non-Charm success for each round shortened. Killing an opponent with this Charm awards the Solar one point of Willpower.",
+      "rawData": "Seven Omens Shot\nCost: 3m, 1wp; Mins: Archery 5, Essence 3\nType: Simple\nKeywords: Decisive-only\nDuration: Instant\nPrerequisite Charms: Accuracy Without Distance\nClearing her mind of all thoughts, the Solar focuses only \non the arrow drawn back against her bowstring, feeling for \nthe flow of Essence she needs to make an incredible shot. \nThe Solar must take a special “long aim” action—an aim \naction lasting three rounds—against a single target in order \nto use this Charm. Invoking Seven Omens \nShot converts the normal +3 bonus dice from aiming \ninto three automatic non-Charm successes and adds any \nextra successes on the attack roll to the attack’s raw damage. \nAccuracy Without Distance can shorten the action by a \nsingle round, but may only add a single non-Charm success \nfor each round shortened. Killing an opponent with this \nCharm awards the Solar one point of Willpower.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "f8a5abe2-0144-3d47-8cba-8397135a764c",
+      "name": "Revolving Bow Discipline",
+      "ability": "Archery",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "5158f95b-6a9c-3629-83ad-1c0b4c80a622"
+      ],
+      "cost": "6m, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Perilous",
+        "Withering-only"
+      ],
+      "duration": "Instant",
+      "fullText": "Holding arrows between each finger, the Solar draws down on her target, firing with profound speed and focus. The Solar may draw and attack a single target repeatedly, launching multiple withering attacks until she either misses or crashes her opponent. Revolving Bow Discipline can only be used within short or close range, and can’t be used on targets already in crash. Used against a battle group, the Solar attacks until she misses or depletes the group’s Magnitude.\n\nAt Essence 4+, the Solar gains one point of temporary Willpower when she crashes a foe with this attack.",
+      "rawData": "Revolving Bow Discipline\nCost: 6m, 1wp; Mins: Archery 5, Essence 3\nType: Simple\nC H A R M S\nEX3\n259\nKeywords: Perilous, Withering-only\nDuration: Instant\nPrerequisite Charms: Arrow Storm Technique\nHolding arrows between each finger, the Solar draws down \non her target, firing with profound speed and focus. The \nSolar may draw and attack a single target repeatedly, launch-\ning multiple withering attacks until she either misses or \ncrashes her opponent. Revolving Bow Discipline can only \nbe used within short or close range, and can’t be used on \ntargets already in crash. Used against a battle group, the Solar \nattacks until she misses or depletes the group’s Magnitude.\nAt Essence 4+, the Solar gains one point of temporary \nWillpower when she crashes a foe with this attack.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "08064dad-f8e5-3c93-9684-09fc1d6bd286",
+      "name": "Finishing Snipe",
+      "ability": "Archery",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "07bc56ba-4367-3fb3-9361-9a583e93d01b"
+      ],
+      "cost": "7m",
+      "type": "Reflexive",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "With instincts honed for the kill, the Exalt feels the momentum of battle break and flee her target. When an opponent within range suffers crash, the Lawgiver draws on this moment to attack again, even if she has already used a combat action that turn. This attack requires no aim action, but if she wishes to use Finishing Snipe, the Lawgiver must not be engaged in a Simple action that would prevent her from attacking.",
+      "rawData": "Finishing Snipe\nCost: 7m; Mins: Archery 5, Essence 3\nType: Reflexive\nKeywords: Decisive-only\nDuration: Instant\nPrerequisite Charms: Hunter’s Swift Answer\nWith instincts honed for the kill, the Exalt feels the momen-\ntum of battle break and flee her target. When an opponent \nwithin range suffers crash, the Lawgiver draws on this moment \nto attack again, even if she has already used a combat action \nthat turn. This attack requires no aim action, but if she wishes \nto use Finishing Snipe, the Lawgiver must not be engaged in \na Simple action that would prevent her from attacking.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "51be9115-0dee-3a18-913f-3405e209601c",
+      "name": "Rain of Feathered Death",
+      "ability": "Archery",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "77830bd6-392a-3664-97ff-63bd8eda7b98"
+      ],
+      "cost": "3m per duplicate, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "The Lawgiver hones her killing prowess, splitting an arrow into a devastating barrage. The Exalt only needs a single arrow to fire this shot; her one arrow splits into multiple arrows and all are directed against a single target. The Solar may split her shot into a maximum of (Dexterity) arrows.\n\nIf the attack hits, each created arrow hits with a raw damage equal to the Solar’s current Initiative minus her successes on each damage roll. Therefore, if she rolls 10 damage dice and gains two successes on the first roll, the second roll will feature eight damage dice. If that gains four successes, her third damage roll will be four dice. If the Exalt runs out of damage dice due to successful hits, her created arrows cannot do less than (Essence) damage each.",
+      "rawData": "Rain of Feathered Death\nCost: 3m per duplicate, 1wp; Mins: Archery 5, Essence 3\nType: Simple\nKeywords: Decisive-only\nDuration: Instant\nPrerequisite Charms: Phantom Arrow Technique\nThe Lawgiver hones her killing prowess, splitting an arrow \ninto a devastating barrage. The Exalt only needs a single \narrow to fire this shot; her one arrow splits into multiple \narrows and all are directed against a single target. The Solar \nmay split her shot into a maximum of (Dexterity) arrows. \nIf the attack hits, each created arrow hits with a raw damage \nequal to the Solar’s current Initiative minus her successes \non each damage roll. Therefore, if she rolls 10 damage dice \nand gains two successes on the first roll, the second roll \nwill feature eight damage dice. If that gains four successes, \nher third damage roll will be four dice. If the Exalt runs \nout of damage dice due to successful hits, her created arrows \ncannot do less than (Essence) damage each.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "e10ec269-a4d4-312f-a1cf-f76d4ba2b624",
+      "name": "Shadow-Seeking Arrow",
+      "ability": "Archery",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "d0d4e297-3314-3fb7-8c31-abbcdd1bdfd5"
+      ],
+      "cost": "3m, 2i",
+      "type": "Reflexive",
+      "keywords": [
+        "Uniform"
+      ],
+      "duration": "Instant",
+      "fullText": "During combat, if the Lawgiver’s Awareness check uncovers an opponent, she may make an attack against that opponent regardless of the Initiative order, without using her attack action for the round, and without having to use an aim action. The Solar may pay to use this Charm multiple times to attack multiple opponents she has uncovered in a single Awareness check.",
+      "rawData": "Shadow-Seeking Arrow\nCost: 3m, 2i; Mins: Archery 5, Essence 3\nType: Reflexive\nKeywords: Uniform\nDuration: Instant\nPrerequisite Charms: Dazzling Flare Attack\nDuring combat, if the Lawgiver’s Awareness check uncov-\ners an opponent, she may make an attack against that op-\nponent regardless of the Initiative order, without using \nher attack action for the round, and without having to use \nan aim action. The Solar may pay to use this Charm mul-\ntiple times to attack multiple opponents she has uncov-\nered in a single Awareness check.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "0ef5067e-87db-3682-a45f-c0a1aef273aa",
+      "name": "Searing Sunfire Interdiction",
+      "ability": "Archery",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "d0d4e297-3314-3fb7-8c31-abbcdd1bdfd5"
+      ],
+      "cost": "4m, 1i, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "The Lawgiver fires an arrow that courses with burning Essence, streaking down like a falling star to explode at her enemy’s feet. This attack is a difficulty 3 gambit that requires no aim action. However, if the Exalt aims before using the Charm, she may act first on the next round, regardless of her place in the Initiative order. If another character uses magic to act first on the same round, compare their Initiative to determine order of actions.\n\nThe Initiative roll on this gambit is made with double 9s.\n\nIf successful, it blasts the target out of position, forcing him to act (2 + extra successes on the gambit’s Initiative roll) ticks later than he would have. If Searing Sunfire Interdiction drops the target to a tick of 0 or less, he loses his turn for the round. Searing Sunfire Interdiction cannot be used on the same target twice consecutively.\n\nAn Essence 3+ repurchase of this Charm lowers the difficulty of the gambit to 2 and waives the Initiative cost upon success.\n\nAn Essence 4+ repurchase of the upgraded Charm resets the Solar’s attack if she drops an opponent from a higher Initiative tick to a lower Initiative tick than her own.\n\nAn Essence 5+ repurchase of the second upgrade allows the Solar to use Searing Sunfire Interdiction twice consecutively on the same target, dropping the Willpower cost from the second shot. If the Solar delays her opponent with both shots, he’s also forced backwards a range band, even if this would force him off a cliff or a rooftop.\n\nAn Essence 6+ repurchase of the previous upgrade allows the Lawgiver to use this gambit repeatedly against a single target: each time she successfully hits with this gambit,\n\nshe may immediately fire the gambit again, so long as she has ammunition. If she misses or forces her target to lose a turn, the Charm ends. As with the previous upgrade, waive the willpower cost from all but the first shot. If the Solar stops an opponent from acting, award her a point of Willpower. As above, for every two shots the opponent is delayed, he’s forced back a range band.\n\nAn Essence 6+ repurchase of the previous upgrade allows the Solar to immediately target a new opponent with the above effect upon dropping another opponent to tick 0 or lower with Searing Sunfire Interdiction.",
+      "rawData": "Searing Sunfire Interdiction\nCost: 4m, 1i, 1wp; Mins: Archery 5, Essence 3\nType: Simple\nKeywords: Decisive-only\nDuration: Instant\nPrerequisite Charms: Dazzling Flare Attack\nThe Lawgiver fires an arrow that courses with burning \nEssence, streaking down like a falling star to explode at \nher enemy’s feet. This attack is a difficulty 3 gambit that \nrequires no aim action. However, if the Exalt aims before \nusing the Charm, she may act first on the next round, re-\ngardless of her place in the Initiative order. If another \ncharacter uses magic to act first on the same round, \ncompare their Initiative to determine order of actions. \nThe Initiative roll on this gambit is made with double 9s. \nIf successful, it blasts the target out of position, forcing \nhim to act (2 + extra successes on the gambit’s Initiative \nroll) ticks later than he would have. If Searing Sunfire In-\nterdiction drops the target to a tick of 0 or less, he loses \nhis turn for the round. Searing Sunfire Interdiction cannot \nbe used on the same target twice consecutively. \nAn Essence 3+ repurchase of this Charm lowers the dif-\nficulty of the gambit to 2 and waives the Initiative cost \nupon success. \nAn Essence 4+ repurchase of the upgraded Charm resets \nthe Solar’s attack if she drops an opponent from a higher \nInitiative tick to a lower Initiative tick than her own.\nAn Essence 5+ repurchase of the second upgrade allows \nthe Solar to use Searing Sunfire Interdiction twice con-\nsecutively on the same target, dropping the Willpower \ncost from the second shot. If the Solar delays her oppo-\nnent with both shots, he’s also forced backwards a range \nband, even if this would force him off a cliff or a rooftop. \nAn Essence 6+ repurchase of the previous upgrade allows \nthe Lawgiver to use this gambit repeatedly against a single \ntarget: each time she successfully hits with this gambit, \nC H A P T E R  6\nEX3\n260\nshe may immediately fire the gambit again, so long as she \nhas ammunition. If she misses or forces her target to lose \na turn, the Charm ends. As with the previous upgrade, \nwaive the willpower cost from all but the first shot. If the \nSolar stops an opponent from acting, award her a point \nof Willpower. As above, for every two shots the opponent \nis delayed, he’s forced back a range band. \nAn Essence 6+ repurchase of the previous upgrade allows \nthe Solar to immediately target a new opponent with the \nabove effect upon dropping another opponent to tick 0 \nor lower with Searing Sunfire Interdiction.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "263c4d26-a46a-3423-a8e8-c50a39297f03",
+      "name": "Solar Spike",
+      "ability": "Archery",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "d0d4e297-3314-3fb7-8c31-abbcdd1bdfd5"
+      ],
+      "cost": "5m, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "The Lawgiver draws a blazing bolt of Essence across her bow and fires it. The attack ignores the range of her weapon, and can be made from medium or long range without an aim action, or extreme range with an aim action. The Exalt must have higher Initiative than her target to use this attack; the conjured Spike does not use the Solar’s Initiative to do damage, but instead has a raw damage equal to her current temporary Willpower multiplied by one or the rating of any Intimacy she is trying to uphold or protect.\n\nSolar Spike is incompatible with Fiery Arrow Attack and Rain of Feathered Death, and does not reset the Exalt’s Initiative to base on a hit. Solar Spike may only be used once per scene, but can be reset by landing a withering attack with six 10s rolled across the attack and damage rolls.",
+      "rawData": "Solar Spike\nCost: 5m, 1wp; Mins: Archery 5, Essence 3\nType: Simple\nKeywords: Decisive-only\nDuration: Instant\nPrerequisite Charms: Dazzling Flare Attack\nThe Lawgiver draws a blazing bolt of Essence across her \nbow and fires it. The attack ignores the range of her weapon, \nand can be made from medium or long range without an \naim action, or extreme range with an aim action. The Exalt \nmust have higher Initiative than her target to use this \nattack; the conjured Spike does not use the Solar’s Initia-\ntive to do damage, but instead has a raw damage equal to \nher current temporary Willpower multiplied by one or the \nrating of any Intimacy she is trying to uphold or protect. \nSolar Spike is incompatible with Fiery Arrow Attack and \nRain of Feathered Death, and does not reset the Exalt’s Ini-\ntiative to base on a hit. Solar Spike may only be used once \nper scene, but can be reset by landing a withering attack \nwith six 10s rolled across the attack and damage rolls.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "fe07e89f-09be-3d0e-9dc0-4c5d7b22f54b",
+      "name": "Heart-Eating Incineration",
+      "ability": "Archery",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "263c4d26-a46a-3423-a8e8-c50a39297f03"
+      ],
+      "cost": "3m, 3a",
+      "type": "Reflexive",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar’s judgment scourges her target with devouring flames. She may only pay to use this attack when unleashing Solar Spike, and when her anima is at bonfire. Instead of conjuring Solar Spike, the Solar draws her anima as if she were pulling an arrow from a quiver, her iconic manifestation taking the form of a living, screaming missile.\n\nThis attack follows the rules of Solar Spike, but adds the Solar’s Initiative to the raw damage of the attack. This does cause the Lawgiver’s Initiative to reset on a hit, but if Heart-Eating Incineration kills her target, the target’s body and soul are engulfed in a torrent of flames and burned away completely, restoring a number of motes to the Solar equal to her Intimacy rating for the target plus his permanent Essence score. Using Heart-Eating Incineration resets the Solar’s anima to the dim level. Spirits destroyed with this attack may still reform as they normally might.",
+      "rawData": "Heart-Eating Incineration\nCost: 3m, 3a; Mins: Archery 5, Essence 3\nType: Reflexive\nKeywords: Decisive-only\nDuration: Instant\nPrerequisite Charms: Solar Spike\nThe Solar’s judgment scourges her target with devouring \nflames. She may only pay to use this attack when unleash-\ning Solar Spike, and when her anima is at bonfire. Instead \nof conjuring Solar Spike, the Solar draws her anima as if \nshe were pulling an arrow from a quiver, her iconic man-\nifestation taking the form of a living, screaming missile. \nThis attack follows the rules of Solar Spike, but adds the \nSolar’s Initiative to the raw damage of the attack. This \ndoes cause the Lawgiver’s Initiative to reset on a hit, but \nif Heart-Eating Incineration kills her target, the target’s \nbody and soul are engulfed in a torrent of flames and \nburned away completely, restoring a number of motes to \nthe Solar equal to her Intimacy rating for the target plus \nhis permanent Essence score. Using Heart-Eating Incin-\neration resets the Solar’s anima to the dim level. Spirits \ndestroyed with this attack may still reform as they nor-\nmally might.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "b1493aa6-22bd-3da1-90e9-de6f550b3df4",
+      "name": "Dust and Ash Sleight",
+      "ability": "Archery",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "3513eb39-94f9-30bd-8d20-01cc25210368"
+      ],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "The Lawgiver may use this Charm to shorten the long aim action of Seven Omens Shot by one round, forfeiting the prerequisite’s automatic non-Charm successes to make the attack faster. An Essence 5+ repurchase allows the Solar to add the lost successes back into the attack.",
+      "rawData": "Dust and Ash Sleight\nCost: 3m; Mins: Archery 5, Essence 4\nType: Reflexive\nKeywords: Decisive-only\nDuration: Instant\nPrerequisite Charms: Seven Omens Shot\nThe Lawgiver may use this Charm to shorten the long aim \naction of Seven Omens Shot by one round, forfeiting the \nprerequisite’s automatic non-Charm successes to make \nthe attack faster. An Essence 5+ repurchase allows the \nSolar to add the lost successes back into the attack.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "a148ca88-55cb-390e-ab2b-96c33a44a41b",
+      "name": "Heavens Crash Down",
+      "ability": "Archery",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "f8a5abe2-0144-3d47-8cba-8397135a764c"
+      ],
+      "cost": "6m, 2i, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Clash",
+        "Perilous",
+        "Withering-only"
+      ],
+      "duration": "Instant",
+      "fullText": "When the Lawgiver is cornered and fighting for her life, the burning power of her judgment becomes even more terrifying. Drawing the burning Essence of her life from her very wounds, she can unleash a powerful, Essence-\n\nladen shot from her bow that can override other attacks and overwhelm her attackers. The Solar may use this Charm to clash attacks against her from short or close range, but only when she is in her -4 health levels. This clash gains (Essence) automatic successes, and the damage roll doubles 9s. However, Initiative damaged by this roll is not transferred to the Solar; it is instead rerolled as decisive damage against her target, ignoring hardness and doubling 10s.\n\nAn Essence 5+ repurchase of this Charm removes the Perilous keyword, allowing the Solar to spend herself into lower negative Initiative numbers while crashed.",
+      "rawData": "Heavens Crash Down\nCost: 6m, 2i, 1wp; Mins: Archery 5, Essence 4\nType: Reflexive\nKeywords: Clash, Perilous, Withering-only\nDuration: Instant\nPrerequisite Charms: Revolving Bow Discipline\nWhen the Lawgiver is cornered and fighting for her life, \nthe burning power of her judgment becomes even more \nterrifying. Drawing the burning Essence of her life from \nher very wounds, she can unleash a powerful, Essence-\nWHEN DO I NEED TO AIM?\nCharacters at medium or long range must typically take \nan aim action before they can attack. But this is not \nalways true. A character does not need to aim if:\n• She is casting a spell. \n• She is using a Charm from an Ability or martial art  \nthat is not typically ranged to create a ranged attack. \nExamples: Apocalypse Flare Attack (p. 283), Blazing \nSolar Bolt (p. 353). \n•  The ranged Charm in question is triggered by some \nevent, objective, or dice result and must be performed \ninstantly. Typically this type of Charm is Reflexive, but \nnot all Reflexive Charms qualify. Examples: Fallen \nWeapon Deflection (p. 417), Savage Wolf Attack (p. 419).\n•  The ranged Charm in question creates bonus attacks or \nimmediate attacks as a reward for a good dice roll, and \nit wouldn’t make sense for such attacks not to happen \ninstantly. Example: Swarm-Culling Instinct (p. 416). \n• If a Charm resets her combat action.\n• If a Charm states she can waive the aim action. \nC H A R M S\nEX3\n261\nladen shot from her bow that can override other attacks \nand overwhelm her attackers. The Solar may use this Charm \nto clash attacks against her from short or close range, but \nonly when she is in her -4 health levels. This clash gains \n(Essence) automatic successes, and the damage roll doubles \n9s. However, Initiative damaged by this roll is not trans-\nferred to the Solar; it is instead rerolled as decisive damage \nagainst her target, ignoring hardness and doubling 10s.\nAn Essence 5+ repurchase of this Charm removes the Per-\nilous keyword, allowing the Solar to spend herself into \nlower negative Initiative numbers while crashed.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "ae3355c8-8a99-322e-9dfe-f9100aaf631d",
+      "name": "Streaming Arrow Stance",
+      "ability": "Archery",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "08064dad-f8e5-3c93-9684-09fc1d6bd286"
+      ],
+      "cost": "6m",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "One scene",
+      "fullText": "The Lawgiver feels the channels of her bow open when her prey falls into peril. This Charm allows the Exalt to fire on a crashed target from medium or long range without using an aim action.",
+      "rawData": "Streaming Arrow Stance\nCost: 6m; Mins: Archery 5, Essence 4\nType: Simple\nKeywords: None\nDuration: One scene\nPrerequisite Charms: Finishing Snipe\nThe Lawgiver feels the channels of her bow open when \nher prey falls into peril. This Charm allows the Exalt to \nfire on a crashed target from medium or long range without \nusing an aim action.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "4a3a2275-b35e-3bed-b0d9-21e8788321b5",
+      "name": "Whispered Prayer of Judgment",
+      "ability": "Archery",
+      "minAbility": 5,
+      "minEssence": 5,
+      "prerequisites": [
+        "ae3355c8-8a99-322e-9dfe-f9100aaf631d"
+      ],
+      "cost": "1m",
+      "type": "Supplemental",
+      "keywords": [
+        "Uniform"
+      ],
+      "duration": "Instant",
+      "fullText": "After using an aim action, the Solar may use this Charm to charge her shot with wrathful Essence, adding (Essence) damage to the attack.\n\nAthletics",
+      "rawData": "Whispered Prayer of Judgment\nCost: 1m; Mins: Archery 5, Essence 5\nType: Supplemental\nKeywords: Uniform\nDuration: Instant\nPrerequisite Charms: Streaming Arrow Stance\nAfter using an aim action, the Solar may use this Charm \nto charge her shot with wrathful Essence, adding (Essence) \ndamage to the attack. \nAthletics",
+      "potentiallyProblematicImport": false
+    }
+  ]
+}

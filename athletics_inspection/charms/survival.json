@@ -1,0 +1,394 @@
+{
+  "$schema": "./charm-schema.json",
+  "version": "0.1.0",
+  "ability": "Survival",
+  "type": "solarAbility",
+  "exalt": "solar",
+  "charms": [
+    {
+      "id": "d8dfd12b-e40a-3326-a259-f439ac770080",
+      "name": "Food-Gathering Exercise",
+      "ability": "Survival",
+      "minAbility": 1,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "3m",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "One hour",
+      "fullText": "The land gives its strength to the Lawgiver. The Solar may use this Charm to make a ([Charisma or Wits] + Survival) roll against a difficulty assigned by the Storyteller. Each extra success on this roll represents enough food gathered to feed a single person for a day. The fare guaranteed by this Charm is of a meager sort—berries, grubs, nuts, seeds, insects, and small animals—but the Solar has no need of a spear or bow or net to hunt such game. If the Storyteller decides there simply isn’t any sort of sustenance in the region, or the player fails the roll, the Solar still finds enough food to feed at least one person. In addition, for every hour the Solar continues to use this Charm, the Solar works toward a climactic encounter with the rawest expression of survivalist skill possible. This guarantees that after repeated use, the Solar will have at least one chance per day to catch a large fish, kill a game animal, trap a large bird or find a fruit-bearing tree. This encounter will happen regardless of Storyteller decree, but is still contingent on a difficulty 6 roll in the worst case scenario.",
+      "rawData": "Food-Gathering Exercise\nCost: 3m; Mins: Survival 1, Essence 1\nType: Simple\nKeywords: None\nDuration: One hour\nPrerequisite Charms: None\nThe land gives its strength to the Lawgiver. The Solar may \nuse this Charm to make a ([Charisma or Wits] + Survival) \nroll against a difficulty assigned by the Storyteller. Each \nextra success on this roll represents enough food gathered \nto feed a single person for a day. The fare guaranteed by \nthis Charm is of a meager sort—berries, grubs, nuts, seeds, \ninsects, and small animals—but the Solar has no need of \na spear or bow or net to hunt such game. If the Storytell-\ner decides there simply isn’t any sort of sustenance in the \nregion, or the player fails the roll, the Solar still finds \nenough food to feed at least one person. In addition, \nfor every hour the Solar continues to use this Charm, \nthe Solar works toward a climactic encounter with the \nrawest expression of survivalist skill possible. This \nguarantees that after repeated use, the Solar will have at \nleast one chance per day to catch a large fish, kill a game \nanimal, trap a large bird or find a fruit-bearing tree. This \nencounter will happen regardless of Storyteller decree, \nbut is still contingent on a difficulty 6 roll in the worst \ncase scenario.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "bfff2030-1a4e-36b9-969e-a921fdd0019b",
+      "name": "Hardship-Surviving Mendicant Spirit",
+      "ability": "Survival",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "5m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "One day",
+      "fullText": "Through the use of this Charm, the Solar becomes able to survive in even the most hostile conditions without special preparation. This Charm negates all environmental penalties to Survival rolls and eliminates the deleterious effects of exposure to extreme climates. The coldest glacier and the hottest desert are no more deadly to the Solar than the gentlest rolling plain. She ignores inclement weather even when lightly dressed, and does not suffer undue blisters, bug bites or plant poison even when walking barefoot through the jungle. This Charm does not protect the Exalt against environmental damage.\n\nIn addition, Hardship-Surviving Mendicant Spirit lowers the difficulty to forage and find shelter by 2, to a minimum of 1.",
+      "rawData": "Hardship-Surviving Mendicant Spirit\nCost: 5m; Mins: Survival 3, Essence 1\nType: Reflexive\nKeywords: None\nDuration: One day\nPrerequisite Charms: None\nThrough the use of this Charm, the Solar becomes able \nto survive in even the most hostile conditions without \nspecial preparation. This Charm negates all environmen-\ntal penalties to Survival rolls and eliminates the deleteri-\nous effects of exposure to extreme climates. The coldest \nglacier and the hottest desert are no more deadly to the \nSolar than the gentlest rolling plain. She ignores inclem-\nent weather even when lightly dressed, and does not suffer \nundue blisters, bug bites or plant poison even when \nwalking barefoot through the jungle. This Charm does \nnot protect the Exalt against environmental damage.\nIn addition, Hardship-Surviving Mendicant Spirit lowers \nthe difficulty to forage and find shelter by 2, to a minimum \nof 1.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "215cd257-471f-3db0-a808-34bb827e6779",
+      "name": "Friendship with Animals Approach",
+      "ability": "Survival",
+      "minAbility": 2,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "3m",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "One scene",
+      "fullText": "Through the use of this Charm, the Exalt can deal with nearly any wild animal. Herbivores and smaller omnivores will not break and run when the Solar approaches, and will even become somewhat docile, allowing the Exalt to pet or handle them. Predators are less susceptible to this Charm, and most will simply let the Solar pass unmolested through their territory. This Charm does not work on sentient animals or familiars, animals that are trained to attack, or animals that are maddened by pain, hunger, or disease.",
+      "rawData": "Friendship with Animals Approach\nCost: 3m; Mins: Survival 2, Essence 1\nType: Simple\nKeywords: None\nDuration: One scene\nPrerequisite Charms: None\nThrough the use of this Charm, the Exalt can deal with \nnearly any wild animal. Herbivores and smaller omnivores \nwill not break and run when the Solar approaches, and will \neven become somewhat docile, allowing the Exalt to pet \nor handle them. Predators are less susceptible to this Charm, \nand most will simply let the Solar pass unmolested through \ntheir territory. This Charm does not work on sentient \nanimals or familiars, animals that are trained to attack, or \nanimals that are maddened by pain, hunger, or disease.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "b558019b-95ed-3771-bf7e-f0e388ceaea5",
+      "name": "Trackless Region Navigation",
+      "ability": "Survival",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "bfff2030-1a4e-36b9-969e-a921fdd0019b"
+      ],
+      "cost": "5m, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Indefinite",
+      "fullText": "The deepest wilds are no mystery to the Solar Exalted.\n\nWith this Charm, the Exalt can find her way safely through even the worst terrain. The Solar and a group of up to (Essence * 2) followers can travel up to 10 miles a day across the harshest terrain, and 20 miles per day across normal wilderness. The Solar automatically succeeds at any Sur-\n\nvival roll to find the next oasis, natural shelter, river or other topographical feature the region might include.",
+      "rawData": "Trackless Region Navigation\nCost: 5m, 1wp; Mins: Survival 4, Essence 2\nType: Reflexive\nKeywords: None\nDuration: Indefinite\nPrerequisite Charms: Hardship-Surviving Mendicant \nSpirit\nThe deepest wilds are no mystery to the Solar Exalted. \nWith this Charm, the Exalt can find her way safely through \neven the worst terrain. The Solar and a group of up to \n(Essence * 2) followers can travel up to 10 miles a day across \nthe harshest terrain, and 20 miles per day across normal \nwilderness. The Solar automatically succeeds at any Sur-\nC H A P T E R  6\nEX3\n410\nvival roll to find the next oasis, natural shelter, river or \nother topographical feature the region might include.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "901441b4-7cfb-3835-905c-0116f86618e2",
+      "name": "Unshakeable Bloodhound Technique",
+      "ability": "Survival",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "b558019b-95ed-3771-bf7e-f0e388ceaea5"
+      ],
+      "cost": "4m",
+      "type": "Supplemental",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar can track someone through the wilderness following the most minute signs, or sometimes no sign at all, following unerring instinct. This Charm supplements the (Perception + Survival) roll described on page 229. Reroll all 5s and 6s until 5s and 6s no longer appear, and treat 1s rolled by the opposing player as 10s on the Solar’s result.\n\nThis Charm can even contest perfect track-covering effects such as Traceless Passage.",
+      "rawData": "Unshakeable Bloodhound Technique\nCost: 4m; Mins: Survival 5, Essence 2\nType: Supplemental\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Trackless Region Navigation\nThe Solar can track someone through the wilderness fol-\nlowing the most minute signs, or sometimes no sign at all, \nfollowing unerring instinct. This Charm supplements the \n(Perception + Survival) roll described on page 229. Reroll \nall 5s and 6s until 5s and 6s no longer appear, and treat 1s \nrolled by the opposing player as 10s on the Solar’s result. \nThis Charm can even contest perfect track-covering effects \nsuch as Traceless Passage.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "fa561b8f-f85a-3c94-890d-f8b444419e30",
+      "name": "Spirit-Tied Pet",
+      "ability": "Survival",
+      "minAbility": 3,
+      "minEssence": 2,
+      "prerequisites": [
+        "215cd257-471f-3db0-a808-34bb827e6779"
+      ],
+      "cost": "10m, 1wp, 1xp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "An Exalt with a familiar has experienced the gift of having been chosen twice. The Exalt reaches through her anima to touch the bond she shares with her companion animal, elevating its spiritual status and according herself the following powers:\n\nUnbreakable Loyalty: The familiar gains a Defining Tie of loyalty to the Solar, if it does not already have one. No influence of any kind—other than that of the Solar—can make the familiar act against this Intimacy.\n\nEssence-Drawing Method: The familiar becomes a font of spiritual energy. The Solar may reflexively draw up to five motes from her pet once per day. The Exalt must be within short range of the familiar she wishes to tap.\n\nIf the Exalt taps more than five motes from multiple pets in a scene, the motes she draws will only last until her next turn.\n\nPower-Renewing Bond: The Solar draws strength from her familiar bond. Once per day, through interaction with her familiar, the Exalt may draw a single point of Willpower as a simple action lasting at least a few seconds.\n\nThis contact renews the Solar’s mental energies and can even negate a -1 crippling penalty to the Exalt’s social influence actions. The Solar may only use this power once per day, no matter how many familiars she has.\n\nSense-Riding Discipline: The Exalt may borrow the senses of a familiar through a moment of intense concentration. This simple action requires the Solar to concentrate on pushing her consciousness into the mind of her familiar, rendering her incapable of taking any other actions until she has returned to her own mind. This power can be invoked when the character is asleep or otherwise inactive, and has no known range limitation. At Survival 5, the Exalt further extends her influence into the familiar’s motor functions, merging seamlessly with her charge in order to control its actions.",
+      "rawData": "Spirit-Tied Pet\nCost: 10m, 1wp, 1xp; Mins: Survival 3, Essence 2\nType: Simple\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Friendship with Animals Approach\nAn Exalt with a familiar has experienced the gift of having \nbeen chosen twice. The Exalt reaches through her anima \nto touch the bond she shares with her companion animal, \nelevating its spiritual status and according herself the fol-\nlowing powers:\nUnbreakable Loyalty: The familiar gains a Defining Tie \nof loyalty to the Solar, if it does not already have one. No \ninfluence of any kind—other than that of the Solar—can \nmake the familiar act against this Intimacy.\nEssence-Drawing Method: The familiar becomes a font \nof spiritual energy. The Solar may reflexively draw up to \nfive motes from her pet once per day. The Exalt must be \nwithin short range of the familiar she wishes to tap. \nIf the Exalt taps more than five motes from multiple pets \nin a scene, the motes she draws will only last until her \nnext turn. \nPower-Renewing Bond: The Solar draws strength from \nher familiar bond. Once per day, through interaction with \nher familiar, the Exalt may draw a single point of Will-\npower as a simple action lasting at least a few seconds. \nThis contact renews the Solar’s mental energies and can \neven negate a -1 crippling penalty to the Exalt’s social in-\nfluence actions. The Solar may only use this power once \nper day, no matter how many familiars she has. \nSense-Riding Discipline: The Exalt may borrow the \nsenses of a familiar through a moment of intense concen-\ntration. This simple action requires the Solar to concen-\ntrate on pushing her consciousness into the mind of her \nfamiliar, rendering her incapable of taking any other \nactions until she has returned to her own mind. This power \ncan be invoked when the character is asleep or otherwise \ninactive, and has no known range limitation. At Survival \n5, the Exalt further extends her influence into the famil-\niar’s motor functions, merging seamlessly with her charge \nin order to control its actions.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "c5928cdf-fe3b-3ad3-bdfb-fc32c8fe11fe",
+      "name": "Beast-Mastering Behavior",
+      "ability": "Survival",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "fa561b8f-f85a-3c94-890d-f8b444419e30"
+      ],
+      "cost": "10m, 1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "One week",
+      "fullText": "The Solar holds dominion over the beasts of the field.\n\nWith this Charm she can train an animal, familiar or otherwise, to follow her commands. Through exercise and repeated practice, she can also train the beast to use special abilities that are latent, such as an eagle’s disarm ability (p. 563), or techniques designed by the player or the Storyteller which are appropriate to the animal.\n\nNormally, training an animal to unlock its latent potential requires a minimum of Survival 3, and two specialties: one in animal husbandry, and another specific to the animal—falconry for a hawk, lion taming for a great cat, and so on. The trainer makes an extended roll with an interval of one month and a goal of 10, modified by the animal’s attitude—docile and tamed beasts presenting no penalties, familiars representing a number of bonus dice equal to the trainer’s Intimacy to the animal, and hostile, wild, or otherwise untrainable animals representing a penalty of -2 or -3. The trainer must spend the entire month interacting with the beast, teaching it words, signals, commands, and running it through exercises daily. Any significant amount of time the trainer spends away from the beast during this time saps successes away at a rate of one success for every two or three days.\n\nSuccess at the extended roll means that the animal learns to use the technique and can be order to do so on command.\n\nON SPIRIT-TIED PET The first time a Solar uses this Charm, ignore the 1xp activation cost.\n\nA Solar with Beast-Mastering Behavior gains (Essence) automatic successes to this roll, and shortens the interval of the roll to one week. Using this Charm exempts her from the specialty requirements of normal training, while the Charm Friendship with Animals Approach may eliminate the penalty associated with wild or hostile animals.\n\nAt Survival 5+, Essence 3+, the Solar can teach a familiar she has enhanced with Spirit-Tied Pet to use magical abilities, such as the eagle’s special ability Iron Wings Carry.\n\nDoing so costs the Solar two experience points per ability trained.The player and the Storyteller can work together to develop new and appropriate abilities for the Solar to teach her familiar.\n\nAlso at Survival 5+, Essence 3+, the Exalt can use BeastMastering Behavior on a familiar she has enhanced with Bestial Traits Technique, to teach it to use a special ability that it can only use during Deadly Predator Method, for a cost of two experience points. Such abilities need not be wholly appropriate for the animal in question. A flying squirrel might gain the power to generate a charge like an electric eel, while a tyrant lizard might learn to spit a fireball from its mouth.",
+      "rawData": "Beast-Mastering Behavior\nCost: 10m, 1wp; Mins: Survival 4, Essence 2\nType: Simple\nKeywords: None\nDuration: One week\nPrerequisite Charms: Spirit-Tied Pet\nThe Solar holds dominion over the beasts of the field. \nWith this Charm she can train an animal, familiar or oth-\nerwise, to follow her commands. Through exercise and \nrepeated practice, she can also train the beast to use special \nabilities that are latent, such as an eagle’s disarm ability \n(p. 563), or techniques designed by the player or the Sto-\nryteller which are appropriate to the animal.\nNormally, training an animal to unlock its latent poten-\ntial requires a minimum of Survival 3, and two special-\nties: one in animal husbandry, and another specific to \nthe animal—falconry for a hawk, lion taming for a great \ncat, and so on. The trainer makes an extended roll with \nan interval of one month and a goal of 10, modified by \nthe animal’s attitude—docile and tamed beasts present-\ning no penalties, familiars representing a number of bonus \ndice equal to the trainer’s Intimacy to the animal, and \nhostile, wild, or otherwise untrainable animals repre-\nsenting a penalty of -2 or -3. The trainer must spend the \nentire month interacting with the beast, teaching it words, \nsignals, commands, and running it through exercises \ndaily. Any significant amount of time the trainer spends \naway from the beast during this time saps successes away \nat a rate of one success for every two or three days. \nSuccess at the extended roll means that the animal learns \nto use the technique and can be order to do so on \ncommand. \nON SPIRIT-TIED PET\nThe first time a Solar uses this Charm, ignore the \n1xp activation cost.\nC H A R M S\nEX3\n411\nA Solar with Beast-Mastering Behavior gains (Essence) \nautomatic successes to this roll, and shortens the interval \nof the roll to one week. Using this Charm exempts her \nfrom the specialty requirements of normal training, while \nthe Charm Friendship with Animals Approach may elim-\ninate the penalty associated with wild or hostile animals. \nAt Survival 5+, Essence 3+, the Solar can teach a familiar \nshe has enhanced with Spirit-Tied Pet to use magical abil-\nities, such as the eagle’s special ability Iron Wings Carry. \nDoing so costs the Solar two experience points per ability \ntrained.The player and the Storyteller can work together \nto develop new and appropriate abilities for the Solar to \nteach her familiar.\nAlso at Survival 5+, Essence 3+, the Exalt can use Beast-\nMastering Behavior on a familiar she has enhanced with \nBestial Traits Technique, to teach it to use a special ability \nthat it can only use during Deadly Predator Method, for \na cost of two experience points. Such abilities need not \nbe wholly appropriate for the animal in question. A flying \nsquirrel might gain the power to generate a charge like \nan electric eel, while a tyrant lizard might learn to spit a \nfireball from its mouth.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "eb269fc4-278c-3dfd-b829-6df2e2caf678",
+      "name": "Deadly Onslaught Coordination",
+      "ability": "Survival",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "c5928cdf-fe3b-3ad3-bdfb-fc32c8fe11fe"
+      ],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Lawgiver trains her familiar to strike on command.\n\nWith a flash of Essence, they strike in tandem, delivering a terrible blow. With this Charm, the Exalt can call her familiar to strike on the same instant she attacks—so long as her familiar has not attacked that round, she can call it from any position in the combat order to attack her target immediately before or after her own strike.",
+      "rawData": "Deadly Onslaught Coordination\nCost: 3m; Mins: Survival 5, Essence 2\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Beast-Mastering Behavior\nThe Lawgiver trains her familiar to strike on command. \nWith a flash of Essence, they strike in tandem, delivering \na terrible blow. With this Charm, the Exalt can call her \nfamiliar to strike on the same instant she attacks—so long \nas her familiar has not attacked that round, she can call it \nfrom any position in the combat order to attack her target \nimmediately before or after her own strike.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "3bfb1551-93d1-3e00-83b7-0b7eb2a89627",
+      "name": "Bestial Traits Technique",
+      "ability": "Survival",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "fa561b8f-f85a-3c94-890d-f8b444419e30"
+      ],
+      "cost": "10m, 1wp, 2xp",
+      "type": "Supplemental",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "With this Charm, the Solar can invest her Spirit-Tied Pet with traits beyond its natural capacity. This Charm supplements a normal beast-training roll, rerolling all 1s until 1s fail to appear. In addition to teaching her charge a new command, she can also increase one of the following traits upon the successful completion of the extended roll.\n\n• Strength, Dexterity, Stamina, or Perception +1. This may not be repurchased for the same Attribute more than once, and may not give a familiar an Attribute rated higher than 10.\n\n• Athletics, Brawl, Larceny, Martial Arts, Performance, Resistance, Stealth, or Survival, by one dot, to a maximum of the Exalt’s rating in that Ability.\n\n• Steeliness (Merit): This special merit permanently raises the familiar’s Resolve against intimidation or othe fear inducing effects by 1. This may only be purchased once.",
+      "rawData": "Bestial Traits Technique\nCost: 10m, 1wp, 2xp; Mins: Survival 4, Essence 2\nType: Supplemental\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Spirit-Tied Pet\nWith this Charm, the Solar can invest her Spirit-Tied Pet \nwith traits beyond its natural capacity. This Charm supple-\nments a normal beast-training roll, rerolling all 1s until 1s \nfail to appear. In addition to teaching her charge a new \ncommand, she can also increase one of the following traits \nupon the successful completion of the extended roll.  \n• Strength, Dexterity, Stamina, or Perception +1. This may \n not be repurchased for the same Attribute more than \n once, and may not give a familiar an Attribute rated \n higher than 10.  \n• Athletics, Brawl, Larceny, Martial Arts, Performance, \n Resistance, Stealth, or Survival, by one dot, to a maximum \n of the Exalt’s rating in that Ability.  \n• Steeliness (Merit): This special merit permanently raises \n the familiar’s Resolve against intimidation or othe fear \n inducing effects by 1. This may only be purchased once.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "4cf76745-4d3b-39d3-b67e-e10aa4b16a1d",
+      "name": "Hide-Hardening Practice",
+      "ability": "Survival",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "3bfb1551-93d1-3e00-83b7-0b7eb2a89627"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [
+        "Stackable"
+      ],
+      "duration": "Permanent",
+      "fullText": "The Solar reaches into the substance of her familiar, and draws out that which is soft and vulnerable, hardening muscle, bone and hide. The familiar’s soak increases by three, and its hardness by one. The Solar may enhance a single familiar with this Charm (Essence) times.",
+      "rawData": "Hide-Hardening Practice\nCost: —; Mins: Survival 5, Essence 2\nType: Permanent\nKeywords: Stackable\nDuration: Permanent\nPrerequisite Charms: Bestial Traits Technique\nThe Solar reaches into the substance of her familiar, and \ndraws out that which is soft and vulnerable, hardening \nmuscle, bone and hide. The familiar’s soak increases by \nthree, and its hardness by one. The Solar may enhance a \nsingle familiar with this Charm (Essence) times.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "e3264382-f62a-3024-b0f5-715e7e1a3ba7",
+      "name": "Life of the Aurochs",
+      "ability": "Survival",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "3bfb1551-93d1-3e00-83b7-0b7eb2a89627"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [
+        "Stackable"
+      ],
+      "duration": "Permanent",
+      "fullText": "The Solar taps a wellspring of Essence to increase her familiar’s vitality and stature. Each purchase of this Charm increases a familiar’s health levels, adding one -1 health level and two -2 health levels to its health track. In addition, each repurchase increases her familiar’s size by 10%, to be manifested normally or only during Saga Beast Virtue and Deadly Predator Method. The Solar may enhance a single familiar with this Charm (Essence) times.",
+      "rawData": "Life of the Aurochs\nCost: —; Mins: Survival 5, Essence 2\nType: Permanent\nKeywords: Stackable\nDuration: Permanent\nPrerequisite Charms: Bestial Traits Technique\nThe Solar taps a wellspring of Essence to increase her fa-\nmiliar’s vitality and stature. Each purchase of this Charm \nincreases a familiar’s health levels, adding one -1 health \nlevel and two -2 health levels to its health track. In addi-\ntion, each repurchase increases her familiar’s size by 10%, \nto be manifested normally or only during Saga Beast Virtue \nand Deadly Predator Method. The Solar may enhance a \nsingle familiar with this Charm (Essence) times.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "3c3ec7ef-89ef-37fd-9ea4-5236e94ff55a",
+      "name": "Familiar-Honing Instruction",
+      "ability": "Survival",
+      "minAbility": 3,
+      "minEssence": 2,
+      "prerequisites": [
+        "411dec61-9df5-3a8e-bda8-f262c25d2f65"
+      ],
+      "cost": "4m",
+      "type": "Simple",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "The first time a Solar uses this Charm, ignore the 2xp activation cost.\n\nThe Solar can inspire zealous devotion, even in the beasts of the wilderness. Conveying her wishes to her familiar through a brief command, the Solar orders her companion to attempt an action of which it is capable. Roll the Exalt’s (Charisma + Survival) and add her successes as dice to the familiar’s attempt to follow the Solar’s order. Unlike normal Simple Charms, this Charm may be placed in a flurry. At Essence 3+, this Charm can be used reflexively.",
+      "rawData": "Familiar-Honing Instruction\nCost: 4m; Mins: Survival 3, Essence 2\nType: Simple\nKeywords: Mute\nDuration: Instant\nPrerequisite Charms: Spirit-Tied Pet\nON BESTIAL TRAITS TECHNIQUE\nThe first time a Solar uses this Charm, ignore the \n2xp activation cost.\nC H A P T E R  6\nEX3\n412\nThe Solar can inspire zealous devotion, even in the beasts \nof the wilderness. Conveying her wishes to her familiar \nthrough a brief command, the Solar orders her companion \nto attempt an action of which it is capable. Roll the Exalt’s \n(Charisma + Survival) and add her successes as dice to the \nfamiliar’s attempt to follow the Solar’s order. Unlike normal \nSimple Charms, this Charm may be placed in a flurry. At \nEssence 3+, this Charm can be used reflexively.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "00b6f184-3e49-3f2f-ab23-4e09c5b09fa2",
+      "name": "Spirit-Hunting Hound",
+      "ability": "Survival",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "f0809e2c-a8b8-3bb1-8490-bc19fea6ab8a",
+        "56d8907e-5e74-3f7b-b0a0-38a722ba6c0b"
+      ],
+      "cost": "1m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "One turn",
+      "fullText": "With this Charm, the Exalt invokes the familiar’s senses, feeding them with the forces that primed Creation. For one turn, the familiar can attempt to detect immaterial beings with a (Perception + Awareness) roll, against a difficulty of the target’s Essence or five, whichever is lower.\n\nIf the Solar’s familiar detects the target, it continues to do so for the rest of the scene.",
+      "rawData": "Spirit-Hunting Hound\nCost: 1m; Mins: Survival 5, Essence 2\nType: Reflexive\nKeywords: None\nDuration: One turn\nPrerequisite Charms: Familiar-Honing Instruction\nThough the Solar’s eyes may be blind to the spirit world, \nthe eyes of her familiar can see into the realm of Essence. \nWith this Charm, the Exalt invokes the familiar’s senses, \nfeeding them with the forces that primed Creation. For \none turn, the familiar can attempt to detect immaterial \nbeings with a (Perception + Awareness) roll, against a dif-\nficulty of the target’s Essence or five, whichever is lower. \nIf the Solar’s familiar detects the target, it continues to do \nso for the rest of the scene.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "5267b508-dc34-3651-84ee-24a8705bf5fa",
+      "name": "Element-Resisting Prana",
+      "ability": "Survival",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "bfff2030-1a4e-36b9-969e-a921fdd0019b"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "Through this Charm, the Solar becomes able to survive in any environment. When the prerequisite is active, the Solar can withstand the heat and toxic fumes in the caldera of an active volcano, can walk underwater with no ill effects, and can even withstand the hostile and inimical climes of the Elemental Poles. While Hardship-Surviving Mendicant Spirit is active, reduce damage from all elemental sources of environmental damage by the Exalt’s Resistance rating.",
+      "rawData": "Element-Resisting Prana\nCost: —; Mins: Survival 5, Essence 3\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Hardship-Surviving \nMendicant Spirit\nThrough this Charm, the Solar becomes able to survive \nin any environment. When the prerequisite is active, the \nSolar can withstand the heat and toxic fumes in the caldera \nof an active volcano, can walk underwater with no ill \neffects, and can even withstand the hostile and inimical \nclimes of the Elemental Poles. While Hardship-Surviving \nMendicant Spirit is active, reduce damage from all ele-\nmental sources of environmental damage by the Exalt’s \nResistance rating.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "61dd8b43-72d2-37e7-a231-69f6b88cf684",
+      "name": "Traceless Passage",
+      "ability": "Survival",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "901441b4-7cfb-3835-905c-0116f86618e2"
+      ],
+      "cost": "3m, 1wp",
+      "type": "Supplemental",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "An Exalt with this Charm can vanish into the wilderness.\n\nThis Charm affects the Solar and up to (Essence x2) followers, supplementing a (Wits + Survival) roll to cover the Exalt’s tracks (p. 229). This roll gains (Essence) automatic successes and is bolstered by the double 9s rule.\n\nThe Solar cannot be tracked conventionally, not even with the aid of tracking animals or other means—mundane attempts automatically fail. Only those with supernatural prowess can hope to find the vanished Lawgiver.",
+      "rawData": "Traceless Passage\nCost: 3m, 1wp; Mins: Survival 5, Essence 3\nType: Supplemental\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Unshakeable Bloodhound \nTechnique\nAn Exalt with this Charm can vanish into the wilderness. \nThis Charm affects the Solar and up to (Essence x2) fol-\nlowers, supplementing a (Wits + Survival) roll to cover \nthe Exalt’s tracks (p. 229). This roll gains (Essence) auto-\nmatic successes and is bolstered by the double 9s rule. \nThe Solar cannot be tracked conventionally, not even with \nthe aid of tracking animals or other means—mundane at-\ntempts automatically fail. Only those with supernatural \nprowess can hope to find the vanished Lawgiver.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "aa4a80cc-a31c-3292-9373-02381ea49cb7",
+      "name": "Eye-Deceiving Camouflage",
+      "ability": "Survival",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "61dd8b43-72d2-37e7-a231-69f6b88cf684"
+      ],
+      "cost": "6m",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Indefinite",
+      "fullText": "With this Charm, the Solar can camouflage herself or an object (Essence + 1) yards wide so perfectly that they cannot be detected by mundane senses while immobile.\n\nEven the acute senses of a claw strider or other famed hunting beasts will fail to detect the Exalt (or her shelter, or her hidden cache of food, etc). Preparing this camouflage takes the Solar an hour. The player rolls (Intelligence + Survival) and records the successes, rerolling all nonsuccesses a single time and all 1s until 1s fail to appear.\n\nA FAMILIAR INVESTMENT Nothing’s sacred. Sometimes familiars get killed. Many of the Survival Charms featured here require the Solar to make an investment of experience points in a familiar. These Charms do not represent a poor investment, nor a guarantee of painful regret in the future. Should the Exalt’s familiar die, the experience points invested into the familiar return to the Solar.\n\nThese successes directly counter any magical Awarenessbased attempts to pierce the Lawgiver’s camouflaging efforts.",
+      "rawData": "Eye-Deceiving Camouflage\nCost: 6m; Mins: Survival 5, Essence 3\nType: Simple\nKeywords: None\nDuration: Indefinite\nPrerequisite Charms: Traceless Passage\nWith this Charm, the Solar can camouflage herself or an \nobject (Essence + 1) yards wide so perfectly that they \ncannot be detected by mundane senses while immobile. \nEven the acute senses of a claw strider or other famed \nhunting beasts will fail to detect the Exalt (or her shelter, \nor her hidden cache of food, etc). Preparing this camou-\nflage takes the Solar an hour. The player rolls (Intelligence \n+ Survival) and records the successes, rerolling all non-\nsuccesses a single time and all 1s until 1s fail to appear. \nA FAMILIAR INVESTMENT\nNothing’s sacred. Sometimes familiars get killed. Many \nof the Survival Charms featured here require the Solar \nto make an investment of experience points in a famil-\niar. These Charms do not represent a poor investment, \nnor a guarantee of painful regret in the future. Should \nthe Exalt’s familiar die, the experience points invested \ninto the familiar return to the Solar. \nC H A R M S\nEX3\n413\nThese successes directly counter any magical Awareness-\nbased attempts to pierce the Lawgiver’s camouflaging \nefforts.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "0ba243a8-d0a7-30a5-9a88-1422d8f3a711",
+      "name": "Red-Toothed Execution Order",
+      "ability": "Survival",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "eb269fc4-278c-3dfd-b829-6df2e2caf678"
+      ],
+      "cost": "5m",
+      "type": "Reflexive",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "Sensing a moment to strike, the Exalt orders her familiar in for the kill. Though it is a reflexive, this Charm supplements a familiar’s decisive attack, adding extra successes from the attack roll to the attack’s raw damage. Using this Charm sets the familiar’s Initiative to base after the attack, even when it’s under the effect of Deadly Predator Method. This Charm may not be used more than once per scene, but resets if the familiar raises its Initiative to 10+.",
+      "rawData": "Red-Toothed Execution Order\nCost: 5m; Mins: Survival 5, Essence 3\nType: Reflexive\nKeywords: Decisive-only\nDuration: Instant\nPrerequisite Charms: Deadly Onslaught \nCoordination\nSensing a moment to strike, the Exalt orders her familiar \nin for the kill. Though it is a reflexive, this Charm supple-\nments a familiar’s decisive attack, adding extra success-\nes from the attack roll to the attack’s raw damage. Using \nthis Charm sets the familiar’s Initiative to base after the \nattack, even when it’s under the effect of Deadly Predator \nMethod. This Charm may not be used more than once per \nscene, but resets if the familiar raises its Initiative to 10+.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "97576421-627a-32c1-8dc9-fe7e2a6fcd0b",
+      "name": "Ghost Panther Slinking",
+      "ability": "Survival",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "c5928cdf-fe3b-3ad3-bdfb-fc32c8fe11fe",
+        "3bfb1551-93d1-3e00-83b7-0b7eb2a89627"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "When the Solar controls a familiar using the Sense-Riding Discipline effect of Spirit-Tied Pet, she can indict the senses of her enemies. While taking the form of her familiar, the Exalt may activate any Stealth Charms she knows to protect her familiar-self from detection. Familiars which are large, unusual, or otherwise unsuited to stealth may incur penalties to normal Stealth actions based on unfavorable circumstances—a claw strider slinking through a forest can be difficult to notice, but a claw strider skulking through the shadowed streets of Nexus suffers a -2 penalty.",
+      "rawData": "Ghost Panther Slinking\nCost: —; Mins: Survival 5, Essence 3\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Beast-Mastering Behavior, Bestial \nTraits Technique\nWhen the Solar controls a familiar using the Sense-Riding \nDiscipline effect of Spirit-Tied Pet, she can indict the senses \nof her enemies. While taking the form of her familiar, the \nExalt may activate any Stealth Charms she knows to protect \nher familiar-self from detection. Familiars which are large, \nunusual, or otherwise unsuited to stealth may incur pen-\nalties to normal Stealth actions based on unfavorable cir-\ncumstances—a claw strider slinking through a forest can \nbe difficult to notice, but a claw strider skulking through \nthe shadowed streets of Nexus suffers a -2 penalty.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "3391b43c-5bdb-3c0d-aee3-b90daa3b4ab2",
+      "name": "Saga Beast Virtue",
+      "ability": "Survival",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "4cf76745-4d3b-39d3-b67e-e10aa4b16a1d",
+        "e3264382-f62a-3024-b0f5-715e7e1a3ba7"
+      ],
+      "cost": "5m, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Indefinite",
+      "fullText": "The Exalt infuses her familiar with Solar anima, unlocking the form of the sacred beast. Her familiar grows in size by 25%, and gains +1 to all Attributes, and both defenses. It also gains up to (Essence) mutations, determined by the player upon purchase of the Charm. The Exalt can choose to activate Saga Beast Virtue with as many or as few of the designated mutations as she chooses. While in Saga Beast form, the familiar is completely immune to fear-inducing effects.",
+      "rawData": "Saga Beast Virtue\nCost: 5m, 1wp; Mins: Survival 5, Essence 3\nType: Reflexive\nKeywords: None\nDuration: Indefinite\nPrerequisite Charms: Hide-Hardening Practice, Life of \nthe Aurochs\nThe Exalt infuses her familiar with Solar anima, unlock-\ning the form of the sacred beast. Her familiar grows in \nsize by 25%, and gains +1 to all Attributes, and both de-\nfenses. It also gains up to (Essence) mutations, determined \nby the player upon purchase of the Charm. The Exalt can \nchoose to activate Saga Beast Virtue with as many or as \nfew of the designated mutations as she chooses. While in \nSaga Beast form, the familiar is completely immune to \nfear-inducing effects.\nC H A P T E R  6\nEX3\n414",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "b37d504a-836a-3d0e-9f04-301a61462bb3",
+      "name": "Phantom-Rending Fangs",
+      "ability": "Survival",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "1a1efd12-cb1a-3bfa-9035-f9f6c6ec8aed",
+        "bf0a114b-07fe-330a-9488-a12e26f6ec9e",
+        "a0627ba4-960a-3b0f-bc9c-7726d1552339",
+        "bcc91cb2-cdb5-34a3-992b-f10d5c88ebc9"
+      ],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "One turn",
+      "fullText": "Honing Instruction by one for each less mote she pays to activate Phantom-Rending Fangs. This can reduce the cost of this Charm to zero.",
+      "rawData": "Phantom-Rending Fangs\nCost: 3m; Mins: Survival 5, Essence 3\nType: Reflexive\nKeywords: None\nDuration: One turn\nPrerequisite Charms: Spirit-Hunting Hound\nReaching into the Essence of the world, the Solar chan-\nnels condemnation through a bestial agent. Though it is \na reflexive Charm, this Charm supplements a familiar’s \nattack against an immaterial foe. If the familiar success-\nfully grapples and establishes clinch control of the imma-\nterial, it is rendered temporarily vulnerable to physical \nattacks for the clinch’s duration. If the Exalt has enhanced \nthis Charm with Familiar-Honing Instruction, the player \nmay choose to lower the cost of this Charm by one mote \nper success, reducing the bonus dice added by Familiar-\nHoning Instruction by one for each less mote she pays to \nactivate Phantom-Rending Fangs. This can reduce the \ncost of this Charm to zero.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "cb369b88-5074-36fb-b9bd-ad4f62d7a459",
+      "name": "Crimson Talon Vigor",
+      "ability": "Survival",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "502acbdd-5ca6-31c7-a7e2-25b311c1939a"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Lawgiver and her familiar fight as one. With this Charm, the familiar learns to read the Exalt’s momentum, flowing with her attacks as if it were part of the Solar’s Essence. For each successful withering attack the Solar lands against an opponent, the familiar gains bonus Initiative equal to half the Initiative drained by the attack, rounded up. This bonus may not exceed the Solar’s Essence score. This Charm must be repurchased for every familiar the Solar wishes to enhance with its effect.",
+      "rawData": "Crimson Talon Vigor\nCost: —; Mins: Survival 5, Essence 3\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Force-Building Predator Style\nThe Lawgiver and her familiar fight as one. With this \nCharm, the familiar learns to read the Exalt’s momentum, \nflowing with her attacks as if it were part of the Solar’s \nEssence. For each successful withering attack the Solar \nlands against an opponent, the familiar gains bonus Ini-\ntiative equal to half the Initiative drained by the attack, \nrounded up. This bonus may not exceed the Solar’s Essence \nscore. This Charm must be repurchased for every famil-\niar the Solar wishes to enhance with its effect.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "1ff9d750-8705-33c9-904b-d44511dabf1a",
+      "name": "Deadly Predator Method",
+      "ability": "Survival",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "cb369b88-5074-36fb-b9bd-ad4f62d7a459",
+        "0ba243a8-d0a7-30a5-9a88-1422d8f3a711",
+        "0e5ecec2-499a-3760-a65b-d30ee739245e",
+        "2c4b5e65-cbd3-370c-9b4b-e33adb6ed472"
+      ],
+      "cost": "15m, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Indefinite",
+      "fullText": "Solar crushes a tiny star in her fist, releasing a massive amount of spiritual force into the world around her. Her surroundings become primal, shifting in modes and methods unseen since the dawn of time, and her familiar remembers an ancient time and an earlier form in which beasts were the life that beat at the heart of a supreme being. Channeling the Essence of the ancient world through her familiar, the Solar’s honored companion is transformed into a primal beast of war.\n\nDeadly Predator Method has the following advantages:\n\n•  The familiar grows immense. Its size grows by 15%, and an additional 10% for every repurchase of Life of the Aurochs. The Solar may waive the growth bonus if she chooses.\n\n•  The familiar’s appearance becomes magnificent and terrifying. Its markings become more extreme, its colors explosive and vibrant. Natural armor such as a shell or carapace becomes spiked and ridged, while natural weaponry such as horns, fangs and tusks grow even more pronounced. The familiar gains (Solar’s Essence) automatic successes to intimidate targets. Against much smaller or cowardly opponents, the familiar is automatically intimidating—such enemies suffer a -1 penalty to their attacks against the familiar.\n\n•  The familiar cannot be intimidated, and ignores all fearinducing magic.\n\n•  The familiar gains (Solar’s Essence) automatic successes to all movement-based Athletics rolls. Mighty familiars such as bears and boars gain (Solar’s Essence) in successes on (Strength + Athletics) rolls. Gigantic familiars gain all of these advantages and increase their minimum strength by (Solar’s Essence x2) for the purposes of which feats of strength they can attempt.\n\n•  The familiar’s withering and decisive attacks gain (Solar’s Essence) automatic successes. The creature’s withering damage gains a bonus equal to the Solar’s Essence. For the duration of the Charm, its Initiative does not reset on a successful decisive attack unless the ON SAGA BEAST VIRTUE A Solar with Supernal Survival can grant three mutations to a familiar before reaching Essence 3.\n\nSolar uses Red-Toothed Execution Order.\n\n•  The familiar’s hide grows tough as iron, its bones as hard as diamond, its flesh like granite. It gains five soak against withering attacks, and it becomes invulnerable to decisive attacks. During this time, the transformed familiar can only be hurt by falling from extreme heights or by being crushed by massive vertical tonnage.\n\nEven so, such damage will not exceed the familiar’s final health box, leaving it incapacitated but alive when the Charm ends.\n\n•  The familiar may roll Join Battle upon transformation, keeping the higher of its current value or the roll’s result.\n\nSmaller animals that do not usually attack gain dice pools comparable to smaller predators and can use appropriate special attacks associated with such animals.\n\nFor example, a hummingbird gains access to the eagle’s Death Dive attack (see p. 563). Familiars enhanced with Beast-Mastering Behavior may also gain access to a special ability denoted in that’s Charm’s text.\n\nWhile Deadly Predator Method is active, the familiar loses one point of Initiative per round, and if it suffers Initiative crash, Deadly Predator Method ends, and the beast reverts to its mundane form. Deadly Predator Method can only be used once per battle, but can be reset by killing an opponent with Red-Toothed Execution Order.\n\nThrown",
+      "rawData": "Deadly Predator Method\nCost: 15m, 1wp; Mins: Survival 5, Essence 3\nType: Reflexive\nKeywords: None\nDuration: Indefinite\nPrerequisite Charms: Crimson Talon Vigor, Red-Toothed \nExecution Order, Saga Beast Virtue\nOpening her palm to a beam of pure Solar Essence, the \nSolar crushes a tiny star in her fist, releasing a massive \namount of spiritual force into the world around her. Her \nsurroundings become primal, shifting in modes and \nmethods unseen since the dawn of time, and her familiar \nremembers an ancient time and an earlier form in which \nbeasts were the life that beat at the heart of a supreme \nbeing. Channeling the Essence of the ancient world \nthrough her familiar, the Solar’s honored companion is \ntransformed into a primal beast of war. \nDeadly Predator Method has the following advantages: \n•  The familiar grows immense. Its size grows by 15%, \nand an additional 10% for every repurchase of Life of \nthe Aurochs. The Solar may waive the growth bonus if \nshe chooses. \n•  The familiar’s appearance becomes magnificent and ter-\nrifying. Its markings become more extreme, its colors \nexplosive and vibrant. Natural armor such as a shell or \ncarapace becomes spiked and ridged, while natural weap-\nonry such as horns, fangs and tusks grow even more pro-\nnounced. The familiar gains (Solar’s Essence) automat-\nic successes to intimidate targets. Against much smaller \nor cowardly opponents, the familiar is automatically in-\ntimidating—such enemies suffer a -1 penalty to their \nattacks against the familiar.\n•  The familiar cannot be intimidated, and ignores all fear-\ninducing magic.\n•  The familiar gains (Solar’s Essence) automatic success-\nes to all movement-based Athletics rolls. Mighty famil-\niars such as bears and boars gain (Solar’s Essence) in \nsuccesses on (Strength + Athletics) rolls. Gigantic famil-\niars gain all of these advantages and increase their \nminimum strength by (Solar’s Essence x2) for the pur-\nposes of which feats of strength they can attempt.\n•  The familiar’s withering and decisive attacks gain \n(Solar’s Essence) automatic successes. The creature’s \nwithering damage gains a bonus equal to the Solar’s \nEssence. For the duration of the Charm, its Initiative \ndoes not reset on a successful decisive attack unless the \nON SAGA BEAST VIRTUE\nA Solar with Supernal Survival can grant three muta-\ntions to a familiar before reaching Essence 3. \nC H A R M S\nEX3\n415\nSolar uses Red-Toothed Execution Order.\n•  The familiar’s hide grows tough as iron, its bones as hard \nas diamond, its flesh like granite. It gains five soak against \nwithering attacks, and it becomes invulnerable to \ndecisive attacks. During this time, the transformed \nfamiliar can only be hurt by falling from extreme heights \nor by being crushed by massive vertical tonnage. \nEven so, such damage will not exceed the familiar’s final \nhealth box, leaving it incapacitated but alive when the \nCharm ends.\n•  The familiar may roll Join Battle upon transformation, \nkeeping the higher of its current value or the roll’s result. \nSmaller animals that do not usually attack gain dice \npools comparable to smaller predators and can use ap-\npropriate special attacks associated with such animals. \nFor example, a hummingbird gains access to the eagle’s \nDeath Dive attack (see p. 563). Familiars enhanced with \nBeast-Mastering Behavior may also gain access to a \nspecial ability denoted in that’s Charm’s text.\nWhile Deadly Predator Method is active, the familiar loses \none point of Initiative per round, and if it suffers Initia-\ntive crash, Deadly Predator Method ends, and the beast \nreverts to its mundane form. Deadly Predator Method can \nonly be used once per battle, but can be reset by killing an \nopponent with Red-Toothed Execution Order.\nThrown",
+      "potentiallyProblematicImport": true
+    }
+  ]
+}

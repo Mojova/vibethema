@@ -1,0 +1,426 @@
+{
+  "$schema": "./charm-schema.json",
+  "version": "0.1.0",
+  "ability": "Stealth",
+  "type": "solarAbility",
+  "exalt": "solar",
+  "charms": [
+    {
+      "id": "b4418dd6-9415-3558-bd09-31948ef52b41",
+      "name": "Perfect Shadow Stillness",
+      "ability": "Stealth",
+      "minAbility": 2,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "1m, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Lawgiver’s stealth technique is honed until it’s flawless. Perfect Shadow Stillness allows a reroll of any Stealthbased action, preserving the 10s from those results and rerolling the remaining dice. At Stealth 5, succeeding at a stealth attempt with this Charm awards the Solar one point of temporary Willpower.",
+      "rawData": "Perfect Shadow Stillness \nCost: 1m, 1wp; Mins: Stealth 2, Essence 1\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: None\nThe Lawgiver’s stealth technique is honed until it’s flaw-\nless. Perfect Shadow Stillness allows a reroll of any Stealth-\nbased action, preserving the 10s from those results and \nrerolling the remaining dice. At Stealth 5, succeeding at a \nstealth attempt with this Charm awards the Solar one \npoint of temporary Willpower.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "b83af89e-0812-387b-857a-4949b32fed70",
+      "name": "Invisible Statue Spirit",
+      "ability": "Stealth",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "532636c8-4873-37a7-983e-aff6d4d21c74",
+        "a74c0942-505d-39b0-9553-b4ec46bafc2d"
+      ],
+      "cost": "5m",
+      "type": "Reflexive",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Indefinite",
+      "fullText": "Solar with this Charm can affect true invisibility. However, the Exalt cannot move, nor can she take violent action without breaking this deception. Characters using Invisible Statue Spirit are not immaterial and can still be detected by touch, scent, taste, or hearing.",
+      "rawData": "Invisible Statue Spirit\nCost: 5m; Mins: Stealth 3, Essence 1\nType: Reflexive\nKeywords: Mute\nDuration: Indefinite\nPrerequisite Charms: Perfect Shadow Stillness\nAssuming perfect stillness, the Solar fades from sight. A \nSolar with this Charm can affect true invisibility. However, \nthe Exalt cannot move, nor can she take violent action \nwithout breaking this deception. Characters using Invis-\nible Statue Spirit are not immaterial and can still be de-\ntected by touch, scent, taste, or hearing.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "ff9732c8-ee5d-3eae-b657-092c5a477d74",
+      "name": "Easily-Overlooked Presence Method",
+      "ability": "Stealth",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "3m",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "One scene",
+      "fullText": "The Lawgiver evades detection by hiding in plain sight.\n\nA Solar with this Charm is able to drift unnoticed through crowds or alone. This Charm models her talent for blending in and remaining unobtrusive. When active, characters cannot notice her unless she takes overt action. Such actions include any display of prowess—leaping from the street to the rooftops, braving a snowstorm in summer clothes, etc. Join Battle always counts as an overt action.\n\nThis skill does not work against alert guards or those who intend to stop everyone (as with a checkpoint), but can\n\nbe overcome by magic only if the user has a Minor or greater Intimacy to the Solar or a Major or Defining Intimacy to a cause the Exalt’s presence directly threatens.\n\nCertain Charms may aid in detecting the Exalt. Roll the Lawgiver’s ([Wits or Dexterity] + Stealth) against her opponent’s relevant (Attribute + Ability) or Resolve, if the attacking Charm is based on the opponent’s Integrity.",
+      "rawData": "Easily-Overlooked Presence Method \nCost: 3m; Mins: Stealth 3, Essence 1\nType: Simple\nKeywords: None\nDuration: One scene\nPrerequisite Charms: None\nThe Lawgiver evades detection by hiding in plain sight. \nA Solar with this Charm is able to drift unnoticed through \ncrowds or alone. This Charm models her talent for blend-\ning in and remaining unobtrusive. When active, charac-\nters cannot notice her unless she takes overt action. Such \nactions include any display of prowess—leaping from the \nstreet to the rooftops, braving a snowstorm in summer \nclothes, etc. Join Battle always counts as an overt action.\nThis skill does not work against alert guards or those who \nintend to stop everyone (as with a checkpoint), but can \nC H A P T E R  6\nEX3\n404\nbe overcome by magic only if the user has a Minor or \ngreater Intimacy to the Solar or a Major or Defining In-\ntimacy to a cause the Exalt’s presence directly threatens. \nCertain Charms may aid in detecting the Exalt. Roll the \nLawgiver’s ([Wits or Dexterity] + Stealth) against her op-\nponent’s relevant (Attribute + Ability) or Resolve, if the \nattacking Charm is based on the opponent’s Integrity.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "53d19f31-350d-3645-8baa-43bae631838e",
+      "name": "Blinding Battle Feint",
+      "ability": "Stealth",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "3m",
+      "type": "Supplemental",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar leaps in and out of battle with nigh untraceable speed. The Exalt may use her (Dexterity + Stealth) to Join Battle. Her Join Battle result also acts as an attempt to enter Stealth. If she beats her opponent’s Awareness-based Join Battle roll, she is automatically concealed, so long as there is a viable place to hide. If her foe uses a Join Battle roll modified to use any other Ability than Awareness, then he must make an Awareness roll to spot her, suffering a penalty equal to the difference in their Initiative, even if he rolled higher. If he fails the Awareness check, the Solar still vanishes from view.",
+      "rawData": "Blinding Battle Feint\nCost: 3m; Mins: Stealth 3, Essence 1\nType: Supplemental\nKeywords: None\nDuration: Instant\nPrerequisite Charms: None\nThe Solar leaps in and out of battle with nigh untraceable \nspeed. The Exalt may use her (Dexterity + Stealth) to Join \nBattle. Her Join Battle result also acts as an attempt to \nenter Stealth. If she beats her opponent’s Awareness-based \nJoin Battle roll, she is automatically concealed, so long as \nthere is a viable place to hide. If her foe uses a Join Battle \nroll modified to use any other Ability than Awareness, \nthen he must make an Awareness roll to spot her, suffer-\ning a penalty equal to the difference in their Initiative, \neven if he rolled higher. If he fails the Awareness check, \nthe Solar still vanishes from view.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "81514937-b10f-3791-a1fb-314dd403e7b8",
+      "name": "Stalking Wolf Attitude",
+      "ability": "Stealth",
+      "minAbility": 4,
+      "minEssence": 1,
+      "prerequisites": [
+        "53d19f31-350d-3645-8baa-43bae631838e"
+      ],
+      "cost": "5m",
+      "type": "Simple",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Indefinite",
+      "fullText": "The Solar stalks her prey unseen, waiting for the perfect moment to strike. While concealed, the Solar uses this technique to focus on an opponent. Feeling along the pulse of the world’s Essence, she stalks her target from the shadows, her veins coursing with lethal readiness.\n\nWith this Charm, the Solar ignores the -3 penalty to Stealth rolls for moving while concealed. In addition, on each round in which she succeeds at the contested roll to evade detection by her mark, she gains an amount of Initiative equal to her extra successes on the roll. When the Exalt senses the perfect moment to strike, she may then leap from concealment to unleash a decisive attack, as long as she’s been hidden by this Charm for at least a round.\n\nFor each round that she remains under the effects of this Charm, the Solar gains a mounting -1 penalty to her Stealth rolls, and if she is discovered or if she voluntarily leaves concealment or terminates the Charm without making a decisive attack, she loses all of the Initiative she gained through her most recent activation of the Charm.\n\nPERSONAS: RULES AND LIMITATIONS Personas are a tool developed by the master socialites of the Solar Exalted to more comfortably and effectively lead multiple lives. The Solar can use personas to maintain a number of different alliances, loyalties, and ways of thinking. She can use a persona to solve problems that are not suited to her natural disposition, and to more comfortably and invisibly ally herself with the enemies of her friends in order to learn their weaknesses. Though there are a few Charm-based exceptions, personas are not metaphysically different people from the Solar. The Solar’s masks, genders, and personalities are all entirely performative, and created through her social environment. Through her mastery of social skills, she is able to adapt to a situation so completely that her true self almost disappears.\n\nSuch freedom and flexibility also has a few downsides:\n\n•  Personas cannot use Hundred-Faced Stranger to create their own personas.\n\n•  Personas do not benefit from Supernal Abilities.\n\n•  If a persona wishes to use a Charm that has an experience points cost, the experience is spent twice— from both the persona’s experience as well as the Solar’s.\n\n•  When the Exalt uses Hundred-Faced Stranger to become a persona with different Charms than her own, any ongoing effects are terminated at the moment she changes, unless her persona also knows the Charm. This includes the effects of permanent Charms.\n\n•  If the Solar and her persona share a Charm with a reset condition, use of the Charm by either character places it in a “down” state for both. Likewise, resetting it for one resets it for both.\n\n•  Craft points earned by the Solar are shared with her personas, and craft points earned by her personas are shared with the Solar. Charms which award craft points over time—after sleeping, after a story ends— are only awarded once, no matter how many times the Solar purchases them across various personas.\n\n•  Lastly, if the Solar enters into an agreement bound by the Eclipse oath anima power (p. 176), her persona is bound by it, and vice versa. Likewise, if the Solar is struck with a curse, she may not escape it by taking the guise of a persona. If the Exalt has been prevented from speaking certain knowledge by Corrupted Words, she can’t switch to a persona in order to speak her mind.",
+      "rawData": "Stalking Wolf Attitude \nCost: 5m; Mins: Stealth 4, Essence 1\nType: Simple\nKeywords: Mute\nDuration: Indefinite\nPrerequisite Charms: Blinding Battle Feint\nThe Solar stalks her prey unseen, waiting for the perfect \nmoment to strike. While concealed, the Solar uses this \ntechnique to focus on an opponent. Feeling along the \npulse of the world’s Essence, she stalks her target from \nthe shadows, her veins coursing with lethal readiness. \nWith this Charm, the Solar ignores the -3 penalty to \nStealth rolls for moving while concealed. In addition, on \neach round in which she succeeds at the contested roll \nto evade detection by her mark, she gains an amount of \nInitiative equal to her extra successes on the roll. When \nthe Exalt senses the perfect moment to strike, she may \nthen leap from concealment to unleash a decisive attack, \nas long as she’s been hidden by this Charm for at least \na round.\nFor each round that she remains under the effects of this \nCharm, the Solar gains a mounting -1 penalty to her Stealth \nrolls, and if she is discovered or if she voluntarily leaves \nconcealment or terminates the Charm without making a \ndecisive attack, she loses all of the Initiative she gained \nthrough her most recent activation of the Charm.\nPERSONAS: RULES AND LIMITATIONS\nPersonas are a tool developed by the master socialites \nof the Solar Exalted to more comfortably and effectively \nlead multiple lives. The Solar can use personas to main-\ntain a number of different alliances, loyalties, and ways \nof thinking. She can use a persona to solve problems \nthat are not suited to her natural disposition, and to more \ncomfortably and invisibly ally herself with the enemies \nof her friends in order to learn their weaknesses. Though \nthere are a few Charm-based exceptions, personas are \nnot metaphysically different people from the Solar. The \nSolar’s masks, genders, and personalities are all en-\ntirely performative, and created through her social en-\nvironment. Through her mastery of social skills, she is \nable to adapt to a situation so completely that her true \nself almost disappears.\nSuch freedom and flexibility also has a few downsides:\n•  Personas cannot use Hundred-Faced Stranger to \ncreate their own personas.\n•  Personas do not benefit from Supernal Abilities.\n•  If a persona wishes to use a Charm that has an ex-\nperience points cost, the experience is spent twice—\nfrom both the persona’s experience as well as the \nSolar’s.\n•  When the Exalt uses Hundred-Faced Stranger to \nbecome a persona with different Charms than her \nown, any ongoing effects are terminated at the moment \nshe changes, unless her persona also knows the \nCharm. This includes the effects of permanent Charms.\n•  If the Solar and her persona share a Charm with a \nreset condition, use of the Charm by either character \nplaces it in a “down” state for both. Likewise, reset-\nting it for one resets it for both.\n•  Craft points earned by the Solar are shared with her \npersonas, and craft points earned by her personas \nare shared with the Solar. Charms which award craft \npoints over time—after sleeping, after a story ends—\nare only awarded once, no matter how many times \nthe Solar purchases them across various personas.\n•  Lastly, if the Solar enters into an agreement bound \nby the Eclipse oath anima power (p. 176), her persona \nis bound by it, and vice versa. Likewise, if the Solar \nis struck with a curse, she may not escape it by taking \nthe guise of a persona. If the Exalt has been prevent-\ned from speaking certain knowledge by Corrupted \nWords, she can’t switch to a persona in order to speak \nher mind.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "41330fe1-36db-3c3a-9c95-b162f3a48c9c",
+      "name": "Guardian Fog Approach",
+      "ability": "Stealth",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "53d19f31-350d-3645-8baa-43bae631838e"
+      ],
+      "cost": "3m",
+      "type": "Simple",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "Through quick action, the Solar may obscure someone with her own efforts to remain hidden. The Solar must be touching the one she wishes to hide, and must herself attempt a Stealth action at the same time. The Solar works to obscure her charge, covering him with her body, shrouding him with her cloak, or guiding him into a cleverly concealed niche. Add half the Solar’s successes (rounded up) and any stunt bonuses on this action as dice to her charge’s own Stealth roll.",
+      "rawData": "Guardian Fog Approach\nCost: 3m; Mins: Stealth 3, Essence 1\nType: Simple\nKeywords: Mute\nDuration: Instant\nPrerequisite Charms: Blinding Battle Feint\nThrough quick action, the Solar may obscure someone \nwith her own efforts to remain hidden. The Solar must \nbe touching the one she wishes to hide, and must herself \nattempt a Stealth action at the same time. The Solar works \nto obscure her charge, covering him with her body, shroud-\ning him with her cloak, or guiding him into a cleverly con-\ncealed niche. Add half the Solar’s successes (rounded up) \nand any stunt bonuses on this action as dice to her charge’s \nown Stealth roll.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "131f2d0d-353d-33b0-bde7-995ccf9543d6",
+      "name": "Mental Invisibility Technique",
+      "ability": "Stealth",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "ff9732c8-ee5d-3eae-b657-092c5a477d74"
+      ],
+      "cost": "5m, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "One scene",
+      "fullText": "The surreptitious Exalt may even hide in the spaces between thoughts. Roll the Exalt’s (Dexterity + Stealth) against her subject’s Resolve. On a success, she vanishes from her subject’s notice, and cannot be perceived. This effect applies to every witness whose Resolve is surpassed by the Solar’s skill.\n\nNot even overt action can reveal the Exalt to those affected by Mental Invisibility Technique. The Lawgiver may step out of her coat in a snowstorm or leap to the rooftops from the street without being noticed. However, rolling Join Battle or taking violent action ends this Charm’s effects.\n\nAdditionally, subjects may spend one Willpower to break free of the Solar’s deception if the Exalt’s presence is pointed out to him, the Solar intentionally reveals herself to him, or the Exalt attempts to harm or steal something he values at the level of a Major or Defining Intimacy.",
+      "rawData": "Mental Invisibility Technique \nCost: 5m, 1wp; Mins: Stealth 4, Essence 2\nType: Simple\nKeywords: Mute\nDuration: One scene\nPrerequisite Charms: Easily-Overlooked Presence Method\nThe surreptitious Exalt may even hide in the spaces \nbetween thoughts. Roll the Exalt’s (Dexterity + Stealth) \nagainst her subject’s Resolve. On a success, she vanishes \nfrom her subject’s notice, and cannot be perceived. This \neffect applies to every witness whose Resolve is surpassed \nby the Solar’s skill. \nNot even overt action can reveal the Exalt to those af-\nfected by Mental Invisibility Technique. The Lawgiver \nmay step out of her coat in a snowstorm or leap to the \nrooftops from the street without being noticed. However, \nrolling Join Battle or taking violent action ends this \nCharm’s effects.\nAdditionally, subjects may spend one Willpower to break \nfree of the Solar’s deception if the Exalt’s presence is \npointed out to him, the Solar intentionally reveals her- \nself to him, or the Exalt attempts to harm or steal \nsomething he values at the level of a Major or Defining \nIntimacy.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "4b57ad1e-670f-377e-b092-22ab366476c6",
+      "name": "Shadow Victor’s Repose",
+      "ability": "Stealth",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "772f8c12-0b53-346f-a8e6-6c5330f9c1ec",
+        "d858514c-4707-3ba7-8fcf-5c28aa6af9c1",
+        "eb8f50f8-16ec-3bbd-918d-9694fa23f042",
+        "3746b410-3616-346a-b722-c1ca6283b99b"
+      ],
+      "cost": "3m, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "",
+      "rawData": "Shadow Victor’s Repose\nCost: 3m, 1wp; Mins: Stealth 4, Essence 2\nType: Simple\nKeywords: Mute\nDuration: Instant\nPrerequisite Charms: Blinding Battle Feint\nStanding unseen in the midst of her enemies, the Exalt \nrevels in her control of battle’s flow. Once per scene, \nwhile concealed during combat, the Exalt may roll \nJoin Battle and add her result to her current Initiative, \nso long as she has landed at least one decisive attack. \nAny Charms the Exalt uses to enhance her roll are au-\ntomatically muted.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "343c1f95-87de-3d2a-9713-a173c9287bf5",
+      "name": "Flash-Eyed Killer’s Insight",
+      "ability": "Stealth",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "9ae7fbd2-ac5a-3c55-8b17-dd2f985553d5",
+        "0ba7d7fd-26ef-3f8d-8bb8-304bf11dbefd",
+        "093936c0-ea2a-330c-89d1-557c5cf898ff",
+        "9e162906-4ab2-3ca3-bf2b-877c3071a7b8",
+        "ab2eda11-d867-3d94-88f9-23d35d3c4b9c"
+      ],
+      "cost": "2m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "",
+      "rawData": "Flash-Eyed Killer’s Insight\nCost: 2m; Mins: Stealth 5, Essence 2\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Shadow Victor’s Repose\nTriumphant, the Lawgiver’s eyes flash upon hidden places, \nshowing her the way to victory. Upon incapacitating \nan opponent, the Lawgiver may trigger this Charm. If she \nhas already used Shadow Victor’s Repose in the scene, she \nmay reuse it.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "348abda4-4396-3487-ad2c-35dc7199eac7",
+      "name": "Hidden Snake Recoil",
+      "ability": "Stealth",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "81514937-b10f-3791-a1fb-314dd403e7b8"
+      ],
+      "cost": "1wp or 2i",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "Like a flashing viper, the Exalt strikes and is gone. Upon incapacitating a target, the Solar may reflexively attempt concealment by rolling (Dexterity + Stealth), adding (Essence) automatic successes. This Charm contributes four motes total to the cost of any Stealth Charms the Solar uses to aid in this attempt.",
+      "rawData": "Hidden Snake Recoil \nCost: 1wp or 2i; Mins: Stealth 5, Essence 2\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Stalking Wolf \nAttitude\nLike a flashing viper, the Exalt strikes and is gone. Upon \nincapacitating a target, the Solar may reflexively attempt \nconcealment by rolling (Dexterity + Stealth), adding \n(Essence) automatic successes. This Charm contributes \nfour motes total to the cost of any Stealth Charms the \nSolar uses to aid in this attempt.\nC H A P T E R  6\nEX3\n406",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "2792f70b-84f6-36c2-a2af-8c20b52a8c86",
+      "name": "Dark Sentinel’s Way",
+      "ability": "Stealth",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "41330fe1-36db-3c3a-9c95-b162f3a48c9c"
+      ],
+      "cost": "1m",
+      "type": "Reflexive",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "While using a defend other action on a subject, a hidden Solar may use this Charm to conceal her defense of that subject. Upon parrying an incoming attack, the Solar flickers briefly into view, then vanishes, returning her to concealment as if she had never left it. The Solar must be within close range of her subject or otherwise using Charms which allow her to apply defend other benefits from beyond close range.",
+      "rawData": "Dark Sentinel’s Way\nCost: 1m; Mins: Stealth 4, Essence 2\nType: Reflexive\nKeywords: Mute\nDuration: Instant\nPrerequisite Charms: Guardian Fog Approach\nWhile using a defend other action on a subject, a hidden \nSolar may use this Charm to conceal her defense of that \nsubject. Upon parrying an incoming attack, the Solar flick-\ners briefly into view, then vanishes, returning her to con-\ncealment as if she had never left it. The Solar must be \nwithin close range of her subject or otherwise using \nCharms which allow her to apply defend other benefits \nfrom beyond close range.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "fbbf3271-c8a9-39fc-9871-b1de1e23c062",
+      "name": "Smoke and Shadow Cover",
+      "ability": "Stealth",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "2792f70b-84f6-36c2-a2af-8c20b52a8c86"
+      ],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "The Exalt is at one with the shadows, drawing safety from even the most intangible concealment. While this Charm is active, the Solar treats concealment as cover. Mild concealment (such as hiding in partially obscuring shadows, behind light foliage, or in obscuring fog) is treated as light cover, while heavy concealment (such as deep, full-body covering shadows, undergrowth that obscures all but the character’s eyes, or thick, opaque smoke) is treated as heavy cover. Completely pitch-black, lightless environments count as full cover. Using concealment as cover requires a take cover combat action (see p. 198) replacing Dodge with Stealth unless the character is already concealed. In that case, her hiding place counts as cover until she moves out of it or something happens to obviate it, such as flames banishing the shadows she’s crouched in. Furthermore, this Charm also penalizes non-ranged attacks by one success in addition to any dice penalties the attack might accrue from fighting in low visibility conditions.",
+      "rawData": "Smoke and Shadow Cover\nCost: 3m; Mins: Stealth 5, Essence 2\nType: Reflexive\nKeywords: Mute\nDuration: Instant\nPrerequisite Charms: Dark Sentinel’s Way\nThe Exalt is at one with the shadows, drawing safety from even \nthe most intangible concealment. While this Charm is active, the \nSolar treats concealment as cover. Mild concealment (such as \nhiding in partially obscuring shadows, behind light foliage, or in \nobscuring fog) is treated as light cover, while heavy concealment \n(such as deep, full-body covering shadows, undergrowth that \nobscures all but the character’s eyes, or thick, opaque smoke) is \ntreated as heavy cover. Completely pitch-black, lightless environ-\nments count as full cover. Using concealment as cover \nrequires a take cover combat action (see p. 198) replacing Dodge \nwith Stealth unless the character is already concealed. In that \ncase, her hiding place counts as cover until she moves out of it or \nsomething happens to obviate it, such as flames banishing the \nshadows she’s crouched in. Furthermore, this Charm also penal-\nizes non-ranged attacks by one success in addition to any dice \npenalties the attack might accrue from fighting in low visibility \nconditions.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "d01508ac-0981-38eb-a40c-f04603aec53f",
+      "name": "Sun Swallowing Practice",
+      "ability": "Stealth",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "040df246-5359-34f8-b0cd-372888b336a9"
+      ],
+      "cost": "2m per anima level",
+      "type": "Reflexive",
+      "keywords": [
+        "Mute",
+        "Stackable"
+      ],
+      "duration": "Indefinite",
+      "fullText": "At Essence 5+, if the Solar has swallowed four or more levels of anima, she can release her commitment to this Charm by spitting her hidden anima into the air, creating a massive heatless flare that can be seen up to ten miles away. This method of release sheds her anima completely, and inflicts a (number of anima levels expelled + 3) penalty to the Awareness rolls of all characters within long range of the Solar until the next round. A Solar using Eye of the Unconquered Sun is immune to this effect.",
+      "rawData": "Sun Swallowing Practice\nCost: 2m per anima level; Mins: Stealth 5, Essence 3\nType: Reflexive\nKeywords: Mute, Stackable\nDuration: Indefinite\nPrerequisite Charms: Blurred Form Style\nTaking a single short breath, the Solar drinks in her anima \nto restore the shadows. This Charm costs two motes per \nanima level the Exalt wishes to consume. Releasing this \nCharm causes the Solar’s anima to leap into view. \n\nAt Essence 5+, if the Solar has swallowed four or more \nlevels of anima, she can release her commitment to this \nCharm by spitting her hidden anima into the air, creating \na massive heatless flare that can be seen up to ten miles \naway. This method of release sheds her anima complete-\nly, and inflicts a (number of anima levels expelled + 3) \npenalty to the Awareness rolls of all characters within \nlong range of the Solar until the next round. A Solar using \nEye of the Unconquered Sun is immune to this effect.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "0fce0bdd-cd40-3ace-a66c-f69408d6d1ed",
+      "name": "Vanishing From Mind’s Eye Method",
+      "ability": "Stealth",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "5d13bd43-3791-35b0-a9c1-bfa78aa95fd3",
+        "c14b89b4-07db-3f88-9e17-98bdee752784"
+      ],
+      "cost": "10m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Indefinite",
+      "fullText": "Once per day, individuals affected by this Charm may attempt to recognize the Exalt or remember her involvement in a past event. Roll the subject’s (Wits + Lore) against a difficulty equal to the Exalt’s result. If the roll does not succeed, he does not recognize the Solar, and the Exalt remains a nameless, shadowy distortion in his memories.",
+      "rawData": "Vanishing From Mind’s Eye Method\nCost: 10m, 1wp; Mins: Stealth 5, Essence 3\nType: Reflexive\nKeywords: Mute\nDuration: Indefinite\nPrerequisite Charms: Mental Invisibility Technique\nOne of the greatest of all deceptions—the Solar vanishes \nfrom memory. Roll the Exalt’s (Dexterity + Stealth) and \nadd her Essence in automatic successes to the result. \nRecord the result. The Exalt slips out of the thoughts and \nmemories of everyone who has ever known her, hiding in \ntheir minds. Upon meeting, she is unrecognizable to those \nwho should know her. \nOnce per day, individuals affected by this Charm may \nattempt to recognize the Exalt or remember her involve-\nment in a past event. Roll the subject’s (Wits + Lore) against \na difficulty equal to the Exalt’s result. If the roll does not \nsucceed, he does not recognize the Solar, and the Exalt \nremains a nameless, shadowy distortion in his memories.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "d2754476-3e9f-37ae-9e97-065ffa7caee0",
+      "name": "Sound and Scent Banishing Attitude",
+      "ability": "Stealth",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "d7137d9e-eea7-3124-b776-dde2d7dbea3e",
+        "0fce0bdd-cd40-3ace-a66c-f69408d6d1ed"
+      ],
+      "cost": "6m",
+      "type": "Reflexive",
+      "keywords": [
+        "Mute",
+        "Stackable"
+      ],
+      "duration": "One hour",
+      "fullText": "The Exalt conquers her foe’s senses, leaving only his eyes to settle the contest. The Solar enacts a technique allowing her to defeat one sense, rendering her undetectable to it. She can defeat the senses of hearing, smell, touch, and taste. However, she cannot use this Charm to overcome a target’s sight.\n\nIf she uses her sound-banishing technique, she is completely silent; not even the heightened sensory acuity of a guard dog’s ears can detect her. Likewise, if she banishes touch, then someone who bumps into her in a pitch black room will be completely unaware. If she banishes taste, then the probing taste organs of an octopus or the flicking of a great serpent’s tongue will not find her.\n\nThis Charm may be stacked twice, allowing the Solar to banish up to two senses. If the player stunts the Charm description in such a way that it explains the nature of sensory muting as an extension of her skills, the cost of the Charm is reduced by two motes.",
+      "rawData": "Sound and Scent Banishing Attitude \nCost: 6m; Mins: Stealth 5, Essence 3\nType: Reflexive\nKeywords: Mute, Stackable\nDuration: One hour\nPrerequisite Charms: Blurred Form Style, Vanishing \nFrom Mind’s Eye Method\nThe Exalt conquers her foe’s senses, leaving only his eyes \nto settle the contest. The Solar enacts a technique allow-\ning her to defeat one sense, rendering her undetectable \nto it. She can defeat the senses of hearing, smell, touch, \nand taste. However, she cannot use this Charm to over-\ncome a target’s sight.\nIf she uses her sound-banishing technique, she is com-\npletely silent; not even the heightened sensory acuity of \na guard dog’s ears can detect her. Likewise, if she banish-\nes touch, then someone who bumps into her in a pitch \nblack room will be completely unaware. If she banishes \ntaste, then the probing taste organs of an octopus or the \nflicking of a great serpent’s tongue will not find her. \nThis Charm may be stacked twice, allowing the Solar to \nbanish up to two senses. If the player stunts the Charm \ndescription in such a way that it explains the nature of \nsensory muting as an extension of her skills, the cost of \nthe Charm is reduced by two motes.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "56f384ce-f809-3f94-87da-8087e1ad5c89",
+      "name": "Ten Whispers Silence Meditation",
+      "ability": "Stealth",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "d2754476-3e9f-37ae-9e97-065ffa7caee0"
+      ],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "One scene",
+      "fullText": "The Lawgiver whispers the ten koans of utter stillness, each quieter than the next. When she is finished, her concentration is improved, allowing her to swallow even the tiniest sounds. For the duration of this Charm, any Awareness attempt to detect her by hearing alone loses one success for every 1 and 2 the opponent rolls.",
+      "rawData": "Ten Whispers Silence Meditation\nCost: 3m; Mins: Stealth 5, Essence 3\nType: Reflexive\nKeywords: None\nDuration: One scene\nPrerequisite Charms: Sound and Scent \nBanishing Attitude\nThe Lawgiver whispers the ten koans of utter stillness, \neach quieter than the next. When she is finished, her con-\ncentration is improved, allowing her to swallow even the \ntiniest sounds. For the duration of this Charm, any Aware-\nness attempt to detect her by hearing alone loses one \nsuccess for every 1 and 2 the opponent rolls.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "ecdd3ef0-0122-3e8c-8d75-7debec022cca",
+      "name": "Mind Shroud Meditation",
+      "ability": "Stealth",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "343c1f95-87de-3d2a-9713-a173c9287bf5"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "Meditating on future combat, the Exalt speaks a design into her soul that erases her from combat’s flow. This Charm permanently upgrades Shadow Victor’s Repose. When the Exalt uses it to reroll Join Battle, she also momentarily vanishes (Essence) rounds from the short term memories of all opponents, allowing her next unexpected attack to act as an ambush provided it occurs within that period.",
+      "rawData": "Mind Shroud Meditation\nCost: —; Mins: Stealth 5, Essence 3\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Flash-Eyed Killer’s Insight\nMeditating on future combat, the Exalt speaks a design \ninto her soul that erases her from combat’s flow. This Charm \npermanently upgrades Shadow Victor’s Repose. When the \nExalt uses it to reroll Join Battle, she also momentarily \nvanishes (Essence) rounds from the short term memories \nof all opponents, allowing her next unexpected attack to \nact as an ambush provided it occurs within that period.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "92a24620-9939-3a03-9a57-85eeb7a71d8e",
+      "name": "Shadow Replacement Technique",
+      "ability": "Stealth",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "3b857961-1dbb-3e2d-8ac6-197ebe2ffc2b",
+        "5532c5a1-20ea-33f4-bffd-4ea5bc338c8e"
+      ],
+      "cost": "8m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Perilous",
+        "Mute"
+      ],
+      "duration": "Indefinite",
+      "fullText": "Solar princes beware! Woe to the Solar who loses her crown by vanishing from the minds of her subjects. This Charm is not selective. Until the Solar voluntarily terminates the Charm, everyone forgets her.\n\nof a grapple, after which she must then successfully execute a (Dexterity + Stealth) roll which surpasses her target’s Resolve, with a number of automatic successes equal to the Exalt’s Essence and a number of bonus dice equal to half the remaining rounds of clinch control, rounded down. If successful, the Solar appears to step into her target’s shadow and bleed away. The Solar takes possession of her target’s senses and motor functions, and can make her victim act against a negative Intimacy or act against something to which he has a positive Minor Intimacy without contest.\n\nIf the Solar attempts to make her host act against a Major or Defining Intimacy, use the social influence system as normal, though the subject can terminate this Charm by successfully resisting such influence. Abstract Intimacies such as “I refuse to be controlled” or “I cannot be forced to take action” are not valid for the purpose of this Charm— when resolving the effects of Shadow Replacement Technique, treat such Intimacies as nonexistent. (See also the “Intimacies and Roleplaying” sidebar, p. 172.) Unlike other forms of control, a Solar can use Shadow Replacement Technique to force a victim to harm or even kill himself; however, the Solar is subject to damage equal to any suffered by her subject while in possession. While this Charm is active, Vanishing from Mind’s Eye Method can be targeted to the host alone, and costs only five motes to activate.\n\nShadow Replacement Technique still works on targets that do not have a shadow. Replacing someone’s shadow counts as being concealed within full cover for the purposes of Shadow-Crossing Leap Technique.",
+      "rawData": "Shadow Replacement Technique\nCost: 8m, 1wp; Mins: Stealth 5, Essence 3\nType: Reflexive\nKeywords: Perilous, Mute\nDuration: Indefinite\nPrerequisite Charms: Dark Sentinel’s Way\nGripping her foe like a vice, the Lawgiver’s penetrating \ngaze opens a rift into her target’s soul, allowing her to hide \nthere. This technique requires the Lawgiver be in control \nON VANISHING FROM MIND’S EYE METHOD\nSolar princes beware! Woe to the Solar who loses her \ncrown by vanishing from the minds of her subjects. This \nCharm is not selective. Until the Solar voluntarily termi-\nnates the Charm, everyone forgets her. \nC H A P T E R  6\nEX3\n408\nof a grapple, after which she must then successfully execute \na (Dexterity + Stealth) roll which surpasses her target’s \nResolve, with a number of automatic successes equal to the \nExalt’s Essence and a number of bonus dice equal to half \nthe remaining rounds of clinch control, rounded down. If \nsuccessful, the Solar appears to step into her target’s shadow \nand bleed away. The Solar takes possession of her target’s \nsenses and motor functions, and can make her victim act \nagainst a negative Intimacy or act against something to \nwhich he has a positive Minor Intimacy without contest. \nIf the Solar attempts to make her host act against a Major \nor Defining Intimacy, use the social influence system as \nnormal, though the subject can terminate this Charm by \nsuccessfully resisting such influence. Abstract Intimacies \nsuch as “I refuse to be controlled” or “I cannot be forced \nto take action” are not valid for the purpose of this Charm—\nwhen resolving the effects of Shadow Replacement Tech-\nnique, treat such Intimacies as nonexistent. (See also the \n“Intimacies and Roleplaying” sidebar, p. 172.) \nUnlike other forms of control, a Solar can use Shadow Re-\nplacement Technique to force a victim to harm or even \nkill himself; however, the Solar is subject to damage equal \nto any suffered by her subject while in possession. While \nthis Charm is active, Vanishing from Mind’s Eye Method \ncan be targeted to the host alone, and costs only five motes \nto activate. \nShadow Replacement Technique still works on targets \nthat do not have a shadow. Replacing someone’s shadow \ncounts as being concealed within full cover for the pur-\nposes of Shadow-Crossing Leap Technique.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "1ee703bd-b273-3f10-8254-6a64d88f0c2d",
+      "name": "Shadow-Crossing Leap Technique",
+      "ability": "Stealth",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "bbfe33e0-82fd-3bd9-92c7-b5027f73700d",
+        "1cb9e658-121e-3dac-99ca-26f01913d91c",
+        "db691dce-9256-3523-a071-a8370cee1b75",
+        "cc9d95e7-475c-3e47-890b-53922efc3817",
+        "72cd12ae-30b1-3ba2-a698-c35e323c9e42"
+      ],
+      "cost": "5m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "for the Solar to make this leap: she cannot leap through solid walls or closed doors. This transition is instantaneous, the Solar blinking out of one location and flashing into another without passing through the space between. This Charm is incompatible with Blurred Form Style.\n\nAt Essence 4+, the Solar can flash into hiding places that do not have a clear path to move by passing through structures that are transparent or partially opaque, such as windows or gates.\n\nAt Essence 5+, the Solar may use this Charm even when she is not concealed, as long as she is moving through places where visual penalties might apply. If she is not concealed and not actively trying to stay concealed, this Charm no longer costs a point of Willpower to use.\n\nCrossing a range band with Shadow-Crossing Leap Technique always counts as the Exalt’s movement action for the round.\n\nAt Essence 6+, when concealed, the Exalt may move one range band per turn using this Charm, and an additional range band using her normal movement. This use always costs a point of Willpower.",
+      "rawData": "Shadow-Crossing Leap Technique\nCost: 5m, 1wp; Mins: Stealth 5, Essence 3\nType: Reflexive\nKeywords: Mute\nDuration: Instant\nPrerequisite Charms: Smoke and Shadow Cover\nUnfurling her unseen anima, the Solar leaps to join the \ndarkness she has conquered. While concealed, Exalt may \nmove up to one range band, from one place of cover to an \nequal place of cover, without penalty. There must be a path \nfor the Solar to make this leap: she cannot leap through \nsolid walls or closed doors. This transition is instantaneous, \nthe Solar blinking out of one location and flashing into \nanother without passing through the space between. This \nCharm is incompatible with Blurred Form Style.\nAt Essence 4+, the Solar can flash into hiding places that \ndo not have a clear path to move by passing through struc-\ntures that are transparent or partially opaque, such as \nwindows or gates.\nAt Essence 5+, the Solar may use this Charm even when \nshe is not concealed, as long as she is moving through \nplaces where visual penalties might apply. If she is not \nconcealed and not actively trying to stay concealed, \nthis Charm no longer costs a point of Willpower to use. \nCrossing a range band with Shadow-Crossing Leap Tech-\nnique always counts as the Exalt’s movement action for \nthe round.\nAt Essence 6+, when concealed, the Exalt may move one \nrange band per turn using this Charm, and an additional \nrange band using her normal movement. This use always \ncosts a point of Willpower.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "856d2e4e-d83f-3863-a6de-e14cd24fae8f",
+      "name": "Fivefold Shadow Burial",
+      "ability": "Stealth",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "d2754476-3e9f-37ae-9e97-065ffa7caee0"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Solar is a master of stealth deception, capable of defeating each of the five senses. This Charm represents the Solar’s mastery of stealth by subtracting 2 successes for every 1 rolled in any Perception- or Awareness-based attempt to spot her. This penalty does not stack with the penalized 1s affected by Ten Whispers Silence Meditation.",
+      "rawData": "Fivefold Shadow Burial\nCost: —; Mins: Stealth 5, Essence 4\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Sound and Scent \nBanishing Attitude\nThe Solar is a master of stealth deception, capable of \ndefeating each of the five senses. This Charm represents \nthe Solar’s mastery of stealth by subtracting 2 successes \nfor every 1 rolled in any Perception- or Awareness-based \nattempt to spot her. This penalty does not stack \nwith the penalized 1s affected by Ten Whispers Silence \nMeditation.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "c89e0e6f-db12-3cb2-b505-1a73be3e6792",
+      "name": "False Image Feint",
+      "ability": "Stealth",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "348abda4-4396-3487-ad2c-35dc7199eac7",
+        "0fce0bdd-cd40-3ace-a66c-f69408d6d1ed"
+      ],
+      "cost": "7m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Perilous",
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "A hair’s breadth from the blade’s edge, the Exalt fades from harm. Only her anima is struck. When hit with a decisive attack, the Solar may use this Charm if the attacker rolls a combined total of six 1s and 2s across her attack and damage rolls. Roll the Solar’s (Dexterity + Stealth) against her attacker’s (Perception + Awareness).\n\nIf she succeeds, she slips out of sight and into concealment, evading the attack as if she had dodged it. If she succeeds with at least one 10 in her result, she enters stealth while her opponent strikes an afterimage left by the Solar’s anima, transferring the damage result harmlessly away from the Solar and returning her opponent to base Initiative. The Solar may leave an object concealed within her anima to receive the strike, reducing the Charm cost by one mote—two if the player makes a clever substitution.\n\nAt Essence 5+, forcing an attacker down to base Initiative with this Charm nets the Solar a temporary point of Willpower.",
+      "rawData": "False Image Feint\nCost: 7m, 1wp; Mins: Stealth 5, Essence 4\nType: Reflexive\nKeywords: Perilous, Mute\nDuration: Instant\nPrerequisite Charms: Hidden Snake Recoil, Vanishing \nFrom Mind’s Eye Method\nA hair’s breadth from the blade’s edge, the Exalt fades \nfrom harm. Only her anima is struck. When hit with a \ndecisive attack, the Solar may use this Charm if the at-\ntacker rolls a combined total of six 1s and 2s across her \nattack and damage rolls. Roll the Solar’s (Dexterity + \nStealth) against her attacker’s (Perception + Awareness). \nIf she succeeds, she slips out of sight and into conceal-\nment, evading the attack as if she had dodged it. If she \nsucceeds with at least one 10 in her result, she enters \nstealth while her opponent strikes an afterimage left \nby the Solar’s anima, transferring the damage result \nharmlessly away from the Solar and returning her oppo-\nnent to base Initiative. The Solar may leave an object \nconcealed within her anima to receive the strike, reduc-\ning the Charm cost by one mote—two if the player makes \na clever substitution.\n\nAt Essence 5+, forcing an attacker down to base Initiative \nwith this Charm nets the Solar a temporary point of \nWillpower.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "4028c21b-22b2-3e38-bc15-3bf2ec1dd7ac",
+      "name": "Flashing Nocturne Prana",
+      "ability": "Stealth",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "1ee703bd-b273-3f10-8254-6a64d88f0c2d"
+      ],
+      "cost": "10m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Perilous",
+        "Mute"
+      ],
+      "duration": "Indefinite",
+      "fullText": "The deadliest Solars use this legendary stealth technique to evade discovery. When in a place of concealment, the Exalt may use this Charm to anchor the thread of her Essence to the spot. Should she relinquish her commitment to the Charm, so long as she is within three range bands of her hiding place, she is carried there instantly on wings of anima. She does not travel the space between. This counts as an automatically successful Stealth attempt. After the Solar flashes back to her anchor point, others may not attempt to detect her for two rounds.\n\nSurvival",
+      "rawData": "Flashing Nocturne Prana\nCost: 10m, 1wp; Mins: Stealth 5, Essence 4\nType: Reflexive\nKeywords: Perilous, Mute\nDuration: Indefinite\nPrerequisite Charms: Shadow-Crossing Leap \nTechnique\nThe deadliest Solars use this legendary stealth technique \nto evade discovery. When in a place of concealment, \nthe Exalt may use this Charm to anchor the thread of \nher Essence to the spot. Should she relinquish her \ncommitment to the Charm, so long as she is within three \nrange bands of her hiding place, she is carried there \ninstantly on wings of anima. She does not travel the space \nbetween. This counts as an automatically successful \nStealth attempt. After the Solar flashes back to her anchor \npoint, others may not attempt to detect her for two \nrounds.\nSurvival",
+      "potentiallyProblematicImport": false
+    }
+  ]
+}

@@ -1,0 +1,461 @@
+{
+  "$schema": "./charm-schema.json",
+  "version": "0.1.0",
+  "ability": "Linguistics",
+  "type": "solarAbility",
+  "exalt": "solar",
+  "charms": [
+    {
+      "id": "0726eea9-44d2-3230-ac88-20664ff4d544",
+      "name": "Whirling Brush Method",
+      "ability": "Linguistics",
+      "minAbility": 1,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [
+        "Mute",
+        "Written-only"
+      ],
+      "duration": "Instant",
+      "fullText": "A Solar with this technique writes with superhuman speed.\n\nThe Exalt pens brief social influence or short communiqués with incredible speed—she can write a full-page letter in just seconds, while shorter missives may be constructed almost instantly. She can also quickly copy massive volumes of information. This Charm does not allow her to produce new work longer than a few pages, but she may flawlessly copy a written work of any length as she reads it, writing quickly enough that she may copy a large book in a single day, or prepare a document that would take hours to transcribe in a matter of minutes. The Solar can even perfectly WRITTEN VS. SPOKEN EFFECTS Many Linguistics Charms feature both written and spoken delivery methods. A Linguistics Charm using the written method must be read to be effective, while a spoken delivery need only be heard. In most cases, these types of deliveries use identical rules, typically a roll of ([Social Attribute] + Linguistics). However, because social influence written into a letter, a missive, a book etc. may sometimes require minutes, hours, or days before the target actually receives and reads the writing, the rolls are timed differently.\n\nWith written social influence, roll (Attribute + Linguistics) the moment the character finishes the composition and record the successes. The character must use any enhancing magic she knows at the moment this roll is required, because once she has finished encoding her work with magic, she may not alter it again without magic specifically for this purpose. After any relevant Intimacies are applied to lower the target’s Resolve, the total successes are then compared to the target’s Resolve to see if the Charm takes effect.\n\nSpoken social influence works exactly like any other kind: roll (Attribute + Linguistics) the moment the character speaks to her target.\n\ntranscribe a rapid conversation between multiple parties.\n\nThe Solar may also quickly copy maps—though this Charm lends nothing to her artistic ability, she is able to convey all the information the original conveys, such that one could be substituted for the other, in function if not in form. This Charm does not destroy quills from writing too fast, but writing instruments do wear down at the regular speed, and the Solar’s writing consumes the normal amount of ink. As this Charm entails a dramatic action in which the Solar copies a work, the duration of the effect varies. In a scene where the Solar has used Whirling Brush Method, additional activation costs only one mote.",
+      "rawData": "Whirling Brush Method\nCost: 3m; Mins: Linguistics 1, Essence 1\nType: Reflexive\nKeywords: Mute, Written-only\nDuration: Instant\nPrerequisite Charms: None\nA Solar with this technique writes with superhuman speed. \nThe Exalt pens brief social influence or short communi-\nqués with incredible speed—she can write a full-page letter \nin just seconds, while shorter missives may be constructed \nalmost instantly. She can also quickly copy massive volumes \nof information. This Charm does not allow her to produce \nnew work longer than a few pages, but she may flawlessly \ncopy a written work of any length as she reads it, writing \nquickly enough that she may copy a large book in a single \nday, or prepare a document that would take hours to tran-\nscribe in a matter of minutes. The Solar can even perfectly \nWRITTEN VS. SPOKEN EFFECTS\nMany Linguistics Charms feature both written and spoken \ndelivery methods. A Linguistics Charm using the written \nmethod must be read to be effective, while a spoken de-\nlivery need only be heard. In most cases, these types of \ndeliveries use identical rules, typically a roll of ([Social \nAttribute] + Linguistics). However, because social influ-\nence written into a letter, a missive, a book etc. may \nsometimes require minutes, hours, or days before the \ntarget actually receives and reads the writing, the rolls \nare timed differently.\nWith written social influence, roll (Attribute + Linguis-\ntics) the moment the character finishes the composition \nand record the successes. The character must use any \nenhancing magic she knows at the moment this roll is \nrequired, because once she has finished encoding her \nwork with magic, she may not alter it again without \nmagic specifically for this purpose. After any relevant \nIntimacies are applied to lower the target’s Resolve, the \ntotal successes are then compared to the target’s Resolve \nto see if the Charm takes effect. \nSpoken social influence works exactly like any other \nkind: roll (Attribute + Linguistics) the moment the char-\nacter speaks to her target. \nC H A R M S\nEX3\n323\ntranscribe a rapid conversation between multiple parties. \nThe Solar may also quickly copy maps—though this Charm \nlends nothing to her artistic ability, she is able to convey all \nthe information the original conveys, such that one could \nbe substituted for the other, in function if not in form. This \nCharm does not destroy quills from writing too fast, but \nwriting instruments do wear down at the regular speed, \nand the Solar’s writing consumes the normal amount of \nink. As this Charm entails a dramatic action in which the \nSolar copies a work, the duration of the effect varies. In a \nscene where the Solar has used Whirling Brush Method, \nadditional activation costs only one mote.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "22b2cad7-c169-32f1-a1c2-ab2594b87166",
+      "name": "Flawless Brush Discipline",
+      "ability": "Linguistics",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "0726eea9-44d2-3230-ac88-20664ff4d544"
+      ],
+      "cost": "1m",
+      "type": "Supplemental",
+      "keywords": [
+        "Written-only"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar concentrates all of her talent into a perfect expression of form. With this Charm, she may perfectly copy any written work down to the finest detail. Her flawless precision makes her script impossible to tell apart from the original, allowing her to create a perfect replica of a work. If the Exalt focuses intently on aesthetic elements, she may even use this Charm to copy them, flawlessly reproducing pictograms, illustrations and even maps. The Exalt may also forge signatures effortlessly, but cannot use this Charm to forge seals or other impressions affixed to a document. It is impossible to pierce this deception through normal means. Magic which can detect the Solar’s forgery must overcome a difficulty equal to the Solar’s (Linguistics + Essence) score at the time of writing.",
+      "rawData": "Flawless Brush Discipline\nCost: 1m; Mins: Linguistics 3, Essence 1\nType: Supplemental\nKeywords: Written-only\nDuration: Instant \nPrerequisite Charms: Whirling Brush Method\nThe Solar concentrates all of her talent into a perfect ex-\npression of form. With this Charm, she may perfectly \ncopy any written work down to the finest detail. Her \nflawless precision makes her script impossible to tell \napart from the original, allowing her to create a perfect \nreplica of a work. If the Exalt focuses intently on aes-\nthetic elements, she may even use this Charm to copy \nthem, flawlessly reproducing pictograms, illustrations \nand even maps. The Exalt may also forge signatures ef-\nfortlessly, but cannot use this Charm to forge seals or \nother impressions affixed to a document. It is impossible \nto pierce this deception through normal means. Magic \nwhich can detect the Solar’s forgery must overcome a \ndifficulty equal to the Solar’s (Linguistics + Essence) score \nat the time of writing.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "446ed5e0-73f3-36a4-93da-e60d496870f6",
+      "name": "Letter-Within-A-Letter Technique",
+      "ability": "Linguistics",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "4m",
+      "type": "Simple",
+      "keywords": [
+        "Mute",
+        "Written-only"
+      ],
+      "duration": "Instant",
+      "fullText": "By carefully injecting allusions, subtle stresses and loaded word choices, the Exalt can imbed a secret message in a document of seemingly innocuous character—a shopping list, a bill of lading or even a quickly dashed note. The Solar must be familiar with the recipient in order for him to see the hidden missive. The hidden message can be no longer (in words) than half the length of the cover document. Magic that can break the Solar’s code automatically costs an additional Willpower and must beat a difficulty of the Solar’s Linguistics or the highest difficulty of any magical encryption inscribed into the text.",
+      "rawData": "Letter-Within-A-Letter Technique\nCost: 4m; Mins: Linguistics 3, Essence 1\nType: Simple\nKeywords: Mute, Written-only\nDuration: Instant\nPrerequisite Charms: None\nBy carefully injecting allusions, subtle stresses and loaded \nword choices, the Exalt can imbed a secret message in a \ndocument of seemingly innocuous character—a shopping \nlist, a bill of lading or even a quickly dashed note. The \nSolar must be familiar with the recipient in order for him \nto see the hidden missive. The hidden message can be no \nlonger (in words) than half the length of the cover docu-\nment. Magic that can break the Solar’s code automatical-\nly costs an additional Willpower and must beat a difficul-\nty of the Solar’s Linguistics or the highest difficulty of any \nmagical encryption inscribed into the text.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "00f53ee0-fda4-32a4-b374-3c8db958539e",
+      "name": "Subtle Speech Method",
+      "ability": "Linguistics",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "3m",
+      "type": "Simple",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "One idea conveyed",
+      "fullText": "The Solar speaks in a roundabout fashion, stressing particular words, inflections and allusions to convey ideas and concepts that may have nothing to do with what she is saying. Only the intended recipients can understand the true meaning of the Solar’s words; everyone else just hears what the Solar says on the surface. Thus an Exalt using this Charm could appear to discuss the weather while laying out the details of an assassination plot. This Charm does not confer the ability to communicate across language barriers.",
+      "rawData": "Subtle Speech Method\nCost: 3m; Mins: Linguistics 3, Essence 1\nType: Simple\nKeywords: Mute\nDuration: One idea conveyed\nPrerequisite Charms: None\nThe Solar speaks in a roundabout fashion, stressing par-\nticular words, inflections and allusions to convey ideas \nand concepts that may have nothing to do with what she \nis saying. Only the intended recipients can understand \nthe true meaning of the Solar’s words; everyone else just \nhears what the Solar says on the surface. Thus an Exalt \nusing this Charm could appear to discuss the weather \nwhile laying out the details of an assassination plot. This \nCharm does not confer the ability to communicate across \nlanguage barriers.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "d10e88f2-6abc-339c-88dd-c5e48d891092",
+      "name": "Flowing Elegant Hand",
+      "ability": "Linguistics",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "2m",
+      "type": "Supplemental",
+      "keywords": [
+        "Mute",
+        "Written-only"
+      ],
+      "duration": "Instant",
+      "fullText": "Drawing on the Essence of her formidable mind, the Exalt perfects her arguments and sharpens her words, so that her writing is pristine, flawless and precise. This Charm supplements written Linguistics actions with double 9s.\n\nARTISTIC TALENT: LINGUISTICS OR CRAFT?\n\nLinguistics is not the “Art” skill, any more than Investigation is the “Sight” skill.  Linguistics does entail a very specific artistic skill—in the ability to produce elegant calligraphy, and the ability to produce, translate, or reproduce very specific aesthetics. Language in itself is a representative of such aesthetics: words evolve from pictograms to ideograms, hieroglyphs form and refine into runes that make up descendent languages thousands of years later.\n\nVery specific forms of art are also constructs of language: maps, diagrams, and supplemental illustrations fall into these categories. Where art is concerned, Linguistics mainly provides the ability to produce beautiful and complex letters, and extremely complex, detailed informational illustrations. Drawing one’s Lunar mate gobbling cake, or painting a gorgeous landscape or a portrait of the Circle’s Twilight, are all examples of the Craft Ability.\n\nAt Linguistics 5+, Essence 3+, she may repurchase this Charm, learning a three mote version that doubles 8s.\n\nThis repurchase requires that she know Flawless Brush Discipline.\n\nAt Linguistics 5+, Essence 5+, she may purchase this Charm a third time, learning a four mote version that grants double 7s.",
+      "rawData": "Flowing Elegant Hand\nCost: 2m; Mins: Linguistics 3, Essence 1\nType: Supplemental\nKeywords: Mute, Written-only\nDuration: Instant\nPrerequisite Charms: None\nDrawing on the Essence of her formidable mind, the Exalt \nperfects her arguments and sharpens her words, so that \nher writing is pristine, flawless and precise. This Charm \nsupplements written Linguistics actions with double 9s. \nARTISTIC TALENT: LINGUISTICS OR CRAFT?\nLinguistics is not the “Art” skill, any more than Inves-\ntigation is the “Sight” skill.  Linguistics does entail \na very specific artistic skill—in the ability to produce \nelegant calligraphy, and the ability to produce, trans-\nlate, or reproduce very specific aesthetics. Language \nin itself is a representative of such aesthetics: \nwords evolve from pictograms to ideograms, hiero-\nglyphs form and refine into runes that make up \ndescendent languages thousands of years later. \n \nVery specific forms of art are also constructs of lan-\nguage: maps, diagrams, and supplemental illustra-\ntions fall into these categories. Where art is concerned, \nLinguistics mainly provides the ability to produce beau-\ntiful and complex letters, and extremely complex, de-\ntailed informational illustrations. Drawing one’s Lunar \nmate gobbling cake, or painting a gorgeous landscape \nor a portrait of the Circle’s Twilight, are all examples \nof the Craft Ability.\nC H A P T E R  6\nEX3\n324\nAt Linguistics 5+, Essence 3+, she may repurchase this \nCharm, learning a three mote version that doubles 8s. \nThis repurchase requires that she know Flawless Brush \nDiscipline. \nAt Linguistics 5+, Essence 5+, she may purchase this Charm \na third time, learning a four mote version that grants \ndouble 7s.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "afc7e023-2f0f-39e8-8d2e-2e32ceca5555",
+      "name": "Strange Tongue Understanding",
+      "ability": "Linguistics",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "1m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "Tuning Essence through her language centers, the Exalt reconciles a character’s vocal tone, inflection, and gestures into a clear statement of intent. This allows her to accurately interpret statements made in languages she doesn’t know. As the Solar’s concentration congeals into a moment of perfect clarity, she must evaluate each statement separately. Each activation of this Charm allows her to understand three or four simple sentences or one long, complex sentence. The Solar may also use this Charm to reflexively lower the Guile of a speaker using abstruse language to conceal an issue or artificially inflate the importance of a topic, reducing his Guile by one.",
+      "rawData": "Strange Tongue Understanding\nCost: 1m; Mins: Linguistics 3, Essence 1\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: None\nTuning Essence through her language centers, the Exalt \nreconciles a character’s vocal tone, inflection, and gestures \ninto a clear statement of intent. This allows her to accu-\nrately interpret statements made in languages she doesn’t \nknow. As the Solar’s concentration congeals into a moment \nof perfect clarity, she must evaluate each statement sepa-\nrately. Each activation of this Charm allows her to under-\nstand three or four simple sentences or one long, complex \nsentence. The Solar may also use this Charm to reflex-\nively lower the Guile of a speaker using abstruse language \nto conceal an issue or artificially inflate the importance \nof a topic, reducing his Guile by one.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "56c14bb5-d239-33f6-a2a5-63047d5fa203",
+      "name": "Sagacious Reading of Intent",
+      "ability": "Linguistics",
+      "minAbility": 4,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "4m, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar’s wit is incisive and her mind is canny. By reading a text, she also may read its author. The Solar may invoke this Charm after reading a text but before any social influence is rolled or checked. This allows the Solar to make a ([Wits, Charisma, or Manipulation] + Linguistics) read intentions action that is automatically successful. In that moment, she instantly knows if the writing indicates any of the author’s Intimacies, and what those Intimacies are.\n\nThis may come across as a clear slant or bias in the narrative, or a sense of mood or emotion in the writing which highlights the context of a Tie. This Charm does not reveal the writer’s hidden motives behind any work, but it can reveal the absence of any Intimacies in the writing, potentially denoting that the work is a forgery, a copy, or that the author didn’t believe what he was writing.",
+      "rawData": "Sagacious Reading of Intent\nCost: 4m, 1wp; Mins: Linguistics 4, Essence 1\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: None\nThe Solar’s wit is incisive and her mind is canny. By reading \na text, she also may read its author. The Solar may invoke \nthis Charm after reading a text but before any social in-\nfluence is rolled or checked. This allows the Solar to make \na ([Wits, Charisma, or Manipulation] + Linguistics) read \nintentions action that is automatically successful. In that \nmoment, she instantly knows if the writing indicates any \nof the author’s Intimacies, and what those Intimacies are. \nThis may come across as a clear slant or bias in the nar-\nrative, or a sense of mood or emotion in the writing which \nhighlights the context of a Tie. This Charm does not reveal \nthe writer’s hidden motives behind any work, but it can \nreveal the absence of any Intimacies in the writing, po-\ntentially denoting that the work is a forgery, a copy, or that \nthe author didn’t believe what he was writing.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "60fed8a2-9b59-39bc-af4e-5aa62d74b096",
+      "name": "Word-Shield Invocation",
+      "ability": "Linguistics",
+      "minAbility": 5,
+      "minEssence": 1,
+      "prerequisites": [
+        "56c14bb5-d239-33f6-a2a5-63047d5fa203"
+      ],
+      "cost": "2m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "If the Exalt suspects she is about to suffer negative influence, she may use this Charm after using Sagacious Reading of Intent, raising her Resolve by half her Linguistics, rounded up, before her Resolve is compared to the influence’s recorded successes.",
+      "rawData": "Word-Shield Invocation\nCost: 2m; Mins: Linguistics 5, Essence 1\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Sagacious Reading of Intent\nIf the Exalt suspects she is about to suffer negative influ-\nence, she may use this Charm after using Sagacious \nReading of Intent, raising her Resolve by half her Linguis-\ntics, rounded up, before her Resolve is compared to the \ninfluence’s recorded successes.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "9eaad93e-7d61-39b5-aae1-a0fde49de5b8",
+      "name": "Stolen Voice Technique",
+      "ability": "Linguistics",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "22b2cad7-c169-32f1-a1c2-ab2594b87166"
+      ],
+      "cost": "3m",
+      "type": "Simple",
+      "keywords": [
+        "Written-only"
+      ],
+      "duration": "Instant",
+      "fullText": "The Lawgiver’s keen ear, sharp eye and steady hand makes her an inveterate thief of words. With this Charm, the\n\nSolar can adapt the writing voice of another character.\n\nThe Solar need only have read one manuscript or three smaller examples of the character’s writing in order to perfectly mimic his writing style. This Charm does not mimic the effects of Flawless Brush Discipline, so the Solar may need to use that Charm to make her script all the more deceiving. Like the prerequisite, the difficulty to pierce this deception is the Solar’s (Linguistics + Essence) score at the time of writing. Combining this Charm with its prerequisite raises that difficulty by one.\n\nStolen Voice Technique’s deception is automatically successful unless the target has a reason to scrutinize the writing.",
+      "rawData": "Stolen Voice Technique\nCost: 3m; Mins: Linguistics 4, Essence 2\nType: Simple\nKeywords: Written-only\nDuration: Instant\nPrerequisite Charms: Flawless Brush Discipline\nThe Lawgiver’s keen ear, sharp eye and steady hand makes \nher an inveterate thief of words. With this Charm, the \nC H A R M S\nEX3\n325\nSolar can adapt the writing voice of another character. \nThe Solar need only have read one manuscript or three \nsmaller examples of the character’s writing in order to \nperfectly mimic his writing style. This Charm does not \nmimic the effects of Flawless Brush Discipline, so the \nSolar may need to use that Charm to make her script all \nthe more deceiving. Like the prerequisite, the difficulty \nto pierce this deception is the Solar’s (Linguistics + \nEssence) score at the time of writing. Combining this \nCharm with its prerequisite raises that difficulty by one. \nStolen Voice Technique’s deception is automatically \nsuccessful unless the target has a reason to scrutinize \nthe writing.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "00887380-35db-31a1-8d37-833b6a480530",
+      "name": "Moving the Unseen Hand",
+      "ability": "Linguistics",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "9eaad93e-7d61-39b5-aae1-a0fde49de5b8"
+      ],
+      "cost": "4m",
+      "type": "Simple",
+      "keywords": [
+        "Mute",
+        "Written-only"
+      ],
+      "duration": "Instant",
+      "fullText": "The Exalt pens a message in a hand so artful and deceptive that she can cause her reader to make an automatic assumption as to the writer’s identity. Upon writing the message, roll (Manipulation + Linguistics) with (Essence) automatic successes to determine the strength of the deception when compared to the target’s Resolve. To use this Charm, the Exalt must not sign the missive in question; the unsigned letter invites the assumption that allows this Charm to take effect.\n\nThe Exalt may use this technique in three different ways:\n\nShe can make readers believe a message was written by a specific person of whom they’re aware—they do not need to know this character on a personal level. She can also make readers assume the letter was written by the person they most want the letter to be from. Lastly, if the Solar has Bureaucracy 3+, she can make readers assume the letter was written by a hierarchical superior.\n\nDespite being a Simple-type Charm, Moving the Unseen Hand can always be used in combination with its prerequisite; failure to see through Stolen Voice Technique makes the character automatically subject to Moving the Unseen Hand’s deception.",
+      "rawData": "Moving the Unseen Hand \nCost: 4m; Mins: Linguistics 5, Essence 2\nType: Simple\nKeywords: Mute, Written-only\nDuration: Instant\nPrerequisite Charms: Stolen Voice Technique\nThe Exalt pens a message in a hand so artful and decep-\ntive that she can cause her reader to make an automatic \nassumption as to the writer’s identity. Upon writing the \nmessage, roll (Manipulation + Linguistics) with (Essence) \nautomatic successes to determine the strength of the de-\nception when compared to the target’s Resolve. To use \nthis Charm, the Exalt must not sign the missive in ques-\ntion; the unsigned letter invites the assumption that allows \nthis Charm to take effect.  \nThe Exalt may use this technique in three different ways: \nShe can make readers believe a message was written by a \nspecific person of whom they’re aware—they do not need \nto know this character on a personal level. She can also \nmake readers assume the letter was written by the person \nthey most want the letter to be from. Lastly, if the Solar \nhas Bureaucracy 3+, she can make readers assume the \nletter was written by a hierarchical superior. \nDespite being a Simple-type Charm, Moving the Unseen \nHand can always be used in combination with its prereq-\nuisite; failure to see through Stolen Voice Technique makes \nthe character automatically subject to Moving the Unseen \nHand’s deception.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "20ee5e57-8cfb-3db8-a631-97acf1f9b1c3",
+      "name": "Essence-Laden Missive",
+      "ability": "Linguistics",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "446ed5e0-73f3-36a4-93da-e60d496870f6"
+      ],
+      "cost": "1m",
+      "type": "Supplemental",
+      "keywords": [
+        "Mute",
+        "Psyche",
+        "Written-only"
+      ],
+      "duration": "Instant",
+      "fullText": "The Exalt can infuse a short statement with Essence, such that the Essence travels through the reader’s mind to escape through his tongue. A character who reads such a missive will immediately and unironically repeat the statement he just read without realizing he’s doing so. This is not a Charm which simply forces the character to read aloud, but rather causes him to announce the missive. The roll to determine whether the reader blurts out the missive is treated as a ([Charisma or Manipulation] + Linguistics) inspire action with (Essence) automatic successes.",
+      "rawData": "Essence-Laden Missive\nCost: 1m; Mins: Linguistics 4, Essence 2\nType: Supplemental\nKeywords: Mute, Psyche, Written-only\nDuration: Instant\nPrerequisite Charms: Letter-Within-A-Letter Technique\nThe Exalt can infuse a short statement with Essence, such \nthat the Essence travels through the reader’s mind to \nescape through his tongue. A character who reads such a \nmissive will immediately and unironically repeat the state-\nment he just read without realizing he’s doing so. This is \nnot a Charm which simply forces the character to read \naloud, but rather causes him to announce the missive. The \nroll to determine whether the reader blurts out the missive \nis treated as a ([Charisma or Manipulation] + Linguistics) \ninspire action with (Essence) automatic successes.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "31f600da-697a-3d50-a1ec-9acaad3cefd7",
+      "name": "Voice-Caging Calligraphy",
+      "ability": "Linguistics",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "20ee5e57-8cfb-3db8-a631-97acf1f9b1c3"
+      ],
+      "cost": "2m, 1wp",
+      "type": "Supplemental",
+      "keywords": [
+        "Mute",
+        "Psyche",
+        "Written-only"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar binds her words with Essence, folding language into form so winding and deep that all meaning falls into the abyss. This Charm may be used to supplement the writing of letters or other brief works. The information contained in such writing cannot be repeated. The reader momentarily loses his ability to process or remember the contents of the message if he tries to speak it aloud or write it down. Any attempt by the reader to communicate what he knows is rendered useless unless he sees an action occurring in which a Defining Intimacy is threatened by withholding what he knows. Only then may the reader pay (Solar’s current Essence rating) Willpower to shake off the effects of this Charm.",
+      "rawData": "Voice-Caging Calligraphy\nCost: 2m, 1wp; Mins: Linguistics 5, Essence 2\nType: Supplemental\nKeywords: Mute, Psyche, Written-only\nDuration: Instant\nPrerequisite Charms: Essence-Laden Missive\nThe Solar binds her words with Essence, folding language \ninto form so winding and deep that all meaning falls into \nthe abyss. This Charm may be used to supplement the \nwriting of letters or other brief works. The information \ncontained in such writing cannot be repeated. The reader \nmomentarily loses his ability to process or remember the \ncontents of the message if he tries to speak it aloud or \nwrite it down. Any attempt by the reader to communicate \nwhat he knows is rendered useless unless he sees an action \noccurring in which a Defining Intimacy is threatened by \nwithholding what he knows. Only then may the reader \npay (Solar’s current Essence rating) Willpower to shake \noff the effects of this Charm.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "4fd0c443-485f-3f3d-b687-5310d14b916d",
+      "name": "Single Voice Kata",
+      "ability": "Linguistics",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "9a385c21-c2a3-323b-bb76-887e783a1f97",
+        "feed0022-61ba-3363-8d9d-e0793c8b3225",
+        "38222c8d-afc2-3866-90c4-fe3ee2c1345e"
+      ],
+      "cost": "5m, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "One scene",
+      "fullText": "Q: What happens if you combine Essence-Laden Missive and Voice-Caging Calligraphy?\n\nA: You tell me.\n\nletters or mechanics. Consequently, it cannot be repeated back to the Solar such that she would comprehend it. This Charm allows purely one way communications, imparting no knowledge of languages the Solar has not yet learned. Spirits despise being addressed by a Solar using this Charm, and the Fair Folk feel physical pain to hear it spoken. A Solar should only use this Charm against such beings if she deliberately intends to cause offense.",
+      "rawData": "Single Voice Kata\nCost: 5m, 1wp; Mins: Linguistics 5, Essence 2\nType: Reflexive\nKeywords: None\nDuration: One scene\nPrerequisite Charms: Mingled Tongue Technique\nThere is a point in the infinite distance where purity and \nentropy touch. That point is both “before” and “after” but \nthe Solar may reach it with a thought, to draw forth perfect \nlanguage. While this Charm is active, the Solar speaks a \nlanguage that can be understood by all who hear it. Knowl-\nedge of this language is purely instinctual; characters un-\nderstand the Solar’s words as she shapes them. Her perfect \nlanguage cannot be learned, as it has no intelligible words, \nTHAT BURNING QUESTION\nQ: What happens if you combine Essence-Laden Missive \nand Voice-Caging Calligraphy?\nA: You tell me.\nC H A P T E R  6\nEX3\n326\nletters or mechanics. Consequently, it cannot be repeated \nback to the Solar such that she would comprehend it. This \nCharm allows purely one way communications, impart-\ning no knowledge of languages the Solar has not yet \nlearned. Spirits despise being addressed by a Solar using \nthis Charm, and the Fair Folk feel physical pain to hear it \nspoken. A Solar should only use this Charm against such \nbeings if she deliberately intends to cause offense.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "619443e7-8636-3090-817d-3ff32f46591b",
+      "name": "Discerning Savant’s Eye",
+      "ability": "Linguistics",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "56c14bb5-d239-33f6-a2a5-63047d5fa203"
+      ],
+      "cost": "1m, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "One scene",
+      "fullText": "The Exalt can make out the minute traces of writing that was once readable but has now been damaged or erased.\n\nExamples include palimpsests, water-soluble inks that have been left in the damp, and stone monuments that have been rendered unreadable by vandalism or the elements. This Charm cannot read the writing on inscriptions that have been crushed into sand or letters that have been burned to ashes. This Charm does not convey the ability to understand a language the Solar cannot normally read, but she may use this Charm in concert with Flawless Brush Discipline to make a perfect, undamaged copy of the original script for later translation.",
+      "rawData": "Discerning Savant’s Eye\nCost: 1m, 1wp; Mins: Linguistics 5, Essence 2\nType: Reflexive\nKeywords: None\nDuration: One scene\nPrerequisite Charms: Sagacious Reading of Intent\nThe Exalt can make out the minute traces of writing that \nwas once readable but has now been damaged or erased. \nExamples include palimpsests, water-soluble inks that \nhave been left in the damp, and stone monuments that \nhave been rendered unreadable by vandalism or the ele-\nments. This Charm cannot read the writing on inscrip-\ntions that have been crushed into sand or letters that have \nbeen burned to ashes. This Charm does not convey the \nability to understand a language the Solar cannot normal-\nly read, but she may use this Charm in concert with Flaw-\nless Brush Discipline to make a perfect, undamaged copy \nof the original script for later translation.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "f7807fc3-b977-3eee-b893-36ed6de80a72",
+      "name": "Power-Snaring Image",
+      "ability": "Linguistics",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "9eaad93e-7d61-39b5-aae1-a0fde49de5b8"
+      ],
+      "cost": "— (1m, 1wp)",
+      "type": "Permanent",
+      "keywords": [
+        "Written-only"
+      ],
+      "duration": "Instant",
+      "fullText": "When the Lawgiver is using Flawless Brush Discipline, she may channel this power to perfectly copy any magic encrypted into the document she is copying, so long as she is capable of producing that magic herself. She does not need to pay the costs of any Charms her copy reproduces—those effects are reproduced automatically and perfectly. At Essence 5+, she may reproduce the written magic effects of the Charms of any being, even those who are not Solar Exalted, so long as her traits meet or exceed the magic’s minimums.",
+      "rawData": "Power-Snaring Image\nCost: — (1m, 1wp); Mins: Linguistics 5, Essence 3\nType: Permanent\nKeywords: Written-only\nDuration: Instant\nPrerequisite Charms: Stolen Voice Technique\nWhen the Lawgiver is using Flawless Brush Discipline, \nshe may channel this power to perfectly copy any magic \nencrypted into the document she is copying, so long as \nshe is capable of producing that magic herself. She does \nnot need to pay the costs of any Charms her copy repro-\nduces—those effects are reproduced automatically and \nperfectly. At Essence 5+, she may reproduce the written \nmagic effects of the Charms of any being, even those who \nare not Solar Exalted, so long as her traits meet or exceed \nthe magic’s minimums.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "5716bf2f-9b8c-3bae-bc2a-5ede431db8da",
+      "name": "Flashing Quill Atemi",
+      "ability": "Linguistics",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "f7807fc3-b977-3eee-b893-36ed6de80a72"
+      ],
+      "cost": "1m",
+      "type": "Reflexive",
+      "keywords": [
+        "Written-only"
+      ],
+      "duration": "One minute",
+      "fullText": "The Lawgiver strikes a body of text with her fingers, reshaping the language to serve her purposes. With this Charm, the Solar may edit a manuscript, letter, or tome with untraceable precision. Where she draws her fingertips through lines, words lift from pages as if they were never written. Where she draws her fingertips through runes, ink chases itself into the shapes of new words.\n\nThrough use of this Charm, the Solar can change the targets of written social influence, and can redefine what is intended by any social influence she encounters. Modifying a work encrypted with magic allows her to redirect the targets of that magic. If she wishes to alter magic she is incapable of producing, she must possess Essence 5+ and must use Power-Snaring Image in combination with this Charm. This combination explicitly allows her to alter magic for which she does not meet minimums.",
+      "rawData": "Flashing Quill Atemi\nCost: 1m; Mins: Linguistics 5, Essence 3\nType: Reflexive\nKeywords: Written-only\nDuration: One minute\nPrerequisite Charms: Power-Snaring Image\nThe Lawgiver strikes a body of text with her fingers, re-\nshaping the language to serve her purposes. With this \nCharm, the Solar may edit a manuscript, letter, or tome \nwith untraceable precision. Where she draws her finger-\ntips through lines, words lift from pages as if they were \nnever written. Where she draws her fingertips through \nrunes, ink chases itself into the shapes of new words. \nThrough use of this Charm, the Solar can change the \ntargets of written social influence, and can redefine what \nis intended by any social influence she encounters. Mod-\nifying a work encrypted with magic allows her to redirect \nthe targets of that magic. If she wishes to alter magic she \nis incapable of producing, she must possess Essence 5+ \nand must use Power-Snaring Image in combination with \nthis Charm. This combination explicitly allows her to alter \nmagic for which she does not meet minimums.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "0ec9afb4-85e5-3c90-b14d-4466bbcd5761",
+      "name": "Mind-Swallowing Missive",
+      "ability": "Linguistics",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "20ee5e57-8cfb-3db8-a631-97acf1f9b1c3"
+      ],
+      "cost": "8m, 1wp",
+      "type": "Supplemental",
+      "keywords": [
+        "Psyche",
+        "Written-only"
+      ],
+      "duration": "Indefinite",
+      "fullText": "The Solar unwinds language with her Essence, writing in such a way that it unbinds the pattern of her reader’s understanding. This Charm supplements a letter written to a specific target, the Solar rolling (Manipulation + Linguistics) to determine its accuracy. If her target reads the letter, he must roll his (Perception + Linguistics) to defend against a swarm of unbinding words that penetrates his mind where languages live. If he fails, his knowledge of all languages is unbound, causing him to forget\n\nevery language he’s currently able to speak. In addition, the subject develops a completely new language on the spot. This language is both functional and logical—and has letters and grammar mechanics—but it is known only to the Charm’s victim. An Exalt may break this control by paying (Solar’s Essence rating) Willpower, instantly recovering one of his spoken languages and another every hour until his knowledge has been restored. Otherwise, this effect lasts until the Solar lifts the commitment.\n\nWhen Mind-Swallowing Missive is broken, the subject’s new language vanishes from his memory. This Charm does not affect spirits.",
+      "rawData": "Mind-Swallowing Missive\nCost: 8m, 1wp; Mins: Linguistics 5, Essence 3\nType: Supplemental\nKeywords: Psyche, Written-only\nDuration: Indefinite\nPrerequisite Charms: Essence-Laden Missive\nThe Solar unwinds language with her Essence, writing \nin such a way that it unbinds the pattern of her reader’s \nunderstanding. This Charm supplements a letter written \nto a specific target, the Solar rolling (Manipulation + \nLinguistics) to determine its accuracy. If her target reads \nthe letter, he must roll his (Perception + Linguistics) to \ndefend against a swarm of unbinding words that pene-\ntrates his mind where languages live. If he fails, his knowl-\nedge of all languages is unbound, causing him to forget \nC H A R M S\nEX3\n327\nevery language he’s currently able to speak. In addition, \nthe subject develops a completely new language on the \nspot. This language is both functional and logical—and \nhas letters and grammar mechanics—but it is known only \nto the Charm’s victim. An Exalt may break this control \nby paying (Solar’s Essence rating) Willpower, instantly \nrecovering one of his spoken languages and another every \nhour until his knowledge has been restored. Otherwise, \nthis effect lasts until the Solar lifts the commitment. \nWhen Mind-Swallowing Missive is broken, the subject’s \nnew language vanishes from his memory. This Charm \ndoes not affect spirits.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "2aebe39e-b0ce-3f42-b0fa-5684584fab83",
+      "name": "Cup Boils Over",
+      "ability": "Linguistics",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "0ec9afb4-85e5-3c90-b14d-4466bbcd5761",
+        "2fc1c1b1-87fb-36b3-b0ff-4cc005da9a11"
+      ],
+      "cost": "1m",
+      "type": "Simple",
+      "keywords": [
+        "Written-only"
+      ],
+      "duration": "Instant",
+      "fullText": "The Lawgiver pens a soul-shattering missive, convincing her subject he leads a pointless existence. This Charm can only be directed at a specific target. Roll the Exalt’s ([Charisma or Manipulation] + Linguistics), rerolling 6s until 6s fail to appear. If she beats her target’s Resolve, his soul falls off and sinks directly into lethe. This Charm only targets characters who have unintelligibly abstruse Intimacies or no Intimacies at all; however, its effect depends on such an unfulfilled soul’s yearning for purpose and meaning—characters who are incapable of feeling (such as the soul-eaten victims of the Fair Folk) are not valid targets for this Charm.",
+      "rawData": "Cup Boils Over\nCost: 1m; Mins: Linguistics 5, Essence 3\nType: Simple\nKeywords: Written-only\nDuration: Instant\nPrerequisite Charms: Mind-Swallowing Missive, Voice-\nCaging Calligraphy\nThe Lawgiver pens a soul-shattering missive, convincing \nher subject he leads a pointless existence. This Charm can \nonly be directed at a specific target. Roll the Exalt’s ([Cha-\nrisma or Manipulation] + Linguistics), rerolling 6s until \n6s fail to appear. If she beats her target’s Resolve, his soul \nfalls off and sinks directly into lethe. This Charm only \ntargets characters who have unintelligibly abstruse Inti-\nmacies or no Intimacies at all; however, its effect depends \non such an unfulfilled soul’s yearning for purpose and \nmeaning—characters who are incapable of feeling (such \nas the soul-eaten victims of the Fair Folk) are not valid \ntargets for this Charm.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "f3bd463a-2a1a-354f-96e0-db760c689a7b",
+      "name": "Twisted Words Technique",
+      "ability": "Linguistics",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "d10e88f2-6abc-339c-88dd-c5e48d891092",
+        "6ae7f7df-be00-35f2-bdc4-3780bcc0a80a",
+        "82a1f065-c645-3540-8547-82be328b1ff6",
+        "7484689c-0a8b-3906-b425-373be8658da1",
+        "d52333e5-9b76-3c42-a879-1d95c54a6433",
+        "3ce59b31-0ab6-3e76-8bde-1cce776f5bd4",
+        "091b866a-1d77-37db-9b7f-7a395b8e5d07",
+        "83abd51e-ca66-3336-8441-97e0738f3b55",
+        "5aedd1e7-250f-3d40-bd9a-1825931ca4c0",
+        "5cbd69a4-20c5-3be8-9aa6-1b8eb6a8d9e9",
+        "b15d4bdb-42de-3e88-b251-e1bbd4cb312b"
+      ],
+      "cost": "1m, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Psyche"
+      ],
+      "duration": "Instant",
+      "fullText": "",
+      "rawData": "Twisted Words Technique\nCost: 1m, 1wp; Mins: Linguistics 5, Essence 3\nType: Simple\nKeywords: Psyche\nDuration: Instant\nPrerequisite Charms: Flowing Elegant Hand, Letter-\nWithin-A-Letter Technique, Subtle Speech Method\nConcentrating on the formation of sounds and the weight \nof certain meanings, the Solar shapes her words like a \nweapon. This Charm is a mental attack disguised as social \ninfluence, entailing a written or spoken action made with \n(Manipulation + [Linguistics or another relevant Social \nAbility]). The Solar must target an Intimacy when using \nthis Charm—exploiting something the character cares \nabout to get him to accept influence. However, upon \nsuccess, the target will feel overwhelmingly compelled to \nact in a way that is the opposite of what she agreed to, as \nif her Intimacy had been inverted. For example, a Solar \nconvinces an Immaculate priest of the evils of the har-\nC H A P T E R  6\nEX3\n328\nlotry in Great Forks, convincing her to shun the temple \nprostitutes. The priest agrees vehemently, and then goes \nto live with them. Likewise, a Solar forced to brainwash \na Circle member could outwardly torture him, while ac-\ntually strengthening his Intimacies of love for her and his \nunderstanding of why his suffer-\ning is necessary. Once successful, \npersuasion caused by this Charm \ncan’t be resisted with Willpower \nuntil another character success-\nfully dissuades the target from a \nchosen course of action (p. 221), \nand upon doing so, the target must \npay (Solar’s Essence) Willpower \nto break free. Intimacies tainted \nby this Charm are more insidious—\nthey are both harder to root out, \nbut also indecipherable from what \na character truly believes. While \nTranscendent Hero’s Meditation \n(p. 308) can shatter persuasion \ncaused by this Charm, it can’t \nchange the Solar’s Intimacies, \nthough it does make her realize \nhow she’s been influenced.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "b21d42b7-6f61-3143-bd7f-70cc13303329",
+      "name": "Swift Sage’s Eye",
+      "ability": "Linguistics",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [],
+      "cost": "1m",
+      "type": "Reflexive ON TWISTED WORDS TECHNIQUE",
+      "keywords": [],
+      "duration": "",
+      "fullText": "This Charm doesn’t actually invert Intimacies, though it ultimately causes characters to behave as if it did. When used to instill beliefs, this Charm may strengthen or weaken Intimacies as a normal instill action would. The difference is that it appears to strengthen an Intimacy when it is actually weakening it, or strengthens an Intimacy that it appears to weaken.\n\nFor example, “You certainly look noble in purple,” convinces someone that he looks like a fool in purple, while “I can’t stand you, you’re insufferable,” only increases his desire to be around you. Just as a normal instill action, it may also be used to create contradictory Intimacies, though it appears to create an Intimacy which agrees.\n\nFor example, one might get a monk with a Defining Intimacy for the Immaculate Order to agree that temple harlotry in Great Forks is bad far more easily than one might convince him that it’s good.\n\nBy using this Charm to convince him that it’s bad, one convinces him to behave as if it’s good, giving him an Intimacy that, in some way, contradicts his core belief in the Immaculate Faith.\n\nKeywords: Mute Duration: One text Prerequisite Charms: Perfect Recollection Discipline Mind quickened by flowing Essence, the Exalt reads at superhuman speed. She can read a scroll as quickly as she can unroll it, and a book as fast as she can turn the pages— approximately three pages per second.",
+      "rawData": "Swift Sage’s Eye\nCost: 1m; Mins: Linguistics 5, Essence 3\nType: Reflexive\nON TWISTED WORDS TECHNIQUE\nThis Charm doesn’t actually invert Inti-\nmacies, though it ultimately causes char-\nacters to behave as if it did. When used \nto instill beliefs, this Charm may \nstrengthen or weaken Intimacies as a \nnormal instill action would. The differ-\nence is that it appears to strengthen an \nIntimacy when it is actually weakening \nit, or strengthens an Intimacy that it \nappears to weaken.\nFor example, “You certainly look noble \nin purple,” convinces someone that he \nlooks like a fool in purple, while “I can’t \nstand you, you’re insufferable,” only in-\ncreases his desire to be around you. Just \nas a normal instill action, it may also be \nused to create contradictory Intimacies, \nthough it appears to create an Intimacy \nwhich agrees.\nFor example, one might get a monk with \na Defining Intimacy for the Immaculate \nOrder to agree that temple harlotry in \nGreat Forks is bad far more easily than \none might convince him that it’s good. \nBy using this Charm to convince him that \nit’s bad, one convinces him to behave as \nif it’s good, giving him an Intimacy that, \nin some way, contradicts his core belief \nin the Immaculate Faith.  \nC H A R M S\nEX3\n329\nKeywords: Mute\nDuration: One text\nPrerequisite Charms: Perfect Recollection Discipline\nMind quickened by flowing Essence, the Exalt reads at \nsuperhuman speed. She can read a scroll as quickly as she \ncan unroll it, and a book as fast as she can turn the pages—\napproximately three pages per second.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "8288f187-e793-39ce-b8ad-7574fbea38d0",
+      "name": "Mind-Scribing Method",
+      "ability": "Linguistics",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "011eba6e-00c8-36f8-a03c-57cb2c6b4008"
+      ],
+      "cost": "5m, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "Even chained in a lightless dungeon, the Lawgiver can write a book that transforms the world. This Charm allows the Solar to engage an extended roll to produce a long work (p. 221) without requiring that she have any writing instruments. The Exalt stores her progress mentally, and may copy it down at her earliest convenience. There is no limit to how many novels, epics, and dogmas the Exalt may store in this fashion. As the Solar is copying her own work, she may use a combination of Whirling Brush Method and Perfect Recollection Discipline to copy a remembered work with tremendous speed. The Solar is explicitly permitted to enhance any writing she composes in her head with other Linguistics Charms, even those with the written-only keyword.",
+      "rawData": "Mind-Scribing Method\nCost: 5m, 1wp; Mins: Linguistics 5, Essence 3\nType: Simple\nKeywords: Mute\nDuration: Instant\nPrerequisite Charms: Perfect Recollection Discipline\nEven chained in a lightless dungeon, the Lawgiver can \nwrite a book that transforms the world. This Charm allows \nthe Solar to engage an extended roll to produce a long \nwork (p. 221) without requiring that she have any writing \ninstruments. The Exalt stores her progress mentally, and \nmay copy it down at her earliest convenience. There is no \nlimit to how many novels, epics, and dogmas the Exalt \nmay store in this fashion. As the Solar is copying her own \nwork, she may use a combination of Whirling Brush \nMethod and Perfect Recollection Discipline to copy a re-\nmembered work with tremendous speed. The Solar is ex-\nplicitly permitted to enhance any writing she composes \nin her head with other Linguistics Charms, even those \nwith the written-only keyword.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "81dc2c1e-1c9f-3a99-a918-282fb3b70097",
+      "name": "Heaven-Drawing Discipline",
+      "ability": "Linguistics",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "8288f187-e793-39ce-b8ad-7574fbea38d0"
+      ],
+      "cost": "8m, 1wp",
+      "type": "Supplemental",
+      "keywords": [
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "The Essence of the universe flowing through her mind, the Solar draws on a library of words as deep as the celestial vault. This Charm magnifies the Solar’s ability to compose massive volumes of complex information, allowing her to complete difficult manuscripts with increased speed. This Charm supplements an extended roll to produce such work (see p. 221), automatically reducing the interval by one unit, from years to seasons, seasons to months, and months to weeks. While this Charm greatly speeds the Solar’s efforts, it does not directly influence the mechanical speed with which she lays down words—her speed is increased by a streamlining of thought processes and an amplification of the mental faculties that surround vocabulary and dissemination skills, rather than an increase of manual dexterity. The Exalt must use this Charm against each interval she wishes to shorten, and must be able to dedicate the required time and writing instruments to the task. If this Charm is used in combination with its prerequisite, ignore this Charm’s Willpower cost.\n\nA repurchase at Essence 4+ allows the Exalt to pay twelve motes, one Willpower, to reduce an interval by two units.\n\nReducing the work of years to months, or seasons to weeks is a challenging feat if the Solar does all the work mentally; if she is physically writing, she may need Whirling Brush Method to keep up with the speed at which she can process ideas. The Lawgiver may not yet reduce production time of a tome to less than a unit of weeks.\n\nA second repurchase at Essence 5+ allows the Exalt to pay fifteen motes, one Willpower, to reduce an interval by a full three units of time. An Exalt with this Charm can reduce the time it takes to produce work from years to weeks, and from months to hours. If the Lawgiver is writing as she works, she will not get the full speed of her creative process without the use of Whirling Brush Method, and even then, she may be seen to spend several sleepless nights constructing single massive works.",
+      "rawData": "Heaven-Drawing Discipline\nCost: 8m, 1wp; Mins: Linguistics 5, Essence 3\nType: Supplemental\nKeywords: Mute\nDuration: Instant\nPrerequisite Charms: Mind-Scribing Method\nThe Essence of the universe flowing through her mind, \nthe Solar draws on a library of words as deep as the celes-\ntial vault. This Charm magnifies the Solar’s ability to \ncompose massive volumes of complex information, allow-\ning her to complete difficult manuscripts with increased \nspeed. This Charm supplements an extended roll to \nproduce such work (see p. 221), automatically reducing \nthe interval by one unit, from years to seasons, seasons to \nmonths, and months to weeks. While this Charm greatly \nspeeds the Solar’s efforts, it does not directly influence the \nmechanical speed with which she lays down words—her \nspeed is increased by a streamlining of thought processes \nand an amplification of the mental faculties that surround \nvocabulary and dissemination skills, rather than an in-\ncrease of manual dexterity. The Exalt must use this Charm \nagainst each interval she wishes to shorten, and must be \nable to dedicate the required time and writing instruments \nto the task. If this Charm is used in combination with its \nprerequisite, ignore this Charm’s Willpower cost.  \nA repurchase at Essence 4+ allows the Exalt to pay twelve \nmotes, one Willpower, to reduce an interval by two units. \nReducing the work of years to months, or seasons to weeks \nis a challenging feat if the Solar does all the work men-\ntally; if she is physically writing, she may need Whirling \nBrush Method to keep up with the speed at which she can \nprocess ideas. The Lawgiver may not yet reduce produc-\ntion time of a tome to less than a unit of weeks.\nA second repurchase at Essence 5+ allows the Exalt to pay \nfifteen motes, one Willpower, to reduce an interval by a \nfull three units of time. An Exalt with this Charm can \nreduce the time it takes to produce work from years to \nweeks, and from months to hours. If the Lawgiver is \nwriting as she works, she will not get the full speed of \nher creative process without the use of Whirling Brush \nMethod, and even then, she may be seen to spend several \nsleepless nights constructing single massive works.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "0522fe79-9fdc-34f9-a8e2-843697d21e0b",
+      "name": "Perfect Celestial Author",
+      "ability": "Linguistics",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "5716bf2f-9b8c-3bae-bc2a-5ede431db8da"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [
+        "Written-only"
+      ],
+      "duration": "Permanent",
+      "fullText": "While using Flashing Quill Atemi, the Lawgiver can edit a manuscript to combine Simple-type Charms or effects which could otherwise not coexist. Thus, she could use Letter-Within-A-Letter Technique and Cup Boils Over to kill someone with what appears to be a love letter.",
+      "rawData": "Perfect Celestial Author\nCost: —; Mins: Linguistics 5, Essence 4\nType: Permanent\nKeywords: Written-only\nDuration: Permanent\nPrerequisite Charms: Flashing Quill Atemi\nWhile using Flashing Quill Atemi, the Lawgiver can edit \na manuscript to combine Simple-type Charms or effects \nwhich could otherwise not coexist. Thus, she could use \nLetter-Within-A-Letter Technique and Cup Boils Over to \nkill someone with what appears to be a love letter.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "96bb8afe-c8f8-34be-9154-e386f8a0e6c8",
+      "name": "Unbreakable Fascination Method",
+      "ability": "Linguistics",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "f3bd463a-2a1a-354f-96e0-db760c689a7b"
+      ],
+      "cost": "6m, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Psyche"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar speaks in such a magnetic and engaging fashion that those who can hear her become powerless to do anything but listen. Roll the Solar’s (Manipulation + Linguistics) with (Essence) automatic successes, ignoring the penalty for group influence. The Solar may not exploit targeted Intimacies to lower Resolve, nor may Intimacies be invoked to raise Resolve against this effect.  Those who fail their Resolve checks are entranced by the Solar’s voice and are held enraptured until she ceases speaking for more than a few seconds. Even characters who don’t understand the Solar’s language can succumb to this power.\n\nThis Charm may also be used to ensnare and captivate a reader: if a character reads so much as a single line of writing reinforced with Unbreakable Fascination Method, he must engage his Resolve, and if he fails, he must continue reading what the Solar has written in its entirety, though this Charm may only hold a reader rapt for (Essence) minutes.\n\nThis Charm may not be resisted with Willpower. Attack cancels the Charm, but only direct physical danger disrupts the effect. A brave or suicidal Exalt could keep a platoon of guards with her in a burning building until it was fully engulfed, but they would not stand there listening as the flaming timbers started crashing down around them.\n\nLore",
+      "rawData": "Unbreakable Fascination Method\nCost: 6m, 1wp; Mins: Linguistics 5, Essence 4\nType: Simple\nKeywords: Psyche\nDuration: Instant\nPrerequisite Charms: Twisted Words Technique\nThe Solar speaks in such a magnetic and engaging fashion \nthat those who can hear her become powerless to do any-\nthing but listen. Roll the Solar’s (Manipulation + Linguis-\ntics) with (Essence) automatic successes, ignoring the \npenalty for group influence. The Solar may not exploit \ntargeted Intimacies to lower Resolve, nor may Intimacies \nbe invoked to raise Resolve against this effect.  Those who \nfail their Resolve checks are entranced by the Solar’s voice \nand are held enraptured until she ceases speaking for more \nthan a few seconds. Even characters who don’t under-\nstand the Solar’s language can succumb to this power. \nC H A P T E R  6\nEX3\n330\nThis Charm may also be used to ensnare and captivate a \nreader: if a character reads so much as a single line of \nwriting reinforced with Unbreakable Fascination Method, \nhe must engage his Resolve, and if he fails, he must con-\ntinue reading what the Solar has written in its entirety, \nthough this Charm may only hold a reader rapt for \n(Essence) minutes. \nThis Charm may not be resisted with Willpower. Attack \ncancels the Charm, but only direct physical danger \ndisrupts the effect. A brave or suicidal Exalt could keep \na platoon of guards with her in a burning building until \nit was fully engulfed, but they would not stand there \nlistening as the flaming timbers started crashing down \naround them. \nLore",
+      "potentiallyProblematicImport": false
+    }
+  ]
+}

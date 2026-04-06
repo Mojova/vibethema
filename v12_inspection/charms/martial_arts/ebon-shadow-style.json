@@ -1,0 +1,171 @@
+{
+  "$schema": "./charm-schema.json",
+  "version": "0.1.0",
+  "ability": "Ebon Shadow Style",
+  "type": "martialArts",
+  "exalt": "solar",
+  "charms": [
+    {
+      "id": "c2386c7f-b8c9-3a2f-9af9-c0a8f4c6f229",
+      "name": "Snow Follows Winter",
+      "ability": "Ebon Shadow Style",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "06a0a73a-f231-310d-88e4-7f70508cad42",
+        "e73b9527-67ba-3b7f-817f-2d49236d80bb",
+        "48adf949-2bca-3b91-b359-55873e1a5d2a"
+      ],
+      "cost": "— (+1wp)",
+      "type": "Permanent",
+      "keywords": [
+        "Mastery"
+      ],
+      "duration": "Permanent",
+      "fullText": "A brilliant flare of scarlet suffuses the silver halos of the White Reaper’s corona, as if stained with the blood of countless enemies. Then, in an instant, it flickers out, vanishing into her wounds and sealing them with a hissing burst of steam. The martial artist must have White Reaper Form active and at least one damaged -2 health level to use Snow Follows Winter, paying a point of Willpower at the start of her turn to heal (current halos) levels of bashing and lethal damage. Doing so expends these halos at the end of her turn. This healing surge can only be used once per scene.\n\nAdditionally, for the rest of the scene, the martial artist gains the following benefits while she is in White Reaper Form:\n\n• The martial artist reduces any wound penalties she suffers by the number of halos she has.\n\n• Enemies who have witnessed the awful power of their seemingly invincible enemy lose their courage in battle.\n\nAny rout check provoked by the martial artist’s attacks are made at (1 + [halos/2, round up]) difficulty\n\n• Whenever she resets to base Initiative after making a decisive attack, she may add +1 to her base Initiative for each halo she has. Doing so expends all halos at the end of the turn.\n\nSpecial activation rules: Snow Follows Winter can only be used once per fight.\n\nMastery: Using Snow Follows Winter for the first time in a fight gives the martial artist a surge of (Stamina x\n\nhalos) motes, which must be spent that turn on White Reaper Charms or Excellencies. Additionally, the martial artist may reset the healing power of Snow Follows Winter if she makes an attack that would cause her to gain a halo while she already has the maximum of (Essence) halos, but only if she currently has a -4 health level filled with damage or is in Initiative Crash.\n\nEbon Shadow Style Ebon Shadow style is the art of fighting from stealth, vanishing into shadows or dashing behind cover before moving out to deliver a deadly, unexpected strike. While other martial artists hold their ground in fights, a student of the Ebon Shadow fades in and out of combat, hiding when the tide of battle turns against her and emerging from stealth when an opportune moment presents itself.\n\nMany who practice it in the Second Age are assassins and knaves, clinging to the cover of darkness to hide their wickedness, but there are still some who remember the righteous origins of the style as that which taught evildoers to fear the shadows and delivered restitution to those who suffered at their hands. With the return of the Solar Exalted, this legacy shines only brighter amid the shadows of the Time of Tumult.\n\nEbon Shadow Weapons: Ebon Shadow style uses fighting chains to deliver painful, lashing blows, or moves in close to use unarmed attacks, sais, tiger claws, and knives to deliver strikes to the jugular, solar plexus, and other weak points of the body. Any unarmed attack that is enhanced by an Ebon Shadow Charm can always be stunted to deal lethal damage.\n\nArmor: Ebon Shadow style is incompatible with armor.\n\nComplementary Abilities: Stealth is essential to the practice of Ebon Shadow style—no matter how great a stylist’s fighting prowess as a deadly assassin may be, it means nothing if she lacks the skill to evade the notice of her victims.",
+      "rawData": "Snow Follows Winter\nCost: — (+1wp); Mins: Martial Arts 5, Essence 3; \nType: Permanent \nKeywords: Mastery \nDuration: Permanent \nPrerequisite Charms: Enemies Like Grass, Greatest \nKiller Attitude, Impenetrable White Shroud\nA brilliant flare of scarlet suffuses the silver halos of the \nWhite Reaper’s corona, as if stained with the blood of \ncountless enemies. Then, in an instant, it flickers out, \nvanishing into her wounds and sealing them with a hissing \nburst of steam. The martial artist must have White Reaper \nForm active and at least one damaged -2 health level to use \nSnow Follows Winter, paying a point of Willpower at the \nstart of her turn to heal (current halos) levels of bashing and \nlethal damage. Doing so expends these halos at the end of \nher turn. This healing surge can only be used once per scene. \nAdditionally, for the rest of the scene, the martial artist gains \nthe following benefits while she is in White Reaper Form: \n• The martial artist reduces any wound penalties she  \n suffers by the number of halos she has.  \n• Enemies who have witnessed the awful power of their \n seemingly invincible enemy lose their courage in battle. \n Any rout check provoked by the martial artist’s attacks \n are made at (1 + [halos/2, round up]) difficulty \n• Whenever she resets to base Initiative after making a \n  decisive attack, she may add +1 to her base Initiative \n for each halo she has. Doing so expends all halos at the \n end of the turn.\nSpecial activation rules: Snow Follows Winter can only \nbe used once per fight. \nMastery: Using Snow Follows Winter for the first time \nin a fight gives the martial artist a surge of (Stamina x \n\nhalos) motes, which must be spent that turn on White \nReaper Charms or Excellencies. Additionally, the martial \nartist may reset the healing power of Snow Follows Winter \nif she makes an attack that would cause her to gain a halo \nwhile she already has the maximum of (Essence) halos, \nbut only if she currently has a -4 health level filled with \ndamage or is in Initiative Crash.\nEbon Shadow Style\nEbon Shadow style is the art of fighting from stealth, \nvanishing into shadows or dashing behind cover before \nmoving out to deliver a deadly, unexpected strike. While \nother martial artists hold their ground in fights, a student \nof the Ebon Shadow fades in and out of combat, hiding \nwhen the tide of battle turns against her and emerging \nfrom stealth when an opportune moment presents itself. \nMany who practice it in the Second Age are assassins and \nknaves, clinging to the cover of darkness to hide their \nwickedness, but there are still some who remember the \nrighteous origins of the style as that which taught evildoers \nto fear the shadows and delivered restitution to those who \nsuffered at their hands. With the return of the Solar \nExalted, this legacy shines only brighter amid the shadows \nof the Time of Tumult.\nEbon Shadow Weapons: Ebon Shadow style uses fighting \nchains to deliver painful, lashing blows, or moves in close \nto use unarmed attacks, sais, tiger claws, and knives to \ndeliver strikes to the jugular, solar plexus, and other weak \npoints of the body. Any unarmed attack that is enhanced \nby an Ebon Shadow Charm can always be stunted to deal \nlethal damage.\nArmor: Ebon Shadow style is incompatible with armor.\nComplementary Abilities: Stealth is essential to the \npractice of Ebon Shadow style—no matter how great a \nstylist’s fighting prowess as a deadly assassin may be, it \nmeans nothing if she lacks the skill to evade the notice of \nher victims.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "a82a9cb0-2c50-32ea-b9e3-c22d080e2c3b",
+      "name": "Nothing But Shadows",
+      "ability": "Ebon Shadow Style",
+      "minAbility": 2,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [
+        "Decisive-only",
+        "Mastery"
+      ],
+      "duration": "Instant",
+      "fullText": "Students of the Ebon Shadow style fade in and out of sight in combat, emerging as if from nowhere to strike before vanishing back into the shadows. When the martial artist takes a Stealth action in combat, she may use Nothing But Shadows to apply a penalty equal to (higher of 3 or her Essence) to the opposed roll of any enemy with a lower Initiative than her, to a maximum of -5.\n\nAlternatively, when the martial artist is hit with a decisive attack, she may use Nothing But Shadows to play dead, slowing her heart rate to nearly nothing. This is treated as an attempt to go to ground by faking death, rather than seeking concealment. The usual penalties apply, but the martial artist applies the benefits of this Charm on all rolls she makes to go to ground for free, and also adds any wound penalties she is suffering as bonus dice on all rolls—the more damage she has taken, the more convincing her false death.\n\nMastery: Every 1 that a non-trivial enemy rolls on his (Perception + Awareness) opposing the supplemented action gives the martial artist a point of Initiative, up to a maximum of (Stealth) points per activation.",
+      "rawData": "Nothing But Shadows\nCost: 3m; Mins: Martial Arts 2, Essence 1 \nType: Reflexive \nKeywords: Decisive-only, Mastery \nDuration: Instant \nPrerequisite Charms: None\nStudents of the Ebon Shadow style fade in and out of sight \nin combat, emerging as if from nowhere to strike before \nvanishing back into the shadows. When the martial artist \ntakes a Stealth action in combat, she may use Nothing But \nShadows to apply a penalty equal to (higher of 3 or her \nEssence) to the opposed roll of any enemy with a lower \nInitiative than her, to a maximum of -5.\nAlternatively, when the martial artist is hit with a decisive \nattack, she may use Nothing But Shadows to play dead, \nslowing her heart rate to nearly nothing. This is treated as \nan attempt to go to ground by faking death, rather than \nseeking concealment. The usual penalties apply, but the \nmartial artist applies the benefits of this Charm on all rolls \nshe makes to go to ground for free, and also adds any wound \npenalties she is suffering as bonus dice on all rolls—the more \ndamage she has taken, the more convincing her false death. \nMastery: Every 1 that a non-trivial enemy rolls on his \n(Perception + Awareness) opposing the supplemented \naction gives the martial artist a point of Initiative, up to a \nmaximum of (Stealth) points per activation.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "aaf08eb2-b37b-3f15-b140-2f1180bde1be",
+      "name": "Seven Points of Weakness Strike",
+      "ability": "Ebon Shadow Style",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "4m",
+      "type": "Supplemental",
+      "keywords": [
+        "Mastery",
+        "Withering-only"
+      ],
+      "duration": "Instant",
+      "fullText": "Pinpointing a seam or flaw in an enemy’s armor, the martial artist strikes through it with the expert precision of a trained assassin. Seven Points of Weakness Strike subtracts (the martial artist’s Stealth) from her enemy’s armored soak. Unexpected attacks double the amount of soak ignored.\n\nMastery: If this Charm reduces an enemy’s armored soak to zero against a withering attack, any remaining points of soak reduction are converted to post-soak damage dice.",
+      "rawData": "Seven Points of Weakness Strike\nCost: 4m; Mins: Martial Arts 3, Essence 1 \nType: Supplemental \nKeywords: Mastery, Withering-only \nDuration: Instant \nPrerequisite Charms: None\nPinpointing a seam or flaw in an enemy’s armor, the martial \nartist strikes through it with the expert precision of \na trained assassin. Seven Points of Weakness Strike \nsubtracts (the martial artist’s Stealth) from her enemy’s \narmored soak. Unexpected attacks double the amount of \nsoak ignored. \nMastery: If this Charm reduces an enemy’s armored soak \nto zero against a withering attack, any remaining points \nof soak reduction are converted to post-soak damage dice.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "c79a1e34-1f0d-32a9-b54d-c39feed47950",
+      "name": "Ebon Shadow Form",
+      "ability": "Ebon Shadow Style",
+      "minAbility": 4,
+      "minEssence": 1,
+      "prerequisites": [
+        "a82a9cb0-2c50-32ea-b9e3-c22d080e2c3b",
+        "aaf08eb2-b37b-3f15-b140-2f1180bde1be"
+      ],
+      "cost": "8m",
+      "type": "Simple",
+      "keywords": [
+        "Form",
+        "Mute"
+      ],
+      "duration": "One scene",
+      "fullText": "The martial artist’s outline begins to distort and flicker, as if it were a shadow cast by a candle’s unsteady flame. She moves with eerie speed and unnatural grace, making her enemies question whether she is even human. If her anima banner flares, it seems shapeless and dark, an umbral mantle enveloping her in its depths. Any enemy who fails an opposed roll to spot her when she enters stealth loses a point of Initiative, and she adds (her Stealth/2, round up) to her base Initiative when she resets after making a decisive unexpected attack. She also adds +1 to her Defense.\n\nIf the martial artist is killed while in the Ebon Shadow Form, her body evaporates into an acrid black smoke, leaving behind no physical remains by which she might be identified.\n\nSpecial activation rules: Whenever the martial artist makes a Stealth roll in combat that beats the opposing rolls of all enemies in the combat, she may reflexively activate Ebon Shadow Form. Enemies within range lose Initiative for failing their roll as described above.",
+      "rawData": "Ebon Shadow Form\nCost: 8m; Mins: Martial Arts 4, Essence 1 \nType: Simple \nKeywords: Form, Mute \nDuration: One scene \nPrerequisite Charms: Nothing But Shadows, Seven \nPoints of Weakness Strike\nThe martial artist’s outline begins to distort and flicker, as \nif it were a shadow cast by a candle’s unsteady flame. She \nmoves with eerie speed and unnatural grace, making her \nenemies question whether she is even human. If her anima \nbanner flares, it seems shapeless and dark, an umbral mantle \nenveloping her in its depths. Any enemy who fails an \nopposed roll to spot her when she enters stealth loses a \npoint of Initiative, and she adds (her Stealth/2, round up) \nto her base Initiative when she resets after making a decisive \nunexpected attack. She also adds +1 to her Defense.\nIf the martial artist is killed while in the Ebon Shadow \nForm, her body evaporates into an acrid black smoke, \nleaving behind no physical remains by which she might \nbe identified. \nSpecial activation rules: Whenever the martial artist \nmakes a Stealth roll in combat that beats the opposing \nrolls of all enemies in the combat, she may reflexively \nactivate Ebon Shadow Form. Enemies within range lose \nInitiative for failing their roll as described above.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "6323fe70-415b-32e5-be8b-7b0554f311f6",
+      "name": "Elusive Flicker Evasion",
+      "ability": "Ebon Shadow Style",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "c79a1e34-1f0d-32a9-b54d-c39feed47950"
+      ],
+      "cost": "4m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Decisive-only",
+        "Mastery",
+        "Terrestrial"
+      ],
+      "duration": "Instant",
+      "fullText": "The Ebon Shadow moves in flashes, evading an enemy’s attack without seeming to ever cross through space. Elusive Flicker Evasion forces an enemy to make two attacks rolls for a decisive attack against the martial artist, taking the lower result.\n\nTerrestrial: A Dragon-Blood may only use this Charm once per scene, though it can be reset by incapacitating a non-trivial opponent with an unexpected decisive attack.\n\nMastery: When an enemy misses the martial artist, he loses points of Initiative equal to the difference between the two attack rolls, up to a maximum of the martial artist’s Stealth.",
+      "rawData": "Elusive Flicker Evasion\nCost: 4m, 1wp; Mins: Martial Arts 5, Essence 2 \nType: Reflexive \nKeywords: Decisive-only, Mastery, Terrestrial \nDuration: Instant \nPrerequisite Charms: Ebon Shadow Form\nThe Ebon Shadow moves in flashes, evading an enemy’s \nattack without seeming to ever cross through space. Elusive \nFlicker Evasion forces an enemy to make two attacks rolls \nfor a decisive attack against the martial artist, taking the \nlower result.\nTerrestrial: A Dragon-Blood may only use this Charm \nonce per scene, though it can be reset by incapacitating a \nnon-trivial opponent with an unexpected decisive attack.\nMastery: When an enemy misses the martial artist, \nhe loses points of Initiative equal to the difference between \nthe two attack rolls, up to a maximum of the martial \nartist’s Stealth.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "f65473b0-a803-3004-8e6e-bf3cb5616570",
+      "name": "Shadow-Body Dissolution",
+      "ability": "Ebon Shadow Style",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "6323fe70-415b-32e5-be8b-7b0554f311f6"
+      ],
+      "cost": "10m",
+      "type": "Reflexive",
+      "keywords": [
+        "Decisive-only",
+        "Mute",
+        "Terrestrial"
+      ],
+      "duration": "Instant",
+      "fullText": "The martial artist’s body becomes tenebrous and insubstantial, dissipating and deforming to let blows pass harmlessly through her. Shadow-Body Dissolution subtracts the martial artist’s (Essence + Stealth) from the raw damage of a decisive attack against her. If the martial artist takes no damage at all from the attack, she may reflexively make a Stealth attempt. On a successful roll, what her foe struck at was nothing but a shadowy illusion, while she had been hidden elsewhere all along. This Charm is incompatible with other effects that reduce decisive damage.\n\nTerrestrial: A Dragon-Blood must roll (Essence + Stealth), with each success subtracting one die of damage. If all damage is negated this way, then the successes from this roll are used as her stealth attempt, rather than having her make a (Dexterity + Stealth roll).",
+      "rawData": "Shadow-Body Dissolution\nCost: 10m; Mins: Martial Arts 5, Essence 2 \nType: Reflexive \nKeywords: Decisive-only, Mute, Terrestrial \nDuration: Instant \nPrerequisite Charms: Elusive Flicker Evasion\nThe martial artist’s body becomes tenebrous and \ninsubstantial, dissipating and deforming to let blows pass \nharmlessly through her. Shadow-Body Dissolution subtracts \nthe martial artist’s (Essence + Stealth) from the raw damage \nof a decisive attack against her. If the martial artist takes \nno damage at all from the attack, she may reflexively make \na Stealth attempt. On a successful roll, what her foe struck \nat was nothing but a shadowy illusion, while she had been \nhidden elsewhere all along. This Charm is incompatible \nwith other effects that reduce decisive damage.\n\nTerrestrial: A Dragon-Blood must roll (Essence + Stealth), \nwith each success subtracting one die of damage. If all \ndamage is negated this way, then the successes from this \nroll are used as her stealth attempt, rather than having \nher make a (Dexterity + Stealth roll).",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "49e09b59-6617-37bc-a310-677fd8c13740",
+      "name": "Shadow-Stepping Motion",
+      "ability": "Ebon Shadow Style",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "c79a1e34-1f0d-32a9-b54d-c39feed47950"
+      ],
+      "cost": "5m",
+      "type": "Supplemental",
+      "keywords": [
+        "Dual",
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "The Ebon Shadow crosses from hiding place to hiding place as though she could walk through shadows, vanishing and reappearing across the battlefield. Shadow-Stepping Motion can supplement any movement action taken while in stealth, applying double 9s to the roll and negating the increased penalty for crossing wide-open terrain.\n\nIf the martial artist uses Shadow-Stepping Motion to close in on an enemy before making an unexpected attack against him, her sudden lunge doubles the penalties inflicted by a surprise decisive attack, or adds the martial artist’s Stealth to the post-soak damage of surprise withering attack.",
+      "rawData": "Shadow-Stepping Motion\nCost: 5m; Mins: Martial Arts 4, Essence 2; \nType: Supplemental \nKeywords: Dual, Mute \nDuration: Instant \nPrerequisite Charms: Ebon Shadow Form\nThe Ebon Shadow crosses from hiding place to hiding \nplace as though she could walk through shadows, vanishing \nand reappearing across the battlefield. Shadow-Stepping \nMotion can supplement any movement action taken \nwhile in stealth, applying double 9s to the roll and negating \nthe increased penalty for crossing wide-open terrain. \nIf the martial artist uses Shadow-Stepping Motion to close \nin on an enemy before making an unexpected attack \nagainst him, her sudden lunge doubles the penalties \ninflicted by a surprise decisive attack, or adds the martial \nartist’s Stealth to the post-soak damage of surprise \nwithering attack.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "279c475f-677a-3286-9448-6a79a30c5f22",
+      "name": "Throat-Slitting Shadow Atemi",
+      "ability": "Ebon Shadow Style",
+      "minAbility": 4,
+      "minEssence": 3,
+      "prerequisites": [
+        "77318cf8-3807-332d-b463-20a6f260879b",
+        "1c9f49c5-2f3f-33ef-a3d9-ab232d5bfc2e",
+        "6884ef5e-9caf-358e-8ede-9fad86c7b33b"
+      ],
+      "cost": "1m, 1wp",
+      "type": "Supplemental",
+      "keywords": [
+        "Decisive-only",
+        "Terrestrial"
+      ],
+      "duration": "Instant",
+      "fullText": "Terrestrial: A Dragon-Blood can only use this Charm to enhance unexpected attacks, and these attacks may convert a maximum of (Essence) dice.",
+      "rawData": "Throat-Slitting Shadow Atemi\nCost: 1m, 1wp; Mins: Martial Arts 4, Essence 3  \nType: Supplemental  \nKeywords: Decisive-only, Terrestrial  \nDuration: Instant  \nPrerequisite Charms: Shadow-Stepping Motion  \n \nShrouding her weapon in a penumbra of Essence, the \nmartial artist strikes before her foes have even realized \nthey are under attack. For each extra success on a deci-\nsive attack roll, she converts one die of raw damage to an \nautomatic successes, up to a maximum of (Essence) dice. \nUnexpected attacks have no upper limit on how many \ndamage dice can be converted to successes. An enemy \nkilled with this Charm dissolves into smoke, leaving behind \nno corpse.\nTerrestrial: A Dragon-Blood can only use this Charm to \nenhance unexpected attacks, and these attacks may convert \na maximum of (Essence) dice.",
+      "potentiallyProblematicImport": true
+    }
+  ]
+}

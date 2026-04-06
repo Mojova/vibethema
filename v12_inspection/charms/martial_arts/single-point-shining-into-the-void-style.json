@@ -1,0 +1,216 @@
+{
+  "$schema": "./charm-schema.json",
+  "version": "0.1.0",
+  "ability": "Single Point Shining Into the Void Style",
+  "type": "martialArts",
+  "exalt": "solar",
+  "charms": [
+    {
+      "id": "ca1595fa-f8fb-3a66-866e-82a2191333be",
+      "name": "Angry Predator Frenzy",
+      "ability": "Single Point Shining Into the Void Style",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "dfb606cb-6e53-3a42-9933-22237927493b",
+        "a8354a68-1fc2-3b1e-8dba-d04deec41450",
+        "d0416ed4-07df-3e2b-86f8-f4ffd81923f6",
+        "29efd04c-ccac-3aa4-9e9d-e3532cc80359"
+      ],
+      "cost": "— (+5m, 1wp)",
+      "type": "Permanent",
+      "keywords": [
+        "Mastery",
+        "Terrestrial"
+      ],
+      "duration": "Permanent",
+      "fullText": "The apex of Tiger style is nothing less than predation in its purest form. As the martial artist enters the Tiger Form, she may pay an additional five motes and a point of Willpower to unleash the Angry Predator Frenzy, roaring with bestial fury as she casts aside the restraints of humanity. Her muscles surge with newfound strength, while her eyes narrow to red slits of berserker rage. While in the Angry Predator Frenzy, the martial artist may add up to (Strength) extra successes to the raw damage of decisive attacks, and gains a Defining Tie of savage hatred towards her enemies. In addition, she can rush as a reflexive action, in addition to her usual movement action for the turn. Conversely, while enraged, she cannot disengage or withdraw.\n\nTerrestrial: A Dragon-Blood add may add up to (lower of Strength or Essence) extra successes to the raw damage of decisive attacks.\n\nMastery: Whenever the martial artist resets to base Initiative after making a decisive attack while in this rage,\n\nshe adds (her Strength/2, round up) to her base Initiative.\n\nIn addition, while her anima is at the bonfire level, it takes on a bestial or destructive form that lashes out and rends the animas of her enemies. Whenever she damages an enemy with a decisive attack while at bonfire, his anima fades by one level, ripped apart by the claws or destructive vortices of her totemic display of fury.\n\nSingle Point Shining Into the Void Style Single Point Shining Into the Void is a sword style that emphasizes blinding speed and deadly-perfect finishing moves. Students learn to draw their blade as though it were an extension of their own body, transitioning effortlessly from the draw to a strike or parry. When a master duels a lesser swordsman, the fight often ends in a single stroke, the blade sheathed almost in the same instant it’s drawn. When faced against a foe who matches her in skill, the Single Point stylist fights with swift blows and an almost meditative focus, seeking the single moment of weakness in her foe’s defenses that will allow her to slash through him entirely.\n\nSingle Point Shining Into the Void Weapons: This style uses slashing swords and their artifact equivalents, reaper daiklaves, delivering lightning-fast attacks from the draw.\n\nIt cannot be used unarmed.\n\nArmor: This style is compatible with light and medium armor.",
+      "rawData": "Angry Predator Frenzy\nCost: — (+5m, 1wp); Mins: Martial Arts 5, Essence 3 \nType: Permanent \nKeywords: Mastery, Terrestrial \nDuration: Permanent \nPrerequisite Charms: Celestial Tiger Hide, Prey-\nMaiming Frenzy, Spine-Shattering Bite, Leap From \nCloaking Shadows\nThe apex of Tiger style is nothing less than predation in \nits purest form. As the martial artist enters the Tiger Form, \nshe may pay an additional five motes and a point of \nWillpower to unleash the Angry Predator Frenzy, roaring \nwith bestial fury as she casts aside the restraints of \nhumanity. Her muscles surge with newfound strength, \nwhile her eyes narrow to red slits of berserker rage. While \nin the Angry Predator Frenzy, the martial artist may add \nup to (Strength) extra successes to the raw damage of \ndecisive attacks, and gains a Defining Tie of savage hatred \ntowards her enemies. In addition, she can rush as a \nreflexive action, in addition to her usual movement action \nfor the turn. Conversely, while enraged, she cannot \ndisengage or withdraw.\nTerrestrial: A Dragon-Blood add may add up to (lower \nof Strength or Essence) extra successes to the raw damage \nof decisive attacks.\nMastery: Whenever the martial artist resets to base \nInitiative after making a decisive attack while in this rage, \nC H A P T E R  7\nEX3\n434\nshe adds (her Strength/2, round up) to her base Initiative. \nIn addition, while her anima is at the bonfire level, it takes \non a bestial or destructive form that lashes out and rends \nthe animas of her enemies. Whenever she damages an \nenemy with a decisive attack while at bonfire, his anima \nfades by one level, ripped apart by the claws or destructive \nvortices of her totemic display of fury.\nSingle Point Shining Into the Void Style\nSingle Point Shining Into the Void is a sword style that \nemphasizes blinding speed and deadly-perfect finishing \nmoves. Students learn to draw their blade as though it \nwere an extension of their own body, transitioning \neffortlessly from the draw to a strike or parry. When a \nmaster duels a lesser swordsman, the fight often ends in \na single stroke, the blade sheathed almost in the same \ninstant it’s drawn. When faced against a foe who matches \nher in skill, the Single Point stylist fights with swift blows \nand an almost meditative focus, seeking the single moment \nof weakness in her foe’s defenses that will allow her to \nslash through him entirely. \nSingle Point Shining Into the Void Weapons: This style \nuses slashing swords and their artifact equivalents, reaper \ndaiklaves, delivering lightning-fast attacks from the draw. \nIt cannot be used unarmed.\nArmor: This style is compatible with light and medium \narmor.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "29bef7b2-5920-3d23-8eeb-52a9c8ba12c0",
+      "name": "Gathering Light Concentration",
+      "ability": "Single Point Shining Into the Void Style",
+      "minAbility": 2,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [
+        "Mastery",
+        "Uniform"
+      ],
+      "duration": "Instant",
+      "fullText": "The clashing steel and ferocious blows of the swordsman’s enemies do not disrupt her focus—rather, she welcomes them, gleaning the weaknesses of each foe’s fighting style from their offense. After successfully parrying an attack, the stylist can use Gathering Light Concentration to reverse the onslaught penalties inflicted by it. Instead of applying them to her Defense, she applies them to her attacker’s Defense until his next turn.\n\nMastery: At Essence 3+, the Solar may spend an extra 3i when activating Gathering Light Concentration to cancel all onslaught penalties she’s suffering from, and inflict them on her attacker.",
+      "rawData": "Gathering Light Concentration\nCost: 3m; Mins: Martial Arts 2, Essence 1 \nType: Reflexive \nKeywords: Mastery, Uniform \nDuration: Instant \nPrerequisite Charms: None\nThe clashing steel and ferocious blows of the swordsman’s \nenemies do not disrupt her focus—rather, she welcomes \nthem, gleaning the weaknesses of each foe’s fighting style \nfrom their offense. After successfully parrying an attack, \nthe stylist can use Gathering Light Concentration to \nreverse the onslaught penalties inflicted by it. Instead of \napplying them to her Defense, she applies them to her \nattacker’s Defense until his next turn.\nMastery: At Essence 3+, the Solar may spend an extra 3i \nwhen activating Gathering Light Concentration to cancel \nall onslaught penalties she’s suffering from, and inflict \nthem on her attacker.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "90e56856-a645-30ad-88ec-be4925e3845c",
+      "name": "Shining Starfall Execution",
+      "ability": "Single Point Shining Into the Void Style",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "6m",
+      "type": "Supplemental",
+      "keywords": [
+        "Decisive-only",
+        "Mastery"
+      ],
+      "duration": "Instant",
+      "fullText": "Committing fully to a lethal blow, the swordsman cleaves through her enemies with killing speed. Shining Starfall Execution adds (her Dexterity/2, round up) to the raw damage of a decisive attack. If she is at Initiative 15+, she adds her full Dexterity instead. However, if the attack misses, then the stylist adds (Dexterity /2) to the amount of Initiative she loses.\n\nMastery: Shining Starfall Execution also doubles 10s on the damage roll at Initiative 15+.",
+      "rawData": "Shining Starfall Execution\nCost: 6m; Mins: Martial Arts 3, Essence 1 \nType: Supplemental \nKeywords: Decisive-only, Mastery \nDuration: Instant \nPrerequisite Charms: None\nCommitting fully to a lethal blow, the swordsman cleaves \nthrough her enemies with killing speed. Shining Starfall \nExecution adds (her Dexterity/2, round up) to the raw \ndamage of a decisive attack. If she is at Initiative 15+, she \nadds her full Dexterity instead. However, if the attack \nmisses, then the stylist adds (Dexterity /2) to the amount \nof Initiative she loses. \nMastery: Shining Starfall Execution also doubles 10s on \nthe damage roll at Initiative 15+.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "af295397-06b6-395f-90ce-2f78d010c283",
+      "name": "Single Point Shining Into the Void Form",
+      "ability": "Single Point Shining Into the Void Style",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "29bef7b2-5920-3d23-8eeb-52a9c8ba12c0",
+        "9a781e0d-53ad-3f77-8c75-766806b27c85",
+        "09c5ad6c-668f-3fbf-8f6b-d9a9fb237bdd",
+        "0ed9b14c-e941-363e-b2a7-0ea3283a6eb7",
+        "1939e3e1-cfe5-382b-b15e-aefc25f2593e",
+        "3973d684-ee1e-3d82-94ce-b3981a927ce2",
+        "375c0f2c-a2bb-3f3d-81bd-d209e804524c",
+        "0a6aeacd-2cc2-3df9-a521-379367691d80",
+        "d73e4df6-252d-392e-98d6-40f817c8b80d"
+      ],
+      "cost": "10m",
+      "type": "Simple",
+      "keywords": [
+        "Form",
+        "Mastery",
+        "Terrestrial"
+      ],
+      "duration": "One scene",
+      "fullText": "This does not represent the sword gaining intelligence or agency of its own, but rather, the superior speed of the stylist allowing her to strike twice during each round.\n\nWhen the sword’s turn comes up in Initiative order, the swordsman may choose to make an attack with it, or to delay the action until later in the round. No other actions can be taken (including movement actions), and if the stylist does not choose one of these options, the sword’s turn is wasted.\n\nThe sword’s Initiative is separate from the swordsman’s own—withering attacks made by one cannot add to the other’s Initiative, and decisive attacks made by one do not reset the other to base Initiative. The base raw damage of decisive attacks made on the sword’s turn cannot exceed the swordsman’s own Initiative, even if the sword’s is higher. When the stylist is dealt Initiative damage, the character who damaged her may choose whether to apply it to her own Initiative or the sword’s, but cannot split the damage across both pools. The sword also loses a point of Initiative at the end of every round it was not used to successfully land an attack. If the sword’s Initiative is reduced to zero, then the stylist is forced out of this form, and cannot reactivate it again for three rounds. When she does, she does not reroll Join Battle, but only sets the sword to base Initiative. If the swordsman leaves this form voluntarily before the end of the fight, note the sword’s current Initiative rating. If it is reactivated later during the scene, the sword’s Initiative is reset to this value, rather than making a new Join Battle roll.\n\nSpecial activation rules: Whenever the martial artist achieves the highest Join Battle value at the start of a fight, she may reflexively activate Single Point Shining Into the Void Form.\n\nTerrestrial: A Dragon-Blood must pay a point of Willpower each round she wishes to attack twice.\n\nOtherwise, she may only make one attack per round, choosing whether to “use” her own Initiative or the sword’s each round.\n\nMastery: The martial artist gains the following benefits:\n\n• When using the sword’s turn to make a decisive attack, its damage is not capped by the stylist’s own Initiative.\n\n• The sword does not lose Initiative on turns it did not successfully land an attack.\n\n• If the sword’s Initiative is reduced to zero or less, the stylist loses the benefits of this form, but it still remains active. Once three rounds have passed, its benefits resume without the swordsman needing to activate it or pay its cost again. Additionally, if the swordsman crashes an enemy who reduced his sword’s Initiative to zero, then he may immediately roll Join Battle for it again and take an action with it on the same tick, as per the usual rules for Initiative Shifting (p. 194).",
+      "rawData": "Single Point Shining Into the Void Form\nCost: 10m; Mins: Martial Arts 4, Essence 2 \nType: Simple \nKeywords: Form, Mastery, Terrestrial \nDuration: One scene \nPrerequisite Charms: Gathering Light Concentration, \nShining Starfall Execution\nSheathing her blade for a brief moment, the swordsman \ncenters her mind and Essence. As she draws her sword \nonce again and enters this form, it is as a lightning bolt of \nflashing steel, moving with unimaginable speed and \ncontrol. While in this form, it is customary to sheathe \none’s sword after each strike, and draw it anew for each \nnew one—not merely as a show of this style’s formidable \nspeed, but to contain and dissipate the overwhelming \nbuildup of Essence that might erupt beyond the stylist’s \ncontrol without such restraint. The first time the \nswordsman uses this Charm in a fight, she rolls her sword \ninto battle with a (Wits + Martial Arts) Join Battle roll, \ngiving it its own Initiative track separate from her own. \nThis does not represent the sword gaining intelligence or \nagency of its own, but rather, the superior speed of the \nstylist allowing her to strike twice during each round. \nWhen the sword’s turn comes up in Initiative order, the \nswordsman may choose to make an attack with it, or to \ndelay the action until later in the round. No other actions \ncan be taken (including movement actions), and if the \nstylist does not choose one of these options, the sword’s \nturn is wasted.\nThe sword’s Initiative is separate from the swordsman’s \nown—withering attacks made by one cannot add to the \nother’s Initiative, and decisive attacks made by one do \nnot reset the other to base Initiative. The base raw damage \nof decisive attacks made on the sword’s turn cannot exceed \nthe swordsman’s own Initiative, even if the sword’s is \nhigher. When the stylist is dealt Initiative damage, the \ncharacter who damaged her may choose whether to apply \nit to her own Initiative or the sword’s, but cannot split the \ndamage across both pools. The sword also loses a point \nof Initiative at the end of every round it was not used to \nsuccessfully land an attack. If the sword’s Initiative is \nreduced to zero, then the stylist is forced out of this form, \nand cannot reactivate it again for three rounds. When she \ndoes, she does not reroll Join Battle, but only sets the \nsword to base Initiative. If the swordsman leaves this form \nvoluntarily before the end of the fight, note the sword’s \ncurrent Initiative rating. If it is reactivated later during \nthe scene, the sword’s Initiative is reset to this value, rather \nthan making a new Join Battle roll. \nSpecial activation rules: Whenever the martial artist \nachieves the highest Join Battle value at the start of a fight, \nshe may reflexively activate Single Point Shining Into the \nVoid Form.\nTerrestrial: A Dragon-Blood must pay a point of \nWillpower each round she wishes to attack twice. \nOtherwise, she may only make one attack per round, \nchoosing whether to “use” her own Initiative or the \nsword’s each round.\nMastery: The martial artist gains the following benefits: \n• When using the sword’s turn to make a decisive attack, \nits damage is not capped by the stylist’s own Initiative. \n• The sword does not lose Initiative on turns it did not \nsuccessfully land an attack. \n• If the sword’s Initiative is reduced to zero or less, the \nstylist loses the benefits of this form, but it still remains \nactive. Once three rounds have passed, its benefits resume \nwithout the swordsman needing to activate it or pay its \ncost again. Additionally, if the swordsman crashes an \nenemy who reduced his sword’s Initiative to zero, then \nhe may immediately roll Join Battle for it again and take \nan action with it on the same tick, as per the usual rules \nfor Initiative Shifting (p. 194).",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "8e14ab27-ae3a-3351-8434-49c1d31c58fb",
+      "name": "Fatal Stroke Flash",
+      "ability": "Single Point Shining Into the Void Style",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "47cd6c63-cd80-3ccf-b962-9a90ac226a0f",
+        "25eec15e-5cdd-33cb-8001-8e252e860069",
+        "0ab2e921-f50f-300d-a6cc-021db50f1249",
+        "d8c40438-8554-3ab1-8764-70b32d164d84"
+      ],
+      "cost": "1m, 1wp",
+      "type": "Supplemental",
+      "keywords": [
+        "Decisive-only",
+        "Mastery",
+        "Terrestrial"
+      ],
+      "duration": "Instant C H A P T E R 7",
+      "fullText": "Terrestrial: A Dragon-Blood can only use this Charm after parrying an attack that caused the attacker’s Initiative to fall beneath her own. Upon doing so, she may use Fatal Stroke Flash against him on her next turn.\n\nMastery: The martial artist may also double up to (Essence) 9s on the attack roll.",
+      "rawData": "Fatal Stroke Flash\nCost: 1m, 1wp; Mins: Martial Arts 4, Essence 2 \nType: Supplemental \nKeywords: Decisive-only, Mastery, Terrestrial \nDuration: Instant \nC H A P T E R  7\nEX3\n436\nPrerequisite Charms: Single Point Shining Into the \nVoid Form\nSeizing the crucial moment, the swordsman lunges \nforward into an all-or-nothing attack, her blade blurring \ninto a flash of crimson-flecked steel. Against an enemy \nwith lower Initiative, Fatal Stroke Flash adds the \ndifference to the raw damage of a decisive attack against \nhim. The bonus damage cannot exceed the swordsman’s \nown Initiative. However, if the attack misses, then the \nstylist’s own Initiative falls to equal the enemy’s before \nhe suffers the usual Initiative loss for missing a decisive \nattack.\nTerrestrial: A Dragon-Blood can only use this Charm \nafter parrying an attack that caused the attacker’s Initiative \nto fall beneath her own. Upon doing so, she may use Fatal \nStroke Flash against him on her next turn.\nMastery: The martial artist may also double up to \n(Essence) 9s on the attack roll.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "6c981c85-3a44-322e-a500-ee1f44457800",
+      "name": "Liquid Steel Flow",
+      "ability": "Single Point Shining Into the Void Style",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "9b727aa8-d981-3f37-91fc-4e9a18f5fe13",
+        "f2925a66-101c-3032-898d-deaec849d793"
+      ],
+      "cost": "5m (+1wp)",
+      "type": "Reflexive",
+      "keywords": [
+        "Dual",
+        "Mastery",
+        "Terrestrial"
+      ],
+      "duration": "One round",
+      "fullText": "While this style’s form is active, if the stylist and her sword both act on the same tick to make decisive attacks, then the benefits of this Charm apply to both attacks before it ends. The swordsman does not seem to make two attacks, but a single stroke of steel that can fell even the mightiest enemies.\n\nTerrestrial: A Dragon-Blood cannot pay Willpower to extend this Charm’s duration.\n\nMastery: As long as the martial artist is at Initiative 11+, he also adds one automatic success on all attack rolls he makes against enemies of lower Initiative.",
+      "rawData": "Liquid Steel Flow\nCost: 5m (+1wp); Mins: Martial Arts 5, Essence 2 \nType: Reflexive \nKeywords: Dual, Mastery, Terrestrial \nDuration: One round \nPrerequisite Charms: Fatal Stroke Flash\nMoving faster than her foes can even blink, the stylist’s \nblade seems like a flowing river of steel. Liquid Steel Flow \nadds the stylist’s Dexterity to the raw damage of all her \nwithering attacks. After landing a successful attack, she \nmay pay a point of Willpower to extend this Charm’s \nduration to one scene. Making a decisive attack ends the \nLiquid Steel Flow, as the swordsman focuses all her speed \ninto one deadly-perfect strike that converts up to \n(Dexterity/2, round up) dice of raw damage to automatic \nsuccesses. If Fatal Stroke Flash is used to enhance this \ndecisive attack, its Willpower cost is waived if the stylist \npaid Willpower into Liquid Steel Flow. \nWhile this style’s form is active, if the stylist and her sword \nboth act on the same tick to make decisive attacks, then \nthe benefits of this Charm apply to both attacks before it \nends. The swordsman does not seem to make two attacks, \nbut a single stroke of steel that can fell even the mightiest \nenemies. \nTerrestrial: A Dragon-Blood cannot pay Willpower to \nextend this Charm’s duration.\nMastery: As long as the martial artist is at Initiative 11+, \nhe also adds one automatic success on all attack rolls he \nmakes against enemies of lower Initiative.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "b6cb6133-4ae4-3744-91ea-062f084631b7",
+      "name": "Void-Slicing Wind",
+      "ability": "Single Point Shining Into the Void Style",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "2ea3474f-09b3-3bd2-b8c6-84fdf43ecfbf",
+        "e42c9060-d2ff-3b09-afcc-213b05d0aeab",
+        "3168bb49-71a9-3f01-bc8f-8b1f1472e8fd",
+        "d8c40438-8554-3ab1-8764-70b32d164d84",
+        "1b3c49e1-cc4d-3689-a746-a920be178f8e",
+        "f03c9574-dcaf-3412-9396-4847a54cc7c8"
+      ],
+      "cost": "6m, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Decisive-only",
+        "Terrestrial"
+      ],
+      "duration": "Instant",
+      "fullText": "When the stylist and her sword take their turns together on the same tick, they may unleash the devastating attack known as the Countless Strikes Sheathed, combining the two turns into the single action of activating this Charm.\n\nThe swordsman makes the attack roll before beginning her movement, and chooses whether she will use her own Initiative or the sword’s to make the final decisive attack.\n\nIf the swordsman’s movement toward her target brings her within close range of other enemies whose Defenses would be hit by her attack roll, she may choose to reflexively strike them. Against each such enemy, she may choose to make a withering strike, which deals her Essence in Initiative damage and adds to the Initiative pool chosen for the final attack (including any Initiative Breaks received), or a decisive strike, which lets her forgo up to (her Dexterity) points of Initiative from the chosen pool and roll it as damage which ignores hardness. If one of these preliminary decisive strikes incapacitates a nontrivial opponent, the Initiative invested in it is recovered.\n\nOnce the swordsman has cleared all enemies between her and the final target, she concludes with a decisive attack against the final target. Those struck by the Countless Strikes Sheathed do not even realize they have been attacked until the swordsman sheathes her blade at the conclusion of the final strike, at which point their wounds burst open.\n\nTerrestrial: A Dragon-Blood cannot use Countless Strikes Sheathed.",
+      "rawData": "Void-Slicing Wind\nCost: 6m, 1wp; Mins: Martial Arts 5, Essence 3 \nType: Simple \nKeywords: Decisive-only, Terrestrial \nDuration: Instant \nPrerequisite Charms: Single Point Shining Into the \nVoid Form\nAs one heartbeat begins, the stylist draws her sword from \nits scabbard. By the heartbeat’s end, the blade is already \nstained with the blood of her enemy. The swordsman may \nattack an enemy out to medium range, drawing her blade \nand flashing to the enemy’s side in a single lunge that \ncounts as her movement action for the round. She adds \none automatic success to both the attack and damage roll \nfor each range band she crosses, channeling the devastating \nmomentum of her advance into the strike. However, if the \nattack misses, the swordsman loses control of her \nmomentum, sliding past her target to end her movement \nat short range beyond him.\nWhen the stylist and her sword take their turns together \non the same tick, they may unleash the devastating attack \nknown as the Countless Strikes Sheathed, combining the \ntwo turns into the single action of activating this Charm. \nThe swordsman makes the attack roll before beginning \nher movement, and chooses whether she will use her own \nInitiative or the sword’s to make the final decisive attack. \nIf the swordsman’s movement toward her target brings \nher within close range of other enemies whose Defenses \nwould be hit by her attack roll, she may choose to reflexively \nstrike them. Against each such enemy, she may choose to \nmake a withering strike, which deals her Essence in \nInitiative damage and adds to the Initiative pool chosen \nfor the final attack (including any Initiative Breaks \nreceived), or a decisive strike, which lets her forgo up to \n(her Dexterity) points of Initiative from the chosen pool \nand roll it as damage which ignores hardness. If one of \nthese preliminary decisive strikes incapacitates a non-\ntrivial opponent, the Initiative invested in it is recovered. \nOnce the swordsman has cleared all enemies between her \nand the final target, she concludes with a decisive attack \nagainst the final target. Those struck by the Countless \nStrikes Sheathed do not even realize they have been \nattacked until the swordsman sheathes her blade at the \nconclusion of the final strike, at which point their wounds \nburst open. \nTerrestrial: A Dragon-Blood cannot use Countless Strikes \nSheathed.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "650b75e5-a764-3a29-a2b8-ec31f80be9ce",
+      "name": "Horizon-Swallowed Star Flash",
+      "ability": "Single Point Shining Into the Void Style",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "53efbcab-66cd-36a0-8102-12b57d8cbbbf",
+        "67f4ce35-1e78-3e26-8296-ae7b7d76fb3f"
+      ],
+      "cost": "8m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Clash",
+        "Decisive-only",
+        "Mastery",
+        "Terrestrial"
+      ],
+      "duration": "Instant",
+      "fullText": "While this style’s form is active, the stylist chooses whether to use her Initiative pool or her sword’s when making  this clash attack. If she clashes, and then in the same round uses the other Initiative pool to make a decisive attack against the same enemy, that attack also receives the +1 damage bonus of being a clash attack. This combination move is known as the Shattered Mirror Nova-Strike.\n\nTerrestrial: A Dragon-Blood treats the clash attack granted by this Charm as her attack action for the round, and cannot make another. If she has already attacked this round, then it counts as her attack for her next turn.\n\nMastery: The martial artist’s attacker loses Initiative equal to the amount that the swordsman gains with this Charm.",
+      "rawData": "Horizon-Swallowed Star Flash\nCost: 8m, 1wp; Mins: Martial Arts 5, Essence 2; \nType: Reflexive \nKeywords: Clash, Decisive-only, Mastery, Terrestrial \nDuration: Instant \nPrerequisite Charms: Single Point Shining Into the \nVoid Form\nMoving without the least sign of effort, the swordsman \nrepels the blows of her attackers in a flash of steel before \nsheathing her sword, as if to seal away the wasted force \nof their strikes. Horizon-Swallowed Star Flash allows the \nmartial artist to make a reflexive clash attack. A successful \nattack grants Initiative equal to her extra successes, up to \na maximum of her Wits. This Initiative is added before \ncalculating the raw damage of the attack.\nWhile this style’s form is active, the stylist chooses \nwhether to use her Initiative pool or her sword’s when \nmaking  this clash attack. If she clashes, and then in the \nsame round uses the other Initiative pool to make a \ndecisive attack against the same enemy, that attack also \nreceives the +1 damage bonus of being a clash attack. This \ncombination move is known as the Shattered Mirror \nNova-Strike.\nTerrestrial: A Dragon-Blood treats the clash attack \ngranted by this Charm as her attack action for the round, \nand cannot make another. If she has already attacked this \nround, then it counts as her attack for her next turn.\nMastery: The martial artist’s attacker loses Initiative \nequal to the amount that the swordsman gains with this \nCharm.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "c44bc2ae-c59d-3b0b-b243-e5a412e68c42",
+      "name": "Six-Demon Scabbard Binding",
+      "ability": "Single Point Shining Into the Void Style",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "477e8fd6-7bab-327d-ac2e-ea2ebb42a76b",
+        "c176610f-08a9-329e-8197-c801e862707d",
+        "5a2e3855-b6d7-34c5-a578-058689e80280",
+        "3e6338b9-731d-3bbf-aa0d-bc7ce0b7f702",
+        "20d159f1-ef9d-34e1-ae37-c57d89a91b8c"
+      ],
+      "cost": "1m, 1wp (or 4m)",
+      "type": "Reflexive",
+      "keywords": [
+        "Clash",
+        "Decisive-only",
+        "Terrestrial"
+      ],
+      "duration": "Instant",
+      "fullText": "The Six-Demon Scabbard Binding can also be used to cut a clear path through ambient or environmental transformative magic, such as the warping effects of the Wyld, at a cost of 4m. The stylist rolls (Dexterity + Martial Arts) against the difficulty to resist the effect, or an ad hoc difficulty set by the Storyteller. Success lets the swordsman cut a metaphysical path for herself, rendering her immune to that magic for one scene. It was with this Charm that Eternal Nova, the mythic creator of this style, defeated his own shadow to carve a path out of oblivion, giving this style its name.\n\nTerrestrial: A Dragon-Blood may only use this Charm to defend against hostile magic, and cannot make a clash attack against the character using it unless she uses Horizon-Swallowed Star Flash along with this Charm.",
+      "rawData": "Six-Demon Scabbard Binding\nCost: 1m, 1wp (or 4m); Mins: Martial Arts 5, Essence 3 \nType: Reflexive \nKeywords: Clash, Decisive-only, Terrestrial \nDuration: Instant \nPrerequisite Charms: Horizon-Swallowed Star Flash\nSweeping her blade through the motions of an intricate \nEssence-channeling pattern, the stylist forces hostile magic \nto condense itself into form, taking on shape as a howling \ndevil which she swiftly dispatches and seals away as she \nsheathes her sword. The Six-Demon Scabbard Binding \nallows the swordsman to defend against a warping, \ntwisting, or shaping effect that would alter her mind or \nbody by making a clash attack against it, opposed by the \nactivation roll of the effect. If the magic has no roll, its \nuser rolls (Essence + Willpower), or a more suitable dice \npool chosen by the Storyteller. Success on the clash \nattack allows the swordsman to strike through the manifest \ndevil of the magic and its master with a single stroke. \nShe may even clash against distant enemies, sending the \ndevil howling back at its creator to deliver her wrath \n(which can strike dematerialized enemies as well as \nmaterial ones).\nThe Six-Demon Scabbard Binding can also be used to cut \na clear path through ambient or environmental \ntransformative magic, such as the warping effects of the \nWyld, at a cost of 4m. The stylist rolls (Dexterity + Martial \nArts) against the difficulty to resist the effect, or an ad hoc \ndifficulty set by the Storyteller. Success lets the swordsman \ncut a metaphysical path for herself, rendering her immune \nto that magic for one scene. It was with this Charm that \nEternal Nova, the mythic creator of this style, defeated \nhis own shadow to carve a path out of oblivion, giving this \nstyle its name. \nTerrestrial: A Dragon-Blood may only use this Charm to \ndefend against hostile magic, and cannot make a clash \nattack against the character using it unless she uses \nHorizon-Swallowed Star Flash along with this Charm.",
+      "potentiallyProblematicImport": true
+    }
+  ]
+}

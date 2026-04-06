@@ -1,0 +1,199 @@
+{
+  "$schema": "./charm-schema.json",
+  "version": "0.1.0",
+  "ability": "Snake Style",
+  "type": "martialArts",
+  "exalt": "solar",
+  "charms": [
+    {
+      "id": "42b3b397-dca4-3fdd-b152-d1719b4cf6a7",
+      "name": "Serpentine Evasion",
+      "ability": "Snake Style",
+      "minAbility": 2,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "2m",
+      "type": "Reflexive",
+      "keywords": [
+        "Mastery",
+        "Uniform"
+      ],
+      "duration": "Instant",
+      "fullText": "Ducking and weaving, the snake confounds predators’ attempts at violence. Serpentine Evasion adds +1 to the martial artist’s Evasion against a single attack. If the attack is made after the martial artist has already taken her turn that round, she may declare this Charm after the attack has already been rolled—enemies who cannot even keep pace with her in battle have no hope of striking her.\n\nMastery: Successfully evading an attack after using this Charm cumulatively lowers the cost of subsequent activations of it by one mote until the martial artist’s next turn.",
+      "rawData": "Serpentine Evasion\nCost: 2m; Mins: Martial Arts 2, Essence 1 \nType: Reflexive \nKeywords: Mastery, Uniform \nDuration: Instant \nPrerequisite Charms: None\nDucking and weaving, the snake confounds predators’ \nattempts at violence. Serpentine Evasion adds +1 to the \nmartial artist’s Evasion against a single attack. If the attack \nis made after the martial artist has already taken her turn \nthat round, she may declare this Charm after the attack \nhas already been rolled—enemies who cannot even keep \npace with her in battle have no hope of striking her.\nMastery: Successfully evading an attack after using this \nCharm cumulatively lowers the cost of subsequent activations \nof it by one mote until the martial artist’s next turn.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "960c6cf9-d85e-3640-b26a-2ca081ddb7f4",
+      "name": "Striking Cobra Technique",
+      "ability": "Snake Style",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "3m",
+      "type": "Supplemental",
+      "keywords": [
+        "Dual",
+        "Mastery"
+      ],
+      "duration": "Instant",
+      "fullText": "The snake claims its victory not by striking hardest, but by striking first. Against an enemy with lower Initiative or who hasn’t taken their turn yet this round, Striking Cobra Technique adds the martial artist’s Dexterity to the raw damage of a withering attack, or one die to the raw damage of a decisive attack. Against enemies in Initiative Crash, the withering damage boost is added after soak, while the decisive damage boost is converted to an automatic success.\n\nMastery: Add the martial artist’s (Essence + 2) to her Initiative when determining if she can use this Charm against an enemy.",
+      "rawData": "Striking Cobra Technique\nCost: 3m; Mins: Martial Arts 3, Essence 1 \nType: Supplemental \nKeywords: Dual, Mastery \nDuration: Instant \nPrerequisite Charms: None\nThe snake claims its victory not by striking hardest, but \nby striking first. Against an enemy with lower Initiative \nor who hasn’t taken their turn yet this round, Striking \nCobra Technique adds the martial artist’s Dexterity to the \nraw damage of a withering attack, or one die to the raw \ndamage of a decisive attack. Against enemies in Initiative \nCrash, the withering damage boost is added after soak, \nwhile the decisive damage boost is converted to an \nautomatic success.\nMastery: Add the martial artist’s (Essence + 2) to her \nInitiative when determining if she can use this Charm \nagainst an enemy.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "06db3928-e75a-3896-87cb-9442d00d873e",
+      "name": "Snake Form",
+      "ability": "Snake Style",
+      "minAbility": 4,
+      "minEssence": 1,
+      "prerequisites": [
+        "42b3b397-dca4-3fdd-b152-d1719b4cf6a7",
+        "960c6cf9-d85e-3640-b26a-2ca081ddb7f4"
+      ],
+      "cost": "8m",
+      "type": "Simple",
+      "keywords": [
+        "Form",
+        "MIXING STYLES",
+        "True masters of the martial arts are able to blend differ-",
+        "ent styles into truly devastating techniques",
+        "such as ap-",
+        "plying Armor-Penetrating Fang Strike (from Snake style)",
+        "with Striking Fury Claws (from Tiger style). This may",
+        "only be done if using a weapon shared in common",
+        "(usually unarmed strikes)",
+        "and the higher of the two",
+        "Martial Arts abilities is used for any rolls or Defense cal-",
+        "culations required.",
+        "C H A P T E R 7"
+      ],
+      "duration": "One scene",
+      "fullText": "The martial artist steps back into the posture of a wary snake—head back, ready to attack or retreat. Her motions become sinuous and hypnotic, as mesmerizing as they are deadly. Enemies are entranced by this posture, taking a -1 penalty on all attack rolls against her—which increases to a -3 penalty if their Initiative rating is lower than the martial artist’s. In addition, this flexible pose makes it easier to roll with attacks and thus minimize their impact, adding the stylist’s Dexterity rating to her soak.\n\nSpecial activation rules: Whenever the martial artist makes a withering attack which lowers an enemy’s current Initiative value from greater than her own to less than her own, she may reflexively activate Snake Form.",
+      "rawData": "Snake Form\nCost: 8m; Mins: Martial Arts 4, Essence 1 \nType: Simple \nKeywords: Form \nMIXING STYLES\nTrue masters of the martial arts are able to blend differ-\nent styles into truly devastating techniques, such as ap-\nplying Armor-Penetrating Fang Strike (from Snake style) \nwith Striking Fury Claws (from Tiger style). This may \nonly be done if using a weapon shared in common \n(usually unarmed strikes), and the higher of the two \nMartial Arts abilities is used for any rolls or Defense cal-\nculations required.\nC H A P T E R  7\nEX3\n428\nDuration: One scene \nPrerequisite Charms: Serpentine Evasion, Striking \nCobra Technique\nThe martial artist steps back into the posture of a wary \nsnake—head back, ready to attack or retreat. Her motions \nbecome sinuous and hypnotic, as mesmerizing as they are \ndeadly. Enemies are entranced by this posture, taking a -1 \npenalty on all attack rolls against her—which increases to \na -3 penalty if their Initiative rating is lower than the \nmartial artist’s. In addition, this flexible pose makes it \neasier to roll with attacks and thus minimize their impact, \nadding the stylist’s Dexterity rating to her soak. \nSpecial activation rules: Whenever the martial artist \nmakes a withering attack which lowers an enemy’s current \nInitiative value from greater than her own to less than her \nown, she may reflexively activate Snake Form.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "51fc88ff-fcb8-33e3-bb19-4b0aa2bb2f4d",
+      "name": "Armor-Penetrating Fang Strike",
+      "ability": "Snake Style",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "bef66e15-0d59-3888-b78b-7db466d26542"
+      ],
+      "cost": "5m, 1wp",
+      "type": "Supplemental",
+      "keywords": [
+        "Dual",
+        "Terrestrial"
+      ],
+      "duration": "Instant",
+      "fullText": "Terrestrial: A Dragon-Blood may only use this Charm once per scene, unless she resets it by dealing 3+ levels of damage with a Snake style decisive attack and then builds back up to Initiative 12+.",
+      "rawData": "Armor-Penetrating Fang Strike\nCost: 5m, 1wp; Mins: Martial Arts 5, Essence 2 \nType: Supplemental \nKeywords: Dual, Terrestrial \nDuration: Instant \nPrerequisite Charms: Snake Form\nEssence hardens the Snake stylist’s fingers into fangs \ncapable of piercing through steel. The Armor-Penetrating \nFang Strike allows a withering attack to ignore all of an \nenemy’s soak from armor, or a decisive attack to ignore \n(higher of Essence or 3) hardness.\nTerrestrial: A Dragon-Blood may only use this Charm \nonce per scene, unless she resets it by dealing 3+ levels of \ndamage with a Snake style decisive attack and then builds \nback up to Initiative 12+.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "19cc38aa-bd3c-3fe5-b169-47ca30a02e1f",
+      "name": "Crippling Pressure-Point Strike",
+      "ability": "Snake Style",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "06db3928-e75a-3896-87cb-9442d00d873e"
+      ],
+      "cost": "3m",
+      "type": "Simple",
+      "keywords": [
+        "Decisive-only",
+        "Terrestrial"
+      ],
+      "duration": "Instant",
+      "fullText": "Striking quick, rapid jabs to nerve clusters and pressure points, the martial artist leave her foes numbed and deadened, as if they had actually been bitten by a venomous snake. Crippling Pressure-Point Strike allows the Snake stylist to use one of the following gambits, crippling vital pressure points and disrupting meridians of Essence with painful fang strikes.\n\n• Blinding Fang Strike (Difficulty 3): A finger-fang strike to each of the enemy’s eyes leaves him blinded for the M A R T I A L  A R T S  A N D  S O R C E R Y rest of the scene. The enemy suffers a -3 penalty on all actions. He may recover his sight by spending a turn rubbing his injured eyes, a miscellaneous action which cannot be placed in a flurry.\n\n•Nerve-Deadening Venom Atemi (Difficulty 4): A lightning-swift flurry of fang strikes along an arm leaves it paralyzed until the end of the scene. The victim immediately drops anything he was holding in that hand, cannot use it to perform any actions, and suffers a -2 penalty on any actions that would normally require the use of both hands. It is possible to paralyze both (or sometimes, all) of an enemy’s arms with repeated use of this gambit, leaving him unable to wield weapons at all without clever stunting on his part.\n\n•Withering Venom Paralysis (Difficulty 6): A single devastating fang strike to an enemy’s sacral chakra leaves his lower body paralyzed or the rest of the scene, causing him to immediately fall prone. Even on a successful rise from prone action (which must always be rolled, against difficulty 3), he is only capable of propping himself up on arms and elbows to crawl across the earth. He may take other movement actions at a -3 penalty, and treats all ground as difficult terrain, but still suffers all other penalties of being prone.\n\nTerrestrial: In order to use this Charm, a Dragon-Blood must first successfully dodge a decisive attack. On her next turn, she may take advantage of the opening in the attacking enemy’s defense to unleashing the Crippling Pressure-Point Strike against him. Withering Venom Paralysis cannot be used.",
+      "rawData": "Crippling Pressure-Point Strike\nCost: 3m; Mins: Martial Arts 4, Essence 2 \nType: Simple \nKeywords: Decisive-only, Terrestrial \nDuration: Instant \nPrerequisite Charms: Snake Form\nStriking quick, rapid jabs to nerve clusters and pressure \npoints, the martial artist leave her foes numbed and \ndeadened, as if they had actually been bitten by a venomous \nsnake. Crippling Pressure-Point Strike allows the Snake \nstylist to use one of the following gambits, crippling vital \npressure points and disrupting meridians of Essence with \npainful fang strikes.\n• Blinding Fang Strike (Difficulty 3): A finger-fang strike \nto each of the enemy’s eyes leaves him blinded for the \nM A R T I A L  A R T S  A N D  S O R C E R Y\nEX3\n429\nrest of the scene. The enemy suffers a -3 penalty on all \nactions. He may recover his sight by spending a turn \nrubbing his injured eyes, a miscellaneous action which \ncannot be placed in a flurry. \n•Nerve-Deadening Venom Atemi (Difficulty 4): A \nlightning-swift flurry of fang strikes along an arm leaves \nit paralyzed until the end of the scene. The victim \nimmediately drops anything he was holding in that hand, \ncannot use it to perform any actions, and suffers a -2 \npenalty on any actions that would normally require the \nuse of both hands. It is possible to paralyze both (or \nsometimes, all) of an enemy’s arms with repeated use \nof this gambit, leaving him unable to wield weapons at \nall without clever stunting on his part.\n •Withering Venom Paralysis (Difficulty 6): A single \ndevastating fang strike to an enemy’s sacral chakra leaves \nhis lower body paralyzed or the rest of the scene, causing \nhim to immediately fall prone. Even on a successful rise \nfrom prone action (which must always be rolled, against \ndifficulty 3), he is only capable of propping himself up \non arms and elbows to crawl across the earth. He may \ntake other movement actions at a -3 penalty, and treats \nall ground as difficult terrain, but still suffers all other \npenalties of being prone.\nTerrestrial: In order to use this Charm, a Dragon-Blood \nmust first successfully dodge a decisive attack. On her \nnext turn, she may take advantage of the opening in the \nattacking enemy’s defense to unleashing the Crippling \nPressure-Point Strike against him. Withering Venom \nParalysis cannot be used.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "87feedfa-5968-326b-a1d7-a5afe221bddd",
+      "name": "Essence Fangs and Scales Technique",
+      "ability": "Snake Style",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "06db3928-e75a-3896-87cb-9442d00d873e"
+      ],
+      "cost": "— (+1m, 1wp)",
+      "type": "Permanent",
+      "keywords": [
+        "Mastery"
+      ],
+      "duration": "Permanent",
+      "fullText": "The martial artist’s anima coalesces into thick layers of scales, and needle-sharp anima fangs extend from her fingertips or weapon. When Snake Form is activated, the martial artist may pay an additional mote and a point of Willpower to enhance it with this serpentine display. Doing so adds the martial artist’s Essence to her soak in addition to the base soak bonus of the form, and adds +2 to the raw damage of all withering Snake attacks she makes.\n\nMastery: The damage bonus of this Charm applies to decisive attacks against any enemy whose Initiative is at least two points lower than the martial artist’s.",
+      "rawData": "Essence Fangs and Scales Technique\nCost: — (+1m, 1wp); Mins: Martial Arts 4, Essence 2 \nType: Permanent \nKeywords: Mastery \nDuration: Permanent \nPrerequisite Charms: Snake Form\nThe martial artist’s anima coalesces into thick layers of \nscales, and needle-sharp anima fangs extend from her \nfingertips or weapon. When Snake Form is activated, the \nmartial artist may pay an additional mote and a point of \nWillpower to enhance it with this serpentine display. Doing \nso adds the martial artist’s Essence to her soak in addition \nto the base soak bonus of the form, and adds +2 to the raw \ndamage of all withering Snake attacks she makes.\nMastery: The damage bonus of this Charm applies to \ndecisive attacks against any enemy whose Initiative is at \nleast two points lower than the martial artist’s.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "c2907283-64b2-32e6-b6df-b92fb43504f9",
+      "name": "Uncoiling Serpent Prana",
+      "ability": "Snake Style",
+      "minAbility": 4,
+      "minEssence": 3,
+      "prerequisites": [
+        "87feedfa-5968-326b-a1d7-a5afe221bddd"
+      ],
+      "cost": "7m, 3i",
+      "type": "Simple",
+      "keywords": [
+        "Terrestrial",
+        "Uniform"
+      ],
+      "duration": "Instant",
+      "fullText": "Striking a menacing blow in the direction of a distant enemy, the martial artist sends a serpentine ribbon of anima flashing towards him, bearing her wrath on its fangs. Uncoiling Serpent Prana can be used to attack an enemy with lower Initiative out to short range with a withering or decisive attack. If this deals 5+ Initiative damage or any decisive damage, the martial artist may drag that enemy into close range with her, twisting the ribbon of Essence to coil around him and draw him in.\n\nWhile Essence Fangs and Scales Technique is active, the range of this Charm is extended to medium.\n\nTerrestrial: A Dragon-Blood does not enjoy any additional benefit when Essence Fangs and Scales Technique is active.",
+      "rawData": "Uncoiling Serpent Prana\nCost: 7m, 3i; Mins: Martial Arts 4, Essence 3 \nType: Simple \nKeywords: Terrestrial, Uniform \nDuration: Instant \nPrerequisite Charms: Essence Fangs and Scales \nTechnique\nStriking a menacing blow in the direction of a distant \nenemy, the martial artist sends a serpentine ribbon of \nanima flashing towards him, bearing her wrath on \nits fangs. Uncoiling Serpent Prana can be used to attack \nan enemy with lower Initiative out to short range with \na withering or decisive attack. If this deals 5+ Initiative \ndamage or any decisive damage, the martial artist \nmay drag that enemy into close range with her, twisting \nthe ribbon of Essence to coil around him and draw \nhim in.\nWhile Essence Fangs and Scales Technique is active, the \nrange of this Charm is extended to medium.\nTerrestrial: A Dragon-Blood does not enjoy any additional \nbenefit when Essence Fangs and Scales Technique is active.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "86e4dfd2-13cc-3fa7-b053-35f253781799",
+      "name": "Snake Strikes the Heel",
+      "ability": "Snake Style",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [],
+      "cost": "2m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Clash",
+        "Dual",
+        "Terrestrial"
+      ],
+      "duration": "Instant",
+      "fullText": "If the martial artist knows Uncoiling Serpent Prana, she may activate it as though it were a Reflexive Charm to allow her to clash against a ranged enemy with Snake Strikes the Heel.\n\nTerrestrial: A Dragon-Blood treats the clash attack granted by this Charm as her action for the round, and cannot make another. If she’s already acted this round, then it counts as her action for her next turn.",
+      "rawData": "Snake Strikes the Heel\nCost: 2m, 1wp; Mins: Martial Arts 4, Essence 2 \nType: Reflexive \nKeywords: Clash, Dual, Terrestrial \nDuration: Instant \nPrerequisite Charms: Snake Form\nThose who tread on serpents may not live to repeat their \nerror. This Charm allows the martial artist to reflexively \nmake a withering or decisive clash attack. A withering \nclash does not grant any Initiative to the martial artist, \nonly serving to disrupt the momentum of her enemy with \nthe blurring violence of her unexpected attack. A decisive \nclash can only be used to execute a gambit, potentially \nincluding a reflexive activation of Crippling Pressure-\nPoint Strike to use one of its gambits.\nIf the martial artist knows Uncoiling Serpent Prana, she \nmay activate it as though it were a Reflexive Charm to \nallow her to clash against a ranged enemy with Snake \nStrikes the Heel. \nTerrestrial: A Dragon-Blood treats the clash attack \ngranted by this Charm as her action for the round, and \ncannot make another. If she’s already acted this round, \nthen it counts as her action for her next turn.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "b903b13c-23a2-38c7-b9f2-9f99e774ebac",
+      "name": "Countless Coils Evasion",
+      "ability": "Snake Style",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "6ed87e55-16fc-34f4-9b33-8f5bf41283fe",
+        "e0c53f05-6d5d-3145-8814-06bd07f64813",
+        "b07d2352-114b-3754-9850-066444415afc"
+      ],
+      "cost": "7m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Decisive-only",
+        "Perilous",
+        "Terrestrial",
+        "C H A P T E R 7"
+      ],
+      "duration": "Instant",
+      "fullText": "Terrestrial: A Dragon-Blood must use this Charm before the damage of an attack is rolled, with each success subtracting a die of raw damage, and may only use it once per scene.",
+      "rawData": "Countless Coils Evasion\nCost: 7m, 1wp; Mins: Martial Arts 5, Essence 3 \nType: Reflexive \nKeywords: Decisive-only, Perilous, Terrestrial \nC H A P T E R  7\nEX3\n430\nDuration: Instant \nPrerequisite Charms: Snake Strikes the Heel\nMoving with the reflexes and raw speed of a startled snake, \nthe martial artist leaves no flaw in her defenses. After the \ndamage roll of a decisive attack against her, the martial \nartist may use this Charm to roll (Essence + Initiative). \nEach success on her roll negates a level of damage from \nthe attack, after which she is reset to base Initiative. If \nthis successfully negates all damage from the attack, then \nthe martial artist emerges unscathed, revealing that what \nher opponent struck was only an afterimage, and adds +2 \nto her base Initiative when she resets. This Charm is \nincompatible with any other effect that reduces the damage \nof a decisive attack.\nTerrestrial: A Dragon-Blood must use this Charm before \nthe damage of an attack is rolled, with each success \nsubtracting a die of raw damage, and may only use it once \nper scene.",
+      "potentiallyProblematicImport": true
+    }
+  ]
+}

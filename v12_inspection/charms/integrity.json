@@ -1,0 +1,565 @@
+{
+  "$schema": "./charm-schema.json",
+  "version": "0.1.0",
+  "ability": "Integrity",
+  "type": "solarAbility",
+  "exalt": "solar",
+  "charms": [
+    {
+      "id": "a8599213-a985-3931-9663-5aad246774bc",
+      "name": "Enduring Mental Toughness",
+      "ability": "Integrity",
+      "minAbility": 1,
+      "minEssence": 1,
+      "prerequisites": [
+        "0ee064b2-f24f-359c-a1a9-3c918b07937e",
+        "472c18e2-b353-3fd1-a5bf-536c0673a8bd",
+        "f478c1e8-af33-37ee-8cc1-c37927edcc55"
+      ],
+      "cost": "1m",
+      "type": "Reflexive",
+      "keywords": [
+        "Bridge"
+      ],
+      "duration": "Instant",
+      "fullText": "Even in extreme pain, the Exalt does not succumb to despair. The Solar may ignore wound, illness, and crippling penalties to her Resolve or Guile for one tick.\n\nAt Integrity 3+, this Charm can be repurchased, giving it an alternate cost and duration. For five motes, one Willpower the duration extends to one scene.\n\nAt Integrity 5+, Essence 3+, this Charm may be repurchased a second time, allowing the Exalt to pay eight motes, one Willpower to extend the effect to one day.",
+      "rawData": "Enduring Mental Toughness\nCost: 1m; Mins: Integrity 1, Essence 1\nType: Reflexive\nKeywords: Bridge\nDuration: Instant\nPrerequisite Charms: None or any 5 Presence, Resis-\ntance, or Socialize Charms\nEven in extreme pain, the Exalt does not succumb to \ndespair. The Solar may ignore wound, illness, and crip-\npling penalties to her Resolve or Guile for one tick. \nAt Integrity 3+, this Charm can be repurchased, giving it \nan alternate cost and duration. For five motes, one Will-\npower the duration extends to one scene.\nAt Integrity 5+, Essence 3+, this Charm may be repur-\nchased a second time, allowing the Exalt to pay eight \nmotes, one Willpower to extend the effect to one day.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "6a089e54-2691-3a65-b58f-fd24e2307193",
+      "name": "Stubborn Boar Defense",
+      "ability": "Integrity",
+      "minAbility": 2,
+      "minEssence": 1,
+      "prerequisites": [
+        "86e9cccf-c5b4-37fa-93fc-ec75f569c11e",
+        "0a55ec9c-3cc2-321c-a986-bac656478992",
+        "164f27ce-97c9-3176-900e-64d3a40aeb48"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [
+        "Bridge"
+      ],
+      "duration": "Permanent",
+      "fullText": "The Lawgiver’s resolve cannot be easily broken. Once the Solar has resisted a persuade action, she gains +2 to her Resolve if the issue is raised again. The Solar’s Lunar mate is always capable of insinuating herself into the Solar’s graces and may ignore this Charm’s effect.",
+      "rawData": "Stubborn Boar Defense\nCost: —; Mins: Integrity 2, Essence 1\nType: Permanent\nKeywords: Bridge\nDuration: Permanent\nPrerequisite Charms: None or any 3 Bureaucracy, Pres-\nence, or War Charms\nThe Lawgiver’s resolve cannot be easily broken. Once the \nSolar has resisted a persuade action, she gains +2 to her \nResolve if the issue is raised again. The Solar’s Lunar mate \nis always capable of insinuating herself into the Solar’s \ngraces and may ignore this Charm’s effect.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "7032c7bd-c93e-398c-89d8-e46887f29a9b",
+      "name": "Integrity-Protecting Prana",
+      "ability": "Integrity",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "—(5m, 1wp)",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "Exposure to Wyld energies can cause hallucinations, addiction, insanity, and even terrible mutations. When the Exalt\n\nis exposed to such energies, she immediately senses the warping danger that surrounds her. She may then choose to pay five motes, one Willpower to immunize her mind, body, and equipment against the Wyld’s twisting power for as long as she keeps motes committed. The Solar’s sense of such danger becomes instinctive; she may even activate this Charm while she is asleep or incapacitated.\n\nThis Charm can also be used to shield the Solar against other environmental effects which would warp her mind or body, such as the twisting choral of the demon prince with voice like crystal facets, or the tainted Essence emanating from the intestines of a malfunctioning First Age manse. But be warned: once the Lawgiver is addicted to the Wyld or mutated by twisting energies, this Charm will not discontinue such effects; it will only prevent her condition from worsening.\n\nWhile Integrity-Protecting Prana protects the Solar and her possessions from being subject to environmental twisting powers, it does not allow her to ignore Wyld phenomena. She can still be torn apart by Wyld-spawned ravenous cyclones of burning teeth and giant hundred-armed mantises. This Charm also does not defend against attacks that might warp her mind or body directly, such as the Wyld-Mind Strike of the Thousand Venoms Mistress, or fiat-level changes to her existence caused by alterations to the Loom of Fate.",
+      "rawData": "Integrity-Protecting Prana\nCost: —(5m, 1wp); Mins: Integrity 3, Essence 1\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: None\nExposure to Wyld energies can cause hallucinations, addic-\ntion, insanity, and even terrible mutations. When the Exalt \nC H A P T E R  6\nEX3\n304\nis exposed to such energies, she immediately senses the \nwarping danger that surrounds her. She may then choose \nto pay five motes, one Willpower to immunize her mind, \nbody, and equipment against the Wyld’s twisting power \nfor as long as she keeps motes committed. The Solar’s \nsense of such danger becomes instinctive; she may even \nactivate this Charm while she is asleep or incapacitated. \nThis Charm can also be used to shield the Solar against \nother environmental effects which would warp her mind \nor body, such as the twisting choral of the demon prince \nwith voice like crystal facets, or the tainted Essence ema-\nnating from the intestines of a malfunctioning First Age \nmanse. But be warned: once the Lawgiver is addicted to \nthe Wyld or mutated by twisting energies, this Charm will \nnot discontinue such effects; it will only prevent her con-\ndition from worsening.\nWhile Integrity-Protecting Prana protects the Solar and \nher possessions from being subject to environmental twist-\ning powers, it does not allow her to ignore Wyld phenom-\nena. She can still be torn apart by Wyld-spawned raven-\nous cyclones of burning teeth and giant hundred-armed \nmantises. This Charm also does not defend against attacks \nthat might warp her mind or body directly, such as the \nWyld-Mind Strike of the Thousand Venoms Mistress, or \nfiat-level changes to her existence caused by alterations \nto the Loom of Fate.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "5a36fe7d-93fa-3960-8d82-786eded0182a",
+      "name": "Destiny-Manifesting Method",
+      "ability": "Integrity",
+      "minAbility": 1,
+      "minEssence": 1,
+      "prerequisites": [
+        "f06bf784-acfc-30a1-b6b8-d7eaa917e670"
+      ],
+      "cost": "—(3m, 1wp)",
+      "type": "Permanent",
+      "keywords": [
+        "Stackable"
+      ],
+      "duration": "Permanent",
+      "fullText": "The Solar is the heritor of a legend that cannot easily be erased. When struck with a reality-shaping or fate-weaving attack that would permanently alter her mind or body, the Solar’s destiny manifests to override the changes. This Charm does not completely nullify deleterious effects.\n\nPaying this Charm’s cost merely downgrades or slows the effect. Destiny-Manifesting Method guarantees two things:\n\nFirst, the Solar cannot be immediately changed beyond her ability to represent the character concept implied by the ten prerequisites from which she derived this Charm.\n\nSecond, no matter how fatal or permanent the effect may be, fate itself will generate a condition by which the Solar may shatter any curse. This condition is decided by the Storyteller. The Storyteller should also provide the Solar ample time—seasons or even years—to pursue a cure.\n\nThe Solar is not guaranteed to know the shattering condition of her curse, but characters with appropriate Lore, Medicine, and Occult Charms may be able to aid her in this regard.\n\nON DESTINY-MANIFESTING METHOD The Solar cannot be changed beyond her ability to represent the character concept implied by the ten prerequisites from which she derived this Charm. This means, literally, that if a Solar daiklave master who derived this Charm from ten Melee Charms is struck by an attack that would have transformed her into a cat, she is instead changed into a feline beastwoman, allowing her to continue to wield daiklaves and, by extension, to continue to function as a person and a Solar, using Charms, channeling Essence, and so on. Likewise, a legendary Solar courtesan struck by a curse that would wither away her beauty, drying her to a crone-like husk, might experience only a slight downgrade to her Appearance—an unprepossessing feature she can conceal, for example. Furthermore, multiple repurchases, stacking repurchases, and the Solar having a higher Essence rating than her attacker can reduce such effects to nothing or almost nothing when such effects should be completely ignored. In these instances, the Storyteller should give the Solar a temporary dice penalty or make her player roll a few damage dice and move on.\n\nBecause there are many different such effects, the Storyteller has ample latitude to interpret the results. When in doubt, the following things should be considered: this Charm exists for the purpose of telling interesting stories. It is boring and disappointing if a Solar is slain by being turned to stone, and it is equally boring if the Solar runs no risk at all from a secret stone touch or granite-imbuing glance. With this Charm she is instead made obdurate; stony patches mar her skin, and her soak increases by three while her Dexterity is reduced by the same. Given seasons unanswered, this condition might worsen and cause her death, but the Solar at least has a chance to break the curse, manifesting her true destiny. Likewise, a character struck with the killing gaze of Balor might instead experience slow, continuous damage to her health track each time she is rolled into battle. Such characters face crushing adversity as a result of these curses, but may also derive interesting Storyteller-approved benefits from them, aside from the opportunity to explore their character in the face of such a deep and transformative crisis.\n\nThis Charm may be repurchased for every ten different Charms the Solar knows, amplifying its effects. This Charm is also stackable; a Solar who purchases it off the back of ten Melee Charms may purchase it again by using ten different Melee Charms. In this instance, the Storyteller should further lessen any changes wrought to the Solar. Repurchasing this Charm while under the effects of an ongoing condition has no lessening effect on that condition, however.",
+      "rawData": "Destiny-Manifesting Method\nCost: —(3m, 1wp); Mins: Integrity 1, Essence 1\nType: Permanent\nKeywords: Stackable\nDuration: Permanent\nPrerequisite Charms: Ten Charms from any  \none Ability\nThe Solar is the heritor of a legend that cannot easily be \nerased. When struck with a reality-shaping or fate-weav-\ning attack that would permanently alter her mind or body, \nthe Solar’s destiny manifests to override the changes. This \nCharm does not completely nullify deleterious effects. \nPaying this Charm’s cost merely downgrades or slows the \neffect. Destiny-Manifesting Method guarantees two things: \nFirst, the Solar cannot be immediately changed beyond \nher ability to represent the character concept implied by \nthe ten prerequisites from which she derived this Charm. \nSecond, no matter how fatal or permanent the effect may \nbe, fate itself will generate a condition by which the Solar \nmay shatter any curse. This condition is decided by \nthe Storyteller. The Storyteller should also provide the \nSolar ample time—seasons or even years—to pursue a cure. \nThe Solar is not guaranteed to know the shattering con-\ndition of her curse, but characters with appropriate Lore, \nMedicine, and Occult Charms may be able to aid her in \nthis regard. \nON DESTINY-MANIFESTING METHOD\nThe Solar cannot be changed beyond her ability to represent the character concept implied by the ten prerequisites from \nwhich she derived this Charm. This means, literally, that if a Solar daiklave master who derived this Charm from ten Melee \nCharms is struck by an attack that would have transformed her into a cat, she is instead changed into a feline beastwom-\nan, allowing her to continue to wield daiklaves and, by extension, to continue to function as a person and a Solar, using \nCharms, channeling Essence, and so on. Likewise, a legendary Solar courtesan struck by a curse that would wither away \nher beauty, drying her to a crone-like husk, might experience only a slight downgrade to her Appearance—an unprepos-\nsessing feature she can conceal, for example. Furthermore, multiple repurchases, stacking repurchases, and the Solar \nhaving a higher Essence rating than her attacker can reduce such effects to nothing or almost nothing when such effects \nshould be completely ignored. In these instances, the Storyteller should give the Solar a temporary dice penalty or make \nher player roll a few damage dice and move on.\nBecause there are many different such effects, the Storyteller has ample latitude to interpret the results. When in doubt, \nthe following things should be considered: this Charm exists for the purpose of telling interesting stories. It is boring and \ndisappointing if a Solar is slain by being turned to stone, and it is equally boring if the Solar runs no risk at all from a secret \nstone touch or granite-imbuing glance. With this Charm she is instead made obdurate; stony patches mar her skin, and \nher soak increases by three while her Dexterity is reduced by the same. Given seasons unanswered, this condition might \nworsen and cause her death, but the Solar at least has a chance to break the curse, manifesting her true destiny. Likewise, \na character struck with the killing gaze of Balor might instead experience slow, continuous damage to her health track \neach time she is rolled into battle. Such characters face crushing adversity as a result of these curses, but may also derive \ninteresting Storyteller-approved benefits from them, aside from the opportunity to explore their character in the face of \nsuch a deep and transformative crisis. \n\nThis Charm may be repurchased for every ten different \nCharms the Solar knows, amplifying its effects. This Charm \nis also stackable; a Solar who purchases it off the back of \nten Melee Charms may purchase it again by using ten dif-\nferent Melee Charms. In this instance, the Storyteller should \nfurther lessen any changes wrought to the Solar. Repur-\nchasing this Charm while under the effects of an ongoing \ncondition has no lessening effect on that condition, however.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "a14ccc1d-675c-3d1e-9d3f-a6d3ee027ed5",
+      "name": "Legend-Soul Revival",
+      "ability": "Integrity",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "5a36fe7d-93fa-3960-8d82-786eded0182a"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "Upon purchasing this Charm, the Solar becomes nigh immune to any curse she has broken with Destiny-Manifesting Method. Such effects either affect her not at all, or apply paltry damage or a small dice penalty lasting no longer than a round.",
+      "rawData": "Legend-Soul Revival\nCost: —; Mins: Integrity 3, Essence 1\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Destiny-Manifesting Method\nUpon purchasing this Charm, the Solar becomes nigh \nimmune to any curse she has broken with Destiny-Man-\nifesting Method. Such effects either affect her not at all, \nor apply paltry damage or a small dice penalty lasting no \nlonger than a round.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "e882fa44-0090-3bf9-860f-231d5501bc61",
+      "name": "Spirit-Maintaining Maneuver",
+      "ability": "Integrity",
+      "minAbility": 3,
+      "minEssence": 2,
+      "prerequisites": [
+        "a8599213-a985-3931-9663-5aad246774bc"
+      ],
+      "cost": "5m per 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The core of the Solar’s will is so great that she can survive sustained mental assault. When resisting social influence or any magic which seeks to force itself upon the Solar’s will or mind, she may use this Charm to aid in resistance, paying five motes for every one Willpower she would have to spend in order to resist.",
+      "rawData": "Spirit-Maintaining Maneuver\nCost: 5m per 1wp; Mins: Integrity 3, Essence 2\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Enduring Mental Toughness\nThe core of the Solar’s will is so great that she can survive \nsustained mental assault. When resisting social influence \nor any magic which seeks to force itself upon the Solar’s \nwill or mind, she may use this Charm to aid in resistance, \npaying five motes for every one Willpower she would have \nto spend in order to resist.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "fb6c3e53-2b4b-3545-8885-e6f82ed597f6",
+      "name": "Undying Solar Resolve",
+      "ability": "Integrity",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "aeff0e0b-02d4-3b45-b83a-1883acfac4cb"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [
+        "Bridge"
+      ],
+      "duration": "Permanent",
+      "fullText": "Through adversity the Lawgiver finds power. Whenever a character tries to socially influence the Solar, use magic on her that would mentally control her, curse or change her nature, the Exalt gains one mote for every 1 and 2 in the initiate’s roll (if applicable). Motes gained through this Charm can only be used on Charms from social Abilities and vanish at the end of the scene.",
+      "rawData": "Undying Solar Resolve\nCost: —; Mins: Integrity 4, Essence 2\nType: Permanent\nKeywords: Bridge\nDuration: Permanent\nPrerequisite Charms: Stubborn Boar Defense or any 8 \nsocial Charms\nEX3\n306\nC H A P T E R  6\nThrough adversity the Lawgiver finds power. Whenever \na character tries to socially influence the Solar, use magic \non her that would mentally control her, curse or change \nher nature, the Exalt gains one mote for every 1 and 2 in \nthe initiate’s roll (if applicable). Motes gained through \nthis Charm can only be used on Charms from social Abil-\nities and vanish at the end of the scene.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "62f4bbbc-8d22-3530-b04b-27376cd0648d",
+      "name": "Temptation-Resisting Stance",
+      "ability": "Integrity",
+      "minAbility": 3,
+      "minEssence": 2,
+      "prerequisites": [
+        "6a089e54-2691-3a65-b58f-fd24e2307193"
+      ],
+      "cost": "5m, 1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "One scene",
+      "fullText": "The Solar Exalted rise above the poisons of a wicked world.\n\nCorruption, lust, and greed; vice and the addictive soulstroking caresses of the raksha—the Lawgivers stand resolute against all such threats. This Charm raises the Exalt’s Resolve by one against all social influence which would tempt her to turn against her Ties or sway her from her Principles. In addition, when multiple Solars working toward the same overall goal in a social scene each activate this Charm, their bonuses stack together, to a limit of five bonus Resolve—the traditional number of Solars in a Circle.",
+      "rawData": "Temptation-Resisting Stance\nCost: 5m, 1wp; Mins: Integrity 3, Essence 2\nType: Simple\nKeywords: None\nDuration: One scene\nPrerequisite Charms: Stubborn Boar Defense\nThe Solar Exalted rise above the poisons of a wicked world. \nCorruption, lust, and greed; vice and the addictive soul-\nstroking caresses of the raksha—the Lawgivers stand res-\nolute against all such threats. This Charm raises the Exalt’s \nResolve by one against all social influence which would \ntempt her to turn against her Ties or sway her from her \nPrinciples. In addition, when multiple Solars working \ntoward the same overall goal in a social scene each acti-\nvate this Charm, their bonuses stack together, to a limit \nof five bonus Resolve—the traditional number of Solars \nin a Circle.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "eefbf842-a08b-3d38-8b8f-e3050783c5d0",
+      "name": "Mind-Cleansing Prana",
+      "ability": "Integrity",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "2ff35cdb-e6e7-3669-a23d-db4fed873e50"
+      ],
+      "cost": "5m",
+      "type": "Simple",
+      "keywords": [
+        "Bridge",
+        "Mute"
+      ],
+      "duration": "Instant",
+      "fullText": "Through concentration, controlled breathing, and rumination on the solid core of her Principles, the Solar becomes one with the flow of Essence. This Charm entails an hour spent in meditation to clear a penalty having to do with the Exalt’s perceptions of a circumstance she finds herself in. It grants two automatic successes or erases up to -2 in penalties from Awareness, Investigation, Survival, and any other rolls requiring concentration, difficult abstract thought, complex puzzling of unrelated facts or an opening of the senses. This may explicitly aid the Lawgiver in reading intentions. Successfully resolving an action with this Charm grants the Exalt one point of temporary Willpower.",
+      "rawData": "Mind-Cleansing Prana\nCost: 5m; Mins: Integrity 4, Essence 2\nType: Simple\nKeywords: Bridge, Mute\nDuration: Instant\nPrerequisite Charms: Temptation-Resisting Stance or \nany 6 Martial Arts Charms\nThrough concentration, controlled breathing, and rumi-\nnation on the solid core of her Principles, the Solar becomes \none with the flow of Essence. This Charm entails an hour \nspent in meditation to clear a penalty having to do with \nthe Exalt’s perceptions of a circumstance she finds herself \nin. It grants two automatic successes or erases up to -2 in \npenalties from Awareness, Investigation, Survival, and \nany other rolls requiring concentration, difficult abstract \nthought, complex puzzling of unrelated facts or an opening \nof the senses. This may explicitly aid the Lawgiver in \nreading intentions. Successfully resolving an action \nwith this Charm grants the Exalt one point of temporary \nWillpower.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "5ec19bee-2d03-370a-ac7d-42c0edf61b4e",
+      "name": "Clear Mind Discipline",
+      "ability": "Integrity",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "f04e76b8-e726-33a1-9cbb-2dd5100a3782"
+      ],
+      "cost": "—",
+      "type": "Reflexive",
+      "keywords": [
+        "Bridge"
+      ],
+      "duration": "Instant",
+      "fullText": "Once per day, the Exalt may use this Charm in combination with the prerequisite to complete the needed meditation in only a handful of seconds.",
+      "rawData": "Clear Mind Discipline\nCost: —; Mins: Integrity 5, Essence 2\nType: Reflexive\nKeywords: Bridge\nDuration: Instant\nPrerequisite Charms: Mind-Cleansing Prana or any 3 \nMartial Arts Charms\nOnce per day, the Exalt may use this Charm in combina-\ntion with the prerequisite to complete the needed medi-\ntation in only a handful of seconds.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "4b6b953f-2352-3593-99ef-98abcefa2acc",
+      "name": "Energy Restoration Prana",
+      "ability": "Integrity",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "f04e76b8-e726-33a1-9cbb-2dd5100a3782"
+      ],
+      "cost": "—",
+      "type": "Reflexive",
+      "keywords": [
+        "Bridge"
+      ],
+      "duration": "Instant",
+      "fullText": "When using the prerequisite, the Exalt may channel this Charm to speed her body’s natural resting processes, allowing her to get a full night’s rest in the time it takes her to meditate, restoring one Willpower and resetting any Charms that can only be used once per day, while also restoring twenty motes of Essence. Energy Restoration Prana can only be used once per day.",
+      "rawData": "Energy Restoration Prana\nCost: —; Mins: Integrity 5, Essence 2\nType: Reflexive\nKeywords: Bridge\nDuration: Instant\nPrerequisite Charms: Mind-Cleansing Prana or any 3 \nMartial Arts Charms\nWhen using the prerequisite, the Exalt may channel this \nCharm to speed her body’s natural resting processes, al-\nlowing her to get a full night’s rest in the time it takes her \nto meditate, restoring one Willpower and resetting any \nCharms that can only be used once per day, while also re-\nstoring twenty motes of Essence. Energy Restoration Prana \ncan only be used once per day.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "4ba31770-65c5-3b25-bf63-a336a228f529",
+      "name": "Steel Heart Stance",
+      "ability": "Integrity",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "ae10482f-32b1-301f-a946-4063186e89c4",
+        "eea2fd1f-f903-3fcb-9b36-0bd47d2944f2",
+        "03b2317d-cc7f-3d9f-9825-4fee38c7e031",
+        "4dfb66b9-7110-3367-8cd2-9c2e80067df5",
+        "164f27ce-97c9-3176-900e-64d3a40aeb48"
+      ],
+      "cost": "4m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Bridge"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar hardens her heart, forcefully reinstating her values in the face of successful influence. After being persuaded to take a Major or Defining course of action, this Charm allows the Solar to deny the influence, even if this means asserting the Intimacy that might have been used to raise her Resolve. Her opponent’s argument was compelling, but she cannot deny her own principles.\n\nThis Charm may only be used once per story, but is reset if the Solar witnesses the defense or upholding of a Defining Principle as a result of changing her mind. For example, a Lawgiver who is persuaded to withdraw her army from the border might reject that persuasion, going back on her decision to withdraw. When a beastman horde suddenly rushes the border and her army is still there and able to prevent the invasion, and if she has a Defining Principle such as “I will defend my kingdom from foreign invaders,” she will see that her decision to change her mind was justified and necessary, and Steel Heart Stance will be reset.",
+      "rawData": "Steel Heart Stance\nCost: 4m, 1wp; Mins: Integrity 4, Essence 2\nType: Reflexive\nKeywords: Bridge\nDuration: Instant\nPrerequisite Charms: Stubborn Boar Defense or any 4 \nArchery, Brawl, Melee, Thrown, or War Charms\nThe Solar hardens her heart, forcefully reinstating her \nvalues in the face of successful influence. After being per-\nsuaded to take a Major or Defining course of action, this \nCharm allows the Solar to deny the influence, even if this \nmeans asserting the Intimacy that might have been used \nto raise her Resolve. Her opponent’s argument was com-\npelling, but she cannot deny her own principles. \nThis Charm may only be used once per story, but is reset \nif the Solar witnesses the defense or upholding of a De-\nfining Principle as a result of changing her mind. For \nexample, a Lawgiver who is persuaded to withdraw her \narmy from the border might reject that persuasion, going \nback on her decision to withdraw. When a beastman horde \nsuddenly rushes the border and her army is still there and \nable to prevent the invasion, and if she has a Defining \nPrinciple such as “I will defend my kingdom from foreign \ninvaders,” she will see that her decision to change her \nmind was justified and necessary, and Steel Heart Stance \nwill be reset.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "3364ff22-08b7-3674-b6e7-4e1cbdba3ec4",
+      "name": "Righteous Lion Defense",
+      "ability": "Integrity",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "3696fb17-3750-398c-9e64-a659ff388147",
+        "5d039bb3-152d-3653-bec7-9d55dc1085ad",
+        "d9bb0a72-4c43-36be-bfea-e8aec84ca32c",
+        "09092288-e112-340d-90c5-8b049f1473be",
+        "1f57a7c1-d317-339b-bc8d-57327ab540fc"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [
+        "Bridge"
+      ],
+      "duration": "Permanent",
+      "fullText": "Solar in such a way that she should never act against it.\n\nRighteous Lion Defense allows the Exalt to treat any persuasion which would cause the Solar to act against the selected Principle as unacceptable influence. This effect may not be routed through principles that are overly broad. “I will never kneel,” is too broad, but “I will never kneel to Zhao Li,” is not. Likewise, “Creation must be conquered,” is too broad, while “Great Forks must be conquered” is not.\n\nThe Solar’s zealous resolution daunts even the most relentless opposition. Any attempt to decay the inviolable Intimacy with an instill action must be rerolled, forcing the opponent to take the lower result. The opponent may enhance the second roll with additional Charms as necessary, but even if he’s able to penetrate the Solar’s Resolve, the Intimacy still does not decay. However, success in this regard allows the Solar to be targeted with persuasion to convince her to act against the protected Intimacy, and this weakness persists until she has taken major or defining action in the Principle’s defense.\n\nThe Solar may always choose to act against her Intimacies, or change them. If her Principle is downgraded, destroyed, transformed or reconciled as a result of roleplaying or Limit Break, this Charm ceases to function until the Intimacy is restored, or until the Solar dedicates herself to a new Principle. At Essence 3+, this Charm may be repurchased a single time, to protect one additional Principle.",
+      "rawData": "Righteous Lion Defense\nCost: —; Mins: Integrity 5, Essence 2\nType: Permanent\nKeywords: Bridge\nDuration: Permanent\nPrerequisite Charms: Steel Heart Stance or any 5 Charms \nthat reflect the Principle being defended\nAround a certain issue, the Solar cannot be moved, shaken, \nswayed or tempted. Upon purchasing this Charm, the \nplayer selects a Defining Principle that exemplifies the \nSolar in such a way that she should never act against it. \nRighteous Lion Defense allows the Exalt to treat any per-\nsuasion which would cause the Solar to act against the se-\nlected Principle as unacceptable influence. This effect may \nnot be routed through principles that are overly broad. “I \nwill never kneel,” is too broad, but “I will never kneel to \nZhao Li,” is not. Likewise, “Creation must be conquered,” \nis too broad, while “Great Forks must be conquered” is not.\nThe Solar’s zealous resolution daunts even the most re-\nlentless opposition. Any attempt to decay the inviolable \nIntimacy with an instill action must be rerolled, forcing \nthe opponent to take the lower result. The opponent may \nenhance the second roll with additional Charms as nec-\nessary, but even if he’s able to penetrate the Solar’s Resolve, \nthe Intimacy still does not decay. However, success in this \nregard allows the Solar to be targeted with persuasion to \nconvince her to act against the protected Intimacy, and \nthis weakness persists until she has taken major or defin-\ning action in the Principle’s defense. \nThe Solar may always choose to act against her Intimacies, \nor change them. If her Principle is downgraded, destroyed, \ntransformed or reconciled as a result of roleplaying or Limit \nBreak, this Charm ceases to function until the Intimacy is \nrestored, or until the Solar dedicates herself to a new Prin-\nciple. At Essence 3+, this Charm may be repurchased a \nsingle time, to protect one additional Principle.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "66d6c27b-9907-3f2e-a4ec-c88911f6a7a6",
+      "name": "Watchful Eyes of Heaven",
+      "ability": "Integrity",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "3364ff22-08b7-3674-b6e7-4e1cbdba3ec4"
+      ],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "If the Solar comes across a person who holds a Principle that is in line with her character, personality or beliefs, and that person is considering or is about to take action which would violate that Principle, this Charm gives the Solar an anxious ping directing the Exalt’s gaze toward the character, and grants her three automatic non-Charm successes to a read intentions action to determine the Principle. Before the Solar uses this Charm, she is automatically aware of which person is in distress, although it confers no knowledge of this person or their situation.\n\nThe Solar can only learn of the person’s troubles by talking to them to establish a read intentions action. This Charm is explicitly allowed to combine with the Charms of other Abilities.",
+      "rawData": "Watchful Eyes of Heaven\nCost: 3m; Mins: Integrity 5, Essence 2\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Righteous Lion Defense\nIf the Solar comes across a person who holds a Principle \nthat is in line with her character, personality or beliefs, \nand that person is considering or is about to take action \nwhich would violate that Principle, this Charm gives the \nSolar an anxious ping directing the Exalt’s gaze toward \nthe character, and grants her three automatic non-Charm \nsuccesses to a read intentions action to determine the \nPrinciple. Before the Solar uses this Charm, she is auto-\nmatically aware of which person is in distress, although \nit confers no knowledge of this person or their situation. \nThe Solar can only learn of the person’s troubles by talking \nto them to establish a read intentions action. This Charm \nis explicitly allowed to combine with the Charms of other \nAbilities.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "d5dd067a-a6b8-31cd-9f4a-c075e2449b22",
+      "name": "Accord of the Unbreakable Spirit",
+      "ability": "Integrity",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "7f56eaf9-38e2-3e2a-80ea-c209b906278e",
+        "e5170c80-352d-3c70-9e90-37ac40ff83c0",
+        "f478c1e8-af33-37ee-8cc1-c37927edcc55"
+      ],
+      "cost": "6m",
+      "type": "Simple",
+      "keywords": [
+        "Bridge"
+      ],
+      "duration": "One hour",
+      "fullText": "The Solar’s spirit forms a bulwark against the powers of waste and chaos. This Charm allows the Solar to protect her followers from the deleterious effects of the middlemarches of the Wyld, diseases, and exposure for one hour.\n\nThe Solar must lead her followers in meditation, prayer, hymns, or chants for the hour. As long as they follow the Solar’s example, the Storyteller should consider the masses to be mostly immune to such effects. For individual characters, the Storyteller should add (Solar’s Essence or three, whichever is greater) successes to rolls to resist such effects. The Solar can also psychically impart one of her Principles to those following her method, and such characters are likely to automatically adopt it without immediately realizing it.\n\nSpecial activation rules: The Solar may pay six motes, one Willpower at the end of an hour to allow her followers to continue on with the method she has established even after she has gone. Doing so grants no more than two automatic successes against resisting disease or the elements, but provides the Charm’s full resistance against the Wyld or similar disfiguring hazards.",
+      "rawData": "Accord of the Unbreakable Spirit\nCost: 6m; Mins: Integrity 5, Essence 2\nType: Simple\nKeywords: Bridge\nDuration: One hour\nPrerequisite Charms: Integrity-Protecting Prana or any \n3 Bureaucracy, Performance, or Socialize Charms\nThe Solar’s spirit forms a bulwark against the powers of \nwaste and chaos. This Charm allows the Solar to protect \nher followers from the deleterious effects of the middle-\nmarches of the Wyld, diseases, and exposure for one hour. \nThe Solar must lead her followers in meditation, prayer, \nhymns, or chants for the hour. As long as they follow \nthe Solar’s example, the Storyteller should consider the \nmasses to be mostly immune to such effects. For individ-\nual characters, the Storyteller should add (Solar’s Essence \nor three, whichever is greater) successes to rolls to resist \nsuch effects. The Solar can also psychically impart one \nof her Principles to those following her method, and such \ncharacters are likely to automatically adopt it without \nimmediately realizing it. \nSpecial activation rules: The Solar may pay six motes, \none Willpower at the end of an hour to allow her follow-\ners to continue on with the method she has established \neven after she has gone. Doing so grants no more than two \nautomatic successes against resisting disease or the ele-\nments, but provides the Charm’s full resistance against \nthe Wyld or similar disfiguring hazards.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "592eb5a4-ef21-34f1-8008-e318ee97d22f",
+      "name": "Phoenix Renewal Tactic",
+      "ability": "Integrity",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "5a36fe7d-93fa-3960-8d82-786eded0182a"
+      ],
+      "cost": "—(Varies)",
+      "type": ": Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Solars went down into a darkness never-ending, but were reborn again in flames. If the Solar is threatened by a warping, shaping, or twisting attack with no clear defense, then this Charm allows the Exalt a chance at such a defense, turning the attack into a contest of wills. Roll the Exalt’s temporary Willpower with double 9s against that of the attacker, treating non-successes on both Willpower rolls as temporary Willpower spent by both parties.\n\nThe Solar also rolls an additional (Essence) dice, for no Willpower cost, with double 9s, adding successes to her total result. If she wins the contest, she casts off the attempted curse and gains a point of temporary Willpower.\n\nShe also gains a point of Willpower if all dice on the Willpower roll turn up successes.\n\nSucceeding at this Charm lowers the cost of Spirit-Maintaining Maneuver by two motes for the rest of the scene, and immunizes the Solar from being struck by any unrolled effect for (Essence) days. The Solar does not need to be aware of the attack to use Phoenix Renewal Tactic; the Charm makes her automatically aware. She can even use this Charm when she is asleep or otherwise incapacitated.\n\nThis Charm may be repurchased at Integrity 5+, granting the Exalt one non-Charm automatic success while allowing the Solar to choose to convert two Willpower dice to three automatic successes as well.",
+      "rawData": "Phoenix Renewal Tactic\nCost: —(Varies); Mins: Integrity 5, Essence 2\nType:: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Destiny-Manifesting Method\nThe Solars went down into a darkness never-ending, but \nwere reborn again in flames. If the Solar is threatened by \na warping, shaping, or twisting attack with no clear \ndefense, then this Charm allows the Exalt a chance at such \na defense, turning the attack into a contest of wills. Roll \nthe Exalt’s temporary Willpower with double 9s against \nthat of the attacker, treating non-successes on both Will-\npower rolls as temporary Willpower spent by both parties. \nC H A P T E R  6\nEX3\n308\nThe Solar also rolls an additional (Essence) dice, for no \nWillpower cost, with double 9s, adding successes to her \ntotal result. If she wins the contest, she casts off the at-\ntempted curse and gains a point of temporary Willpower. \nShe also gains a point of Willpower if all dice on the Will-\npower roll turn up successes.  \nSucceeding at this Charm lowers the cost of Spirit-Main-\ntaining Maneuver by two motes for the rest of the scene, \nand immunizes the Solar from being struck by any unrolled \neffect for (Essence) days. The Solar does not need to be \naware of the attack to use Phoenix Renewal Tactic; the \nCharm makes her automatically aware. She can even use \nthis Charm when she is asleep or otherwise incapacitated.\nThis Charm may be repurchased at Integrity 5+, granting \nthe Exalt one non-Charm automatic success while allow-\ning the Solar to choose to convert two Willpower dice to \nthree automatic successes as well.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "0d6c0b23-cdc8-3603-af71-3716d99d956f",
+      "name": "Sun King Radiance",
+      "ability": "Integrity",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "79905977-afcf-3b6f-93b4-8f242849094a",
+        "7c0bcdbb-2d91-33b0-8acb-f51f1a123d0a",
+        "205468ec-92fa-3fad-83a3-e7429d9abba7",
+        "6757c79f-9d43-30cb-850e-edfc8da1b949",
+        "cf7c20a2-6de0-3d31-9f0c-d0527d086310",
+        "86edbf30-4f62-3e28-8319-71b87cbde4a4",
+        "01535906-96ad-3e0e-ad31-91e0c3916a55",
+        "395830fd-6ad9-3b59-90d5-145f5e94326d",
+        "45d1b409-81b6-3c52-89da-b118d07cbe78",
+        "797d8baf-5008-37c0-950e-c6f03feb343e",
+        "b75842c0-685f-36ab-a779-fc1be2a03784"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "",
+      "rawData": "Sun King Radiance\nCost: —; Mins: Integrity 5, Essence 2\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Any five Performance, Presence, \nor Socialize Charms\nIn every word and action, the Solar manifests a core of \nmagnificent integrity. Even the hearts of the wicked are \nfilled with awe. Each time the Solar succeeds at social in-\nfluence or successfully applies her Resolve, any witness \nwho considers himself a follower of, subservient to, or \nless powerful than the Solar might be profoundly and \nforever changed in that moment. If the Solar’s action res-\nonates with the character, he may accept an automatic \nMajor Intimacy of respect for the Solar. On the back of \nthis, he also gains a temporary boost of excellence on a \nscene of his choosing. During that scene, while acting \ntoward a goal he wishes to fulfill, while using the Solar’s \nactions as a model, the character gains three bonus dice \nto all social influence rolls for the rest of the scene, and \nhas his Resolve boosted by one.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "047a26d7-1f00-3357-9fc1-7acc0abf54b2",
+      "name": "Soul-Nourishing Technique",
+      "ability": "Integrity",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "0d6c0b23-cdc8-3603-af71-3716d99d956f"
+      ],
+      "cost": "4m, 1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar’s words are bread and water to those who listen.\n\nThe Solar gives a sermon, recites a parable, or tells a story that explains one of her Defining Principles and why it means so much to her, how it influences her views and what it reveals about Creation. This sermon must last at least an hour. The Solar’s words feed the audience like a nutritious meal and hydrate them like water from a fresh spring. Listening to this sermon grants listeners automatic knowledge of the Principle being discussed without needing to make a read intentions action.",
+      "rawData": "Soul-Nourishing Technique\nCost: 4m, 1wp; Mins: Integrity 5, Essence 2\nType: Simple\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Sun King Radiance\nThe Solar’s words are bread and water to those who listen. \nThe Solar gives a sermon, recites a parable, or tells a story \nthat explains one of her Defining Principles and why it \nmeans so much to her, how it influences her views and \nwhat it reveals about Creation. This sermon must last at \nleast an hour. The Solar’s words feed the audience like a \nnutritious meal and hydrate them like water from a fresh \nspring. Listening to this sermon grants listeners automat-\nic knowledge of the Principle being discussed without \nneeding to make a read intentions action.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "c0caf7c8-39e1-3721-975c-95df7023d906",
+      "name": "Spirit-Tempering Practice",
+      "ability": "Integrity",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "e882fa44-0090-3bf9-860f-231d5501bc61"
+      ],
+      "cost": "—",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "Through trial and tribulation, the Solar learns to endure the greatest tests of her resolve. With this Charm, the Solar may convert four motes to one point of Willpower, even if this puts her above her permanent Willpower rating. She may do this at any time she perceives it necessary, but may only use this Charm outside combat, and only once per scene. This power can be reset by successfully resisting any form of social influence or psychic torment while at a penalty or other disadvantage. Being tortured by captors, interrogated by authorities, or tormented by powerful or strange beings all count as disadvantages.",
+      "rawData": "Spirit-Tempering Practice\nCost: —; Mins: Integrity 5, Essence 3\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Spirit-Maintaining Maneuver\nThrough trial and tribulation, the Solar learns to endure \nthe greatest tests of her resolve. With this Charm, the Solar \nmay convert four motes to one point of Willpower, even if \nthis puts her above her permanent Willpower rating. She \nmay do this at any time she perceives it necessary, but may \nonly use this Charm outside combat, and only once per \nscene. This power can be reset by successfully resisting \nany form of social influence or psychic torment while at a \npenalty or other disadvantage. Being tortured by captors, \ninterrogated by authorities, or tormented by powerful or \nstrange beings all count as disadvantages.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "dd432694-3487-3e4e-b1ec-17eb2a3e8b3d",
+      "name": "Empowered Soul Technique",
+      "ability": "Integrity",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "34e28afb-5474-34df-a144-ef89dee01744",
+        "7c0bcdbb-2d91-33b0-8acb-f51f1a123d0a",
+        "f478c1e8-af33-37ee-8cc1-c37927edcc55"
+      ],
+      "cost": "—",
+      "type": "Supplemental",
+      "keywords": [
+        "Bridge"
+      ],
+      "duration": "Instant",
+      "fullText": "A Solar can steady her convictions against the strongest arguments and assaults with solid and affirming power.\n\nThis Charm can be used once per day to allow the Lawgiver to raise her Resolve at a rate of one mote per point with the Integrity Excellency.",
+      "rawData": "Empowered Soul Technique\nCost: —; Mins: Integrity 5, Essence 3\nType: Supplemental\nKeywords: Bridge\nDuration: Instant\nPrerequisite Charms: Spirit-Tempering Practice or any \n5 Lore, Presence, or Socialize Charms\nA Solar can steady her convictions against the strongest \narguments and assaults with solid and affirming power. \nThis Charm can be used once per day to allow the Law-\ngiver to raise her Resolve at a rate of one mote per point \nwith the Integrity Excellency.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "5987ed32-aa81-3570-9546-d9c97512f59a",
+      "name": "Transcendent Hero’s Meditation",
+      "ability": "Integrity",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "e882fa44-0090-3bf9-860f-231d5501bc61"
+      ],
+      "cost": "7m, 1wp",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar looks within and beyond the core of her Essence, to the pure white spark of her divinity. In doing so, she shatters delusions and sees all things truly. This Charm allows the Solar to break any control effects which grip her mind, body or soul. This Charm does not allow her to reverse social influence, but rather it combats persuasion that is\n\nconsidered unnatural, hypnotic, or sorcerous. In order to use this Charm, the Solar must first be forced to take an action against one of her Intimacies as a result of the effect’s control. She must then spend at least five minutes meditating on the core of her existence, during which time she sees the blight on her Essence for what it is. She may then activate this Charm to assert the purity and truth of her inner self, shattering the fell magic and freeing her soul from its grip. This Charm may be used once per story, but it is reset after the Solar experiences Limit Break. The Exalt cannot use this Charm to notice or expunge the Great Curse.",
+      "rawData": "Transcendent Hero’s Meditation\nCost: 7m, 1wp; Mins: Integrity 5, Essence 3\nType: Simple\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Spirit-Maintaining Maneuver\nThe Solar looks within and beyond the core of her Essence, \nto the pure white spark of her divinity. In doing so, she \nshatters delusions and sees all things truly. This Charm \nallows the Solar to break any control effects which grip her \nmind, body or soul. This Charm does not allow her to reverse \nsocial influence, but rather it combats persuasion that is \n\nconsidered unnatural, hypnotic, or sorcerous. In order to \nuse this Charm, the Solar must first be forced to take an \naction against one of her Intimacies as a result of the ef-\nfect’s control. She must then spend at least five minutes \nmeditating on the core of her existence, during which time \nshe sees the blight on her Essence for what it is. She may \nthen activate this Charm to assert the purity and truth of \nher inner self, shattering the fell magic and freeing her soul \nfrom its grip. This Charm may be used once per story, but \nit is reset after the Solar experiences Limit Break. The Exalt \ncannot use this Charm to notice or expunge the Great Curse.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "32846a1b-930b-3236-8e63-c526944f5e3e",
+      "name": "Righteous Soul Judgment",
+      "ability": "Integrity",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "aaf34bf7-c2a5-35b9-ad22-127b2ea7287b",
+        "3bc462af-f2ab-3aba-aff1-343d001384d5",
+        "edb368a3-7d9a-3844-9f9a-cfb4906a087e"
+      ],
+      "cost": "—",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "When the Solar experiences a profound challenge to her beliefs, such as being forced to act against a Defining Principle, or having her beliefs stripped down and mocked by her enemies, the spirit of the Unconquered Sun descends upon her, and she may ignore the cost of any three Charms to resist torment, social influence, damage, or illness. She may also use this Charm to complete a feat of strength which would aid her in an act of defiance or righteous judgment against her enemies. This Charm can be used once per day, but may be reset by upholding a Defining Principle even when the consequences will be severe to those the Lawgiver loves.",
+      "rawData": "Righteous Soul Judgment\nCost: —; Mins: Integrity 5, Essence 3\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Undying Solar Resolve or any 5 \nAthletics, Resistance, or Survival Charms\nWhen the Solar experiences a profound challenge to her \nbeliefs, such as being forced to act against a Defining Prin-\nciple, or having her beliefs stripped down and mocked by \nher enemies, the spirit of the Unconquered Sun descends \nupon her, and she may ignore the cost of any three Charms \nto resist torment, social influence, damage, or illness. She \nmay also use this Charm to complete a feat of strength \nwhich would aid her in an act of defiance or righteous \njudgment against her enemies. This Charm can be used \nonce per day, but may be reset by upholding a Defining \nPrinciple even when the consequences will be severe to \nthose the Lawgiver loves.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "11cf8cfe-7d31-3a83-a30d-e5ed9032efb6",
+      "name": "Barque of Transcendent Vision",
+      "ability": "Integrity",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "f04e76b8-e726-33a1-9cbb-2dd5100a3782"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [
+        "Bridge"
+      ],
+      "duration": "Instant",
+      "fullText": "The Exalt’s soul is in line with the depths of the ocean and the infinite vault of the cosmos. As she looks inward, her surface self cannot be touched, felt, or found. While using the prerequisite, the Solar cannot be influenced socially, mentally, or emotionally. Meditation and thus this protection ends the moment she reacts to another character or any other major stimulus. When the prerequisite is active, the Solar may also use Hardship-Surviving Mendicant Spirit for free in response to changes in the weather without breaking meditation.",
+      "rawData": "Barque of Transcendent Vision\nCost: —; Mins: Integrity 5, Essence 3\nType: Permanent\nKeywords: Bridge\nDuration: Instant\nPrerequisite Charms: Mind-Cleansing Prana or any 3 \nMartial Arts Charms\nThe Exalt’s soul is in line with the depths of the ocean \nand the infinite vault of the cosmos. As she looks inward, \nher surface self cannot be touched, felt, or found. While \nusing the prerequisite, the Solar cannot be influenced so-\ncially, mentally, or emotionally. Meditation and thus this \nprotection ends the moment she reacts to another char-\nacter or any other major stimulus. When the prerequisite \nis active, the Solar may also use Hardship-Surviving Men-\ndicant Spirit for free in response to changes in the weather \nwithout breaking meditation.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "e6cf8a12-9b76-34bc-86f7-7809cb3d4faa",
+      "name": "Unhesitating Dedication",
+      "ability": "Integrity",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "0f0b058c-5950-3aca-ac52-02e5b5645264",
+        "2ac0f58f-3f07-3454-82fd-3802b65f75e4"
+      ],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "If she selects any non-success number other than 1s, instead of negative successes she can force the initiate’s player to reroll up to (Essence) successful dice, starting with the target number (usually 7) and moving up. In this case, the initiate always keeps the lower of the two results.\n\nThis Charm cannot be used in combination with Righteous Lion Defense. The Exalt may only use this Charm to successfully defend an Intimacy once per Intimacy, per story. She can use this to defend the honor of her Lunar mate and uphold her dedication to the Mask of Winters’ fall, but she may not use this Charm to defend either the Lunar or her enmity for the Deathlord more than once per story. This effect can be reset by exploring the claims that were made on the back of an instill action. If it was claimed that her Lunar was adulterous, she might elect to begin an investigation. If the Solar confirms such claims to be false, the Charm is reset.",
+      "rawData": "Unhesitating Dedication\nCost: 3m; Mins: Integrity 5, Essence 3\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Righteous Lion Defense\nSo steadfast is the Solar that those who would sway her \nfind their efforts undone by their own uncertainties. After \na character uses an instill action in an attempt to dimin-\nish one of the Solar’s Defining Intimacies, the Exalt may \nuse this Charm to select one of the initiate’s non-success \nnumbers. If she selects 1s, (Essence) 1s in the roll act as -1 \nsuccess to the attempt. If someone speaks ill of that which \nshe loves, the Solar will find a flaw in his arguments. \nIf she selects any non-success number other than 1s, \ninstead of negative successes she can force the initiate’s \nplayer to reroll up to (Essence) successful dice, starting \nwith the target number (usually 7) and moving up. In \nthis case, the initiate always keeps the lower of the two \nresults. \nThis Charm cannot be used in combination with Righ-\nteous Lion Defense. The Exalt may only use this Charm \nto successfully defend an Intimacy once per Intimacy, per \nstory. She can use this to defend the honor of her Lunar \nmate and uphold her dedication to the Mask of Winters’ \nfall, but she may not use this Charm to defend either the \nLunar or her enmity for the Deathlord more than once \nper story. This effect can be reset by exploring the claims \nthat were made on the back of an instill action. If it was \nclaimed that her Lunar was adulterous, she might elect \nto begin an investigation. If the Solar confirms such claims \nto be false, the Charm is reset.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "6447939a-a98d-323c-9a82-929ca397471c",
+      "name": "Invincible Solar Aegis",
+      "ability": "Integrity",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "81af70b8-14db-3ed5-9d4e-3c63a03d2e78"
+      ],
+      "cost": "10m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Bridge"
+      ],
+      "duration": "Indefinite",
+      "fullText": "This Charm allows the Solar to channel power through a Defining Principle not protected by Righteous Lion Defense. As long as she upholds this Principle at the Defining level, she may use it to reflexively shake off and ignore one of the following forms of magic:\n\n• Fiat-level alterations to her destiny.\n\n• Sorcerous curses such as the spell Corrupted Words.\n\n• Psychic assaults of any kind.\n\n•  Magical attacks that would transform her body in some unwanted way.\n\nThe Solar becomes aware the moment such magic is used on her, and may commit motes to this Charm to rebuff it, becoming immune to all such magic until she drops the commitment. If the Solar wishes to change the Principle this power draws on, or if she wishes to garner a different immunity, she must drop the committed motes and spend one scene without this Charm’s protection, a scene in which she acts in accordance with the Principle she plans to exemplify. This Charm cannot draw on a Defining Principle that isn’t apparent in the character’s actions.\n\nIt can be a Principle the character keeps hidden, but it can’t be one not referenced constantly through the character’s thoughts, actions, or personality. As always, the Storyteller is the final arbiter of whether a character’s Intimacies are accurate, and has the power to adjust them accordingly.\n\nAt Essence 5+, the cost of this Charm drops to seven motes, one Willpower.",
+      "rawData": "Invincible Solar Aegis\nCost: 10m, 1wp; Mins: Integrity 5, Essence 3\nType: Reflexive\nKeywords: Bridge\nDuration: Indefinite\nPrerequisite Charms: Righteous Lion Defense or any 6 \nCharms that reflect the focal Principle\nAs the Solar strengthens her defining Principle, she can \nalso draw strength from the Principles that sustain her. \nThis Charm allows the Solar to channel power through a \nDefining Principle not protected by Righteous Lion \nDefense. As long as she upholds this Principle at the De-\nfining level, she may use it to reflexively shake off and \nignore one of the following forms of magic:\n• Fiat-level alterations to her destiny.\n• Sorcerous curses such as the spell Corrupted Words.\n• Psychic assaults of any kind. \n•  Magical attacks that would transform her body in some \nunwanted way.\nC H A P T E R  6\nEX3\n310\nThe Solar becomes aware the moment such magic is used \non her, and may commit motes to this Charm to rebuff it, \nbecoming immune to all such magic until she drops the \ncommitment. If the Solar wishes \nto change the Principle this power \ndraws on, or if she wishes to \ngarner a different immunity, she \nmust drop the committed motes \nand spend one scene without this \nCharm’s protection, a scene in \nwhich she acts in accordance with \nthe Principle she plans to exem-\nplify. This Charm cannot draw on \na Defining Principle that isn’t ap-\nparent in the character’s actions. \nIt can be a Principle the character \nkeeps hidden, but it can’t be one \nnot referenced constantly through \nthe character’s thoughts, actions, \nor personality. As always, the Storyteller is the final arbiter \nof whether a character’s Intimacies are accurate, and has \nthe power to adjust them accordingly.\nAt Essence 5+, the cost of this Charm drops to seven motes, \none Willpower.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "eca0d04a-e659-3160-864b-c1a6746170f2",
+      "name": "Eminent Paragon Approach",
+      "ability": "Integrity",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "d6ef918d-b3da-33b8-a7d0-9d0afa6c64ce"
+      ],
+      "cost": "1m",
+      "type": "Supplemental",
+      "keywords": [
+        "Bridge"
+      ],
+      "duration": "Instant",
+      "fullText": "Once per story, the Solar may supplement any action to uphold, defend, or act upon a Defining Principle with this Charm. If the action is successful, all who witness it become automatically aware of the Exalt’s Principle and its intensity, as if they had succeeded at a read intentions action.",
+      "rawData": "Eminent Paragon Approach\nCost: 1m; Mins: Integrity 5, Essence 3\nType: Supplemental\nKeywords: Bridge\nDuration: Instant\nPrerequisite Charms: Soul-Nourishing Technique or \nany 5 Charms\nOnce per story, the Solar may supplement any action to \nuphold, defend, or act upon a Defining Principle with this \nCharm. If the action is successful, all who witness it become \nautomatically aware of the Exalt’s Principle and its inten-\nsity, as if they had succeeded at a read intentions action.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "9c4a9bcb-cbee-34df-bf94-5b621a170642",
+      "name": "Divine Mantle",
+      "ability": "Integrity",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "eca0d04a-e659-3160-864b-c1a6746170f2",
+        "5a064113-4dc9-32e7-8a68-2dfebe98c814"
+      ],
+      "cost": "7m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Bridge"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar Exalted are paragons of mythic heroism, with reputations earned by completing impossible feats.\n\nThrough Divine Mantle, the Lawgiver can further embody the Principles most central to her character by temporarily learning the Charms of spirits that represent the Principles the Solar has embodied.\n\nHowever, the Exalt may only take Charms from spirits whose nature match one of her Defining Principles, and may only take one spirit Charm for every six Solar Ability Charms she knows which match both the spirit’s nature and the Defining Principle in question.\n\nThus, the more strongly she embodies a certain Principle, the more Charms she can take from the god in question. The Storyteller can pick from published spirits or can make up appropriate Charms on the spot for the purposes of this Charm.\n\nThe Exalt may take up the Charms of multiple different spirits simultaneously, but she may have no more than ten spirit Charms through Divine Mantle. However, if the grounding Principle is lowered in intensity or destroyed, or if any being successfully impugns her embodiment of said Principle by usurping her authority, defeating her, or destroying or harming the subject of her Principle, then she loses her ability to perform the greater miracles of the spirit’s office until she has taken actions to undo the harm or restore her damaged Principle.\n\nIf the Solar wishes to change which spirit Charms she is using, she must spend one hour per Charm meditating on the target Principle. This allows her to move up or down the spirit’s Charm trees as needed. She can also swap (Essence or three, whichever is greater) Charms through one use of Mind-Cleansing Prana. Adding the Charms of a new spirit to her repertoire requires a new activation of the Charm.",
+      "rawData": "Divine Mantle\nCost: 7m, 1wp; Mins: Integrity 5, Essence 3\nType: Reflexive\nKeywords: Bridge\nDuration: Instant\nPrerequisite Charms: Eminent Paragon Approach, In-\nvincible Solar Aegis or any 15 Caste Charms\nThe Solar Exalted are paragons of mythic heroism, with \nreputations earned by completing impossible feats. \nThrough Divine Mantle, the Lawgiver can further embody \nthe Principles most central to her character by temporar-\nily learning the Charms of spirits that represent the Prin-\nciples the Solar has embodied. \n However, the Exalt may only take Charms from spirits \nwhose nature match one of her Defining Principles, and \nmay only take one spirit Charm for every six Solar Ability \nCharms she knows which match \nboth the spirit’s nature and the \nDefining Principle in question. \nThus, the more strongly she em-\nbodies a certain Principle, the \nmore Charms she can take from \nthe god in question. The Story-\nteller can pick from published \nspirits or can make up appropri-\nate Charms on the spot for the \npurposes of this Charm.\nThe Exalt may take up the Charms \nof multiple different spirits simul-\ntaneously, but she may have no \nmore than ten spirit Charms \nthrough Divine Mantle. However, if the grounding Prin-\nciple is lowered in intensity or destroyed, or if any being \nsuccessfully impugns her embodiment of said Principle \nby usurping her authority, defeating her, or destroying or \nharming the subject of her Principle, then she loses her \nability to perform the greater miracles of the spirit’s office \nuntil she has taken actions to undo the harm or restore \nher damaged Principle.\nIf the Solar wishes to change which spirit Charms she is \nusing, she must spend one hour per Charm meditating on \nthe target Principle. This allows her to move up or down \nthe spirit’s Charm trees as needed. She can also swap \n(Essence or three, whichever is greater) Charms through \none use of Mind-Cleansing Prana. Adding the Charms of \na new spirit to her repertoire requires a new activation of \nthe Charm.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "8bc763c2-f795-345a-a4f6-00bc2f576c63",
+      "name": "Body-Restoring Benison",
+      "ability": "Integrity",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "d8281d51-be8f-32d1-b3fc-3a34c0b37a37",
+        "a6cd7ab4-685e-3207-bc77-fffd28cabad1"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [
+        "Bridge"
+      ],
+      "duration": "Permanent",
+      "fullText": "If a spirit recognizes the Lawgiver as king, high priest, or most high prophet in the region of Creation where it dwells, or if the Lawgiver defeats the spirit in combat, then the Solar may use this Dvine Mantle to gain the powers of that spirit’s station. The Solar learns the powers in question instantly and as a matter of instinct, but may only learn Charms she has the trait minimums for. She can ignore the prerequisite of any Charm, however, and can even embody Charms which do not have the Eclipse keyword.",
+      "rawData": "Body-Restoring Benison\nCost: —; Mins: Integrity 5, Essence 4\nType: Permanent\nKeywords: Bridge\nDuration: Permanent\nPrerequisite Charms: Barque of Transcendent Vision or \nany 5 Martial Arts Charms\nEvery hour spent meditating using Mind-Cleansing Med-\nitation restores one of the Solar’s damaged health levels, \ndefers her need to eat, and causes the slightest drop of \nwater to nourish her body like a draught from the purest \nbrook. After eight hours spent in such meditations, the \nExalt’s hunger is satiated and her thirst slaked exactly as \nif she had been treated to a filling meal and refreshing \nwater. Under continuous meditations, the Solar can go \npermanently without food or water. \nIf a spirit recognizes the Lawgiver as \nking, high priest, or most high prophet \nin the region of Creation where it dwells, \nor if the Lawgiver defeats the spirit in \ncombat, then the Solar may use this Dvine \nMantle to gain the powers of that spirit’s \nstation. The Solar learns the powers in \nquestion instantly and as a matter of in-\nstinct, but may only learn Charms she has \nthe trait minimums for. She can ignore the \nprerequisite of any Charm, however, and \ncan even embody Charms which do not \nhave the Eclipse keyword.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "3db67320-d04a-34e5-b479-6d1edb6de531",
+      "name": "Inviolable Essence-Merging",
+      "ability": "Integrity",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "8bc763c2-f795-345a-a4f6-00bc2f576c63",
+        "4b6b953f-2352-3593-99ef-98abcefa2acc"
+      ],
+      "cost": "7m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Indefinite",
+      "fullText": "Through meditation, the Exalt sinks into the Essence of her environment, temporarily absolving herself of the Ties and Principles that make her transient and definite. Instead she is everything and nothing, a fulcrum for the flow of all Essence. In this state she is untouchable. She cannot be attacked or harmed in any way, though she can still be subject to social influence. Powerful beings such as demons whose very voices break hearts and shatter souls may converse with her without harming her; if a being intends her no harm, then even the voice of the apocalypse or the withering whisper of the Dowager cannot harm her. Throughout her meditation, the Exalt simply becomes a natural facet of the cosmos, equal to and unaffected by all things.\n\nHer Lore score is doubled if for the purposes of discussing the nature of Essence and the movement of the stars.\n\nHer Occult score is doubled if for the purposes of making enlightened pronouncement on the mysteries of the universe. The powers and protections of this Charm end the moment the Solar ceases meditation.\n\nSpecial activation rules: This Charm cannot be used in a scene in which the Exalt has attacked or otherwise harmed another character.\n\nInvestigation",
+      "rawData": "Inviolable Essence-Merging\nCost: 7m; Mins: Integrity 5, Essence 4\nType: Reflexive\nKeywords: None\nDuration: Indefinite\nPrerequisite Charms: Body-Restoring Benison, Energy \nRestoration Prana\nThrough meditation, the Exalt sinks into the Essence of \nher environment, temporarily absolving herself of the Ties \nand Principles that make her transient and definite. Instead \nshe is everything and nothing, a fulcrum for the flow of all \nEssence. In this state she is untouchable. She cannot be \nattacked or harmed in any way, though she can still be \nsubject to social influence. Powerful beings such as demons \nwhose very voices break hearts and shatter souls may con-\nverse with her without harming her; if a being intends her \nno harm, then even the voice of the apocalypse or the with-\nering whisper of the Dowager cannot harm her. Through-\nout her meditation, the Exalt simply becomes a natural \nfacet of the cosmos, equal to and unaffected by all things. \nHer Lore score is doubled if for the purposes of discuss-\ning the nature of Essence and the movement of the stars. \nHer Occult score is doubled if for the purposes of making \nenlightened pronouncement on the mysteries of the uni-\nverse. The powers and protections of this Charm end the \nmoment the Solar ceases meditation. \nSpecial activation rules: This Charm cannot be used in \na scene in which the Exalt has attacked or otherwise \nharmed another character.\nInvestigation",
+      "potentiallyProblematicImport": false
+    }
+  ]
+}

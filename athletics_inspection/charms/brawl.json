@@ -1,0 +1,894 @@
+{
+  "$schema": "./charm-schema.json",
+  "version": "0.1.0",
+  "ability": "Brawl",
+  "type": "solarAbility",
+  "exalt": "solar",
+  "charms": [
+    {
+      "id": "6249efd4-2f81-358e-a801-5917b8c6e4f6",
+      "name": "Fists of Iron Technique",
+      "ability": "Brawl",
+      "minAbility": 1,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "1m",
+      "type": "Reflexive",
+      "keywords": [
+        "Dual"
+      ],
+      "duration": "Instant",
+      "fullText": "This Charm allows the Exalt to parry lethal damage with her bare hands. In addition, her bare-handed decisive strike does lethal damage and her withering damage ignores (Essence + Intimacy) soak. The Intimacy in this context can be a Tie (as the Solar strikes a hated enemy or defends a beloved friend) or a Principle (as the Solar exults in the thrill of violence).",
+      "rawData": "Fists of Iron Technique\nCost: 1m; Mins: Brawl 1, Essence 1\nType: Reflexive\nKeywords: Dual\nDuration: Instant\nPrerequisite Charms: None\nThis Charm allows the Exalt to parry lethal damage with \nher bare hands. In addition, her bare-handed decisive \nstrike does lethal damage and her withering damage \nignores (Essence + Intimacy) soak. The Intimacy in this \ncontext can be a Tie (as the Solar strikes a hated enemy \nor defends a beloved friend) or a Principle (as the Solar \nexults in the thrill of violence).",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "88e0955a-4d2e-337c-8253-d89492c07a67",
+      "name": "Iron Battle Focus",
+      "ability": "Brawl",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "5f6112e8-2a36-3847-b7ff-13ab0b5b1de7"
+      ],
+      "cost": "3m",
+      "type": "Reflexive C H A P T E R 6",
+      "keywords": [],
+      "duration": "One turn",
+      "fullText": "",
+      "rawData": "Iron Battle Focus\nCost: 3m; Mins: Brawl 3, Essence 1\nType: Reflexive\nC H A P T E R  6\nEX3\n274\nKeywords: None\nDuration: One turn\nPrerequisite Charms: Fists of Iron Technique\nThough she may take a beating, the Exalt’s resolve is \ntougher than iron. The Solar may activate this Charm to \nbecome immune to further onslaught penalties until her \nnext action.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "9e97162e-b1bf-3869-af52-321f7981d066",
+      "name": "Ferocious Jab",
+      "ability": "Brawl",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "1m",
+      "type": "Supplemental",
+      "keywords": [
+        "Uniform"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar strikes her opponent with a fury-enhanced blow. This Charm supplements a physical strike, and adds a number of dice to the damage of a withering or decisive attack equal to the target’s current onslaught penalty.",
+      "rawData": "Ferocious Jab\nCost: 1m; Mins: Brawl 3, Essence 1\nType: Supplemental\nKeywords: Uniform\nDuration: Instant\nPrerequisite Charms: None\nThe Solar strikes her opponent with a fury-enhanced \nblow. This Charm supplements a physical strike, and adds \na number of dice to the damage of a withering or deci-\nsive attack equal to the target’s current onslaught penalty.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "0f4c10af-4dde-3f67-9ca5-d0caed1253ba",
+      "name": "Wind and Stones Defense",
+      "ability": "Brawl",
+      "minAbility": 4,
+      "minEssence": 1,
+      "prerequisites": [
+        "9e97162e-b1bf-3869-af52-321f7981d066"
+      ],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar dances around her foe’s attacks, or buffets them away with vicious disdain. When the Exalt’s Initiative is higher than her opponent’s, she may use this Charm to raise her Evasion or Parry by an amount equal to her foe’s current onslaught penalty.",
+      "rawData": "Wind and Stones Defense\nCost: 3m; Mins: Brawl 4, Essence 1\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Ferocious Jab\nThe Solar dances around her foe’s attacks, or buffets them \naway with vicious disdain. When the Exalt’s Initiative is \nhigher than her opponent’s, she may use this Charm to \nraise her Evasion or Parry by an amount equal to her foe’s \ncurrent onslaught penalty.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "1189fa35-1b9f-35fa-8619-803e0eed34ab",
+      "name": "Heaven Thunder Hammer",
+      "ability": "Brawl",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "9e97162e-b1bf-3869-af52-321f7981d066"
+      ],
+      "cost": "7m",
+      "type": "Reflexive",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "At the moment of impact, the Solar sends a surge of Essence up her arm or down her leg, multiplying the force of her blow many times over. This Charm is activated after a successful decisive Brawl attack. If the damage roll generates at least one success, the target is knocked prone by the force of the blow, and loses a point of Initiative, which is added to the Solar’s base value (typically 3) when her Initiative resets. This blow strikes with the force of a hurricane condensed into the Solar’s fist. The more damaging the blow, the more forcefully her opponent will be knocked away from her:\n\nFor at least three successes, the opponent is lifted and bodily hurled into an object or surface within close range, hitting it with an impact equivalent to falling a short distance (see falling damage, p. 232), destroying any less-obdurate objects he collides with, such as wooden furniture.\n\nAt four or more successes, the foe is knocked into an object at close range with tremendous force, or is sent sailing a remarkable distance by the force of the blow. If the former, the opponent hits a surface with force sufficient to leave cracks in a stone wall, impacting with a surface as if he had fallen from a medium distance. If the latter, the force of the blow throws him to short range with a short-distance falling impact.\n\nAt five or more successes, the foe is thrown to short range and suffers an impact like falling from a medium height.\n\nThe Solar can use Heaven Thunder Hammer to knock her opponent into a high ceiling, forcing him to contend with falling damage on the way down. She might also choose to smash him through a weak point in a nearby wall, causing him to suffer a collapse. She might aim to hurl her opponent into a spike protruding from a surface, turning FELLING GIGANTIC FOES Heaven Thunder Hammer is written in reference to foes that are as large or not much larger than the Solar.\n\nUnless the Solar is extremely physically strong, even the mightiest god-felling blow will only send a tyrant lizard or other giant opponent crashing into scenery at close range. In order to launch such a gigantic foe with Heaven Thunder Hammer, the Solar’s incredible strength should be surging and demonstrable at the moment of the attack. Athletics Charms such as Nine Aeons Thew (p. 267) help with this effect. When used in conjunction with Heaven Thunder Hammer, such Charms allow the Exalt to launch gigantic foes exactly as if they were of a relative size to the Exalt.\n\nOf course, combining a number of strength-boosting Charms with Heaven Thunder Hammer may allow the Solar to blast opponents across spectacular distances, causing them to leave impact craters in thick stone surfaces. How far an opponent can be hurled, and how much additional damage this does, is up to the Storyteller. Storytellers should use the basic rules of Heaven Thunder Hammer to decide what works best for their games. The exact same principle applies to the Charm Crashing Wave Throw, though characters need the Charm Dragon Coil Technique or an acceptable activation of Athletics Charms to successfully grapple gigantic foes in the first place.\n\nthe damage lethal, or knock her enemy from a rooftop, causing him to suffer a fall from a much greater distance.\n\nThe player should include the environment in their stunts to enhance this Charm’s effectiveness.\n\nAt Essence 3+, double the successes for determining the distance the victim is hurled. At 7+, the victim can be hurled to medium range with a medium height impact.",
+      "rawData": "Heaven Thunder Hammer\nCost: 7m; Mins: Brawl 3, Essence 1\nType: Reflexive\nKeywords: Decisive-only\nDuration: Instant\nPrerequisite Charms: Ferocious Jab\nAt the moment of impact, the Solar sends a surge of Essence \nup her arm or down her leg, multiplying the force of her \nblow many times over. This Charm is activated after a \nsuccessful decisive Brawl attack. If the damage roll gen-\nerates at least one success, the target is knocked prone by \nthe force of the blow, and loses a point of Initiative, which \nis added to the Solar’s base value (typically 3) when her \nInitiative resets. This blow strikes with the force of a hur-\nricane condensed into the Solar’s fist. The more damag-\ning the blow, the more forcefully her opponent will be \nknocked away from her:\nFor at least three successes, the opponent is lifted and \nbodily hurled into an object or surface within close range, \nhitting it with an impact equivalent to falling a short \ndistance (see falling damage, p. 232), destroying any \nless-obdurate objects he collides with, such as wooden \nfurniture.\nAt four or more successes, the foe is knocked into an object \nat close range with tremendous force, or is sent sailing a \nremarkable distance by the force of the blow. If the former, \nthe opponent hits a surface with force sufficient to leave \ncracks in a stone wall, impacting with a surface as if he \nhad fallen from a medium distance. If the latter, the force \nof the blow throws him to short range with a short-dis-\ntance falling impact.\nAt five or more successes, the foe is thrown to short range \nand suffers an impact like falling from a medium height. \nThe Solar can use Heaven Thunder Hammer to knock her \nopponent into a high ceiling, forcing him to contend with \nfalling damage on the way down. She might also choose \nto smash him through a weak point in a nearby wall, \ncausing him to suffer a collapse. She might aim to hurl her \nopponent into a spike protruding from a surface, turning \nFELLING GIGANTIC FOES\nHeaven Thunder Hammer is written in reference to foes \nthat are as large or not much larger than the Solar. \nUnless the Solar is extremely physically strong, even \nthe mightiest god-felling blow will only send a tyrant \nlizard or other giant opponent crashing into scenery at \nclose range. In order to launch such a gigantic foe with \nHeaven Thunder Hammer, the Solar’s incredible strength \nshould be surging and demonstrable at the moment of \nthe attack. Athletics Charms such as Nine Aeons Thew \n(p. 267) help with this effect. When used in conjunction \nwith Heaven Thunder Hammer, such Charms allow the \nExalt to launch gigantic foes exactly as if they were of a \nrelative size to the Exalt.  \nOf course, combining a number of strength-boosting \nCharms with Heaven Thunder Hammer may allow the \nSolar to blast opponents across spectacular distances, \ncausing them to leave impact craters in thick stone sur-\nfaces. How far an opponent can be hurled, and how much \nadditional damage this does, is up to the Storyteller. Sto-\nrytellers should use the basic rules of Heaven Thunder \nHammer to decide what works best for their games. The \nexact same principle applies to the Charm Crashing Wave \nThrow, though characters need the Charm Dragon Coil \nTechnique or an acceptable activation of Athletics Charms \nto successfully grapple gigantic foes in the first place. \nC H A R M S\nEX3\n275\nthe damage lethal, or knock her enemy from a rooftop, \ncausing him to suffer a fall from a much greater distance. \nThe player should include the environment in their stunts \nto enhance this Charm’s effectiveness.\nAt Essence 3+, double the successes for determining the \ndistance the victim is hurled. At 7+, the victim can be \nhurled to medium range with a medium height impact.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "e87793ba-f15a-3cbd-b611-1bcb6b114377",
+      "name": "Vicious Lunge",
+      "ability": "Brawl",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "1m",
+      "type": "Supplemental",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "In a burst of violence, the Solar launches herself at an opponent, seizing him with tremendous force. This Charm supplements a grapple gambit, adding one automatic success to the attack roll, and (Essence or three, whichever is greater) dice to the Initiative roll.",
+      "rawData": "Vicious Lunge\nCost: 1m; Mins: Brawl 3, Essence 1\nType: Supplemental\nKeywords: None\nDuration: Instant\nPrerequisite Charms: None\nIn a burst of violence, the Solar launches herself at an op-\nponent, seizing him with tremendous force. This Charm \nsupplements a grapple gambit, adding one automatic \nsuccess to the attack roll, and (Essence or three, which-\never is greater) dice to the Initiative roll.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "6740d5cf-ed97-33cc-8a60-2563e08c1d53",
+      "name": "Unbreakable Grasp",
+      "ability": "Brawl",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [
+        "e87793ba-f15a-3cbd-b611-1bcb6b114377"
+      ],
+      "cost": "2m per round preserved",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar tightens her Essence around her limbs, making it nearly impossible to pry her off her opponent. The Exalt may use this Charm when her clinch control is threatened by incoming attacks (see p. 200), paying two motes for every round of control preserved. These motes are paid after the opponent’s attack and damage rolls as needed.",
+      "rawData": "Unbreakable Grasp\nCost: 2m per round preserved; Mins: Brawl 3, Essence 1\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Vicious Lunge\nThe Solar tightens her Essence around her limbs, making \nit nearly impossible to pry her off her opponent. The Exalt \nmay use this Charm when her clinch control is threat-\nened by incoming attacks (see p. 200), paying two motes \nfor every round of control preserved. These motes are \npaid after the opponent’s attack and damage rolls \nas needed.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "4bc257c9-535d-3038-b3c0-34b207a0180c",
+      "name": "Devil-Strangling Attitude",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 1,
+      "prerequisites": [
+        "e87793ba-f15a-3cbd-b611-1bcb6b114377"
+      ],
+      "cost": "—(3m)",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The fury-driven might of the Lawgiver can crush the life from even the gods. This Charm allows the Solar to roll (Strength + Brawl) to attack with a grapple gambit. At Essence 2+ she may pay three motes to double extra successes on the control roll when using Oak-Curling Clinch.",
+      "rawData": "Devil-Strangling Attitude\nCost: —(3m); Mins: Brawl 5, Essence 1\nType: Permanent\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Vicious Lunge\nThe fury-driven might of the Lawgiver can crush the life \nfrom even the gods. This Charm allows the Solar to roll \n(Strength + Brawl) to attack with a grapple gambit. At \nEssence 2+ she may pay three motes to double extra suc-\ncesses on the control roll when using Oak-Curling Clinch.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "aaa24fdb-1af8-3ff8-829e-bd7c58a79dbe",
+      "name": "Crashing Wave Throw",
+      "ability": "Brawl",
+      "minAbility": 4,
+      "minEssence": 1,
+      "prerequisites": [
+        "e87793ba-f15a-3cbd-b611-1bcb6b114377"
+      ],
+      "cost": "5m",
+      "type": "Reflexive",
+      "keywords": [
+        "Uniform"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar concentrates her anima around the arc of a throw, hurling her opponent like a meteor to the ground.\n\nWhen the Exalt aborts control of a grapple to make a withering or decisive throw (see p. 201), the damage pool is boosted by +2 damage per round of control forfeited by the throw. The Exalt can throw her opponent up to short range. If she used Dragon Coil Technique to establish control of a clinch, she can hurl truly massive opponents across the battlefield. At Essence 3+, the Exalt may expend two or four rounds of control, decreasing the throw’s damage in order to increase its length, allowing her to throw a foe to medium or long range, forcing him to contend with short or medium distance falling damage— assuming she didn’t hurl him into an abyss, an empty well, an open cave mouth, or some other deep fissure.",
+      "rawData": "Crashing Wave Throw\nCost: 5m; Mins: Brawl 4, Essence 1\nType: Reflexive\nKeywords: Uniform\nDuration: Instant\nPrerequisite Charms: Vicious Lunge\nThe Solar concentrates her anima around the arc of a \nthrow, hurling her opponent like a meteor to the ground. \nWhen the Exalt aborts control of a grapple to make a with-\nering or decisive throw (see p. 201), the damage pool is \nboosted by +2 damage per round of control forfeited by \nthe throw. The Exalt can throw her opponent up to short \nrange. If she used Dragon Coil Technique to establish \ncontrol of a clinch, she can hurl truly massive opponents \nacross the battlefield. At Essence 3+, the Exalt may expend \ntwo or four rounds of control, decreasing the throw’s \ndamage in order to increase its length, allowing her to \nthrow a foe to medium or long range, forcing him to \ncontend with short or medium distance falling damage—\nassuming she didn’t hurl him into an abyss, an empty well, \nan open cave mouth, or some other deep fissure.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "ca3bded6-02d5-32a5-ad44-588fee6abfb9",
+      "name": "Thunderclap Rush Attack",
+      "ability": "Brawl",
+      "minAbility": 3,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar’s aggression fuels her Essence, quickening her movements, allowing her to blur into combat range of an opponent to make a first strike. This Charm allows the Solar to move a single range band without consuming her movement action, to make an attack regardless of her position in the Initiative order. The attack in this instance must be made the moment the Solar blurs forward, and so this Charm can only be activated at short range. This attack counts as her turn for the round, and doesn’t have to be a Brawl attack. If contested by another character using Thunderclap Rush Attack, the better stunt wins. The target of Thunderclap Rush Attack may not use a Clash (p. 202) to defend against the Solar’s attack unless he’s using a Charm with the Clash keyword.\n\nAt Brawl 5, Essence 3+, the character may add one Willpower to the cost of this Charm—when she uses it against her opponent, it automatically strips (Essence or 5, whichever is lower) Initiative from her target and awards it to her, before the attack is made.\n\nThis Charm can be used once per target, per scene, but can be refreshed against a single target by crashing that target.",
+      "rawData": "Thunderclap Rush Attack\nCost: 3m; Mins: Brawl 3, Essence 1\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: None\nThe Solar’s aggression fuels her Essence, quickening her \nmovements, allowing her to blur into combat range of \nan opponent to make a first strike. This Charm allows \nthe Solar to move a single range band without consum-\ning her movement action, to make an attack regardless \nof her position in the Initiative order. The attack in this \ninstance must be made the moment the Solar blurs \nforward, and so this Charm can only be activated at short \nrange. This attack counts as her turn for the round, and \ndoesn’t have to be a Brawl attack. If contested by another \ncharacter using Thunderclap Rush Attack, the better \nstunt wins. The target of Thunderclap Rush Attack \nmay not use a Clash (p. 202) to defend against the \nSolar’s attack unless he’s using a Charm with the \nClash keyword.\nAt Brawl 5, Essence 3+, the character may add one Will-\npower to the cost of this Charm—when she uses it against \nher opponent, it automatically strips (Essence or 5, which-\never is lower) Initiative from her target and awards it to \nher, before the attack is made.\nThis Charm can be used once per target, per scene, but \ncan be refreshed against a single target by crashing that \ntarget.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "41960f88-5f79-3155-8e90-06e72862fb4d",
+      "name": "Falling Hammer Strike",
+      "ability": "Brawl",
+      "minAbility": 4,
+      "minEssence": 1,
+      "prerequisites": [],
+      "cost": "1m",
+      "type": "",
+      "keywords": [],
+      "duration": "",
+      "fullText": "Type: Supplemental Keywords: Uniform Duration: Instant Prerequisite Charms: Thunderclap Rush Attack The Solar is as relentless as the coming storm. This Charm supplements a withering or decisive attack, preventing the onslaught penalty to her target’s Defense from fading on his next turn. The Solar’s onslaught can only be abated by escaping her long enough to suffer no attack for at least one round. If the Solar is unable or unwilling to attack her target, the effect ends and the target’s Defense refreshes as normal. Falling Hammer Strike does not maintain onslaught penalties from other characters’ attacks, nor does it supplement grapple attacks.",
+      "rawData": "Falling Hammer Strike\nCost: 1m; Mins: Brawl 4, Essence 1\nC H A P T E R  6\nEX3\n276\nType: Supplemental\nKeywords: Uniform\nDuration: Instant\nPrerequisite Charms: Thunderclap Rush Attack\nThe Solar is as relentless as the coming storm. This Charm \nsupplements a withering or decisive attack, preventing \nthe onslaught penalty to her target’s Defense from fading \non his next turn. The Solar’s onslaught can only be abated \nby escaping her long enough to suffer no attack for at least \none round. If the Solar is unable or unwilling to attack \nher target, the effect ends and the target’s Defense re-\nfreshes as normal. Falling Hammer Strike does not main-\ntain onslaught penalties from other characters’ attacks, \nnor does it supplement grapple attacks.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "abcfe0ac-5d17-368c-8f7f-ecf64a713ec3",
+      "name": "Reckless Fury Discard",
+      "ability": "Brawl",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "88e0955a-4d2e-337c-8253-d89492c07a67"
+      ],
+      "cost": "3m, 1i",
+      "type": "Reflexive",
+      "keywords": [
+        "Perilous"
+      ],
+      "duration": "Instant",
+      "fullText": "Channeling her rage, the Exalt strikes away a blow at the last second, or steps between strikes to get at her target’s throat. This Charm can be activated after an opponent’s attack roll, raising the Solar’s Parry or Evasion by a number equal to the 1s in the attack roll. This Charm takes precedence over those that reroll 1s.",
+      "rawData": "Reckless Fury Discard\nCost: 3m, 1i; Mins: Brawl 4, Essence 2\nType: Reflexive\nKeywords: Perilous\nDuration: Instant\nPrerequisite Charms: Iron Battle Focus\nChanneling her rage, the Exalt strikes away a blow at the \nlast second, or steps between strikes to get at her target’s \nthroat. This Charm can be activated after an opponent’s \nattack roll, raising the Solar’s Parry or Evasion by a number \nequal to the 1s in the attack roll. This Charm takes prece-\ndence over those that reroll 1s.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "d034eeb2-d0c1-3181-ae42-e81a550fee31",
+      "name": "Solar Cross-Counter",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "abcfe0ac-5d17-368c-8f7f-ecf64a713ec3"
+      ],
+      "cost": "3m, 1i, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Counterattack",
+        "Decisive-only",
+        "Perilous"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar exploits her opponent’s attack to unload a vicious counterstrike. This Charm may only be used after the Solar has taken withering damage from an opponent at close range. She may use this Charm to launch an immediate decisive attack with a base damage of the number of withering damage she just took, and she may unleash ON THUNDERCLAP RUSH ATTACK It is possible to crash someone with the Brawl 5, Essence 3+ upgrade without making an attack. This counts as crashing him with an attack. The Solar is awarded the crash bonus, and any Charms which would trigger by crashing someone, or by gaining a crash bonus are applicable before she makes her attack roll.\n\nthis counterattack even if she has already used her attack action for the round. Damage done by this counterattack does not reset the Solar to base Initiative.\n\nAt Essence 3+, the Solar may pay an extra Willpower to drop the perilous keyword from this Charm for one instant.",
+      "rawData": "Solar Cross-Counter\nCost: 3m, 1i, 1wp; Mins: Brawl 5, Essence 2: \nType: Reflexive\nKeywords: Counterattack, Decisive-only, Perilous\nDuration: Instant\nPrerequisite Charms: Reckless Fury Discard\nThe Solar exploits her opponent’s attack to unload a vicious \ncounterstrike. This Charm may only be used after the \nSolar has taken withering damage from an opponent at \nclose range. She may use this Charm to launch an imme-\ndiate decisive attack with a base damage of the number \nof withering damage she just took, and she may unleash \nON THUNDERCLAP RUSH ATTACK\nIt is possible to crash someone with the Brawl 5, Essence \n3+ upgrade without making an attack. This counts as \ncrashing him with an attack. The Solar is awarded the \ncrash bonus, and any Charms which would trigger by \ncrashing someone, or by gaining a crash bonus are ap-\nplicable before she makes her attack roll. \nC H A R M S\nEX3\n277\nthis counterattack even if she has already used her attack \naction for the round. Damage done by this counterattack \ndoes not reset the Solar to base Initiative. \nAt Essence 3+, the Solar may pay an extra Willpower to \ndrop the perilous keyword from this Charm for one \ninstant.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "c06adc9b-7a0b-3c62-9649-f793006581bc",
+      "name": "Ox-Stunning Blow",
+      "ability": "Brawl",
+      "minAbility": 3,
+      "minEssence": 2,
+      "prerequisites": [
+        "6249efd4-2f81-358e-a801-5917b8c6e4f6"
+      ],
+      "cost": "4m, 1i, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Withering-only"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar pulls explosive Essence from her extremities, causing them to lance through the point of her strike. Her blow enjoys one automatic success on the attack roll and (Essence) bonus dice to damage. Ox-Stunning Blow can only be soaked with the target’s Stamina, but unlike a normal withering attack, the Solar does not reap Initiative from damage successes. Rather, any Initiative she strips is rolled again as dice, and for every two success, the target suffers a -1 penalty to his defenses and dice pools until his onslaught penalty wears off.\n\nAn Essence 3+ repurchase allows the Solar to gain Initiative in addition to penalizing her opponent with rolled successes.",
+      "rawData": "Ox-Stunning Blow\nCost: 4m, 1i, 1wp; Mins: Brawl 3, Essence 2\nType: Simple\nKeywords: Withering-only\nDuration: Instant\nPrerequisite Charms: Fists of Iron Technique\nThe Solar pulls explosive Essence from her extremities, \ncausing them to lance through the point of her strike. Her \nblow enjoys one automatic success on the attack roll and \n(Essence) bonus dice to damage. Ox-Stunning Blow can \nonly be soaked with the target’s Stamina, but unlike a \nnormal withering attack, the Solar does not reap Initia-\ntive from damage successes. Rather, any Initiative she \nstrips is rolled again as dice, and for every two success, \nthe target suffers a -1 penalty to his defenses and dice pools \nuntil his onslaught penalty wears off. \nAn Essence 3+ repurchase allows the Solar to gain Initia-\ntive in addition to penalizing her opponent with rolled \nsuccesses.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "a67b865c-d131-350f-a764-ffeed934251e",
+      "name": "Burning Fist Burial",
+      "ability": "Brawl",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "9e97162e-b1bf-3869-af52-321f7981d066"
+      ],
+      "cost": "4m + 1m per die",
+      "type": "Reflexive",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar’s blow sends a surge of Solar Essence crashing and burning through her foe’s bones and internal organs.\n\nThis Charm adds extra successes from a decisive attack to the damage roll at a rate of one mote per die, and is activated after the attack succeeds.",
+      "rawData": "Burning Fist Burial\nCost: 4m + 1m per die; Mins: Brawl 4, Essence 2\nType: Reflexive\nKeywords: Decisive-only\nDuration: Instant\nPrerequisite Charms: Ferocious Jab\nThe Solar’s blow sends a surge of Solar Essence crashing \nand burning through her foe’s bones and internal organs. \nThis Charm adds extra successes from a decisive attack \nto the damage roll at a rate of one mote per die, and is ac-\ntivated after the attack succeeds.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "86d61a05-f3d1-377a-852e-f357edaada29",
+      "name": "Force-Rending Strike",
+      "ability": "Brawl",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "9e97162e-b1bf-3869-af52-321f7981d066"
+      ],
+      "cost": "5m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Clash",
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "The Exalt glances into the aura of violence before her and knows the course of her opponent’s strike, meeting it with a greater violence of her own. This Charm allows the Solar to make a reflexive Brawl-based clash attack (p. 202) against an incoming decisive attack. This does not count as the Solar’s combat action.",
+      "rawData": "Force-Rending Strike\nCost: 5m, 1wp; Mins: Brawl 4, Essence 2 \nType: Reflexive \nKeywords: Clash, Decisive-only \nDuration: Instant \nPrerequisite Charms: Ferocious Jab\nThe Exalt glances into the aura of violence before her and \nknows the course of her opponent’s strike, meeting it with \na greater violence of her own. This Charm allows the Solar \nto make a reflexive Brawl-based clash attack (p. 202) against \nan incoming decisive attack. This does not count as the \nSolar’s combat action.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "6c0af096-0544-3e52-8ded-f76285f54b41",
+      "name": "Blade-Rebuking Wrath",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "0f4c10af-4dde-3f67-9ca5-d0caed1253ba"
+      ],
+      "cost": "5m, 1i",
+      "type": "Reflexive",
+      "keywords": [
+        "Clash",
+        "Uniform"
+      ],
+      "duration": "Instant",
+      "fullText": "The Lawgiver may clash a withering or decisive attack with such fury that she knocks her foe’s weapon from his hands. This clash attack does no damage, but for every three extra successes on the attack roll, the opponent’s weapon is hurled an extra range band. There is no limit to how far it can be hurled. Using this Charm counts as the Solar’s attack action.",
+      "rawData": "Blade-Rebuking Wrath\nCost: 5m, 1i; Mins: Brawl 5, Essence 2\nType: Reflexive\nKeywords: Clash, Uniform\nDuration: Instant\nPrerequisite Charms: Wind and Stones Defense\nThe Lawgiver may clash a withering or decisive attack \nwith such fury that she knocks her foe’s weapon from his \nhands. This clash attack does no damage, but for every \nthree extra successes on the attack roll, the opponent’s \nweapon is hurled an extra range band. There is no limit \nto how far it can be hurled. Using this Charm counts as \nthe Solar’s attack action.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "acde78c5-134d-3c89-9a9d-3fc52d43a10c",
+      "name": "Sledgehammer Fist Punch",
+      "ability": "Brawl",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "1189fa35-1b9f-35fa-8619-803e0eed34ab"
+      ],
+      "cost": "5m",
+      "type": "Supplemental",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Exalt concentrates her anima around her fist, increasing its weight and hardness as she strikes a blow against an object. This attack is neither withering nor decisive and adds (Strength) automatic successes to the damage roll.\n\nThis Charm greatly enhances a (Strength + Athletics) based attempt to punch through an object; if the Solar’s totals approach viability for such a feat, this Charm allows her to greatly speed up the demolition, based on the durability of the object she strikes and the stunt she performs. For example, a Strength 3, Athletics 3 character who is properly motivated could use this Charm to dash a heavy iron lock from a coffer with the heel of her boot, where a simpler feat might involve a brawler who draws her fist along the cobbles of a street or the stones of a wall, pulping the stony surface into a fine sand to blind her opponent with a punch.\n\nUsing Sledgehammer Fist Punch in such a way may be done reflexively (though the character can still only take AN EXAMPLE OF FALLING HAMMER STRIKE The Solar lunges at her target with a vicious left, enhanced by Falling Hammer Strike. On the next round, he attacks first, but his Defense doesn’t refresh. She uses the Charm again, and snaps his head back with a shattering uppercut. For this attack, his Defense is still at -1. Because she used the Charm twice consecutively, he will be at -2 Defense on her next attack.\n\na reasonable number of such reflexive actions per round, at the Storyteller’s discretion), but using it to cause harm indirectly (by e.g. collapsing a pillar or kicking a stack of barrels down onto someone) requires that it supplement a combat action.",
+      "rawData": "Sledgehammer Fist Punch\nCost: 5m; Mins: Brawl 4, Essence 2\nType: Supplemental\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Heaven Thunder Hammer\nThe Exalt concentrates her anima around her fist, increas-\ning its weight and hardness as she strikes a blow against an \nobject. This attack is neither withering nor decisive and \nadds (Strength) automatic successes to the damage roll. \nThis Charm greatly enhances a (Strength + Athletics) based \nattempt to punch through an object; if the Solar’s totals ap-\nproach viability for such a feat, this Charm allows her to \ngreatly speed up the demolition, based on the durability of \nthe object she strikes and the stunt she performs. For \nexample, a Strength 3, Athletics 3 character who is prop-\nerly motivated could use this Charm to dash a heavy iron \nlock from a coffer with the heel of her boot, where a simpler \nfeat might involve a brawler who draws her fist along the \ncobbles of a street or the stones of a wall, pulping the stony \nsurface into a fine sand to blind her opponent with a punch.\nUsing Sledgehammer Fist Punch in such a way may be \ndone reflexively (though the character can still only take \nAN EXAMPLE OF FALLING HAMMER STRIKE\nThe Solar lunges at her target with a vicious left, en-\nhanced by Falling Hammer Strike. On the next round, \nhe attacks first, but his Defense doesn’t refresh. She \nuses the Charm again, and snaps his head back with \na shattering uppercut. For this attack, his Defense is \nstill at -1. Because she used the Charm twice consec-\nutively, he will be at -2 Defense on her next attack. \nC H A P T E R  6\nEX3\n278\na reasonable number of such reflexive actions per round, \nat the Storyteller’s discretion), but using it to cause harm \nindirectly (by e.g. collapsing a pillar or kicking a stack of \nbarrels down onto someone) requires that it supplement \na combat action.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "984e6541-2b21-31e6-ae2d-5cad173eb22b",
+      "name": "Oak-Curling Clinch",
+      "ability": "Brawl",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "a764d6b3-740d-3faa-9031-7f8ef847373c",
+        "af851f5d-edf7-33a5-a887-83304afc2ef3",
+        "fc9a828b-8f72-3faa-81f4-28f34b9e295c"
+      ],
+      "cost": "2m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "Solar has succeeded at a grapple gambit, converting extra successes on the attack roll into bonus dice on the control roll.",
+      "rawData": "Oak-Curling Clinch\nCost: 2m; Mins: Brawl 4, Essence 2\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Vicious Lunge\nLocked in a deadly struggle with her opponent, the Exalt \ndraws on the inner fire of her Essence, channeling savage \nmight into her limbs. This Charm may be used after the \nSolar has succeeded at a grapple gambit, converting \nextra successes on the attack roll into bonus dice on the \ncontrol roll.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "36f46abf-2034-34c8-b31f-04f47b265666",
+      "name": "Burning Proof of Authority",
+      "ability": "Brawl",
+      "minAbility": 4,
+      "minEssence": 2,
+      "prerequisites": [
+        "6740d5cf-ed97-33cc-8a60-2563e08c1d53"
+      ],
+      "cost": "4m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Indefinite",
+      "fullText": "During a clinch the Solar controls with at least two rounds of control remaining, the Lawgiver forces her anima into her hand, gloving it in the scarlet, violet and gold radiance of Solar fire, before driving it into her opponent’s flesh, branding him with the mark of her dominance. This mark is painless and inflicts no damage, but instigates the immediate release of the captive, knocking him prone. So marked, the victim is subject to the Solar’s immediate grasp—when she is in close range of the mark, she may reflexively release the motes committed to the Charm, pulling the opponent back into the clinch. There is no grapple roll, nor a roll to reestablish control; the Exalt resumes control over the captive with the number of rounds of control she had when she branded him.\n\nIf the Solar does not invoke this power, the brand fades away at the end of the scene and the motes return to her Essence pool. Removing the brand requires that the marked character succeed at a grapple with the Solar and wins at least as many rounds of control as those associated with the brand.",
+      "rawData": "Burning Proof of Authority\nCost: 4m; Mins: Brawl 4, Essence 2\nType: Reflexive\nKeywords: None\nDuration: Indefinite\nPrerequisite Charms: Unbreakable Grasp\nDuring a clinch the Solar controls with at least two rounds \nof control remaining, the Lawgiver forces her anima into \nher hand, gloving it in the scarlet, violet and gold \nradiance of Solar fire, before driving it into her oppo-\nnent’s flesh, branding him with the mark of her domi-\nnance. This mark is painless and inflicts no damage, \nbut instigates the immediate release of the captive, knock-\ning him prone. So marked, the victim is subject to the \nSolar’s immediate grasp—when she is in close range of \nthe mark, she may reflexively release the motes commit-\nted to the Charm, pulling the opponent back into the \nclinch. There is no grapple roll, nor a roll to reestablish \ncontrol; the Exalt resumes control over the captive with \nthe number of rounds of control she had when she \nbranded him. \nIf the Solar does not invoke this power, the brand fades \naway at the end of the scene and the motes return to her \nEssence pool. Removing the brand requires that the \nmarked character succeed at a grapple with the Solar and \nwins at least as many rounds of control as those associ-\nated with the brand.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "5b7cc046-005d-38f5-a5f9-f58718bfb644",
+      "name": "Hammer on Iron Technique",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "41960f88-5f79-3155-8e90-06e72862fb4d"
+      ],
+      "cost": "5m, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "The Lawgiver suffuses her body with Essence, becoming a virtual killing machine, her arms swinging like trip hammers. This Charm creates a series of up to ([half Strength or Stamina, rounded up] + 1) attacks against a single target, dividing the Solar’s Initiative up evenly for each strike, then adding bonus Initiative sufficient to raise the damage of all of them to equal the highest’s.\n\nIn addition, for every blow that lands, the damage of the next is increased by the number of 10s in the previous damage roll.",
+      "rawData": "Hammer on Iron Technique\nCost: 5m, 1wp; Mins: Brawl 5, Essence 2\nType: Simple\nKeywords: Decisive-only\nDuration: Instant\nPrerequisite Charms: Falling Hammer Strike\nThe Lawgiver suffuses her body with Essence, becoming \na virtual killing machine, her arms swinging like trip \nhammers. This Charm creates a series of up to ([half \nStrength or Stamina, rounded up] + 1) attacks against a \nsingle target, dividing the Solar’s Initiative up evenly \nfor each strike, then adding bonus Initiative sufficient to \nraise the damage of all of them to equal the highest’s. \nIn addition, for every blow that lands, the damage of the \nnext is increased by the number of 10s in the previous \ndamage roll.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "4868eef2-89c6-3a97-90dc-26333fc8e845",
+      "name": "One With Violence",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 2,
+      "prerequisites": [
+        "41960f88-5f79-3155-8e90-06e72862fb4d"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "The Exalted brawler does not meditate as the monks do, but her violent ruminations are no less weighty. Hers is not the way of blind instinct, but the force-honed circumstance of a natural disaster. This Charm enhances the crash bonus the Exalt earns for driving any target into crash with a Brawl or Martial Arts attack, awarding her extra Initiative equal to (her Essence or five, whichever is smaller).",
+      "rawData": "One With Violence\nCost: —; Mins: Brawl 5, Essence 2\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Falling Hammer Strike\nThe Exalted brawler does not meditate as the monks do, \nbut her violent ruminations are no less weighty. Hers is \nnot the way of blind instinct, but the force-honed circum-\nstance of a natural disaster. This Charm enhances the \ncrash bonus the Exalt earns for driving any target into \ncrash with a Brawl or Martial Arts attack, awarding her \nextra Initiative equal to (her Essence or five, whichever \nis smaller).",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "4214a659-306b-3b1a-900e-b61d21789e31",
+      "name": "Dancing With Strife Technique",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "bcb0fdc5-412d-3fb1-abea-cedf10edccb8",
+        "c354b7d2-8a32-39e8-8e18-6e1ef02ee2b9",
+        "4c8328af-53a3-3be5-a2f9-43a388be9245",
+        "95bd0fd3-2c27-3c95-9dab-1b9bdb4b00dc"
+      ],
+      "cost": "—",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "",
+      "rawData": "Dancing With Strife Technique\nCost: —; Mins: Brawl 5, Essence 3\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Reckless Fury Discard\nEmpowered by violence, the Solar exults at the song of \ndeath in her ears. Once per scene, if the Exalt success-\nfully defends against an attack that rolls (Solar’s Essence \nor five, whichever is greater) or more successes, she may \nuse this Charm to gain one point of temporary Willpow-\ner. This Charm can be reset by defending against a with-\nering attack when the Exalt has only one Initiative.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "9b452562-77d5-3bcd-987e-97cb2523fbd3",
+      "name": "Knockout Blow",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "c06adc9b-7a0b-3c62-9649-f793006581bc"
+      ],
+      "cost": "5m, 1wp, +1m, 1i per die",
+      "type": "Simple",
+      "keywords": [
+        "Withering-only"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar sees a perfect opening and strikes a blow, the apex of her attack suffused by battering Essence. This\n\nattack is like a normal withering attack, but the damage is bolstered by doubled 9s. In addition, if the Solar drives her opponent into crash with this attack, he is immediately knocked unconscious. The Solar may further enhance the ferocity of this blow, reflexively paying one mote, one Initiative per die to add to the damage of this attack, to a limit of the Initiative gained by the attack.\n\nFor example, if the Solar rolls four successes on the damage roll, she may spend up to four motes, four Initiative to add four additional dice to the damage roll.\n\nKnockout Blow can only be used once per fight, but can be reset by dodging, parrying, or soaking a withering attack with three or fewer Initiative without suffering crash.",
+      "rawData": "Knockout Blow\nCost: 5m, 1wp, +1m, 1i per die; Mins: Brawl 5, Essence 3\nType: Simple\nKeywords: Withering-only\nDuration: Instant\nPrerequisite Charms: Ox-Stunning Blow\nThe Solar sees a perfect opening and strikes a blow, the \napex of her attack suffused by battering Essence. This \nC H A R M S\nEX3\n279\nattack is like a normal withering attack, but the damage \nis bolstered by doubled 9s. In addition, if the Solar drives \nher opponent into crash with this attack, he is immedi-\nately knocked unconscious. The Solar may further enhance \nthe ferocity of this blow, reflexively paying one mote, one \nInitiative per die to add to the damage of this attack, to a \nlimit of the Initiative gained by the attack.\nFor example, if the Solar rolls four successes on the damage \nroll, she may spend up to four motes, four Initiative to add \nfour additional dice to the damage roll. \nKnockout Blow can only be used once per fight, but can be \nreset by dodging, parrying, or soaking a withering attack \nwith three or fewer Initiative without suffering crash.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "c4d3c3b1-1796-3941-aa63-9364c3b52876",
+      "name": "Cancel the Apocalypse",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "98737f51-0381-3f9c-adf2-cd86c823ce93",
+        "a8805621-6337-3c7c-b0a0-214356a08fbe",
+        "79103222-9bf9-365e-bfde-cb07d20c55ab",
+        "83117b06-b3e4-3605-a80a-286aa9a8809d",
+        "f203634e-cde8-36f3-bae7-fd211689639c"
+      ],
+      "cost": "5m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "",
+      "rawData": "Cancel the Apocalypse\nCost: 5m; Mins: Brawl 5, Essence 3\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Knockout Blow\nTearing at an opponent’s anima, the Solar rips away an \nenemy’s chance for victory. The Exalt can use this Charm \nupon driving a target into crash, reaching into his soul to \nrip away at the Essence suffusing him. This Charm deac-\ntivates an ongoing Brawl, Martial Arts, Melee, or combat \nAttribute Charm of the player’s choosing, but cannot target \npermanent effects.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "a589f650-6652-3cd1-be00-a2ed0c3e06d9",
+      "name": "Adamantine Fists of Battle",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "de2dd2a7-ab5e-3c15-80bf-3971b9b3731e",
+        "1c91d3e3-85f2-3aa2-9981-ea277d64a9f1",
+        "7f482caa-991e-3439-bc8a-dd25d8b6b049",
+        "45b63c2f-2e2a-375a-910d-c1140c6ec85f",
+        "b1e4c13a-ae2f-3905-a398-d12c4f23babe",
+        "934bd77b-3e77-3ffa-9e80-19bc3d0dae16",
+        "5768f39f-4cd8-3800-9222-739c10459476",
+        "85555f85-04a8-3527-8179-f5355956aa5f"
+      ],
+      "cost": "4m",
+      "type": "Supplemental",
+      "keywords": [
+        "Dual"
+      ],
+      "duration": "Instant",
+      "fullText": "A repurchase allows the Solar to use a Simple version of this Charm with a duration of one scene and a cost of five motes, one Willpower. This version may be activated reflexively for two motes, one Willpower if the Solar uses the supplemental version to successfully damage an opponent.",
+      "rawData": "Adamantine Fists of Battle\nCost: 4m; Mins: Brawl 5, Essence 3\nType: Supplemental\nKeywords: Dual \nDuration: Instant\nPrerequisite Charms: Burning Fist Burial \nHardening her fists until they are unbreakable, the Exalt \nstrikes a shattering blow. When this Charm supplements \na withering attack made with the Solar’s bare hands, her \nstrike gains an Overwhelming bonus equal to her Strength. \nFor example, the Overwhelming value of a punch attack \nis 1. If the Solar’s Strength is 5, then her Overwhelming \nfor this attack is 6. On a decisive attack, her damage is \nlethal, has double 10s, and rerolls 10s. On the tick she uses \nthis Charm, the Lawgiver can parry lethal attacks with \nher bare hands without a stunt.\nA repurchase allows the Solar to use a Simple version of \nthis Charm with a duration of one scene and a cost of five \nmotes, one Willpower. This version may be activated re-\nflexively for two motes, one Willpower if the Solar uses the \nsupplemental version to successfully damage an opponent.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "9862a051-e8b2-367f-8e97-d34fa2e52546",
+      "name": "Intercepting Fury Smite",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "6de18292-d355-303b-929b-4307dd8be4e7",
+        "841d9478-5495-3d50-868c-84eea0930411",
+        "fdd7ff0c-828c-3cfb-816a-42e5a7ca508f"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "",
+      "rawData": "Intercepting Fury Smite\nCost: —; Mins: Brawl 5, Essence 3\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Force-Rending Strike\nAs violence and destruction goes, the Solar is an artist \nand a savant. This Charm permanently enhances Force-\nRending Strike; so long as she is wielding an improvised \nweapon for the clash, Force-Rending Strike’s cost \nis reduced to four motes, and the Willpower cost is \ndropped. Using Intercepting Fury Smite to succeed at a \nclash forces the Solar to discard her current weapon; it \nis either destroyed or dropped, forcing her to retrieve it \nor choose another.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "3fb11a7e-a8b4-3c00-9290-f945c4da12c9",
+      "name": "Fire-Eating Fist",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "9862a051-e8b2-367f-8e97-d34fa2e52546"
+      ],
+      "cost": "1m",
+      "type": "Supplemental",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar’s strike is guided by the violence she feels in her foe’s onslaught. This Charm supplements a clash attack. Any 1s rolled by the attacker are converted to automatic successes on the Solar’s clash. If the Solar dissolves an energy attack or burning elemental bolt, her fist becomes wreathed in her attacker’s Essence, enjoying (opponent’s Essence) bonus attack and damage dice on her next attack. Attempting to clash a bolt thrown by an assailant out of range of the Solar’s fist lowers the cost of Force-Rending Strike to four motes, and drops the Willpower cost. Fire-Eating Fist does not create a clash attack on its own, and is expressly permitted to enhance Martial Arts Charms with the Clash keyword. At Essence 4+, this effect becomes stackable to a limit of (Stamina) stacks. Therefore, clashing four elemental bolts from an Essence 3 opponent, a Stamina 4 Lawgiver’s fists would be wreathed with twelve bonus damage worth of pain.\n\nIn addition, the Exalt may clash away ranged attacks in the exact same manner, treating them as if they were elemental bolts. Note that in all instances of FireEating Fist, clashing a projectile attack by an opponent who is out of range does not result in damage to that opponent.",
+      "rawData": "Fire-Eating Fist\nCost: 1m; Mins: Brawl 5, Essence 3\nType: Supplemental\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Intercepting Fury Smite\nThe Solar’s strike is guided by the violence she feels in \nher foe’s onslaught. This Charm supplements a clash \nattack. Any 1s rolled by the attacker are converted to \nautomatic successes on the Solar’s clash. If the Solar \ndissolves an energy attack or burning elemental bolt, her \nfist becomes wreathed in her attacker’s Essence, enjoy-\ning (opponent’s Essence) bonus attack and damage dice \non her next attack. Attempting to clash a bolt thrown by \nan assailant out of range of the Solar’s fist lowers the cost \nof Force-Rending Strike to four motes, and drops the \nWillpower cost. Fire-Eating Fist does not create a clash \nattack on its own, and is expressly permitted to enhance \nMartial Arts Charms with the Clash keyword. At Essence \n4+, this effect becomes stackable to a limit of (Stamina) \nstacks. Therefore, clashing four elemental bolts from \nan Essence 3 opponent, a Stamina 4 Lawgiver’s fists would \nbe wreathed with twelve bonus damage worth of pain. \nIn addition, the Exalt may clash away ranged attacks \nin the exact same manner, treating them as if they \nwere elemental bolts. Note that in all instances of Fire-\nEating Fist, clashing a projectile attack by an opponent \nwho is out of range does not result in damage to that \nopponent.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "d2bb8378-354c-3bef-865a-300ccf20293e",
+      "name": "River-Binding Wrath",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "aeca20b7-bd72-3b6a-9f13-d02e1c24ea70"
+      ],
+      "cost": "2m or 4m",
+      "type": "Supplemental",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Exalt leaps through her anima like a burning apparition of glorious anger, capturing a foe in her iron grasp.\n\nFor two motes, this Charm enhances a grapple attempt or the control roll, allowing the Solar to reroll 5s and 6s until 5s and 6s fail to appear. For four motes, it enhances both rolls.",
+      "rawData": "River-Binding Wrath\nCost: 2m or 4m; Mins: Brawl 5, Essence 3\nType: Supplemental\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Oak-Curling Clinch\nC H A P T E R  6\nEX3\n280\nThe Exalt leaps through her anima like a burning appari-\ntion of glorious anger, capturing a foe in her iron grasp. \nFor two motes, this Charm enhances a grapple attempt \nor the control roll, allowing the Solar to reroll 5s and 6s \nuntil 5s and 6s fail to appear. For four motes, it enhances \nboth rolls.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "269fedf3-ea6b-30d1-b844-b5c1d89da6c7",
+      "name": "Wicked Dissolve Dust",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "d2bb8378-354c-3bef-865a-300ccf20293e",
+        "8654522b-91e1-3e04-b1b9-63e3153a2729",
+        "f11b70d5-5abb-371a-ab3d-57f59968db20",
+        "eb0e85b8-ca9f-3aa2-b524-ec43ca620476",
+        "6e8d85c0-9b64-3462-92ea-bb4634c11e25",
+        "c221bbd5-22c8-3fc0-82df-8a4145a8aff1"
+      ],
+      "cost": "4m",
+      "type": "Reflexive",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "",
+      "rawData": "Wicked Dissolve Dust\nCost: 4m; Mins: Brawl 5, Essence 3\nType: Reflexive\nKeywords: Decisive-only\nDuration: Instant\nPrerequisite Charms: River-Binding Wrath, Intercept-\ning Fury Smite\nFeeling the tide of momentum turn against her, the Solar \ndraws a shield against her doom. When in control of a \nclinch, the Exalt can use Wicked Dissolve Dust to inter-\npose her captive between herself and an incoming deci-\nsive attack, enacting a reflexive Dexterity + Brawl clash \nattack. If her clash succeeds, rather than doing damage \nto the attacker, all of the damage of the opponent’s deci-\nsive attack is transferred to her captive.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "77b33fab-aa21-374d-a4b3-9fe933126709",
+      "name": "Rapturous Cradle",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "466768ba-8915-3428-964f-ba129c2ad335",
+        "a2545fce-55c1-320d-89a9-40a5831d0191"
+      ],
+      "cost": "1m, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "",
+      "rawData": "Rapturous Cradle\nCost: 1m, 1wp; Mins: Brawl 5, Essence 3\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Burning Proof of Authority\nLifting her hand, the Solar reaches across the shroud of \nthe heavens to find the one she has marked. Pulling on a \nbrand created by Burning Proof of Authority, she may \ndraw a captive into her grasp from as far away as long \nrange. The target does not travel the distance between \nhimself and the Lawgiver, but blurs into her steel embrace \nas if he had never left it. Using Rapturous Cradle auto-\nmatically releases the Solar’s commitment to Burning \nProof of Authority, removing the brand and resuming its \neffects in total.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "58deb665-a195-30be-a8fd-e1faea0d5868",
+      "name": "Dragon Coil Technique",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "4bc257c9-535d-3038-b3c0-34b207a0180c"
+      ],
+      "cost": "3m",
+      "type": "Reflexive",
+      "keywords": [
+        "Uniform"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar wraps her mighty arms around an opponent and attempts to crush the life from him. The Solar gains (Essence) automatic successes to land a grapple attack, and on the control roll, she treats the opponent’s 10s as her own single successes.\n\nIn addition, when the Solar controls a clinch with Dragon Coil Technique, her withering and decisive savaging attacks and slams enjoy (Essence) bonus dice of damage.\n\nThe Exalt can choose whether this damage is bashing or lethal. In addition, if the Exalt uses Dragon Coil Technique to defend herself from a grapple and wins control, she can keep control of the grapple rather than merely escaping.\n\nFinally, if the Solar uses her (Strength + Brawl) to land a grapple attack, Dragon Coil Technique expressly allows the Solar to grapple characters of prodigious size—tyrant lizards, river dragons, siaka and other similarly sized beasts are all valid targets for the Solar’s dread grasp. However, creatures of truly titanic proportions such as Juggernaut or Mount Mostath can only be gripped in bits and pieces, with the most likely result being that the Solar tears away a massive chunk of her opponent, rather than being able to exert enough force to hold or throw such a gigantic being.",
+      "rawData": "Dragon Coil Technique\nCost: 3m; Mins: Brawl 5, Essence 3\nType: Reflexive\nKeywords: Uniform\nDuration: Instant\nPrerequisite Charms: Devil-Strangling Attitude\nThe Solar wraps her mighty arms around an opponent \nand attempts to crush the life from him. The Solar gains \n(Essence) automatic successes to land a grapple attack, \nand on the control roll, she treats the opponent’s 10s as \nher own single successes. \nIn addition, when the Solar controls a clinch with Dragon \nCoil Technique, her withering and decisive savaging \nattacks and slams enjoy (Essence) bonus dice of damage. \nThe Exalt can choose whether this damage is bashing or \nlethal. In addition, if the Exalt uses Dragon Coil Technique \nto defend herself from a grapple and wins control, she can \nkeep control of the grapple rather than merely escaping.\nFinally, if the Solar uses her (Strength + Brawl) to land a \ngrapple attack, Dragon Coil Technique expressly allows \nthe Solar to grapple characters of prodigious size—tyrant \nlizards, river dragons, siaka and other similarly sized beasts \nare all valid targets for the Solar’s dread grasp. However, \ncreatures of truly titanic proportions such as Juggernaut \nor Mount Mostath can only be gripped in bits and pieces, \nwith the most likely result being that the Solar tears away \na massive chunk of her opponent, rather than being able \nto exert enough force to hold or throw such a gigantic being.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "5b574a51-3ce3-3e3c-b0c6-d60ab42c6c61",
+      "name": "Ten Calamities Technique",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "58deb665-a195-30be-a8fd-e1faea0d5868"
+      ],
+      "cost": "5m",
+      "type": "Supplemental",
+      "keywords": [
+        "Dual"
+      ],
+      "duration": "Until the grapple ends",
+      "fullText": "While controlling a clinch, the Solar locks a ruinous hold on her captive in an attempt to force his submission. The player can describe this as any kind of signature joint lock, chokehold, or scenery-assisted torment they can imagine, applying the damage roll normally. Remember, savaging attacks always hit, and serve only to boost the damage result, per the rules described on page 201.\n\nEach consecutive round the character inflicts damage with a grapple, her raw damage grows—+2 per round for withering or +1 for decisive. Thus, a character who made three withering attacks and then a decisive attack would enjoy bonuses of +2, +4, +6 and +4 respectively. Decisive attacks made with this Charm ignore hardness. Ten Calamities Technique does not enhance throws or slams.",
+      "rawData": "Ten Calamities Technique\nCost: 5m; Mins: Brawl 5, Essence 3\nType: Supplemental\nKeywords: Dual\nDuration: Until the grapple ends\nPrerequisite Charms: Dragon Coil Technique\nWhile controlling a clinch, the Solar locks a ruinous hold \non her captive in an attempt to force his submission. The \nplayer can describe this as any kind of signature joint lock, \nchokehold, or scenery-assisted torment they can imagine, \napplying the damage roll normally. Remember, savaging \nattacks always hit, and serve only to boost the damage \nresult, per the rules described on page 201. \nEach consecutive round the character inflicts damage \nwith a grapple, her raw damage grows—+2 per round for \nwithering or +1 for decisive. Thus, a character who made \nthree withering attacks and then a decisive attack would \nenjoy bonuses of +2, +4, +6 and +4 respectively. Decisive \nattacks made with this Charm ignore hardness. Ten Ca-\nlamities Technique does not enhance throws or slams.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "22ea882c-c751-36c9-a31a-b553edc6ec0e",
+      "name": "Titan-Straightening Method",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "5b574a51-3ce3-3e3c-b0c6-d60ab42c6c61"
+      ],
+      "cost": "7m, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Withering-only"
+      ],
+      "duration": "Instant",
+      "fullText": "Channeling primal strength through a surge of Essence, the Lawgiver winnows and thrashes a clinched opponent in an attempt to shake him apart. The Solar immediately expends all remaining turns of control and makes an equal number of withering savaging attacks.\n\nLearning Titan-Straightening Method permanently enhances Dragon Coil Technique, allowing the Solar to use it to grapple impossibly huge opponents for the express purpose of using Titan-Straightening Method. This Charm does not confer the power to lift, slam or hurl such opponents.",
+      "rawData": "Titan-Straightening Method\nCost: 7m, 1wp; Mins: Brawl 5, Essence 3\nType: Simple\nKeywords: Withering-only\nDuration: Instant\nPrerequisite Charms: Ten Calamities Technique\nChanneling primal strength through a surge of Essence, \nthe Lawgiver winnows and thrashes a clinched opponent \nin an attempt to shake him apart. The Solar immediately \nexpends all remaining turns of control and makes an equal \nnumber of withering savaging attacks. \nC H A R M S\nEX3\n281\nLearning Titan-Straightening Method permanently \nenhances Dragon Coil Technique, allowing the Solar to use \nit to grapple impossibly huge opponents for the express \npurpose of using Titan-Straightening Method. This Charm \ndoes not confer the power to lift, slam or hurl such opponents.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "b921d973-bd68-3a4d-b7a4-15a1d2ba2b29",
+      "name": "Shockwave Technique",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "aaa24fdb-1af8-3ff8-829e-bd7c58a79dbe"
+      ],
+      "cost": "6m, 1wp",
+      "type": "Reflexive",
+      "keywords": [
+        "Withering-only"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar burns with Essence, launching a captive at a group of foes. When the Solar hurls her captive at a group of foes, the damage roll is enhanced by 4 dice per round of control forfeited by the throw, as described on page 201.\n\nThe Solar throws her opponent at a target within short range; her captive goes from her like a meteor, blasting through her target and every opponent within short range of him, applying a single Dexterity + Brawl withering attack with a base damage of seven to all additional opponents. Foes struck by this explosive impact are knocked to the ground, and the damage of the throw is applied to each of them separately. If the Solar is crashed when she uses this attack, she still damages each foe, but she only gains Initiative from a single target. When used in combination with Crashing Wave Throw, not only is the damage of this throw enhanced, but also its range, allowing the Solar to strike enemies out to medium range without spending rounds of control per the rules of Crashing Wave Throw.\n\nSpecial activation rules: Shockwave Technique can be used once per combat. In order to reset it, the Solar must deal 10+ health levels of damage on a single decisive Brawl attack.",
+      "rawData": "Shockwave Technique\nCost: 6m, 1wp; Mins: Brawl 5, Essence 3\nType: Reflexive\nKeywords: Withering-only\nDuration: Instant\nPrerequisite Charms: Crashing Wave Throw\nThe Solar burns with Essence, launching a captive at a \ngroup of foes. When the Solar hurls her captive at a group \nof foes, the damage roll is enhanced by 4 dice per round \nof control forfeited by the throw, as described on page 201. \nThe Solar throws her opponent at a target within short \nrange; her captive goes from her like a meteor, blasting \nthrough her target and every opponent within short range \nof him, applying a single Dexterity + Brawl withering \nattack with a base damage of seven to all additional op-\nponents. Foes struck by this explosive impact are knocked \nto the ground, and the damage of the throw is applied to \neach of them separately. If the Solar is crashed when she \nuses this attack, she still damages each foe, but she only \ngains Initiative from a single target. When used in combi-\nnation with Crashing Wave Throw, not only is the damage \nof this throw enhanced, but also its range, allowing the \nSolar to strike enemies out to medium range without spend-\ning rounds of control per the rules of Crashing Wave Throw. \nSpecial activation rules: Shockwave Technique can be \nused once per combat. In order to reset it, the Solar must \ndeal 10+ health levels of damage on a single decisive Brawl \nattack.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "e80d971a-dedc-3789-99b1-baa36f3cca6e",
+      "name": "Lightning Strikes Twice",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "aaa24fdb-1af8-3ff8-829e-bd7c58a79dbe",
+        "1189fa35-1b9f-35fa-8619-803e0eed34ab"
+      ],
+      "cost": "1m, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "After launching an opponent with one of the prerequisite Charms, the Solar channels Essence through her arms and legs and rips through the space between, flashing into her opponent to make an additional attack using any Ability and allowing the Exalt to reflexively draw a weapon to do so. When the Exalt uses Lightning Strikes Twice after using one of the prerequisites to unleash a decisive attack, her Initiative does not roll over until after the extra attack has been completed.\n\nMaking this attack has slightly different effects depending on whether the Charm was triggered with Crashing Wave Throw or Heaven Thunder Hammer:\n\nCrashing Wave Throw: The Solar strikes her opponent after he bounces off a hard surface and take damage from Crashing Wave Throw. If the Exalt uses this version of Lightning Strikes Twice, she may meet her falling opponent in the air and make a grapple attack with his Defense set to 0. Succeeding in the roll for clinch control means the Solar must make an immediate throw or slam, hurling her opponent into further hard surfaces or driving him bodily into the ground.\n\nHeaven Thunder Hammer: The Solar must knock her foe to short or medium range on the attack in order to use this Charm. Doing so allows her to flash in to range before he impacts, cancelling his impact with scenery to strike him again. In this case, the Solar cannot grapple her opponent, but makes a strike against him as if it were a surprise attack.\n\nUsing Lightning Strikes Twice counts as the Exalt’s movement action, but note that it’s possible to move several range bands while chaining multiple uses of this Charm.\n\nLightning Strikes Twice can only be used once per combat, but can be reset by gaining 10+ Initiative on a single tick.",
+      "rawData": "Lightning Strikes Twice\nCost: 1m, 1wp; Mins: Brawl 5, Essence 3\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Crashing Wave Throw, Heaven \nThunder Hammer\nAfter launching an opponent with one of the prerequisite \nCharms, the Solar channels Essence through her arms \nand legs and rips through the space between, flashing into \nher opponent to make an additional attack using any Ability \nand allowing the Exalt to reflexively draw a weapon to do \nso. When the Exalt uses Lightning Strikes Twice after \nusing one of the prerequisites to unleash a decisive attack, \nher Initiative does not roll over until after the extra attack \nhas been completed. \nMaking this attack has slightly different effects depend-\ning on whether the Charm was triggered with Crashing \nWave Throw or Heaven Thunder Hammer:\nCrashing Wave Throw: The Solar strikes her opponent \nafter he bounces off a hard surface and take damage from \nCrashing Wave Throw. If the Exalt uses this version of \nLightning Strikes Twice, she may meet her falling oppo-\nnent in the air and make a grapple attack with his Defense \nset to 0. Succeeding in the roll for clinch control means \nthe Solar must make an immediate throw or slam, hurling \nher opponent into further hard surfaces or driving him \nbodily into the ground.\nHeaven Thunder Hammer: The Solar must knock her \nfoe to short or medium range on the attack in order to use \nthis Charm. Doing so allows her to flash in to range before \nhe impacts, cancelling his impact with scenery to strike \nhim again. In this case, the Solar cannot grapple her op-\nponent, but makes a strike against him as if it were a \nsurprise attack. \nUsing Lightning Strikes Twice counts as the Exalt’s move-\nment action, but note that it’s possible to move several \nrange bands while chaining multiple uses of this Charm. \nLightning Strikes Twice can only be used once per combat, \nbut can be reset by gaining 10+ Initiative on a single tick.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "d66305c2-6452-3fa6-994b-68d6a1796c36",
+      "name": "Fivefold Fury Onslaught",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "5b7cc046-005d-38f5-a5f9-f58718bfb644"
+      ],
+      "cost": "—",
+      "type": "Permanent",
+      "keywords": [],
+      "duration": "Permanent",
+      "fullText": "This Charm permanently upgrades the prerequisite, allowing the Solar to make ([Strength or Stamina] +1) attacks, and adding bonus damage to each succesful strike—+1 on the first, +2 on the second, +3 on the third, and so on.",
+      "rawData": "Fivefold Fury Onslaught\nCost: —; Mins: Brawl 5, Essence 3\nType: Permanent\nKeywords: None\nDuration: Permanent\nPrerequisite Charms: Hammer on Iron Technique\nThis Charm permanently upgrades the prerequisite, al-\nlowing the Solar to make ([Strength or Stamina] +1) attacks, \nand adding bonus damage to each succesful strike—+1 on \nthe first, +2 on the second, +3 on the third, and so on.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "d29f2d30-10d2-3864-a20b-3745902cd10f",
+      "name": "Striving Aftershock Method",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "2b8d50cc-62ad-3d8d-a72e-c1b8c1792032",
+        "d17de1ad-f52b-34d4-a1f4-88d5a216510a",
+        "8e9a9edd-2b2d-37e6-be3f-5513ade86a8e",
+        "3e5fe245-6cd4-33c7-84b6-86973b1af9d8"
+      ],
+      "cost": "2m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "",
+      "rawData": "Striving Aftershock Method\nCost: 2m; Mins: Brawl 5, Essence 3\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: One With Violence\nDriven on by the flow of violence, the Solar hones her \nEssence into her limbs, assuming a more perfect position \nfor her next strike. After landing a decisive attack which \nresets her to base Initiative (usually 3), the Solar may use \nthis Charm, adding +2 to her base Initiative value. \nC H A P T E R  6\nEX3\n282",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "45054b90-82ab-3384-8e77-5142aed74b3b",
+      "name": "Superior Violent Knowledge",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "d29f2d30-10d2-3864-a20b-3745902cd10f"
+      ],
+      "cost": "4m",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Indefinite",
+      "fullText": "The Lawgiver looks beyond her next attack and sees the battle’s course unfold. She may use this Charm at any time to reflexively store up to (Stamina) Initiative. Thenceforth, upon making a decisive attack, she may choose to reflexively release her commitment to Superior Violent Knowledge, pouring stored Initiative into her attack’s raw damage to boost it. This Charm expressly allows the Exalt to launch a decisive attack while crashed.\n\nSpecial activation rules: Using Superior Violent Knowledge at the start of her turn does not affect her place in the attack order of the current round but will be reflected in subsequent rounds. Stored Initiative cannot be targeted or stripped by withering attacks. Unless used, this Charm’s effect wears off at the end of combat.",
+      "rawData": "Superior Violent Knowledge\nCost: 4m; Mins: Brawl 5, Essence 3\nType: Reflexive\nKeywords: None\nDuration: Indefinite\nPrerequisite Charms: Striving Aftershock Method\nThe Lawgiver looks beyond her next attack and sees the \nbattle’s course unfold. She may use this Charm at any time \nto reflexively store up to (Stamina) Initiative. Thenceforth, \nupon making a decisive attack, she may choose to reflex-\nively release her commitment to Superior Violent Knowl-\nedge, pouring stored Initiative into her attack’s raw damage \nto boost it. This Charm expressly allows the Exalt to launch \na decisive attack while crashed.\nSpecial activation rules: Using Superior Violent Knowl-\nedge at the start of her turn does not affect her place in \nthe attack order of the current round but will be reflected \nin subsequent rounds. Stored Initiative cannot be target-\ned or stripped by withering attacks. Unless used, this \nCharm’s effect wears off at the end of combat.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "1e6423da-cdff-3e41-ae17-31b337def0aa",
+      "name": "Inevitable Victory Meditation",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 3,
+      "prerequisites": [
+        "45054b90-82ab-3384-8e77-5142aed74b3b"
+      ],
+      "cost": "3m, 2i",
+      "type": "Simple",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar takes a moment to assess her surroundings in order to determine the most effective channel for violence.\n\nRoll (Wits + Brawl) and store the result. The Exalt can reflexively use this result in place of a Brawl roll at any time. Stocked successes can be used to bolster defense at a rate of two successes per Parry or Evasion. These successes fade at the end of the scene. At Essence 4+, the roll gains (Essence) automatic successes.\n\nSpecial Activation Rules: This Charm becomes Reflexive if the Solar beats all of her opponents in a Join Battle roll, or if she knocks an opponent prone.",
+      "rawData": "Inevitable Victory Meditation\nCost: 3m, 2i; Mins: Brawl 5, Essence 3\nType: Simple\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Superior Violent Knowledge\nThe Solar takes a moment to assess her surroundings in \norder to determine the most effective channel for violence. \nRoll (Wits + Brawl) and store the result. The Exalt can \nreflexively use this result in place of a Brawl roll at any \ntime. Stocked successes can be used to bolster defense at \na rate of two successes per Parry or Evasion. These suc-\ncesses fade at the end of the scene. At Essence 4+, the roll \ngains (Essence) automatic successes. \nSpecial Activation Rules: This Charm becomes Reflex-\nive if the Solar beats all of her opponents in a Join Battle \nroll, or if she knocks an opponent prone.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "926456ec-33b4-3ecc-a4d0-876a2688465c",
+      "name": "Incarnated Fury Attack",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "a589f650-6652-3cd1-be00-a2ed0c3e06d9"
+      ],
+      "cost": "10m, 3a, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Withering-only"
+      ],
+      "duration": "Instant",
+      "fullText": "Drawing down on a crashed opponent, the Lawgiver channels all the fury of her anima into her fists and strikes a world-rending blow. This is an unblockable, undodgeable withering attack with double 7s on the damage roll. The Solar’s anima must be at bonfire in order to use this Charm, as she sheds her entire anima into the attack and returns to the dim level.",
+      "rawData": "Incarnated Fury Attack\nCost: 10m, 3a, 1wp; Mins: Brawl 5, Essence 4\nType: Simple\nKeywords: Withering-only\nDuration: Instant\nPrerequisite Charms: Adamantine Fists of Battle\nDrawing down on a crashed opponent, the Lawgiver chan-\nnels all the fury of her anima into her fists and strikes a \nworld-rending blow. This is an unblockable, undodgeable \nwithering attack with double 7s on the damage roll. The \nSolar’s anima must be at bonfire in order to use this Charm, \nas she sheds her entire anima into the attack and returns \nto the dim level.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "5789525c-104b-3666-81e0-9892e34b8868",
+      "name": "Orichalcum Fists of Battle",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "219c5427-3bfa-3bbd-8497-0336dac82015"
+      ],
+      "cost": "8m, 3a, 1wp +1m per turn",
+      "type": "Simple",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "One scene",
+      "fullText": "While using the scene-long version of the prerequisite, the Solar may channel the raw fury of her iconic anima down into her fists, suffusing them with blazing Solar Essence. For the rest of the scene, her decisive attacks ignore hardness, and her base Initiative is increased by one. In addition, when she is at base Initiative or lower, her decisive damage gains (Essence) bonus dice and rerolls 1s and 10s until 1s and 10s fail to appear, retaining any successes from rerolled 10s. This effect costs one mote per turn to maintain. This Charm requires three levels of anima to use, and use of this Charm returns the Lawgiver’s anima to the dim level. While this Charm is active, the Solar’s fists glow gold-to-white and her Caste Mark shines brightly. These effects cannot be muted.",
+      "rawData": "Orichalcum Fists of Battle\nCost: 8m, 3a, 1wp +1m per turn; Mins: Brawl 5, Essence 4\nType: Simple\nKeywords: Decisive-only \nDuration: One scene\nPrerequisite Charms: Adamantine Fists of Battle (x2) \nWhile using the scene-long version of the prerequisite, the \nSolar may channel the raw fury of her iconic anima down \ninto her fists, suffusing them with blazing Solar Essence. For \nthe rest of the scene, her decisive attacks ignore hardness, \nand her base Initiative is increased by one. In addition, when \nshe is at base Initiative or lower, her decisive damage gains \n(Essence) bonus dice and rerolls 1s and 10s until 1s and 10s \nfail to appear, retaining any successes from rerolled 10s. This \neffect costs one mote per turn to maintain. This Charm re-\nquires three levels of anima to use, and use of this Charm \nreturns the Lawgiver’s anima to the dim level. While this \nCharm is active, the Solar’s fists glow gold-to-white and her \nCaste Mark shines brightly. These effects cannot be muted.",
+      "potentiallyProblematicImport": true
+    },
+    {
+      "id": "140efe43-675e-3e6c-9e5d-a47ceb0c4936",
+      "name": "Raging Wrath Repeated",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "5b574a51-3ce3-3e3c-b0c6-d60ab42c6c61"
+      ],
+      "cost": "4m, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "The Solar’s surging, destructive Essence is redoubled when she breaks an opponent with her own hands. If the Solar crashes an opponent she is clinching, she may reflexively activate this Charm, resetting her combat action, and restoring all the rounds of control that she had at the start of the clinch.",
+      "rawData": "Raging Wrath Repeated\nCost: 4m, 1wp; Mins: Brawl 5, Essence 4\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Ten Calamities Technique\nThe Solar’s surging, destructive Essence is redoubled \nwhen she breaks an opponent with her own hands. If the \nSolar crashes an opponent she is clinching, she may re-\nflexively activate this Charm, resetting her combat action, \nand restoring all the rounds of control that she had at the \nstart of the clinch.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "813f886b-52fa-3929-8b5d-d2a765f48a92",
+      "name": "Rampage-Berserker Attack",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "d66305c2-6452-3fa6-994b-68d6a1796c36"
+      ],
+      "cost": "7m, 3i, 1wp",
+      "type": "Simple",
+      "keywords": [
+        "Perilous",
+        "Withering-only"
+      ],
+      "duration": "Instant",
+      "fullText": "The Solar shatters her opponent’s limbs and torso with a barrage of Essence-fueled blows. Roll a normal Brawlbased withering attack, but instead of using extra successes for damage, each extra success determines how many times the Solar strikes her opponent and how many times the damage of her attack is repeated. This attack may only be used once per scene, but if can be reset if the Solar incapacitates a powerful or impressive opponent.",
+      "rawData": "Rampage-Berserker Attack\nCost: 7m, 3i, 1wp; Mins: Brawl 5, Essence 4\nType: Simple\nKeywords: Perilous, Withering-only\nDuration: Instant\nPrerequisite Charms: Fivefold Fury Onslaught\nThe Solar shatters her opponent’s limbs and torso with a \nbarrage of Essence-fueled blows. Roll a normal Brawl-\nbased withering attack, but instead of using extra suc-\ncesses for damage, each extra success determines how \nmany times the Solar strikes her opponent and how many \ntimes the damage of her attack is repeated. This attack \nmay only be used once per scene, but if can be reset if the \nSolar incapacitates a powerful or impressive opponent.\nC H A R M S\nEX3\n283",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "6a98c54d-8802-3506-8505-f65b95943768",
+      "name": "Supremacy of War Meditation",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 4,
+      "prerequisites": [
+        "1e6423da-cdff-3e41-ae17-31b337def0aa"
+      ],
+      "cost": "—",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "Instant",
+      "fullText": "Once per ascent to iconic anima, the Lawgiver may use a free full Brawl Excellency to enhance her attacks or defenses. This Charm is reset each time the Solar returns her iconic anima to the dim level.",
+      "rawData": "Supremacy of War Meditation\nCost: —; Mins: Brawl 5, Essence 4\nType: Reflexive\nKeywords: None\nDuration: Instant\nPrerequisite Charms: Inevitable Victory Meditation \nOnce per ascent to iconic anima, the Lawgiver may use a \nfree full Brawl Excellency to enhance her attacks or de-\nfenses. This Charm is reset each time the Solar returns \nher iconic anima to the dim level.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "b6898d08-029d-302c-be12-00c8f5ad3bcc",
+      "name": "Apocalypse Flare Attack",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 5,
+      "prerequisites": [
+        "3fb11a7e-a8b4-3c00-9290-f945c4da12c9"
+      ],
+      "cost": "3m, 2i",
+      "type": "Simple",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "The Lawgiver reaches deep into her Essence, drawing forth a mountain-crushing surge of spirit pressure that burns like a small sun between her hands. The Solar then hurls this flare of burning Essence like a comet to strike a foe she can perceive at any range. The base damage for this attack is any damage the Solar has gathered with Fire-Eating Fist. In addition, the Exalt may choose to pour three levels of anima banner into the attack, shedding them to give the attack three automatic successes and (Essence) additional damage. This attack does not include the Exalt’s Initiative and does not return her to base value.",
+      "rawData": "Apocalypse Flare Attack \nCost: 3m, 2i; Mins: Brawl 5, Essence 5\nType: Simple\nKeywords: Decisive-only\nDuration: Instant\nPrerequisite Charms: Fire-Eating Fist\nThe Lawgiver reaches deep into her Essence, drawing \nforth a mountain-crushing surge of spirit pressure that \nburns like a small sun between her hands. The Solar then \nhurls this flare of burning Essence like a comet to strike \na foe she can perceive at any range. The base damage for \nthis attack is any damage the Solar has gathered with \nFire-Eating Fist. In addition, the Exalt may choose to \npour three levels of anima banner into the attack, shed-\nding them to give the attack three automatic successes \nand (Essence) additional damage. This attack does not \ninclude the Exalt’s Initiative and does not return her to \nbase value.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "19b14b62-17ea-3500-93fd-ea0cee11feb3",
+      "name": "Heaven Fury Smite",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 5,
+      "prerequisites": [
+        "813f886b-52fa-3929-8b5d-d2a765f48a92"
+      ],
+      "cost": "Cost:—",
+      "type": "Reflexive",
+      "keywords": [
+        "Decisive-only"
+      ],
+      "duration": "Instant",
+      "fullText": "Sensing her opponent is near collapse, the Exalt lashes out with a lightning fast decisive attack. Heaven Fury Smite can be used when the Lawgiver lands an attack that drives her target into crash. It automatically resets her attack action, allowing her to attack again instantly, so long as she launches a decisive attack against the crashed opponent. This attack may be made with any viable Ability—the Solar experiences a burst of speed that allows her to reflexively draw a weapon, be it a sword or a nearby tree branch.",
+      "rawData": "Heaven Fury Smite\nCost:—; Mins: Brawl 5, Essence 5\nType: Reflexive\nKeywords: Decisive-only\nDuration: Instant\nPrerequisite Charms: Rampage-Berserker Attack\nSensing her opponent is near collapse, the Exalt lashes \nout with a lightning fast decisive attack. Heaven Fury \nSmite can be used when the Lawgiver lands an attack that \ndrives her target into crash. It automatically resets her \nattack action, allowing her to attack again instantly, so \nlong as she launches a decisive attack against the crashed \nopponent. This attack may be made with any viable \nAbility—the Solar experiences a burst of speed that allows \nher to reflexively draw a weapon, be it a sword or a nearby \ntree branch.",
+      "potentiallyProblematicImport": false
+    },
+    {
+      "id": "4a288cc7-8df6-3bc3-bafe-9074fde2af8f",
+      "name": "Ascendant Battle Visage",
+      "ability": "Brawl",
+      "minAbility": 5,
+      "minEssence": 5,
+      "prerequisites": [
+        "6a98c54d-8802-3506-8505-f65b95943768"
+      ],
+      "cost": "15m, 3a, 1wp",
+      "type": "Reflexive",
+      "keywords": [],
+      "duration": "One scene",
+      "fullText": "Channeling her anima through her physical form, the Lawgiver merges with her iconic manifestation to become a visage of divine wrath. Her hair may lengthen and change colors while her skin darkens toward the spectrums of Solar anima. Her eyes glow white, her voice echoes and thunders, and her body becomes the blazing imprint of tattoos and markings that represent her iconic form, alive and glowing with inner fire. During this time, her anima licks the air as if it were burning, but will neither rise to iconic or fall to dim so long as this Charm’s mote cost is committed. During this time, the Exalt moves with terrific speed. She may rush with double 7s, and may rush with her Strength instead of Dexterity, flying toward her opponent in great leaps. If her opponent is three or more range bands away, she may move two range bands to approach him until she is within medium or short range.\n\nDuring this time, she may clash any attack as her combat action, without having to delay, and if she successfully clashes a ranged attack she immediately flashes into close range with her opponent, clashing, blurring over the distance and striking her target all in the same instant. Furthermore, Ascendant Battle Visage makes the Solar incredibly resilient. For the duration of the Charm, no amount of withering damage can crash her unless it is delivered from close range. If the Solar knows Orichalcum Fists of Battle, she may activate that Charm and its prerequisite reflexively when she assumes this Charm, paying only six motes and ignoring the anima and Willpower cost to do so. In addition, if she knows the Charm Fire-Eating Fist she may store damage from any attack she clashes, with or without Charms. If she knows the Charm Apocalypse Flare Attack, she may unleash that attack at the iconic level without expending her anima or ending this Charm’s effect.\n\nBureaucracy",
+      "rawData": "Ascendant Battle Visage\nCost: 15m, 3a, 1wp; Mins: Brawl 5, Essence 5\nType: Reflexive\nKeywords: None\nDuration: One scene\nPrerequisite Charms: Supremacy of War Meditation\nChanneling her anima through her physical form, the \nLawgiver merges with her iconic manifestation to become \na visage of divine wrath. Her hair may lengthen and change \ncolors while her skin darkens toward the spectrums of \nSolar anima. Her eyes glow white, her voice echoes and \nthunders, and her body becomes the blazing imprint of \ntattoos and markings that represent her iconic form, alive \nand glowing with inner fire. During this time, her anima \nlicks the air as if it were burning, but will neither rise to \niconic or fall to dim so long as this Charm’s mote cost is \ncommitted. During this time, the Exalt moves with ter-\nrific speed. She may rush with double 7s, and may rush \nwith her Strength instead of Dexterity, flying toward her \nopponent in great leaps. If her opponent is three or more \nrange bands away, she may move two range bands to ap-\nproach him until she is within medium or short range. \nDuring this time, she may clash any attack as her combat \naction, without having to delay, and if she successfully \nclashes a ranged attack she immediately flashes into close \nrange with her opponent, clashing, blurring over the dis-\ntance and striking her target all in the same instant. Fur-\nthermore, Ascendant Battle Visage makes the Solar in-\ncredibly resilient. For the duration of the Charm, no \namount of withering damage can crash her unless it is \ndelivered from close range. If the Solar knows Orichal-\ncum Fists of Battle, she may activate that Charm and its \nprerequisite reflexively when she assumes this Charm, \npaying only six motes and ignoring the anima and Will-\npower cost to do so. In addition, if she knows the Charm \nFire-Eating Fist she may store damage from any attack \nshe clashes, with or without Charms. If she knows the \nCharm Apocalypse Flare Attack, she may unleash that \nattack at the iconic level without expending her anima \nor ending this Charm’s effect. \nBureaucracy",
+      "potentiallyProblematicImport": false
+    }
+  ]
+}
