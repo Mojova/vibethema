@@ -37,7 +37,24 @@ Vibethema is a JavaFX-based character builder for Exalted 3rd Edition. It provid
 - Java Development Kit (JDK) 25 or higher.
 - Maven 3.8.1 or higher.
 
-### Building and Running
+### Installation
+
+### macOS
+The macOS binaries are provided as DMG files. Since the application is not signed with an Apple Developer account, macOS Gatekeeper will flag it as untrusted. On modern macOS (Sequoia 15 and later), the traditional "Right-click -> Open" bypass has been removed.
+
+To install and run:
+1. Open the downloaded `.dmg` file and drag **Vibethema.app** to your **Applications** folder.
+2. Attempt to open **Vibethema.app**. You will see a security warning. Click **OK**.
+3. Open **System Settings** and navigate to **Privacy & Security**.
+4. Scroll down to the **Security** section where you will see a message: *"Vibethema.app was blocked from use because it is not from an identified developer."*
+5. Click **Open Anyway** and authenticate with your Mac password or Touch ID.
+6. A final confirmation dialog will appear; click **Open**.
+
+> [!TIP]
+> If you prefer a faster method, you can manually clear the quarantine attribute using Terminal:
+> `sudo xattr -rd com.apple.quarantine /Applications/Vibethema.app`
+
+## Building and Running
 
 To run the application in development mode:
 ```bash

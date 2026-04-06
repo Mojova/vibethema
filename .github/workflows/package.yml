@@ -34,16 +34,16 @@ jobs:
           chmod +x scripts/build_macos.sh
           ./scripts/build_macos.sh
 
-      - name: Archive macOS App
+      - name: Prepare DMG Artifact
         run: |
           cd target/dist
-          zip -r Vibethema-macOS-${{ matrix.arch }}.zip Vibethema.app
+          mv Vibethema.dmg Vibethema-macOS-${{ matrix.arch }}.dmg
 
       - name: Upload macOS Artifact
         uses: actions/upload-artifact@v7
         with:
           name: Vibethema-macOS-${{ matrix.arch }}
-          path: target/dist/Vibethema-macOS-${{ matrix.arch }}.zip
+          path: target/dist/Vibethema-macOS-${{ matrix.arch }}.dmg
 
   build-windows:
     runs-on: windows-latest
@@ -126,8 +126,8 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            release-assets/Vibethema-macOS-x64/Vibethema-macOS-x64.zip
-            release-assets/Vibethema-macOS-arm64/Vibethema-macOS-arm64.zip
+            release-assets/Vibethema-macOS-x64/Vibethema-macOS-x64.dmg
+            release-assets/Vibethema-macOS-arm64/Vibethema-macOS-arm64.dmg
             release-assets/Vibethema-Windows/Vibethema-Windows.zip
             release-assets/Vibethema-Linux/Vibethema-Linux.tar.gz
         env:

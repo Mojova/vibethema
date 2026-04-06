@@ -43,7 +43,7 @@ jpackage \
   --input target \
   --main-jar vibethema.jar \
   --main-class com.vibethema.Launcher \
-  --type app-image \
+  --type dmg \
   --icon "$ICNS_TARGET" \
   --name "Vibethema" \
   --dest target/dist \
