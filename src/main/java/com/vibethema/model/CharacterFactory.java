@@ -24,6 +24,7 @@ public class CharacterFactory {
             }
         }
         
+        character.setDirty(false);
         return character;
     }
 }

@@ -193,6 +193,7 @@ public class MainViewModel implements ViewModel {
             data.getWeapons().add(unarmed.copy());
         }
         this.currentFile.set(null);
+        this.data.setDirty(false);
         Messenger.publish("refresh_all_ui");
     }
 }
