@@ -80,19 +80,55 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Install Linux dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rpm
+          # Download appimagetool
+          curl -Lo appimagetool https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage
+          chmod +x appimagetool
+
       - name: Build and Package Linux
         run: |
           chmod +x scripts/build_linux.sh
           ./scripts/build_linux.sh
+          
+          # Complete AppImage creation
+          # The script created the AppDir structure at target/dist/AppDir-Base/Vibethema
+          APP_DIR="target/dist/AppDir-Base/Vibethema"
+          # AppImage needs AppRun, icon, and desktop file in root
+          cp src/main/resources/icon.png "$APP_DIR/vibethema.png"
+          
+          # Create simple desktop file if jpackage didn't
+          cat <<EOF > "$APP_DIR/vibethema.desktop"
+          [Desktop Entry]
+          Type=Application
+          Name=Vibethema
+          Icon=vibethema
+          Exec=bin/Vibethema
+          Categories=Utility;
+          EOF
 
-      - name: Archive Linux App
-        run: tar -czf target/dist/Vibethema-Linux.tar.gz -C target/dist Vibethema
+          # Create AppRun script
+          cat <<EOF > "$APP_DIR/AppRun"
+          #!/bin/sh
+          SELF=\$(readlink -f "\$0")
+          HERE=\$(dirname "\$SELF")
+          exec "\$HERE/bin/Vibethema" "\$@"
+          EOF
+          chmod +x "$APP_DIR/AppRun"
+          
+          export ARCH=x86_64
+          ./appimagetool --appimage-extract-and-run "$APP_DIR" target/dist/Vibethema-x86_64.AppImage
 
       - name: Upload Linux Artifact
         uses: actions/upload-artifact@v7
         with:
-          name: Vibethema-Linux
-          path: target/dist/Vibethema-Linux.tar.gz
+          name: Vibethema-Linux-Packages
+          path: |
+            target/dist/*.deb
+            target/dist/*.rpm
+            target/dist/*.AppImage
 
   release:
     needs: [build-macos, build-windows, build-linux]
@@ -124,6 +160,8 @@ jobs:
             release-assets/Vibethema-macOS-x64/Vibethema-macOS-x64.dmg
             release-assets/Vibethema-macOS-arm64/Vibethema-macOS-arm64.dmg
             release-assets/Vibethema-Windows-MSI/*.msi
-            release-assets/Vibethema-Linux/Vibethema-Linux.tar.gz
+            release-assets/Vibethema-Linux-Packages/*.deb
+            release-assets/Vibethema-Linux-Packages/*.rpm
+            release-assets/Vibethema-Linux-Packages/*.AppImage
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

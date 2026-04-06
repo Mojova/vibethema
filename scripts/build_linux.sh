@@ -22,6 +22,44 @@ mkdir -p target/dist
 
 # On Linux, jpackage --type app-image creates a directory structure.
 # We include --linux-shortcut to ensure meta-data for desktop integration is ready.
+# 3. Create native packages (DEB and RPM)
+echo "Packaging native DEB..."
+jpackage \
+  --input target \
+  --main-jar vibethema.jar \
+  --main-class com.vibethema.Launcher \
+  --type deb \
+  --icon "$ICON_SOURCE" \
+  --name "Vibethema" \
+  --linux-package-name "vibethema" \
+  --app-version "1.0.0" \
+  --vendor "Vibethema" \
+  --linux-shortcut \
+  --linux-menu-group "Utility" \
+  --dest target/dist \
+  --java-options "--enable-native-access=ALL-UNNAMED" \
+  --verbose
+
+echo "Packaging native RPM..."
+jpackage \
+  --input target \
+  --main-jar vibethema.jar \
+  --main-class com.vibethema.Launcher \
+  --type rpm \
+  --icon "$ICON_SOURCE" \
+  --name "Vibethema" \
+  --linux-package-name "vibethema" \
+  --app-version "1.0.0" \
+  --vendor "Vibethema" \
+  --linux-shortcut \
+  --linux-menu-group "Utility" \
+  --dest target/dist \
+  --java-options "--enable-native-access=ALL-UNNAMED" \
+  --verbose
+
+# 4. Create AppImage (requires appimagetool on Runner)
+# We need the app-image structure first
+echo "Creating app-image for AppImage conversion..."
 jpackage \
   --input target \
   --main-jar vibethema.jar \
@@ -29,7 +67,7 @@ jpackage \
   --type app-image \
   --icon "$ICON_SOURCE" \
   --name "Vibethema" \
-  --dest target/dist \
+  --dest target/dist/AppDir-Base \
   --java-options "--enable-native-access=ALL-UNNAMED" \
   --verbose
 
