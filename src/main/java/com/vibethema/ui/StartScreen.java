@@ -6,6 +6,8 @@ import com.vibethema.model.CharacterSaveState;
 import com.vibethema.viewmodel.MainViewModel;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.ViewTuple;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -19,6 +21,7 @@ import java.io.File;
 import java.io.FileReader;
 
 public class StartScreen extends StackPane {
+    private static final Logger logger = LoggerFactory.getLogger(StartScreen.class);
 
     public StartScreen() {
         getStyleClass().add("start-screen");
@@ -95,7 +98,7 @@ public class StartScreen extends StackPane {
                     getScene().setRoot(mainView);
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
+                logger.error("Failed to load character file: {}", file.getAbsolutePath(), ex);
             }
         }
     }

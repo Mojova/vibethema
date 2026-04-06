@@ -1,6 +1,8 @@
 package com.vibethema.ui;
 
 import com.vibethema.service.PdfExtractor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
@@ -19,6 +21,7 @@ import javafx.stage.Window;
 import java.io.File;
 
 public class PdfImportHelper {
+    private static final Logger logger = LoggerFactory.getLogger(PdfImportHelper.class);
 
     public static void importCorePdf(Window owner, Runnable onComplete) {
         importPdf(owner, "Select Exalted Core 3e PDF", "", true, PdfExtractor.PdfSource.CORE, onComplete);
@@ -86,7 +89,7 @@ public class PdfImportHelper {
         task.setOnFailed(e -> {
             progressStage.close();
             Throwable ex = task.getException();
-            ex.printStackTrace();
+            logger.error("PDF Import failed for source: {}", source, ex);
             Alert alert = new Alert(Alert.AlertType.ERROR, "Import failed: " + ex.getMessage(), ButtonType.OK);
             alert.showAndWait();
         });

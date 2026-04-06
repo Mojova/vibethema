@@ -46,6 +46,7 @@ jpackage \
   --icon "$ICNS_TARGET" \
   --name "Vibethema" \
   --dest target/dist \
+  --java-options "--enable-native-access=javafx.graphics" \
   --file-associations src/main/resources/vbtm.properties \
   --verbose
 

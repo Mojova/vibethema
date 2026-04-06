@@ -118,6 +118,10 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
             row.getStyleClass().add("merit-row");
             row.setAlignment(Pos.CENTER_LEFT);
 
+            CheckBox equippedCb = new CheckBox();
+            equippedCb.setTooltip(new Tooltip("Equipped"));
+            equippedCb.selectedProperty().bindBidirectional(wvm.equippedProperty());
+
             VBox details = new VBox(5);
             Label nameLabel = new Label(wvm.nameProperty().get());
             nameLabel.getStyleClass().add("merit-name");
@@ -191,7 +195,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
             delBtn.setOnAction(e -> viewModel.removeWeapon(wvm.getWeapon()));
 
             HBox.setHgrow(details, Priority.ALWAYS);
-            row.getChildren().addAll(details, specialtyCombo, editBtn, evBtn, delBtn);
+            row.getChildren().addAll(equippedCb, details, specialtyCombo, editBtn, evBtn, delBtn);
             weaponsListContainer.getChildren().add(row);
         }
     }

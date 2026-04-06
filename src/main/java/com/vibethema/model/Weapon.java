@@ -1,7 +1,9 @@
 package com.vibethema.model;
 
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -48,6 +50,7 @@ public class Weapon {
     private final ObjectProperty<WeaponCategory> category = new SimpleObjectProperty<>(WeaponCategory.MEDIUM);
     private final ObservableList<String> tags = FXCollections.observableArrayList();
     private final StringProperty specialtyId = new SimpleStringProperty("");
+    private final BooleanProperty equipped = new SimpleBooleanProperty(false);
 
     // Stats
     private final IntegerProperty accuracy = new SimpleIntegerProperty(0);
@@ -215,6 +218,10 @@ public class Weapon {
     public StringProperty specialtyIdProperty() { return specialtyId; }
     public String getSpecialtyId() { return specialtyId.get(); }
     public void setSpecialtyId(String id) { this.specialtyId.set(id); }
+
+    public BooleanProperty equippedProperty() { return equipped; }
+    public boolean isEquipped() { return equipped.get(); }
+    public void setEquipped(boolean v) { equipped.set(v); }
 
     // --- Persistance Support (DTO) ---
     public static class WeaponData {

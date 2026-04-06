@@ -40,6 +40,7 @@ public class CharacterSaveState {
     public static class WeaponLink {
         public String id;
         public String specialtyId;
+        public boolean equipped;
     }
 
     public static class ArmorLink {

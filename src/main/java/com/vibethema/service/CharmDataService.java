@@ -16,8 +16,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CharmDataService {
+    private static final Logger logger = LoggerFactory.getLogger(CharmDataService.class);
     private static final String APP_DIR = ".vibethema";
     private static final String CHARMS_DIR = "charms";
     private static final String MA_DIR = "martial_arts";
@@ -76,7 +79,7 @@ public class CharmDataService {
                         (fileName.startsWith(baseName + "-") && fileName.endsWith(".json"));
             }).forEach(p -> loadFromFile(p, allCharms));
         } catch (IOException e) {
-            System.err.println("Error scanning directory: " + dir + " - " + e.getMessage());
+            logger.error("Error scanning directory: {}", dir, e);
         }
     }
 
@@ -252,7 +255,7 @@ public class CharmDataService {
                     return collection;
                 }
             } catch (IOException e) {
-                System.err.println("Error loading evocations (new format): " + e.getMessage());
+                logger.error("Error loading evocations (new format) from: {}", filePath, e);
             }
 
             // Fallback: Try reading as old CharmListWrapper format
@@ -262,7 +265,7 @@ public class CharmDataService {
                     return new EvocationCollection(artifactId, wrapper.ability, wrapper.charms);
                 }
             } catch (IOException e) {
-                System.err.println("Error loading evocations (old format): " + e.getMessage());
+                logger.error("Error loading evocations (old format) from: {}", filePath, e);
             }
         }
         return new EvocationCollection(artifactId,
@@ -334,7 +337,7 @@ public class CharmDataService {
                 }.getType();
                 return gson.fromJson(reader, listType);
             } catch (IOException e) {
-                System.err.println("Error loading user keyword file: " + userPath + " - " + e.getMessage());
+                logger.error("Error loading user keyword file: {}", userPath, e);
             }
         }
 
@@ -355,7 +358,7 @@ public class CharmDataService {
                 return true;
             }
         } catch (IOException e) {
-            System.err.println("Error loading charm file: " + path + " - " + e.getMessage());
+            logger.error("Error loading charm file: {}", path, e);
         }
         return false;
     }
@@ -386,11 +389,11 @@ public class CharmDataService {
                             }
                         } catch (Exception e) {
                             // Skip invalid/unreadable JSON or missing type fields
-                            System.err.println("Skipping non-martialArts style file: " + p + " - " + e.getMessage());
+                            logger.warn("Skipping non-martialArts style file: {}", p, e);
                         }
                     });
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Failed to list files in directory: {}", dir, e);
         }
     }
 
@@ -445,7 +448,7 @@ public class CharmDataService {
                     }
                 }
             } catch (IOException e) {
-                System.err.println("Error loading spells from: " + path + " - " + e.getMessage());
+                logger.error("Error loading spells from: {}", path, e);
             }
         }
     }

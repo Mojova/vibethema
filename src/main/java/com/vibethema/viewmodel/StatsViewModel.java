@@ -4,12 +4,17 @@ import com.vibethema.model.*;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.collections.ListChangeListener;
 import com.vibethema.viewmodel.util.Messenger;
+import com.vibethema.viewmodel.equipment.AttackPoolRowViewModel;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import java.util.stream.Collectors;
 
 public class StatsViewModel implements ViewModel {
     private final CharacterData data;
     private final IntegerProperty maTotalDots = new SimpleIntegerProperty(0);
+    private final ObservableList<AttackPoolRowViewModel> attackPoolRows = FXCollections.observableArrayList();
 
     public StatsViewModel(CharacterData data) {
         this.data = data;
@@ -29,6 +34,16 @@ public class StatsViewModel implements ViewModel {
         for (MartialArtsStyle mas : data.getMartialArtsStyles()) {
             mas.ratingProperty().addListener((obs, ov, nv) -> updateMaTotal());
         }
+
+        // Sync attack pools
+        updateAttackPoolRows();
+        data.getAttackPools().addListener((ListChangeListener<? super AttackPoolData>) c -> updateAttackPoolRows());
+    }
+
+    private void updateAttackPoolRows() {
+        attackPoolRows.setAll(data.getAttackPools().stream()
+                .map(AttackPoolRowViewModel::new)
+                .collect(Collectors.toList()));
     }
 
     private void updateMaTotal() {
@@ -42,6 +57,10 @@ public class StatsViewModel implements ViewModel {
 
     public IntegerProperty maTotalDotsProperty() {
         return maTotalDots;
+    }
+
+    public ObservableList<AttackPoolRowViewModel> getAttackPoolRows() {
+        return attackPoolRows;
     }
 
     public void jumpToCharms(String abilityName) {

@@ -3,10 +3,13 @@ package com.vibethema.model.logic;
 import com.vibethema.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ExperienceRuleEngineTest {
+    private static final Logger logger = LoggerFactory.getLogger(ExperienceRuleEngineTest.class);
 
     private CharacterData data;
     private CharacterSaveState snapshot;
@@ -47,7 +50,7 @@ public class ExperienceRuleEngineTest {
         
         // 2 -> 3 (cost 8), 3 -> 4 (cost 12) = Total 20
         for (ExperiencePurchase p : status.log) {
-            System.out.println("PURCHASE: " + p.getDescription() + " : " + p.getCost());
+            logger.info("PURCHASE: {} : {}", p.getDescription(), p.getCost());
         }
         assertEquals(20, status.regularXpSpent);
         assertEquals(2, status.log.size());

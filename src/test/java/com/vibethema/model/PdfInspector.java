@@ -5,10 +5,14 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.PrintWriter;
 
 public class PdfInspector {
+    private static final Logger logger = LoggerFactory.getLogger(PdfInspector.class);
+
     public static void main(String[] args) {
         try (PDDocument doc = Loader.loadPDF(new File("src/main/resources/interactive_sheet.pdf"))) {
             PDAcroForm acroForm = doc.getDocumentCatalog().getAcroForm();
@@ -18,12 +22,12 @@ public class PdfInspector {
                         pw.println(field.getFullyQualifiedName() + " | " + field.getFieldType() + " | Value: " + field.getValueAsString());
                     }
                 }
-                System.out.println("Fields written to pdf_fields.txt");
+                logger.info("Fields written to pdf_fields.txt");
             } else {
-                System.out.println("NO ACROFORM FOUND.");
+                logger.warn("NO ACROFORM FOUND.");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Failed to inspect PDF fields", e);
         }
     }
 }

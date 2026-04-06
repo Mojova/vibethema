@@ -64,6 +64,16 @@
             <artifactId>mvvmfx-validation</artifactId>
             <version>1.8.0</version>
         </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.13</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.7.36</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -81,6 +91,7 @@
                     <mainClass>com.vibethema.Main</mainClass>
                     <options>
                         <option>-Dapple.awt.application.name=Vibethema</option>
+                        <option>--enable-native-access=javafx.graphics</option>
                     </options>
                 </configuration>
             </plugin>
@@ -109,7 +120,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.4</version>
                 <configuration>
-                    <argLine>-XX:+EnableDynamicAgentLoading</argLine>
+                    <argLine>-XX:+EnableDynamicAgentLoading --enable-native-access=javafx.graphics</argLine>
                 </configuration>
             </plugin>
         </plugins>

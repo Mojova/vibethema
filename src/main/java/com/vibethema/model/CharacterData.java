@@ -946,6 +946,7 @@ public class CharacterData {
             CharacterSaveState.WeaponLink wl = new CharacterSaveState.WeaponLink();
             wl.id = w.getId();
             wl.specialtyId = w.getSpecialtyId();
+            wl.equipped = w.isEquipped();
             state.weapons.add(wl);
         }
         state.armors = new ArrayList<>();
@@ -1137,6 +1138,7 @@ public class CharacterData {
                     Weapon w = equipmentService.loadWeapon(wl.id);
                     if (w != null) {
                         w.setSpecialtyId(wl.specialtyId);
+                        w.setEquipped(wl.equipped);
                         weapons.add(w);
                     }
                 }

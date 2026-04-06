@@ -13,8 +13,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EquipmentDataService {
+    private static final Logger logger = LoggerFactory.getLogger(EquipmentDataService.class);
     private static final String APP_DIR = ".vibethema";
     private static final String TAGS_FILE = "equipment_tags.json";
     private static final String EQUIPMENT_DIR = "equipment";
@@ -40,7 +43,7 @@ public class EquipmentDataService {
             Files.createDirectories(getHearthstonesPath());
             Files.createDirectories(getOtherEquipmentPath());
         } catch (IOException e) {
-            System.err.println("Failed to create global equipment directories: " + e.getMessage());
+            logger.error("Failed to create global equipment directories", e);
         }
     }
 
@@ -58,7 +61,7 @@ public class EquipmentDataService {
         try (Reader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
             return gson.fromJson(reader, type);
         } catch (IOException e) {
-            System.err.println("Error loading global item: " + e.getMessage());
+            logger.error("Error loading global item from: {}", filePath, e);
             return null;
         }
     }
@@ -71,9 +74,13 @@ public class EquipmentDataService {
                 try (Reader reader = Files.newBufferedReader(f, StandardCharsets.UTF_8)) {
                     T item = gson.fromJson(reader, type);
                     if (item != null) items.add(item);
-                } catch (IOException e) { e.printStackTrace(); }
+                } catch (IOException e) {
+                    logger.error("Error reading equipment file: {}", f, e);
+                }
             });
-        } catch (IOException e) { e.printStackTrace(); }
+        } catch (IOException e) {
+            logger.error("Error listing equipment directory: {}", dir, e);
+        }
         return items;
     }
 
@@ -147,7 +154,7 @@ public class EquipmentDataService {
             Map<String, List<Tag>> tags = gson.fromJson(reader, type);
             return tags != null ? tags : new HashMap<>();
         } catch (IOException e) {
-            System.err.println("Error loading equipment tags: " + e.getMessage());
+            logger.error("Error loading equipment tags from: {}", path, e);
             return new HashMap<>();
         }
     }

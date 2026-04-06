@@ -11,11 +11,14 @@ import de.saxsys.mvvmfx.ViewTuple;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileReader;
 
 public class Main extends Application {
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
     private static File pendingFile;
 
     public static void setPendingFile(File file) {
@@ -72,7 +75,7 @@ public class Main extends Application {
             });
             stage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Failed to load character file: {}", file.getName(), e);
             // If load fails, fall back to start screen
             pendingFile = null;
             start(stage);

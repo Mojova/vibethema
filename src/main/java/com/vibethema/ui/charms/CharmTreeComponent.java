@@ -13,12 +13,15 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.CubicCurve;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A standalone UI component that renders a charm web and details sidebar.
  * Extracted from BuilderUI to improve modularity.
  */
 public class CharmTreeComponent extends SplitPane {
+    private static final Logger logger = LoggerFactory.getLogger(CharmTreeComponent.class);
 
     public interface CharmTreeListener {
         void onCreateCharm(String contextId, String contextName, String filterType, Runnable onSave);
@@ -458,7 +461,7 @@ public class CharmTreeComponent extends SplitPane {
                                 refresh();
                             }
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            logger.error("Failed to delete custom charm: {}", c.getName(), ex);
                         }
                     }
                 });

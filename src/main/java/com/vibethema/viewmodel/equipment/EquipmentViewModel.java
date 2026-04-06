@@ -8,6 +8,8 @@ import de.saxsys.mvvmfx.ViewModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ListChangeListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Map;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
  * Manages the high-level collections and service interactions for equipment.
  */
 public class EquipmentViewModel implements ViewModel {
+    private static final Logger logger = LoggerFactory.getLogger(EquipmentViewModel.class);
     private final CharacterData data;
     private final EquipmentDataService equipmentService;
     private final CharmDataService dataService;
@@ -171,7 +174,7 @@ public class EquipmentViewModel implements ViewModel {
             }
             data.setDirty(true);
         } catch (IOException e) {
-            System.err.println("Failed to save global weapon: " + e.getMessage());
+            logger.error("Failed to save global weapon: {}", weapon.getName(), e);
         }
     }
 
@@ -188,7 +191,7 @@ public class EquipmentViewModel implements ViewModel {
             }
             data.setDirty(true);
         } catch (IOException e) {
-            System.err.println("Failed to save global armor: " + e.getMessage());
+            logger.error("Failed to save global armor: {}", armor.getName(), e);
         }
     }
 
@@ -205,7 +208,7 @@ public class EquipmentViewModel implements ViewModel {
             }
             data.setDirty(true);
         } catch (IOException e) {
-            System.err.println("Failed to save global hearthstone: " + e.getMessage());
+            logger.error("Failed to save global hearthstone: {}", hearthstone.getName(), e);
         }
     }
 
@@ -222,7 +225,7 @@ public class EquipmentViewModel implements ViewModel {
             }
             data.setDirty(true);
         } catch (IOException e) {
-            System.err.println("Failed to save global other equipment: " + e.getMessage());
+            logger.error("Failed to save global other equipment: {}", equipment.getName(), e);
         }
     }
 

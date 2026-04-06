@@ -20,8 +20,11 @@ import java.util.List;
 import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MainViewModel implements ViewModel {
+    private static final Logger logger = LoggerFactory.getLogger(MainViewModel.class);
     private CharacterData data;
     private FooterViewModel footerViewModel;
     private final EquipmentDataService equipmentService = new EquipmentDataService();
@@ -108,7 +111,7 @@ public class MainViewModel implements ViewModel {
             data.setDirty(false);
             currentFile.set(file);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("Failed to save character to {}", file.getAbsolutePath(), ex);
         }
     }
 
@@ -122,7 +125,7 @@ public class MainViewModel implements ViewModel {
                 data.setDirty(false);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("Failed to load character from {}", file.getAbsolutePath(), ex);
         }
     }
 

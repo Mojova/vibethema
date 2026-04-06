@@ -2,6 +2,7 @@ package com.vibethema.viewmodel.equipment;
 
 import com.vibethema.model.Weapon;
 import de.saxsys.mvvmfx.ViewModel;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.StringProperty;
 
@@ -27,6 +28,7 @@ public class WeaponRowViewModel implements ViewModel {
     public IntegerProperty overwhelmingProperty() { return weapon.overwhelmingProperty(); }
     public IntegerProperty attunementProperty() { return weapon.attunementProperty(); }
     public StringProperty specialtyIdProperty() { return weapon.specialtyIdProperty(); }
+    public BooleanProperty equippedProperty() { return weapon.equippedProperty(); }
     
     public boolean isArtifact() {
         return weapon.getType() == Weapon.WeaponType.ARTIFACT;

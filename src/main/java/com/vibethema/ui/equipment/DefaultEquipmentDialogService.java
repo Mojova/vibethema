@@ -56,6 +56,11 @@ public class DefaultEquipmentDialogService implements EquipmentDialogService {
         ListView<EquipmentDataService.Tag> tagsList = new ListView<>();
         tagsList.setPrefHeight(150);
         ObservableList<EquipmentDataService.Tag> selectedTags = FXCollections.observableArrayList();
+        
+        CheckBox equippedField = new CheckBox("Equipped");
+        if (existing != null) {
+            equippedField.setSelected(existing.isEquipped());
+        }
 
         if (existing != null) {
             String cat = existing.getRange() == Weapon.WeaponRange.CLOSE ? "melee" :
@@ -118,6 +123,7 @@ public class DefaultEquipmentDialogService implements EquipmentDialogService {
         grid.add(categoryCombo, 1, 3);
         grid.add(new Label("Tags:"), 0, 4);
         grid.add(tagsList, 1, 4);
+        grid.add(equippedField, 1, 5);
 
         dialog.getDialogPane().setContent(grid);
         Platform.runLater(nameField::requestFocus);
@@ -129,6 +135,7 @@ public class DefaultEquipmentDialogService implements EquipmentDialogService {
                 nw.setRange(rangeCombo.getValue());
                 nw.setType(typeCombo.getValue());
                 nw.setCategory(categoryCombo.getValue());
+                nw.setEquipped(equippedField.isSelected());
                 nw.getTags().setAll(selectedTags.stream().map(EquipmentDataService.Tag::getName).collect(Collectors.toList()));
                 return nw;
             }

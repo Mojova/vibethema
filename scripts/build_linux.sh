@@ -30,6 +30,7 @@ jpackage \
   --icon "$ICON_SOURCE" \
   --name "Vibethema" \
   --dest target/dist \
+  --java-options "--enable-native-access=javafx.graphics" \
   --verbose
 
 echo "Build complete. Check target/dist/Vibethema for the native app image."

@@ -30,6 +30,7 @@ jpackage `
   --icon $ICO_TARGET `
   --name "Vibethema" `
   --dest target/dist `
+  --java-options "--enable-native-access=javafx.graphics" `
   --verbose
 
 Write-Host "Build complete. Check target/dist/Vibethema for the native executable."

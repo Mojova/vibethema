@@ -2,7 +2,6 @@ package com.vibethema.viewmodel.footer;
 
 import com.vibethema.model.Ability;
 import com.vibethema.model.CharacterData;
-import com.vibethema.model.SystemData;
 import com.vibethema.viewmodel.util.Messenger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

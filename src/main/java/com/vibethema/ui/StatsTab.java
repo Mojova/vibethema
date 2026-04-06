@@ -17,6 +17,7 @@ import javafx.scene.layout.*;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
+import com.vibethema.viewmodel.equipment.AttackPoolRowViewModel;
 
 public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, Initializable {
 
@@ -346,22 +347,60 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         attackGrid.getStyleClass().add("merit-row-container");
         attackGrid.setPadding(new Insets(10));
 
-        String[] headers = { "Weapon", "Withering", "Decisive", "Damage", "Parry" };
+        refreshAttackPools();
+        viewModel.getAttackPoolRows().addListener((javafx.collections.ListChangeListener<? super AttackPoolRowViewModel>) c -> refreshAttackPools());
+
+        section.getChildren().addAll(title, attackGrid);
+        return section;
+    }
+
+    private void refreshAttackPools() {
+        if (attackGrid == null) return;
+        attackGrid.getChildren().clear();
+
+        String[] headers = { "St", "Weapon", "Withering", "Decisive", "Damage", "Parry" };
         for (int i = 0; i < headers.length; i++) {
             Label hl = new Label(headers[i]);
             hl.getStyleClass().add("sidebar-stat-header");
             attackGrid.add(hl, i, 0);
         }
 
-        // Simulating the refresh logic from BuilderUI
-        // In a full MVVM, this might be a ListView or a repeated component
-        // For now, we'll just show a placeholder or fixed rows if possible
-        Label placeholder = new Label("Equip weapons in the Equipment tab to see attack pools.");
-        placeholder.setStyle("-fx-font-style: italic; -fx-text-fill: #888;");
-        attackGrid.add(placeholder, 0, 1, 5, 1);
+        int rowCount = 1;
+        for (AttackPoolRowViewModel rvm : viewModel.getAttackPoolRows()) {
+            Label stLabel = new Label();
+            stLabel.textProperty().bind(rvm.statusProperty());
+            stLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #e67e22;");
+            
+            Label nameLabel = new Label();
+            nameLabel.textProperty().bind(rvm.nameProperty());
+            
+            Label witheringLabel = new Label();
+            witheringLabel.textProperty().bind(rvm.witheringProperty());
+            
+            Label decisiveLabel = new Label();
+            decisiveLabel.textProperty().bind(rvm.decisiveProperty());
+            
+            Label damageLabel = new Label();
+            damageLabel.textProperty().bind(rvm.damageProperty());
+            
+            Label parryLabel = new Label();
+            parryLabel.textProperty().bind(rvm.parryProperty());
 
-        section.getChildren().addAll(title, attackGrid);
-        return section;
+            attackGrid.add(stLabel, 0, rowCount);
+            attackGrid.add(nameLabel, 1, rowCount);
+            attackGrid.add(witheringLabel, 2, rowCount);
+            attackGrid.add(decisiveLabel, 3, rowCount);
+            attackGrid.add(damageLabel, 4, rowCount);
+            attackGrid.add(parryLabel, 5, rowCount);
+            
+            rowCount++;
+        }
+        
+        if (rowCount == 1) {
+            Label placeholder = new Label("Add weapons in the Equipment tab to see attack pools.");
+            placeholder.setStyle("-fx-font-style: italic; -fx-text-fill: #888;");
+            attackGrid.add(placeholder, 0, 1, 6, 1);
+        }
     }
 
     private VBox createGreatCurseSection(CharacterData data) {
