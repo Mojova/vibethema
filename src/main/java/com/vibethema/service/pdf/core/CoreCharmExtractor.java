@@ -75,6 +75,12 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                 String line = lines[i].trim();
                 if (line.isEmpty()) continue;
 
+                // Skip known sidebar/page junk lines in the metadata block
+                if (isSidebarLine(line)) {
+                    descStartIdx = i + 1;
+                    continue;
+                }
+
                 if (line.startsWith("Type:")) {
                     type = line.replace("Type:", "").trim();
                     currentField = "Type";
@@ -108,10 +114,19 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
             String cleanPrereqs = rawPrereqs.trim();
             if (cleanPrereqs.toLowerCase().startsWith("none")) {
                 cleanPrereqs = cleanPrereqs.substring(4).trim();
-                if (cleanPrereqs.startsWith(",")) cleanPrereqs = cleanPrereqs.substring(1).trim();
             }
 
             if (!cleanPrereqs.isEmpty()) {
+                if (cleanPrereqs.startsWith(",")) cleanPrereqs = cleanPrereqs.substring(1).trim();
+
+                // Join hyphenated words broken across lines
+                // Heuristic: dash followed by lowercase means a single word was broken (e.g. Intercept- ing)
+                //            dash followed by uppercase means a compound word (e.g. River- Binding)
+                // We use a comprehensive set of Unicode dash characters to catch all PDF artifacts.
+                String dashPattern = "[\\u002D\\u00AD\\u2010\\u2011\\u2012\\u2013\\u2014]";
+                cleanPrereqs = cleanPrereqs.replaceAll(dashPattern + "\\s*(?=[a-z])", "")
+                                         .replaceAll(dashPattern + "\\s+(?=[A-Z])", "-");
+
                 // Detect patterns like "Any two Keen (Sense) Techniques"
                 Pattern anyKeenPattern = Pattern.compile("(?i)Any (two|three|\\d+) Keen \\(Sense\\) Techniques");
                 Matcher keenMatcher = anyKeenPattern.matcher(cleanPrereqs);
@@ -247,7 +262,22 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
         if (trimmed.isEmpty()) return false;
 
         // ALL CAPS lines are usually headers or sidebars
-        if (trimmed.equals(trimmed.toUpperCase()) && trimmed.length() > 5) return true;
+        if (trimmed.equals(trimmed.toUpperCase()) && trimmed.length() > 5) {
+            // Ignore known page junk that isn't a real description or header
+            if (isSidebarLine(trimmed)) return false;
+            return true;
+        }
+
+        // If we have prerequisites (the last likely field), 
+        // the next non-metadata line is likely the description.
+        if (currentField.equals("Prereqs") && !rawPrereqs.isEmpty()) {
+            // A description line almost always starts with a capital and isn't another field.
+            // We differentiate from broken prerequisite fragments by length or ending punctuation.
+            if (Character.isUpperCase(trimmed.charAt(0)) && !trimmed.contains(":") && !trimmed.startsWith("Cost:")) {
+                if (trimmed.length() > 25 || trimmed.endsWith(".")) return true;
+            }
+            return false;
+        }
         
         // Sidebar headers often start with "ON " (e.g., "ON SURPRISE ANTICIPATION METHOD")
         if (trimmed.startsWith("ON ") && trimmed.length() < 100) return true;

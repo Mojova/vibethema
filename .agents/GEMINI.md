@@ -69,6 +69,9 @@ To ensure parsing logic remains consistent without committing copyrighted materi
     - `reference/`: Directory containing "known good" JSONs (must replicate the app's folder structure, e.g., `reference/charms/archery.json`).
 - **Execution**: `mvn test -Dtest=PdfImportRegressionTest`.
 - **Logic**: The test performs a full extraction to `target/` and compares results *only* for files present in the `reference/` directory. Unordered JSON content is verified using Gson's logical equality.
+- **Reference data**: `reference/` directory contains "known good" JSONs: do not modify these under any circumstances. The user is the only one allowed to modify these files.
+- **Manual Extraction**: Use `com.vibethema.util.PdfImportTool` to run the extraction process from the command line and inspect the resulting JSON data.
+    - Usage: `mvn compile exec:java -Dexec.mainClass="com.vibethema.util.PdfImportTool" -Dexec.args="<pdf-path> [output-dir]"`
 
 ## Key Rules & Logic
 
@@ -98,6 +101,7 @@ To ensure parsing logic remains consistent without committing copyrighted materi
 - `src/main/java/com/vibethema/model/`: Domain models and calculation logic.
 - `src/main/java/com/vibethema/service/`: Business services (PDF, Charms, Equipment).
 - `src/main/resources/`: CSS, JSON data, and Logback configuration.
+- `src/main/java/com/vibethema/util/PdfImportTool.java`: CLI for PDF extraction and inspection.
 
 ## AI Workflow
 1. **Unit tests**: MANDATORY for all model, service, and ViewModel logic. Use JUnit 5 and Mockito.

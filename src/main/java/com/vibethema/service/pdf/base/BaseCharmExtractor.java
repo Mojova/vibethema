@@ -49,6 +49,10 @@ public abstract class BaseCharmExtractor {
         for (String line : lines) {
             line = line.trim();
             if (line.isEmpty()) {
+                // If the previous line ended with a hyphen, we assume the paragraph continues
+                if (currentPara.length() > 0 && currentPara.charAt(currentPara.length() - 1) == '-') {
+                    continue;
+                }
                 if (currentPara.length() > 0) {
                     cleanedLines.add(currentPara.toString().trim());
                     currentPara.setLength(0);
@@ -63,8 +67,11 @@ public abstract class BaseCharmExtractor {
                 char lastChar = prevContent.charAt(prevContent.length() - 1);
 
                 // Handle hyphenated words split across lines
+                // Heuristic: only remove hyphen if the next part starts with a lowercase letter
                 if (lastChar == '-') {
-                    currentPara.setLength(currentPara.length() - 1);
+                    if (Character.isLowerCase(line.charAt(0))) {
+                        currentPara.setLength(currentPara.length() - 1);
+                    }
                     currentPara.append(line);
                     continue;
                 }
@@ -92,12 +99,23 @@ public abstract class BaseCharmExtractor {
     }
 
     protected boolean isSidebarLine(String line) {
-        String upper = line.toUpperCase().trim();
+        String trimmed = line.trim();
+        if (trimmed.isEmpty()) return false;
+        
+        // Handle standalone page numbers and short page junk (e.g. "274", "EX3")
+        if (trimmed.matches("\\d{1,3}") || (trimmed.toUpperCase().equals(trimmed) && trimmed.length() <= 3)) {
+            return true;
+        }
+
+        String upper = trimmed.toUpperCase();
+        if (upper.startsWith("ON ") && trimmed.length() < 100) return true;
+        if (upper.startsWith("C H A P T E R") || upper.contains("SOLAR CHARMS")) return true;
+        
         // Common 3e formatting artifacts
-        if (upper.equals("EX3") || upper.equals("CHARMS") || upper.startsWith("C H A P T E R")) return true;
+        if (upper.equals("EX3") || upper.equals("CHARMS") || upper.startsWith("CHAPTER")) return true;
         
         // Short all-caps lines are often headers/sidebars
-        if (upper.equals(line.trim()) && line.length() > 3 && line.length() < 70) {
+        if (upper.equals(trimmed) && trimmed.length() > 3 && trimmed.length() < 70) {
             if (upper.contains("CHAPTER") || upper.contains("SOLAR") || upper.contains("EX3")) return true;
         }
         return false;
