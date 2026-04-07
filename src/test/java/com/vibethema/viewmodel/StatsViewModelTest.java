@@ -67,4 +67,13 @@ public class StatsViewModelTest {
         data.getAttribute(com.vibethema.model.traits.Attribute.STAMINA).set(5);
         assertEquals(data.healthLevelsProperty().size(), viewModel.healthLevelsProperty().size());
     }
+
+    @Test
+    void testModePropertyDelegatesToModel() {
+        assertEquals(data.modeProperty(), viewModel.modeProperty());
+        assertEquals(CharacterMode.CREATION, viewModel.modeProperty().get());
+
+        data.modeProperty().set(CharacterMode.EXPERIENCED);
+        assertEquals(CharacterMode.EXPERIENCED, viewModel.modeProperty().get());
+    }
 }
