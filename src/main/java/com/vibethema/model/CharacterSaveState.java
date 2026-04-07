@@ -96,6 +96,11 @@ public class CharacterSaveState {
         public String id;
         public String name;
         public String description;
+
+        public ShapingRitualData() {}
+        public ShapingRitualData(String id, String name, String description) {
+            this.id = id; this.name = name; this.description = description;
+        }
     }
 
     public static class SpellData {
@@ -106,6 +111,12 @@ public class CharacterSaveState {
         public List<String> keywords;
         public String duration;
         public String description;
+
+        public SpellData() {}
+        public SpellData(String id, String name, String circle, String cost, List<String> keywords, String duration, String description) {
+            this.id = id; this.name = name; this.circle = circle; this.cost = cost;
+            this.keywords = keywords; this.duration = duration; this.description = description;
+        }
     }
 
     public static class XpAwardData {
@@ -113,6 +124,11 @@ public class CharacterSaveState {
         public String description;
         public int amount;
         public boolean isSolar;
+
+        public XpAwardData() {}
+        public XpAwardData(String id, String description, int amount, boolean isSolar) {
+            this.id = id; this.description = description; this.amount = amount; this.isSolar = isSolar;
+        }
     }
 }
 
