@@ -1,9 +1,12 @@
 package com.vibethema.viewmodel.charms;
 
+import com.vibethema.model.Ability;
 import com.vibethema.model.CharacterData;
 import com.vibethema.model.Charm;
 import com.vibethema.model.SolarCharm;
+import com.vibethema.model.PurchasedCharm;
 import com.vibethema.service.CharmDataService;
+import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -98,8 +101,45 @@ public class CharmTreeViewModelTest {
         // Search for "Gamma"
         viewModel.searchTextProperty().set("Gamma");
         // Gamma is ineligible. With additive filters, it remains hidden because it doesn't pass the "Eligible" check.
-        // Wait, if search overrides eligibility? No, additive.
         assertFalse(viewModel.getCurrentCharms().contains(c), "Should be hidden by eligibility even if matching search");
+    }
+
+    @Test
+    void testNavigation() {
+        // Row 0: A1, A2
+        // Row 1: B1
+        Charm a1 = createCharm("A1", "Alpha 1");
+        Charm a2 = createCharm("A2", "Alpha 2");
+        Charm b1 = createCharm("B1", "Beta 1", "A1");
+        
+        when(dataService.loadCharmsForAbility("Melee")).thenReturn(Arrays.asList(a1, a2, b1));
+        viewModel.initialize("Ability", "Melee", "Melee", null, null);
+
+        // Initial selection (should be first of row 0 if we navigate from null)
+        viewModel.navigate(KeyCode.RIGHT); 
+        assertEquals(a1, viewModel.selectedCharmProperty().get());
+
+        // Move Right
+        viewModel.navigate(KeyCode.RIGHT);
+        assertEquals(a2, viewModel.selectedCharmProperty().get());
+
+        // Move Right again (should stop)
+        viewModel.navigate(KeyCode.RIGHT);
+        assertEquals(a2, viewModel.selectedCharmProperty().get());
+
+        // Move Down (proportional index)
+        // a2 is at index 1 of 2. Row 1 has 1 charm (index 0).
+        viewModel.navigate(KeyCode.DOWN);
+        assertEquals(b1, viewModel.selectedCharmProperty().get());
+
+        // Move Left
+        viewModel.navigate(KeyCode.LEFT);
+        assertEquals(b1, viewModel.selectedCharmProperty().get(), "Should stop at left edge");
+
+        // Move Up
+        viewModel.navigate(KeyCode.UP);
+        // b1 is at index 0 of 1. Row 0 has 2 charms. Index 0 of 2 is a1.
+        assertEquals(a1, viewModel.selectedCharmProperty().get());
     }
 
     private Charm createCharm(String id, String name, String... prereqIds) {

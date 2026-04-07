@@ -178,6 +178,91 @@ public class CharmTreeViewModel implements ViewModel {
             levels.computeIfAbsent(depth, k -> new ArrayList<>()).add(c);
             if (depth > maxDepth) maxDepth = depth;
         }
+
+        // Sort each level to ensure stable visual and logical navigation order
+        // Level 0: Sort by Name
+        if (levels.containsKey(0)) {
+            levels.get(0).sort(Comparator.comparing(Charm::getName));
+        }
+        
+        // Logical barycenter-like sorting for deeper levels (ViewModel's version)
+        Map<String, Double> logicalX = new HashMap<>();
+        for (int d = 0; d <= maxDepth; d++) {
+            List<Charm> row = levels.getOrDefault(d, new ArrayList<>());
+            if (d > 0) {
+                row.sort(Comparator.comparingDouble(c -> {
+                    double sum = 0; int count = 0;
+                    if (c.getPrerequisiteGroups() != null) {
+                        for (Charm.PrerequisiteGroup g : c.getPrerequisiteGroups()) {
+                            for (String rid : g.getCharmIds()) {
+                                if (logicalX.containsKey(rid)) { sum += logicalX.get(rid); count++; }
+                            }
+                        }
+                    }
+                    return count > 0 ? sum / count : (row.size() / 2.0);
+                }));
+            }
+            for (int i = 0; i < row.size(); i++) {
+                logicalX.put(row.get(i).getId(), (double) i);
+            }
+        }
+    }
+
+    public void navigate(javafx.scene.input.KeyCode code) {
+        Charm current = selectedCharm.get();
+        if (current == null) {
+            // Pick first charm if nothing selected
+            if (!levels.isEmpty() && !levels.get(0).isEmpty()) {
+                selectedCharm.set(levels.get(0).get(0));
+            }
+            return;
+        }
+
+        // Find current position
+        int currentDepth = -1;
+        int currentIndex = -1;
+        for (Map.Entry<Integer, List<Charm>> entry : levels.entrySet()) {
+            int idx = entry.getValue().indexOf(current);
+            if (idx != -1) {
+                currentDepth = entry.getKey();
+                currentIndex = idx;
+                break;
+            }
+        }
+
+        if (currentDepth == -1) return;
+
+        List<Charm> currentRow = levels.get(currentDepth);
+        int targetDepth = currentDepth;
+        int targetIndex = currentIndex;
+
+        switch (code) {
+            case LEFT -> targetIndex = Math.max(0, currentIndex - 1);
+            case RIGHT -> targetIndex = Math.min(currentRow.size() - 1, currentIndex + 1);
+            case UP -> {
+                if (currentDepth > 0) {
+                    targetDepth = currentDepth - 1;
+                    List<Charm> prevRow = levels.get(targetDepth);
+                    // Proportional mapping: stay in roughly same horizontal position
+                    targetIndex = (int) Math.round((double) currentIndex * (prevRow.size() - 1) / (currentRow.size() - 1 != 0 ? currentRow.size() - 1 : 1));
+                    targetIndex = Math.max(0, Math.min(prevRow.size() - 1, targetIndex));
+                }
+            }
+            case DOWN -> {
+                if (currentDepth < maxDepth) {
+                    targetDepth = currentDepth + 1;
+                    List<Charm> nextRow = levels.get(targetDepth);
+                    targetIndex = (int) Math.round((double) currentIndex * (nextRow.size() - 1) / (currentRow.size() - 1 != 0 ? currentRow.size() - 1 : 1));
+                    targetIndex = Math.max(0, Math.min(nextRow.size() - 1, targetIndex));
+                }
+            }
+            default -> {}
+        }
+
+        List<Charm> targetRow = levels.get(targetDepth);
+        if (targetRow != null && !targetRow.isEmpty()) {
+            selectedCharm.set(targetRow.get(targetIndex));
+        }
     }
 
     // calculateLayoutState() was replaced by internalCalculateLayout() call within refresh()
