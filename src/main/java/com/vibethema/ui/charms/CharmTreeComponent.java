@@ -17,10 +17,10 @@ import java.net.URL;
 import java.util.*;
 
 /**
- * A standalone UI component that renders a charm web and details sidebar.
- * Refactored to follow the MVVM pattern using mvvmFX.
+ * A standalone UI component that renders a charm web.
+ * Refactored to focus purely on the graphical representation of charms.
  */
-public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeViewModel>, Initializable {
+public class CharmTreeComponent extends VBox implements JavaView<CharmTreeViewModel>, Initializable {
 
     @InjectViewModel
     private CharmTreeViewModel viewModel;
@@ -31,27 +31,13 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
     private final Map<String, Label> charmCheckMap = new HashMap<>();
 
     private final Label titleLabel = new Label();
-    private final Label detailTitle = new Label();
-    private final Label detailReqs = new Label();
-    private final Label costLabel = new Label();
-    private final Label typeLabel = new Label();
-    private final Label durationLabel = new Label();
-    private final FlowPane kwFlow = new FlowPane(3, 3);
-    private final GridPane statsGrid = new GridPane();
-    private final Label descriptionLabel = new Label();
-
-    private final Button purchaseBtn = new Button();
-    private final Button refundBtn = new Button();
-    private final Button deleteCustomBtn = new Button();
-    private final Button editBtn = new Button("Edit Charm");
-
     private final Map<String, List<CubicCurve>> charmIncomingLines = new HashMap<>();
     private final Map<String, List<CubicCurve>> charmOutgoingLines = new HashMap<>();
     private final List<CubicCurve> currentlyHighlightedLines = new ArrayList<>();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        getStyleClass().add("charms-split-pane");
+        getStyleClass().add("charms-tree-component");
         setupUI();
         setupBindings();
         
@@ -60,7 +46,6 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
             updateLineHighlights(newV != null ? newV.getId() : null);
             updateWebNodeStyles();
             if (newV != null) scrollToNode(newV.getId());
-            updateKeywordsUI();
         });
         
         setupKeyHandlers();
@@ -70,20 +55,17 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
     }
 
     private void setupKeyHandlers() {
-        setFocusTraversable(false); // SplitPane itself doesn't need focus
+        setFocusTraversable(false);
         charmScroll.setFocusTraversable(true);
 
-        // Request focus when the tree area is clicked so we can capture keys
         charmCanvas.setOnMousePressed(e -> {
             if (!charmScroll.isFocused()) charmScroll.requestFocus();
         });
 
-        // Navigation only via the scroll pane when it's focused
         charmScroll.addEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, e -> {
             javafx.scene.input.KeyCode code = e.getCode();
             if (code.isArrowKey()) {
                 if (e.isShortcutDown() || e.isShiftDown()) {
-                    // Let default ScrollPane handling occur for scrolling
                     return;
                 }
                 viewModel.navigate(code);
@@ -95,10 +77,8 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
                 viewModel.refundOne();
                 e.consume();
             } else if (code == javafx.scene.input.KeyCode.E) {
-                if (editBtn.isVisible() && !editBtn.isDisabled()) {
-                    editBtn.fire();
-                    e.consume();
-                }
+                viewModel.onEditRequest();
+                e.consume();
             }
         });
     }
@@ -107,34 +87,25 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
         Pane node = charmNodeMap.get(charmId);
         if (node == null) return;
 
-        // Find the ScrollPane
-        javafx.scene.Node parent = getParent();
-        while (parent != null && !(parent instanceof ScrollPane)) {
-            parent = parent.getParent();
-        }
+        double width = charmCanvas.getBoundsInLocal().getWidth();
+        double height = charmCanvas.getBoundsInLocal().getHeight();
         
-        if (parent instanceof ScrollPane scroll) {
-            double width = charmCanvas.getBoundsInLocal().getWidth();
-            double height = charmCanvas.getBoundsInLocal().getHeight();
-            
-            double x = node.getLayoutX() + node.getBoundsInLocal().getWidth() / 2;
-            double y = node.getLayoutY() + node.getBoundsInLocal().getHeight() / 2;
+        double nx = node.getLayoutX() + node.getBoundsInLocal().getWidth() / 2;
+        double ny = node.getLayoutY() + node.getBoundsInLocal().getHeight() / 2;
 
-            double viewportWidth = scroll.getViewportBounds().getWidth();
-            double viewportHeight = scroll.getViewportBounds().getHeight();
+        double viewportWidth = charmScroll.getViewportBounds().getWidth();
+        double viewportHeight = charmScroll.getViewportBounds().getHeight();
 
-            double hValue = (x - viewportWidth / 2) / (width - viewportWidth);
-            double vValue = (y - viewportHeight / 2) / (height - viewportHeight);
+        double hValue = (nx - viewportWidth / 2) / (width - viewportWidth);
+        double vValue = (ny - viewportHeight / 2) / (height - viewportHeight);
 
-            scroll.setHvalue(Math.max(0, Math.min(1, hValue)));
-            scroll.setVvalue(Math.max(0, Math.min(1, vValue)));
-        }
+        charmScroll.setHvalue(Math.max(0, Math.min(1, hValue)));
+        charmScroll.setVvalue(Math.max(0, Math.min(1, vValue)));
     }
 
     private void setupUI() {
-        // Left Side: Tree Web Area
-        VBox leftPane = new VBox(15);
-        leftPane.setPadding(new Insets(20));
+        setPadding(new Insets(20));
+        setSpacing(15);
 
         HBox controls = new HBox(15);
         controls.setAlignment(Pos.CENTER_LEFT);
@@ -156,7 +127,7 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
             }));
 
         CheckBox eligibleFilter = new CheckBox("Show Eligible Only");
-        eligibleFilter.getStyleClass().add("label"); // reuse label style or add custom
+        eligibleFilter.getStyleClass().add("label");
         eligibleFilter.selectedProperty().bindBidirectional(viewModel.showEligibleOnlyProperty());
 
         TextField searchField = new TextField();
@@ -172,100 +143,7 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
         charmScroll.getStyleClass().add("charm-tree-scroll");
         VBox.setVgrow(charmScroll, Priority.ALWAYS);
 
-        leftPane.getChildren().addAll(controls, charmScroll);
-
-        // Right Side: Sidebar Details
-        VBox rightPane = new VBox(0); // No spacing between title and scroll area
-        rightPane.getStyleClass().add("charms-sidebar");
-
-        detailTitle.getStyleClass().add("sidebar-title");
-        detailTitle.setWrapText(true);
-        detailTitle.setPadding(new Insets(20, 20, 10, 20)); // Title has its own padding
-
-        // Sidebar Content (Scrollable)
-        VBox sidebarContent = new VBox(20);
-        sidebarContent.setPadding(new Insets(0, 0, 20, 0)); // Only bottom padding here
-        sidebarContent.setFillWidth(true);
-
-        detailReqs.getStyleClass().add("sidebar-reqs");
-        detailReqs.setWrapText(true);
-        detailReqs.setMaxWidth(Double.MAX_VALUE);
-
-        statsGrid.setHgap(15); statsGrid.setVgap(10);
-        costLabel.getStyleClass().add("sidebar-stat");
-        typeLabel.getStyleClass().add("sidebar-stat");
-        durationLabel.getStyleClass().add("sidebar-stat");
-        kwFlow.setPrefWrapLength(200);
-
-        statsGrid.add(new Label("Cost:"), 0, 0);
-        statsGrid.add(costLabel, 1, 0);
-        statsGrid.add(new Label("Type:"), 0, 1);
-        statsGrid.add(typeLabel, 1, 1);
-        statsGrid.add(new Label("Duration:"), 0, 2);
-        statsGrid.add(durationLabel, 1, 2);
-        statsGrid.add(new Label("Keywords:"), 0, 3);
-        statsGrid.add(kwFlow, 1, 3);
-
-        for (javafx.scene.Node n : statsGrid.getChildren()) {
-            if (GridPane.getColumnIndex(n) == 0 && n instanceof Label) {
-                n.getStyleClass().add("sidebar-stat-header");
-            }
-        }
-
-        // Inner Padding Container for components that should not touch edges
-        VBox paddedContent = new VBox(20);
-        paddedContent.setPadding(new Insets(0, 20, 0, 20));
-
-        descriptionLabel.getStyleClass().add("sidebar-desc");
-        descriptionLabel.setWrapText(true);
-        
-        purchaseBtn.getStyleClass().add("charm-btn");
-        purchaseBtn.setMaxWidth(Double.MAX_VALUE);
-        purchaseBtn.setTooltip(new Tooltip("Buy or Add Stack (ENTER / SPACE)"));
-        HBox.setHgrow(purchaseBtn, Priority.ALWAYS);
-        purchaseBtn.setOnAction(e -> viewModel.togglePurchase());
-
-        refundBtn.getStyleClass().add("charm-btn");
-        refundBtn.setTooltip(new Tooltip("Refund One (BACKSPACE / DELETE)"));
-        refundBtn.setStyle("-fx-base: #a03030;");
-        refundBtn.setOnAction(e -> viewModel.refundOne());
-
-        editBtn.getStyleClass().add("charm-btn");
-        editBtn.setMnemonicParsing(true);
-        editBtn.setTooltip(new Tooltip("Edit Charm (E)"));
-        editBtn.setText("_Edit Charm");
-        editBtn.setStyle("-fx-base: #3c3c3c;");
-        editBtn.setOnAction(e -> {
-            Charm c = viewModel.selectedCharmProperty().get();
-            if (c != null) {
-                Messenger.publish("open_edit_charm_dialog", new Object[]{
-                    c, viewModel.artifactNameProperty().get(), viewModel.filterTypeProperty().get(), (Runnable) this::refresh
-                });
-            }
-        });
-
-        deleteCustomBtn.getStyleClass().add("charm-btn");
-        deleteCustomBtn.setStyle("-fx-base: #a03030;");
-        deleteCustomBtn.setOnAction(e -> {
-            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, 
-                "Are you sure you want to delete this custom charm?", ButtonType.YES, ButtonType.NO);
-            confirm.showAndWait().ifPresent(r -> { if (r == ButtonType.YES) viewModel.deleteCustom(); });
-        });
-
-        HBox charmButtons = new HBox(10, purchaseBtn, refundBtn, deleteCustomBtn, editBtn);
-        
-        paddedContent.getChildren().addAll(charmButtons, statsGrid, descriptionLabel);
-        sidebarContent.getChildren().addAll(detailReqs, paddedContent);
-
-        ScrollPane sideContentScroll = new ScrollPane(sidebarContent);
-        sideContentScroll.setFitToWidth(true);
-        sideContentScroll.getStyleClass().add("scroll-pane-custom");
-        VBox.setVgrow(sideContentScroll, Priority.ALWAYS);
-
-        rightPane.getChildren().addAll(detailTitle, sideContentScroll);
-
-        getItems().addAll(leftPane, rightPane);
-        setDividerPositions(0.7);
+        getChildren().addAll(controls, charmScroll);
     }
 
     private void setupBindings() {
@@ -277,66 +155,6 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
             }
             return selection + " Charms Web (" + viewModel.getCurrentCharms().size() + ")";
         }, viewModel.selectionIdProperty(), viewModel.getCurrentCharms()));
-
-        detailTitle.textProperty().bind(viewModel.detailTitleProperty());
-        detailReqs.textProperty().bind(viewModel.detailReqsProperty());
-        costLabel.textProperty().bind(viewModel.costTextProperty());
-        typeLabel.textProperty().bind(viewModel.typeTextProperty());
-        durationLabel.textProperty().bind(viewModel.durationTextProperty());
-        descriptionLabel.textProperty().bind(viewModel.descriptionTextProperty());
-
-        purchaseBtn.textProperty().bind(viewModel.purchaseBtnTextProperty());
-        purchaseBtn.disableProperty().bind(viewModel.purchaseBtnDisabledProperty());
-        purchaseBtn.visibleProperty().bind(viewModel.purchaseBtnVisibleProperty());
-        purchaseBtn.managedProperty().bind(purchaseBtn.visibleProperty());
-        purchaseBtn.styleProperty().bind(viewModel.purchaseBtnStyleProperty());
-
-        refundBtn.textProperty().bind(viewModel.refundBtnTextProperty());
-        refundBtn.visibleProperty().bind(viewModel.refundBtnVisibleProperty());
-        refundBtn.managedProperty().bind(refundBtn.visibleProperty());
-
-        deleteCustomBtn.textProperty().bind(viewModel.deleteCustomBtnTextProperty());
-        deleteCustomBtn.visibleProperty().bind(viewModel.deleteCustomBtnVisibleProperty());
-        deleteCustomBtn.managedProperty().bind(deleteCustomBtn.visibleProperty());
-
-        editBtn.visibleProperty().bind(viewModel.editBtnVisibleProperty());
-        editBtn.managedProperty().bind(editBtn.visibleProperty());
-        
-        detailReqs.visibleProperty().bind(viewModel.selectedCharmProperty().isNotNull());
-        detailReqs.managedProperty().bind(detailReqs.visibleProperty());
-        
-        descriptionLabel.visibleProperty().bind(viewModel.selectedCharmProperty().isNotNull());
-        descriptionLabel.managedProperty().bind(descriptionLabel.visibleProperty());
-        
-        statsGrid.visibleProperty().bind(viewModel.selectedCharmProperty().isNotNull());
-        statsGrid.managedProperty().bind(statsGrid.visibleProperty());
-
-        viewModel.getKeywords().addListener((javafx.collections.ListChangeListener<? super String>) c -> updateKeywordsUI());
-        updateKeywordsUI();
-    }
-
-    private void updateKeywordsUI() {
-        kwFlow.getChildren().clear();
-        if (viewModel.selectedCharmProperty().get() == null) return;
-
-        if (viewModel.getKeywords().isEmpty()) {
-            Label l = new Label("None");
-            l.getStyleClass().add("sidebar-stat");
-            kwFlow.getChildren().add(l);
-        } else {
-            for (String kw : viewModel.getKeywords()) {
-                Label l = new Label(kw);
-                l.getStyleClass().add("sidebar-stat");
-                l.getStyleClass().add("keyword-label");
-                String def = viewModel.getKeywordDefs().get(kw);
-                if (def != null) {
-                    Tooltip tt = new Tooltip(def); tt.setWrapText(true); tt.setMaxWidth(300);
-                    l.setTooltip(tt);
-                    l.getStyleClass().add("keyword-with-def");
-                }
-                kwFlow.getChildren().add(l);
-            }
-        }
     }
 
     public void refresh() {
@@ -347,6 +165,7 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
         if (charmCanvas == null) return;
         charmCanvas.getChildren().clear();
         charmNodeMap.clear();
+        charmCheckMap.clear();
         charmIncomingLines.clear();
         charmOutgoingLines.clear();
         currentlyHighlightedLines.clear();
@@ -364,7 +183,6 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
         }
         double virtualWidth = Math.max(800, maxRowWidth + 100);
 
-        Map<String, Double> charmXPositions = new HashMap<>();
         for (int d = 0; d <= maxDepth; d++) {
             List<Charm> row = levels.getOrDefault(d, new ArrayList<>());
             double rowWidth = row.size() * boxWidth + Math.max(0, row.size() - 1) * gapX;
@@ -374,13 +192,12 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
             for (int i = 0; i < row.size(); i++) {
                 Charm c = row.get(i);
                 double x = startX + i * (boxWidth + gapX);
-                charmXPositions.put(c.getId(), x + boxWidth / 2.0);
 
                 Pane box = createNodeBox(c, boxWidth, boxHeight);
                 box.setLayoutX(x); box.setLayoutY(y);
                 box.setOnMouseClicked(e -> {
                     viewModel.selectedCharmProperty().set(c);
-                    if (e.getClickCount() == 2) Platform.runLater(purchaseBtn::fire);
+                    if (e.getClickCount() == 2) viewModel.togglePurchase();
                 });
 
                 charmCanvas.getChildren().add(box);
@@ -419,7 +236,6 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
     }
 
     private Pane createNodeBox(Charm c, double w, double h) {
-        // We use a StackPane as the outer container to allow overlaying the checkmark icon
         StackPane root = new StackPane();
         root.setPrefSize(w, h);
         root.getStyleClass().add("charm-node");
@@ -438,7 +254,6 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
 
         content.getChildren().addAll(name, reqs);
         
-        // Add Checkmark Label
         Label checkLabel = new Label("✓");
         checkLabel.getStyleClass().add("charm-node-check");
         checkLabel.setVisible(false);
@@ -485,7 +300,6 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
                 container.getStyleClass().add("charm-node-eligible");
             }
 
-            // Update Checkmark visibility
             Label check = charmCheckMap.get(c.getId());
             if (check != null) {
                 check.setVisible(hasCharm);

@@ -1,13 +1,16 @@
 package com.vibethema.ui;
 
+import com.vibethema.ui.charms.CharmDetailsView;
 import com.vibethema.ui.charms.CharmTreeComponent;
 import com.vibethema.viewmodel.CharmsViewModel;
+import com.vibethema.viewmodel.charms.CharmDetailsViewModel;
 import com.vibethema.viewmodel.charms.CharmTreeViewModel;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
 import de.saxsys.mvvmfx.ViewTuple;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import java.net.URL;
@@ -20,6 +23,8 @@ public class CharmsTab extends BorderPane implements JavaView<CharmsViewModel>, 
 
     private CharmTreeComponent charmTree;
     private CharmTreeViewModel charmTreeViewModel;
+    private CharmDetailsView charmDetails;
+    private CharmDetailsViewModel charmDetailsViewModel;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -36,18 +41,30 @@ public class CharmsTab extends BorderPane implements JavaView<CharmsViewModel>, 
             viewModel.getKeywordDefs()
         );
         
-        ViewTuple<CharmTreeComponent, CharmTreeViewModel> vt = de.saxsys.mvvmfx.FluentViewLoader
+        ViewTuple<CharmTreeComponent, CharmTreeViewModel> vtTree = de.saxsys.mvvmfx.FluentViewLoader
                 .javaView(CharmTreeComponent.class)
                 .viewModel(charmTreeViewModel)
                 .load();
         
-        charmTree = vt.getCodeBehind();
+        charmTree = vtTree.getCodeBehind();
+
+        // Load the CharmDetails MVVM component
+        charmDetailsViewModel = new CharmDetailsViewModel(
+            viewModel.getData(),
+            viewModel.getCharmDataService(),
+            viewModel.getKeywordDefs()
+        );
+
+        ViewTuple<CharmDetailsView, CharmDetailsViewModel> vtDetails = de.saxsys.mvvmfx.FluentViewLoader
+                .javaView(CharmDetailsView.class)
+                .viewModel(charmDetailsViewModel)
+                .load();
+        
+        charmDetails = vtDetails.getCodeBehind();
         
         // Synchronize the child VM with the parent VM state
         charmTreeViewModel.filterTypeProperty().bind(viewModel.filterTypeProperty());
         charmTreeViewModel.selectionIdProperty().bind(viewModel.selectedFilterValueProperty());
-        
-        // If we want to support Evocation mode jump later, we can bind artifactId as well.
         
         // Redraw when selection changed
         viewModel.selectedFilterValueProperty().addListener((obs, oldV, newV) -> charmTreeViewModel.refresh());
@@ -58,8 +75,13 @@ public class CharmsTab extends BorderPane implements JavaView<CharmsViewModel>, 
         topBar.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         topBar.getChildren().addAll(new javafx.scene.control.Label(viewModel.filterTypeProperty().get() + ":"), filterCombo);
         
+        // SplitPane to host both components
+        SplitPane splitPane = new SplitPane(charmTree, charmDetails);
+        splitPane.setDividerPositions(0.7);
+        splitPane.getStyleClass().add("charms-split-pane");
+
         setTop(topBar);
-        setCenter(charmTree);
+        setCenter(splitPane);
         
         // Trigger initial refresh
         charmTreeViewModel.refresh();
