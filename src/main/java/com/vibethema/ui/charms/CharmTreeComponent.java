@@ -42,7 +42,7 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
     private final Button purchaseBtn = new Button();
     private final Button refundBtn = new Button();
     private final Button deleteCustomBtn = new Button();
-    private final Button editBtn = new Button("_Edit Charm");
+    private final Button editBtn = new Button("Edit Charm");
 
     private final Map<String, List<CubicCurve>> charmIncomingLines = new HashMap<>();
     private final Map<String, List<CubicCurve>> charmOutgoingLines = new HashMap<>();
@@ -213,15 +213,19 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
 
         purchaseBtn.getStyleClass().add("charm-btn");
         purchaseBtn.setMaxWidth(Double.MAX_VALUE);
+        purchaseBtn.setTooltip(new Tooltip("Buy or Add Stack (ENTER / SPACE)"));
         HBox.setHgrow(purchaseBtn, Priority.ALWAYS);
         purchaseBtn.setOnAction(e -> viewModel.togglePurchase());
 
         refundBtn.getStyleClass().add("charm-btn");
+        refundBtn.setTooltip(new Tooltip("Refund One (BACKSPACE / DELETE)"));
         refundBtn.setStyle("-fx-base: #a03030;");
         refundBtn.setOnAction(e -> viewModel.refundOne());
 
         editBtn.getStyleClass().add("charm-btn");
         editBtn.setMnemonicParsing(true);
+        editBtn.setTooltip(new Tooltip("Edit Charm (E)"));
+        editBtn.setText("_Edit Charm");
         editBtn.setStyle("-fx-base: #3c3c3c;");
         editBtn.setOnAction(e -> {
             Charm c = viewModel.selectedCharmProperty().get();
