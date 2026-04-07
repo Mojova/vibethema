@@ -52,6 +52,7 @@ public class Main extends Application {
             @Override
             protected Scene call() {
                 // Heavy lifting here: Load the StartScreen and CSS
+                com.vibethema.ui.util.ViewCache.warmup(MainView.class);
                 StartScreen startRoot = (StartScreen) FluentViewLoader.javaView(StartScreen.class).load().getView();
                 Scene scene = new Scene(startRoot, 1200, 800);
                 scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());

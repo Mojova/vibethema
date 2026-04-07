@@ -44,34 +44,42 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         getStyleClass().add("scroll-pane-custom");
         
         if (viewModel != null && !contentLoaded) {
-            // Fill content in the next pulse to allow MainView to show immediately
+            // Fill content staggered over multiple pulses to ensure UI thread remains responsive
             javafx.application.Platform.runLater(() -> {
-                if (!contentLoaded) {
-                    setContent(createContent());
-                    contentLoaded = true;
-                }
+                if (contentLoaded) return;
+                
+                VBox content = new VBox(20);
+                content.getStyleClass().add("content-area");
+                content.setPadding(new Insets(20));
+                CharacterData data = viewModel.getData();
+                setContent(content);
+
+                // Step 1: Top section
+                content.getChildren().add(createBasicAdvantagesSection(data));
+
+                // Step 2: Attributes (next pulse)
+                javafx.application.Platform.runLater(() -> {
+                    content.getChildren().add(createAttributesSection(data));
+
+                    // Step 3: Abilities (next pulse)
+                    javafx.application.Platform.runLater(() -> {
+                        content.getChildren().addAll(createAbilitiesAndSideStuff(data), new Separator());
+
+                        // Step 4: Stats and Combat (final pulse)
+                        javafx.application.Platform.runLater(() -> {
+                            content.getChildren().addAll(
+                                    createStatsRow(data),
+                                    createAttackPoolsSection(data),
+                                    createGreatCurseSection(data)
+                            );
+                            contentLoaded = true;
+                        });
+                    });
+                });
             });
         }
     }
 
-    private VBox createContent() {
-        VBox content = new VBox(20);
-        content.getStyleClass().add("content-area");
-        content.setPadding(new Insets(20));
-
-        CharacterData data = viewModel.getData();
-
-        content.getChildren().addAll(
-                createBasicAdvantagesSection(data),
-                createAttributesSection(data),
-                createAbilitiesAndSideStuff(data),
-                new Separator(),
-                createStatsRow(data),
-                createAttackPoolsSection(data),
-                createGreatCurseSection(data)
-        );
-        return content;
-    }
 
     private VBox createBasicAdvantagesSection(CharacterData data) {
         VBox section = new VBox(15);

@@ -3,7 +3,6 @@ package com.vibethema.ui;
 import com.vibethema.viewmodel.MainViewModel;
 import com.vibethema.viewmodel.StartScreenViewModel;
 import com.vibethema.viewmodel.util.Messenger;
-import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
 import de.saxsys.mvvmfx.ViewTuple;
@@ -102,7 +101,7 @@ public class StartScreen extends StackPane implements JavaView<StartScreenViewMo
 
         // Handle transition to main view (either new or loaded)
         Messenger.subscribe("show_main_view", (name, payload) -> {
-            ViewTuple<MainView, MainViewModel> viewTuple = FluentViewLoader.javaView(MainView.class).load();
+            ViewTuple<MainView, MainViewModel> viewTuple = com.vibethema.ui.util.ViewCache.get(MainView.class);
             MainView mainView = (MainView) viewTuple.getView();
             
             // If a file was provided as payload, load it into the new view model
