@@ -16,7 +16,6 @@ import javafx.beans.property.StringProperty;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.google.gson.Gson;
@@ -28,12 +27,12 @@ public class MainViewModel implements ViewModel {
     private static final Logger logger = LoggerFactory.getLogger(MainViewModel.class);
     private CharacterData data;
     private FooterViewModel footerViewModel;
-    private final EquipmentDataService equipmentService = new EquipmentDataService();
-    private final CharmDataService charmDataService = new CharmDataService();
+    private final EquipmentDataService equipmentService;
+    private final CharmDataService charmDataService;
     private final SystemDataService systemDataService;
 
-    private final Map<String, String> tagDescriptions = new HashMap<>();
-    private final Map<String, String> keywordDefs = new HashMap<>();
+    private final Map<String, String> tagDescriptions = new java.util.concurrent.ConcurrentHashMap<>();
+    private final Map<String, String> keywordDefs = new java.util.concurrent.ConcurrentHashMap<>();
 
     private final ObjectProperty<File> currentFile = new SimpleObjectProperty<>();
     private final StringProperty windowTitle = new SimpleStringProperty("Vibethema");
@@ -41,15 +40,26 @@ public class MainViewModel implements ViewModel {
     private final BooleanProperty coreDataImported = new SimpleBooleanProperty();
 
     public MainViewModel() {
-        this(CharacterFactory.createNewCharacter(new EquipmentDataService()));
+        this(new EquipmentDataService(), new CharmDataService());
+    }
+
+    public MainViewModel(EquipmentDataService equipmentService, CharmDataService charmDataService) {
+        this(CharacterFactory.createNewCharacter(equipmentService), new SystemDataService(), equipmentService, charmDataService);
     }
 
     public MainViewModel(CharacterData data) {
-        this(data, new SystemDataService());
+        this(data, new SystemDataService(), new EquipmentDataService(), new CharmDataService());
     }
 
     public MainViewModel(CharacterData data, SystemDataService systemDataService) {
+        this(data, systemDataService, new EquipmentDataService(), new CharmDataService());
+    }
+
+    public MainViewModel(CharacterData data, SystemDataService systemDataService, 
+                        EquipmentDataService equipmentService, CharmDataService charmDataService) {
         this.systemDataService = systemDataService;
+        this.equipmentService = equipmentService;
+        this.charmDataService = charmDataService;
         init(data);
         coreDataImported.set(systemDataService.isCoreDataImported());
     }
@@ -60,8 +70,10 @@ public class MainViewModel implements ViewModel {
         this.dirty.unbind();
         this.dirty.bind(data.dirtyProperty());
         
-        loadTagDescriptions();
-        loadKeywords();
+        new Thread(() -> {
+            loadTagDescriptions();
+            loadKeywords();
+        }, "MainViewModel-Data-Loader").start();
         
         updateWindowTitle();
         currentFile.addListener((obs, oldV, newV) -> updateWindowTitle());

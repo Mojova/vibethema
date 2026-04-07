@@ -1,13 +1,18 @@
 package com.vibethema.viewmodel;
 
 import com.vibethema.model.CharacterData;
+import com.vibethema.service.CharmDataService;
+import com.vibethema.service.EquipmentDataService;
 import com.vibethema.service.SystemDataService;
+import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.utils.notifications.NotificationObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import com.vibethema.viewmodel.util.Messenger;
 import org.mockito.Mockito;
-
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,15 +22,49 @@ public class MainViewModelTest {
 
     private MainViewModel viewModel;
     private CharacterData data;
+    private EquipmentDataService equipmentService;
+    private CharmDataService charmDataService;
     private SystemDataService systemDataService;
 
     @BeforeEach
     void setUp() {
         data = new CharacterData();
         systemDataService = Mockito.mock(SystemDataService.class);
+        equipmentService = Mockito.mock(EquipmentDataService.class);
+        charmDataService = Mockito.mock(CharmDataService.class);
+        
         // By default, assume core data is imported for these tests
         when(systemDataService.isCoreDataImported()).thenReturn(true);
-        viewModel = new MainViewModel(data, systemDataService);
+        when(equipmentService.loadEquipmentTags()).thenReturn(new HashMap<>());
+        when(charmDataService.loadKeywords()).thenReturn(Collections.emptyList());
+        
+        viewModel = new MainViewModel(data, systemDataService, equipmentService, charmDataService);
+    }
+
+    @Test
+    void testAsyncDataLoading() throws InterruptedException {
+        // Prepare mock data
+        Map<String, List<EquipmentDataService.Tag>> mockTags = new HashMap<>();
+        mockTags.put("weapon", List.of(new EquipmentDataService.Tag("Lethal", "Causes lethal damage")));
+        when(equipmentService.loadEquipmentTags()).thenReturn(mockTags);
+        
+        com.vibethema.model.Keyword mockKeyword = new com.vibethema.model.Keyword();
+        mockKeyword.setName("Aggravated");
+        mockKeyword.setDescription("Causes aggravated damage");
+        when(charmDataService.loadKeywords()).thenReturn(List.of(mockKeyword));
+
+        // Re-initialize to trigger background loading
+        viewModel = new MainViewModel(data, systemDataService, equipmentService, charmDataService);
+        
+        // Wait briefly for the background thread to complete
+        int attempts = 0;
+        while ((viewModel.getTagDescriptions().isEmpty() || viewModel.getKeywordDefs().isEmpty()) && attempts < 10) {
+            Thread.sleep(100);
+            attempts++;
+        }
+        
+        assertEquals("Causes lethal damage", viewModel.getTagDescriptions().get("Lethal"));
+        assertEquals("Causes aggravated damage", viewModel.getKeywordDefs().get("Aggravated"));
     }
 
     @Test

@@ -56,16 +56,16 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         
         // Tabs
         mainTabPane.getTabs().addAll(
-                createTab("Stats", StatsTab.class, new StatsViewModel(viewModel.getData())),
-                createTab("Merits", MeritsTab.class, new MeritsViewModel(viewModel.getData())),
-                createTab("Intimacies", IntimaciesTab.class, new IntimaciesViewModel(viewModel.getData())),
-                createCharmsTab("Solar Charms", "Ability"),
-                createCharmsTab("Martial Arts", "Martial Arts Style"),
-                createTab("Sorcery", SorceryTab.class, new SorceryViewModel(viewModel.getData(), viewModel.getCharmDataService())),
-                createEquipmentTab()
+                createTab("Stats", StatsTab.class, new StatsViewModel(viewModel.getData())), // Eagerly load the first tab
+                createLazyTab("Merits", () -> createTab("Merits", MeritsTab.class, new MeritsViewModel(viewModel.getData()))),
+                createLazyTab("Intimacies", () -> createTab("Intimacies", IntimaciesTab.class, new IntimaciesViewModel(viewModel.getData()))),
+                createCharmsLazyTab("Solar Charms", "Ability"),
+                createCharmsLazyTab("Martial Arts", "Martial Arts Style"),
+                createLazyTab("Sorcery", () -> createTab("Sorcery", SorceryTab.class, new SorceryViewModel(viewModel.getData(), viewModel.getCharmDataService()))),
+                createLazyEquipmentTab()
         );
 
-        experienceTab = createExperienceTab();
+        experienceTab = createLazyExperienceTab();
         viewModel.getData().modeProperty().addListener((obs, oldV, newV) -> updateExperienceTabVisibility(newV));
         updateExperienceTabVisibility(viewModel.getData().getMode());
 
@@ -181,20 +181,40 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         observers.clear();
     }
 
-    private Tab createCharmsTab(String title, String filterType) {
+    private Tab createCharmsLazyTab(String title, String filterType) {
+        // We create the ViewModel eagerly so handleJumpToCharms still works
         CharmsViewModel cvm = new CharmsViewModel(viewModel.getData(), viewModel.getCharmDataService(), viewModel.getKeywordDefs(), filterType);
-        ViewTuple<CharmsTab, CharmsViewModel> vt = de.saxsys.mvvmfx.FluentViewLoader
-                .javaView(CharmsTab.class)
-                .viewModel(cvm)
-                .load();
-        
-        CharmsTab view = (CharmsTab) vt.getView();
-        charmTabs.put(title, view);
         charmViewModels.put(title, cvm);
-        
-        Tab tab = new Tab(title, view);
-        tab.setClosable(false);
-        return tab;
+
+        return createLazyTab(title, () -> {
+            ViewTuple<CharmsTab, CharmsViewModel> vt = de.saxsys.mvvmfx.FluentViewLoader
+                    .javaView(CharmsTab.class)
+                    .viewModel(cvm)
+                    .load();
+            CharmsTab view = (CharmsTab) vt.getView();
+            charmTabs.put(title, view);
+            return new Tab(title, view);
+        });
+    }
+
+    private Tab createLazyEquipmentTab() {
+        return createLazyTab("Equipment", this::createEquipmentTab);
+    }
+
+    private Tab createLazyExperienceTab() {
+        return createLazyTab("Experience", this::createExperienceTab);
+    }
+
+    private Tab createLazyTab(String title, java.util.function.Supplier<Tab> tabSupplier) {
+        Tab lazyTab = new Tab(title);
+        lazyTab.setClosable(false);
+        lazyTab.selectedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal && lazyTab.getContent() == null) {
+                Tab loadedTab = tabSupplier.get();
+                lazyTab.setContent(loadedTab.getContent());
+            }
+        });
+        return lazyTab;
     }
 
     private Tab createEquipmentTab() {
