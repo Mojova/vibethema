@@ -155,6 +155,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                                         + "• "
                                         + details);
                         alert.getDialogPane().setPrefWidth(500);
+                        applyDialogStyle(alert);
                         alert.showAndWait();
                     }
                 });
@@ -174,6 +175,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                     ButtonType cancelBtn =
                             new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
                     alert.getButtonTypes().setAll(saveBtn, discardBtn, cancelBtn);
+                    applyDialogStyle(alert);
 
                     Optional<ButtonType> result = alert.showAndWait();
                     if (result.isPresent()) {
@@ -490,9 +492,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                 "Changing Caste to " + newCaste.toString() + " will invalidate some data.");
 
         // Style the dialog
-        DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
-        dialogPane.getStyleClass().addAll("dialog-pane-custom", "warning-dialog");
+        applyDialogStyle(alert);
 
         StringBuilder content =
                 new StringBuilder("The following selections will be removed/deselected:\n\n");
@@ -557,9 +557,12 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                         new Alert(
                                 Alert.AlertType.INFORMATION,
                                 "Character sheet exported successfully!");
+                applyDialogStyle(alert);
                 alert.showAndWait();
             } catch (Exception e) {
-                new Alert(Alert.AlertType.ERROR, "Export failed: " + e.getMessage()).showAndWait();
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR, "Export failed: " + e.getMessage());
+                applyDialogStyle(errorAlert);
+                errorAlert.showAndWait();
             }
         }
     }
@@ -576,6 +579,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         ButtonType discardBtn = new ButtonType("Discard");
         ButtonType cancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         alert.getButtonTypes().setAll(saveBtn, discardBtn, cancelBtn);
+        applyDialogStyle(alert);
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent()) {
@@ -598,6 +602,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                         + " changed. This is a one-way process.\n\n"
                         + "Proceed to Experienced mode?");
 
+        applyDialogStyle(confirm);
         confirm.showAndWait()
                 .ifPresent(
                         response -> {
@@ -636,13 +641,11 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                         : "Charm";
         dialog.setTitle("Edit " + term + ": " + editViewModel.getCharmName());
 
-        DialogPane dialogPane = dialog.getDialogPane();
-        dialogPane.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
-        dialogPane.getStyleClass().add("dialog-pane-custom");
-        dialogPane.setContent(viewTuple.getView());
+        applyDialogStyle(dialog);
+        dialog.getDialogPane().setContent(viewTuple.getView());
 
         ButtonType saveType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
-        dialogPane.getButtonTypes().addAll(saveType, ButtonType.CANCEL);
+        dialog.getDialogPane().getButtonTypes().addAll(saveType, ButtonType.CANCEL);
 
         dialog.setResultConverter(
                 bt -> {
@@ -685,6 +688,19 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
     private void updateWindowTitle(String title) {
         if (getScene() != null && getScene().getWindow() instanceof Stage stage) {
             stage.setTitle(title);
+        }
+    }
+
+    private void applyDialogStyle(Dialog<?> dialog) {
+        DialogPane dialogPane = dialog.getDialogPane();
+        dialogPane.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+        dialogPane.getStyleClass().add("dialog-pane-custom");
+
+        if (dialog instanceof Alert alert) {
+            if (alert.getAlertType() == Alert.AlertType.WARNING
+                    || alert.getAlertType() == Alert.AlertType.ERROR) {
+                dialogPane.getStyleClass().add("warning-dialog");
+            }
         }
     }
 }
