@@ -216,6 +216,11 @@
     -fx-font-size: 14px;
     -fx-font-style: italic;
     -fx-text-fill: #aaa;
+    -fx-padding: 15px 20px; /* 20px match for full-width background with inset text */
+    -fx-background-color: #222;
+    -fx-border-color: #333 transparent transparent transparent;
+    -fx-border-width: 1px 0 0 0;
+    -fx-min-height: 40px;
 }
 
 .sidebar-stat-header {

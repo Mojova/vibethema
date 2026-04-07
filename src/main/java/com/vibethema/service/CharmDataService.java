@@ -24,6 +24,11 @@ public class CharmDataService {
     private static final String MA_DIR = "martial_arts";
     private static final String EVOCATIONS_DIR = "evocations";
     private static final String SPELLS_DIR = "spells";
+    
+    private final java.util.concurrent.ConcurrentHashMap<String, String> charmIdToNameMap = new java.util.concurrent.ConcurrentHashMap<>();
+    private final java.util.concurrent.ConcurrentHashMap<String, String> charmIdToAbilityMap = new java.util.concurrent.ConcurrentHashMap<>();
+    private final java.util.concurrent.atomic.AtomicBoolean indexBuilt = new java.util.concurrent.atomic.AtomicBoolean(false);
+
     private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Charm.class, (com.google.gson.JsonDeserializer<Charm>) (json, typeOfT, context) -> {
                 com.google.gson.JsonObject obj = json.getAsJsonObject();
@@ -144,6 +149,73 @@ public class CharmDataService {
         }
     }
 
+    public String getCharmName(String id) {
+        ensureIndexBuilt();
+        return charmIdToNameMap.getOrDefault(id, id);
+    }
+
+    public String getCharmAbility(String id) {
+        ensureIndexBuilt();
+        return charmIdToAbilityMap.get(id);
+    }
+
+    private void ensureIndexBuilt() {
+        if (indexBuilt.compareAndSet(false, true)) {
+            buildGlobalIndex();
+        }
+    }
+
+    private void buildGlobalIndex() {
+        logger.info("Building global charm index...");
+        List<Charm> all = new ArrayList<>();
+        
+        // Load all solar and martial arts
+        try {
+            if (Files.exists(getUserCharmsPath())) {
+                Files.list(getUserCharmsPath())
+                    .filter(p -> p.toString().endsWith(".json") && !p.getFileName().toString().equals("keywords.json") && !p.getFileName().toString().equals("charm-schema.json"))
+                    .forEach(p -> loadFromFileForIndex(p, all));
+            }
+            if (Files.exists(getUserMartialArtsPath())) {
+                Files.list(getUserMartialArtsPath())
+                    .filter(p -> p.toString().endsWith(".json"))
+                    .forEach(p -> loadFromFileForIndex(p, all));
+            }
+            // Load evocations
+            if (Files.exists(getUserEvocationsPath())) {
+                Files.list(getUserEvocationsPath())
+                    .filter(p -> p.toString().endsWith(".json"))
+                    .forEach(p -> {
+                        EvocationCollection coll = loadEvocations(p.getFileName().toString().replace(".json", ""));
+                        if (coll != null) all.addAll(coll.evocations);
+                    });
+            }
+        } catch (IOException e) {
+            logger.error("Error building global charm index", e);
+        }
+
+        for (Charm c : all) {
+            if (c.getId() != null) {
+                charmIdToNameMap.put(c.getId(), c.getName());
+                if (c.getAbility() != null) charmIdToAbilityMap.put(c.getId(), c.getAbility());
+            }
+        }
+    }
+
+    private void loadFromFileForIndex(Path path, List<Charm> allCharms) {
+        try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+            CharmListWrapper wrapper = gson.fromJson(reader, CharmListWrapper.class);
+            if (wrapper != null && wrapper.charms != null) {
+                for (Charm c : wrapper.charms) {
+                    if (c instanceof SolarCharm sc) sc.setAbility(wrapper.ability);
+                    allCharms.add(c);
+                }
+            }
+        } catch (Exception e) {
+            // Ignore corrupted or non-charm files
+        }
+    }
+
     public void saveCharm(Charm charm) throws IOException {
         String ability = charm.getAbility();
         String filename = ability.toLowerCase().replace(" ", "-") + ".json";
@@ -200,6 +272,13 @@ public class CharmDataService {
         try (Writer writer = Files.newBufferedWriter(targetPath, StandardCharsets.UTF_8)) {
             prettyGson.toJson(new CharmListWrapper(ability, typeAttr, charms), writer);
         }
+        
+        // Update index cache
+        if (charm.getId() != null) {
+            charmIdToNameMap.put(charm.getId(), charm.getName());
+            if (charm.getAbility() != null) charmIdToAbilityMap.put(charm.getId(), charm.getAbility());
+        }
+        
         exportSchema(); // Ensure schema is present for the user
     }
 
@@ -295,6 +374,12 @@ public class CharmDataService {
         Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
         try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
             prettyGson.toJson(collection, writer);
+        }
+
+        // Update index cache
+        if (charm.getId() != null) {
+            charmIdToNameMap.put(charm.getId(), charm.getName());
+            if (artifactName != null) charmIdToAbilityMap.put(charm.getId(), artifactName);
         }
     }
 
@@ -552,5 +637,4 @@ public class CharmDataService {
             }
         }
     }
-
 }

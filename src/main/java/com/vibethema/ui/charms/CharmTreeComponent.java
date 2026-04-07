@@ -173,14 +173,21 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
         leftPane.getChildren().addAll(controls, charmScroll);
 
         // Right Side: Sidebar Details
-        VBox rightPane = new VBox(15);
-        rightPane.setPadding(new Insets(20));
+        VBox rightPane = new VBox(0); // No spacing between title and scroll area
         rightPane.getStyleClass().add("charms-sidebar");
 
         detailTitle.getStyleClass().add("sidebar-title");
         detailTitle.setWrapText(true);
+        detailTitle.setPadding(new Insets(20, 20, 10, 20)); // Title has its own padding
+
+        // Sidebar Content (Scrollable)
+        VBox sidebarContent = new VBox(20);
+        sidebarContent.setPadding(new Insets(0, 0, 20, 0)); // Only bottom padding here
+        sidebarContent.setFillWidth(true);
+
         detailReqs.getStyleClass().add("sidebar-reqs");
         detailReqs.setWrapText(true);
+        detailReqs.setMaxWidth(Double.MAX_VALUE);
 
         GridPane statsGrid = new GridPane();
         statsGrid.setHgap(15); statsGrid.setVgap(10);
@@ -204,13 +211,13 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
             }
         }
 
+        // Inner Padding Container for components that should not touch edges
+        VBox paddedContent = new VBox(20);
+        paddedContent.setPadding(new Insets(0, 20, 0, 20));
+
         descriptionLabel.getStyleClass().add("sidebar-desc");
         descriptionLabel.setWrapText(true);
-        ScrollPane descScroll = new ScrollPane(descriptionLabel);
-        descScroll.setFitToWidth(true);
-        descScroll.getStyleClass().add("scroll-pane-custom");
-        VBox.setVgrow(descScroll, Priority.ALWAYS);
-
+        
         purchaseBtn.getStyleClass().add("charm-btn");
         purchaseBtn.setMaxWidth(Double.MAX_VALUE);
         purchaseBtn.setTooltip(new Tooltip("Buy or Add Stack (ENTER / SPACE)"));
@@ -245,7 +252,16 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
         });
 
         HBox charmButtons = new HBox(10, purchaseBtn, refundBtn, deleteCustomBtn, editBtn);
-        rightPane.getChildren().addAll(detailTitle, detailReqs, charmButtons, statsGrid, descScroll);
+        
+        paddedContent.getChildren().addAll(charmButtons, statsGrid, descriptionLabel);
+        sidebarContent.getChildren().addAll(detailReqs, paddedContent);
+
+        ScrollPane sideContentScroll = new ScrollPane(sidebarContent);
+        sideContentScroll.setFitToWidth(true);
+        sideContentScroll.getStyleClass().add("scroll-pane-custom");
+        VBox.setVgrow(sideContentScroll, Priority.ALWAYS);
+
+        rightPane.getChildren().addAll(detailTitle, sideContentScroll);
 
         getItems().addAll(leftPane, rightPane);
         setDividerPositions(0.7);

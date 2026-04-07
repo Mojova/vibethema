@@ -300,13 +300,36 @@ public class CharmTreeViewModel implements ViewModel {
                 if (group.getLabel() != null && !group.getLabel().isEmpty()) {
                     prereqStrings.add(group.getLabel());
                 } else {
-                    List<String> names = new ArrayList<>();
-                    for (String rid : group.getCharmIds()) {
-                        // In a real app we'd resolve this via a global map or service
-                        names.add(rid); 
+                    List<String> ids = group.getCharmIds();
+                    int min = group.getMinCount();
+                    
+                    // Summarization Logic: If 4+ IDs all belong to the same ability, summarize
+                    if (ids.size() > 3) {
+                        String commonAbility = null;
+                        boolean allSame = true;
+                        for (String rid : ids) {
+                            String ab = dataService.getCharmAbility(rid);
+                            if (ab == null) { allSame = false; break; }
+                            if (commonAbility == null) commonAbility = ab;
+                            else if (!commonAbility.equals(ab)) { allSame = false; break; }
+                        }
+                        
+                        if (allSame && commonAbility != null) {
+                            String label = (min > 0 && min < ids.size()) 
+                                ? "Any " + min + " " + commonAbility + " Charm" + (min > 1 ? "s" : "")
+                                : "All " + ids.size() + " " + commonAbility + " Charms";
+                            prereqStrings.add(label);
+                            continue;
+                        }
                     }
-                    String prefix = (group.getMinCount() > 0 && group.getMinCount() < group.getCharmIds().size()) 
-                        ? "Any " + group.getMinCount() + " of: " : "";
+
+                    // Otherwise, list resolved names
+                    List<String> names = new ArrayList<>();
+                    for (String rid : ids) {
+                        names.add(dataService.getCharmName(rid)); 
+                    }
+                    String prefix = (min > 0 && min < ids.size()) 
+                        ? "Any " + min + " of: " : "";
                     prereqStrings.add(prefix + String.join(", ", names));
                 }
             }
