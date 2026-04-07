@@ -100,16 +100,14 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
 
         HBox topRow = new HBox(50);
 
-        VBox wpBox = new VBox(5);
-        wpBox.getChildren()
-                .addAll(new Label("Willpower"), new DotSelector(data.willpowerProperty(), 5, 10));
-
         VBox essBox = new VBox(5);
+        Label essLabel = new Label("Essence");
+        essLabel.getStyleClass().add("subsection-title");
         DotSelector essSelector = new DotSelector(data.essenceProperty(), 1, 5);
         essSelector
                 .disableProperty()
                 .bind(viewModel.modeProperty().isEqualTo(CharacterMode.CREATION));
-        essBox.getChildren().addAll(new Label("Essence"), essSelector);
+        essBox.getChildren().addAll(essLabel, essSelector);
 
         VBox motesBox = new VBox(5);
         Label motesLabel = new Label("Mote Pools");
@@ -126,7 +124,12 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
                                 "Peripheral: ", viewModel.peripheralMotesProperty().asString()));
         motesBox.getChildren().addAll(motesLabel, personalLabel, peripheralLabel);
 
-        topRow.getChildren().addAll(wpBox, essBox, motesBox);
+        VBox wpBox = new VBox(5);
+        Label wpLabel = new Label("Willpower");
+        wpLabel.getStyleClass().add("subsection-title");
+        wpBox.getChildren().addAll(wpLabel, new DotSelector(data.willpowerProperty(), 5, 10));
+
+        topRow.getChildren().addAll(essBox, motesBox, wpBox);
         section.getChildren().addAll(advTitle, topRow);
         return section;
     }
