@@ -17,8 +17,15 @@ if (Test-Path $ICON_SOURCE) {
 Write-Host "Building fat JAR..."
 mvn clean package -DskipTests
 
+# 2.1 Extract version from pom.xml (e.g., 0.9-SNAPSHOT -> 0.9.0)
+$RAW_VERSION = (mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+$VERSION = $RAW_VERSION.Replace("-SNAPSHOT", "")
+if ($RAW_VERSION.Contains("-SNAPSHOT")) {
+    $VERSION = "${VERSION}.0"
+}
+
 # 3. Create the native app
-Write-Host "Packaging native app with jpackage..."
+Write-Host "Packaging native app v$VERSION with jpackage..."
 if (Test-Path "target/dist") { Remove-Item -Recurse -Force "target/dist" }
 New-Item -ItemType Directory -Path "target/dist" | Out-Null
 
@@ -30,8 +37,10 @@ jpackage `
   --icon $ICO_TARGET `
   --name "Vibethema" `
   --dest target/dist `
-  --vendor "Vibethema" `
-  --app-version "1.0.0" `
+  --vendor "Mojova" `
+  --copyright "Copyright © 2026 Mojova" `
+  --description "Character management for Exalted 3rd Edition" `
+  --app-version "$VERSION" `
   --win-shortcut `
   --win-menu `
   --win-shortcut-prompt `

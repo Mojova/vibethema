@@ -35,8 +35,15 @@ fi
 echo "Building fat JAR..."
 mvn clean package -DskipTests
 
+# 2.1 Extract version from pom.xml (e.g., 0.9-SNAPSHOT -> 0.9.0)
+RAW_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+VERSION=$(echo "$RAW_VERSION" | sed 's/-SNAPSHOT//')
+if [[ "$RAW_VERSION" == *"-SNAPSHOT"* ]]; then
+    VERSION="${VERSION}.0"
+fi
+
 # 3. Create the native app
-echo "Packaging native app with jpackage..."
+echo "Packaging native app v$VERSION with jpackage..."
 rm -rf target/dist
 mkdir -p target/dist
 
@@ -47,6 +54,10 @@ jpackage \
   --type dmg \
   --icon "$ICNS_TARGET" \
   --name "Vibethema" \
+  --app-version "$VERSION" \
+  --vendor "Mojova" \
+  --copyright "Copyright © 2026 Mojova" \
+  --description "Character management for Exalted 3rd Edition" \
   --dest target/dist \
   --java-options "--enable-native-access=ALL-UNNAMED" \
   --file-associations src/main/resources/vbtm.properties \
