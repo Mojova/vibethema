@@ -38,6 +38,7 @@ jpackage `
   --win-dir-chooser `
   --win-upgrade-uuid "74c10a48-4c8d-4a1e-8e6d-5b3a2a1c0f9d" `
   --java-options "--enable-native-access=ALL-UNNAMED" `
+  --file-associations src/main/resources/vbtm.properties `
   --verbose
 
 Write-Host "Build complete. Check target/dist for the MSI installer."

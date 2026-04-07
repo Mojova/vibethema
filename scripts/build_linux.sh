@@ -45,6 +45,7 @@ jpackage \
   --linux-shortcut \
   --linux-menu-group "Utility" \
   --dest target/dist \
+  --file-associations src/main/resources/vbtm.properties \
   --verbose
 
 # 5. Create RPM from the app-image
@@ -60,6 +61,7 @@ jpackage \
   --linux-shortcut \
   --linux-menu-group "Utility" \
   --dest target/dist \
+  --file-associations src/main/resources/vbtm.properties \
   --verbose
 
 echo "Build complete. Base image: target/dist/AppDir-Base/Vibethema"

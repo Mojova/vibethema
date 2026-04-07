@@ -105,6 +105,20 @@ jobs:
           Icon=vibethema
           Exec=bin/Vibethema
           Categories=Utility;
+          MimeType=application/x-vibethema;
+          EOF
+
+          # Create and install MIME type descriptor
+          mkdir -p "$APP_DIR/usr/share/mime/packages"
+          cat <<EOF > "$APP_DIR/usr/share/mime/packages/vibethema.xml"
+          <?xml version="1.0" encoding="UTF-8"?>
+          <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+            <mime-type type="application/x-vibethema">
+              <comment>Vibethema Character Save</comment>
+              <glob pattern="*.vbtm"/>
+              <icon name="vibethema"/>
+            </mime-type>
+          </mime-info>
           EOF
 
           # Create AppRun script
