@@ -105,8 +105,11 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
                 .addAll(new Label("Willpower"), new DotSelector(data.willpowerProperty(), 5, 10));
 
         VBox essBox = new VBox(5);
-        essBox.getChildren()
-                .addAll(new Label("Essence"), new DotSelector(data.essenceProperty(), 1, 5));
+        DotSelector essSelector = new DotSelector(data.essenceProperty(), 1, 5);
+        essSelector
+                .disableProperty()
+                .bind(viewModel.modeProperty().isEqualTo(CharacterMode.CREATION));
+        essBox.getChildren().addAll(new Label("Essence"), essSelector);
 
         VBox motesBox = new VBox(5);
         Label motesLabel = new Label("Mote Pools");

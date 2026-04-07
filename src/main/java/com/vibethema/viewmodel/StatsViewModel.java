@@ -17,6 +17,7 @@ import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;
 import java.util.stream.Collectors;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -160,5 +161,9 @@ public class StatsViewModel implements ViewModel {
 
     public void markDirty() {
         data.setDirty(true);
+    }
+
+    public ObjectProperty<CharacterMode> modeProperty() {
+        return data.modeProperty();
     }
 }
