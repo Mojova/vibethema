@@ -1,0 +1,301 @@
+package com.vibethema.viewmodel.charms;
+
+import com.vibethema.model.Ability;
+import com.vibethema.model.CharacterData;
+import com.vibethema.model.Charm;
+import com.vibethema.model.PurchasedCharm;
+import com.vibethema.service.CharmDataService;
+import com.vibethema.viewmodel.util.Messenger;
+import de.saxsys.mvvmfx.ViewModel;
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class CharmTreeViewModel implements ViewModel {
+    private static final Logger logger = LoggerFactory.getLogger(CharmTreeViewModel.class);
+
+    private final CharacterData data;
+    private final CharmDataService dataService;
+    private final Map<String, String> keywordDefs;
+
+    // Selection properties
+    private final StringProperty filterType = new SimpleStringProperty();
+    private final StringProperty selectionId = new SimpleStringProperty();
+    private final StringProperty selectionName = new SimpleStringProperty();
+    private final StringProperty artifactId = new SimpleStringProperty();
+    private final StringProperty artifactName = new SimpleStringProperty();
+
+    // Data properties
+    private final ObservableList<Charm> currentCharms = FXCollections.observableArrayList();
+    private final Map<Integer, List<Charm>> levels = new HashMap<>();
+    private int maxDepth = 0;
+
+    // Sidebar properties
+    private final ObjectProperty<Charm> selectedCharm = new SimpleObjectProperty<>();
+    private final StringProperty detailTitle = new SimpleStringProperty("No Charm Selected");
+    private final StringProperty detailReqs = new StringPropertyBase("") {
+        @Override public Object getBean() { return CharmTreeViewModel.this; }
+        @Override public String getName() { return "detailReqs"; }
+    };
+    private final StringProperty costText = new SimpleStringProperty("");
+    private final StringProperty typeText = new SimpleStringProperty("");
+    private final StringProperty durationText = new SimpleStringProperty("");
+    private final ObservableList<String> keywords = FXCollections.observableArrayList();
+    private final StringProperty descriptionText = new SimpleStringProperty("");
+
+    // Action button properties
+    private final StringProperty purchaseBtnText = new SimpleStringProperty("Purchase Charm");
+    private final BooleanProperty purchaseBtnDisabled = new SimpleBooleanProperty(true);
+    private final BooleanProperty purchaseBtnVisible = new SimpleBooleanProperty(false);
+    private final StringProperty purchaseBtnStyle = new SimpleStringProperty("-fx-base: #d4af37;");
+    
+    private final StringProperty refundBtnText = new SimpleStringProperty("Refund");
+    private final BooleanProperty refundBtnVisible = new SimpleBooleanProperty(false);
+    
+    private final BooleanProperty deleteCustomBtnVisible = new SimpleBooleanProperty(false);
+    private final StringProperty deleteCustomBtnText = new SimpleStringProperty("Delete Custom Charm");
+    
+    private final BooleanProperty editBtnVisible = new SimpleBooleanProperty(false);
+
+    public CharmTreeViewModel(CharacterData data, CharmDataService dataService, Map<String, String> keywordDefs) {
+        this.data = data;
+        this.dataService = dataService;
+        this.keywordDefs = keywordDefs;
+        
+        setupListeners();
+    }
+
+    private void setupListeners() {
+        selectedCharm.addListener((obs, oldV, newV) -> updateSidebar(newV));
+    }
+
+    public void initialize(String filterType, String selectionId, String selectionName, String artifactId, String artifactName) {
+        this.filterType.set(filterType);
+        this.selectionId.set(selectionId);
+        this.selectionName.set(selectionName);
+        this.artifactId.set(artifactId);
+        this.artifactName.set(artifactName);
+        refresh();
+    }
+
+    public void refresh() {
+        String selection = selectionId.get();
+        if (selection == null || selection.isEmpty()) return;
+
+        List<Charm> loaded;
+        if ("Evocation".equals(filterType.get())) {
+            CharmDataService.EvocationCollection collection = dataService.loadEvocations(selection);
+            loaded = (collection != null) ? collection.evocations : new ArrayList<>();
+        } else {
+            loaded = dataService.loadCharmsForAbility(selection);
+        }
+
+        // Must calculate level state BEFORE updating the observable list
+        // so listeners (render()) have access to the new layout data.
+        internalCalculateLayout(loaded != null ? loaded : new ArrayList<>());
+        
+        currentCharms.setAll(loaded != null ? loaded : new ArrayList<>());
+        
+        // Reset sidebar if current selection is gone
+        if (selectedCharm.get() != null && !currentCharms.contains(selectedCharm.get())) {
+            selectedCharm.set(null);
+        } else if (selectedCharm.get() != null) {
+            updateSidebar(selectedCharm.get());
+        }
+    }
+
+    private void internalCalculateLayout(List<Charm> charms) {
+        levels.clear();
+        maxDepth = 0;
+        if (charms.isEmpty()) return;
+
+        Map<String, Integer> charmDepth = new HashMap<>();
+        boolean changed = true;
+        while (changed) {
+            changed = false;
+            for (Charm c : charms) {
+                int currentDepth = charmDepth.getOrDefault(c.getId(), 0);
+                int reqDepth = 0;
+                if (c.getPrerequisiteGroups() != null) {
+                    for (Charm.PrerequisiteGroup group : c.getPrerequisiteGroups()) {
+                        for (String reqId : group.getCharmIds()) {
+                            reqDepth = Math.max(reqDepth, charmDepth.getOrDefault(reqId, 0) + 1);
+                        }
+                    }
+                }
+                if (reqDepth > currentDepth) {
+                    charmDepth.put(c.getId(), reqDepth);
+                    changed = true;
+                }
+            }
+        }
+
+        for (Charm c : charms) {
+            int depth = charmDepth.getOrDefault(c.getId(), 0);
+            levels.computeIfAbsent(depth, k -> new ArrayList<>()).add(c);
+            if (depth > maxDepth) maxDepth = depth;
+        }
+    }
+
+    // calculateLayoutState() was replaced by internalCalculateLayout() call within refresh()
+
+    public void updateSidebar(Charm c) {
+        if (c == null) {
+            detailTitle.set("No Charm Selected");
+            detailReqs.set("");
+            costText.set("");
+            typeText.set("");
+            durationText.set("");
+            keywords.clear();
+            descriptionText.set("");
+            purchaseBtnVisible.set(false);
+            refundBtnVisible.set(false);
+            deleteCustomBtnVisible.set(false);
+            editBtnVisible.set(false);
+            return;
+        }
+
+        detailTitle.set(c.getName());
+        
+        // Prerequisite resolution logic
+        List<String> prereqStrings = new ArrayList<>();
+        if (c.getPrerequisiteGroups() != null) {
+            for (Charm.PrerequisiteGroup group : c.getPrerequisiteGroups()) {
+                if (group.getLabel() != null && !group.getLabel().isEmpty()) {
+                    prereqStrings.add(group.getLabel());
+                } else {
+                    List<String> names = new ArrayList<>();
+                    for (String rid : group.getCharmIds()) {
+                        // In a real app we'd resolve this via a global map or service
+                        names.add(rid); 
+                    }
+                    String prefix = (group.getMinCount() > 0 && group.getMinCount() < group.getCharmIds().size()) 
+                        ? "Any " + group.getMinCount() + " of: " : "";
+                    prereqStrings.add(prefix + String.join(", ", names));
+                }
+            }
+        }
+        String prereqStr = prereqStrings.isEmpty() ? "None" : String.join("; ", prereqStrings);
+
+        String baseReqs = "Evocation".equals(filterType.get()) 
+            ? "Mins: Ess " + c.getMinEssence() + "\nPrereqs: " + prereqStr
+            : "Mins: " + c.getAbility() + " " + c.getMinAbility() + ", Ess: " + c.getMinEssence() + "\nPrereqs: " + prereqStr;
+        
+        if (c.isPotentiallyProblematicImport()) {
+            baseReqs = "⚠️ WARNING: Problematic Import\n" + baseReqs;
+        }
+        detailReqs.set(baseReqs);
+        costText.set(c.getCost() != null ? c.getCost() : "");
+        typeText.set(c.getType() != null ? c.getType() : "");
+        durationText.set(c.getDuration() != null ? c.getDuration() : "");
+        keywords.setAll(c.getKeywords() != null ? c.getKeywords() : new ArrayList<>());
+        descriptionText.set(c.getFullText() != null ? c.getFullText() : "");
+
+        updateButtonStates(c);
+        editBtnVisible.set(true);
+    }
+
+    private void updateButtonStates(Charm c) {
+        int count = data.getCharmCount(c.getId());
+        boolean bought = data.hasCharm(c.getId());
+        boolean eligible = c.isEligible(data);
+        boolean stackable = c.getKeywords() != null && c.getKeywords().contains("Stackable");
+        boolean isOxBody = c.getName().equals("Ox-Body Technique");
+
+        String term = "Evocation".equals(filterType.get()) ? "Evocation" : "Charm";
+        deleteCustomBtnVisible.set(c.isCustom());
+        deleteCustomBtnText.set("Delete Custom " + term);
+
+        if (stackable) {
+            int limit = isOxBody ? data.getAbility(Ability.RESISTANCE).get() : 10;
+            purchaseBtnText.set("Purchase (" + count + "/" + limit + ")");
+            purchaseBtnDisabled.set(count >= limit || !eligible);
+            purchaseBtnStyle.set("-fx-base: #d4af37;");
+            purchaseBtnVisible.set(true);
+            refundBtnVisible.set(count > 0);
+            refundBtnText.set("Refund " + term);
+        } else if (bought) {
+            purchaseBtnText.set("Refund " + term);
+            purchaseBtnDisabled.set(false);
+            purchaseBtnStyle.set("-fx-base: #a03030;");
+            purchaseBtnVisible.set(true);
+            refundBtnVisible.set(false);
+        } else {
+            purchaseBtnText.set(eligible ? "Purchase " + term : "Requirements Not Met");
+            purchaseBtnDisabled.set(!eligible);
+            purchaseBtnStyle.set(eligible ? "-fx-base: #d4af37;" : "-fx-base: #444444;");
+            purchaseBtnVisible.set(true);
+            refundBtnVisible.set(false);
+        }
+    }
+
+    public void togglePurchase() {
+        Charm c = selectedCharm.get();
+        if (c == null) return;
+
+        boolean stackable = c.getKeywords() != null && c.getKeywords().contains("Stackable");
+        if (stackable || !data.hasCharm(c.getId())) {
+            data.addCharm(new PurchasedCharm(c.getId(), c.getName(), c.getAbility()));
+        } else {
+            data.removeCharm(c.getId());
+        }
+        updateButtonStates(c);
+        Messenger.publish("refresh_all_ui");
+    }
+
+    public void refundOne() {
+        Charm c = selectedCharm.get();
+        if (c != null) {
+            data.removeOneCharm(c.getId());
+            updateButtonStates(c);
+            Messenger.publish("refresh_all_ui");
+        }
+    }
+
+    public void deleteCustom() {
+        Charm c = selectedCharm.get();
+        if (c != null && c.isCustom()) {
+            try {
+                dataService.deleteCustomCharm(c);
+                Messenger.publish("refresh_all_ui");
+                refresh();
+            } catch (Exception ex) {
+                logger.error("Failed to delete custom charm: {}", c.getName(), ex);
+            }
+        }
+    }
+
+    // Getters
+    public CharacterData getData() { return data; }
+    public ObservableList<Charm> getCurrentCharms() { return currentCharms; }
+    public Map<Integer, List<Charm>> getLevels() { return levels; }
+    public int getMaxDepth() { return maxDepth; }
+    public ObjectProperty<Charm> selectedCharmProperty() { return selectedCharm; }
+    public StringProperty filterTypeProperty() { return filterType; }
+    public StringProperty selectionIdProperty() { return selectionId; }
+    public StringProperty selectionNameProperty() { return selectionName; }
+    public StringProperty artifactIdProperty() { return artifactId; }
+    public StringProperty artifactNameProperty() { return artifactName; }
+    
+    public StringProperty detailTitleProperty() { return detailTitle; }
+    public StringProperty detailReqsProperty() { return detailReqs; }
+    public StringProperty costTextProperty() { return costText; }
+    public StringProperty typeTextProperty() { return typeText; }
+    public StringProperty durationTextProperty() { return durationText; }
+    public ObservableList<String> getKeywords() { return keywords; }
+    public StringProperty descriptionTextProperty() { return descriptionText; }
+    public Map<String, String> getKeywordDefs() { return keywordDefs; }
+
+    public StringProperty purchaseBtnTextProperty() { return purchaseBtnText; }
+    public BooleanProperty purchaseBtnDisabledProperty() { return purchaseBtnDisabled; }
+    public BooleanProperty purchaseBtnVisibleProperty() { return purchaseBtnVisible; }
+    public StringProperty purchaseBtnStyleProperty() { return purchaseBtnStyle; }
+    public StringProperty refundBtnTextProperty() { return refundBtnText; }
+    public BooleanProperty refundBtnVisibleProperty() { return refundBtnVisible; }
+    public BooleanProperty deleteCustomBtnVisibleProperty() { return deleteCustomBtnVisible; }
+    public StringProperty deleteCustomBtnTextProperty() { return deleteCustomBtnText; }
+    public BooleanProperty editBtnVisibleProperty() { return editBtnVisible; }
+}

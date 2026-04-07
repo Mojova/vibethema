@@ -1,108 +1,65 @@
 package com.vibethema.ui.charms;
 
-import com.vibethema.model.Ability;
-import com.vibethema.model.CharacterData;
 import com.vibethema.model.Charm;
-import com.vibethema.model.PurchasedCharm;
-import com.vibethema.service.CharmDataService;
+import com.vibethema.viewmodel.charms.CharmTreeViewModel;
 import com.vibethema.viewmodel.util.Messenger;
+import de.saxsys.mvvmfx.InjectViewModel;
+import de.saxsys.mvvmfx.JavaView;
+import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.shape.CubicCurve;
+import java.net.URL;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A standalone UI component that renders a charm web and details sidebar.
- * Extracted from BuilderUI to improve modularity.
+ * Refactored to follow the MVVM pattern using mvvmFX.
  */
-public class CharmTreeComponent extends SplitPane {
-    private static final Logger logger = LoggerFactory.getLogger(CharmTreeComponent.class);
+public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeViewModel>, Initializable {
 
-    public interface CharmTreeListener {
-        void onCreateCharm(String contextId, String contextName, String filterType, Runnable onSave);
-
-        void onEditCharm(Charm charm, String contextName, String filterType, Runnable onSave);
-
-        void onRefreshAllRequested();
-    }
-
-    private static final Map<String, String> globalCharmNameMap = new ConcurrentHashMap<>();
-
-    private final CharacterData data;
-    private final CharmDataService dataService;
-    private final Map<String, String> keywordDefs;
-    private final CharmTreeListener listener;
-
-    private final ComboBox<String> filterCombo;
-    private final String filterType; // "Ability", "Martial Arts Style", or "Evocation"
-    private final String artifactId; // Only used for "Evocation" mode
-    private final String artifactName; // Only used for "Evocation" mode
+    @InjectViewModel
+    private CharmTreeViewModel viewModel;
 
     private Pane charmCanvas = new Pane();
-    private Map<String, VBox> charmNodeMap = new HashMap<>();
-    private List<Charm> currentCharms = new ArrayList<>();
+    private final Map<String, VBox> charmNodeMap = new HashMap<>();
 
-    private Label titleLabel = new Label();
-    private Label detailTitle = new Label("No Charm Selected");
-    private Label detailReqs = new Label();
+    private final Label titleLabel = new Label();
+    private final Label detailTitle = new Label();
+    private final Label detailReqs = new Label();
+    private final Label costLabel = new Label();
+    private final Label typeLabel = new Label();
+    private final Label durationLabel = new Label();
+    private final FlowPane kwFlow = new FlowPane(3, 3);
+    private final Label descriptionLabel = new Label();
 
-    private Label costLabel = new Label();
-    private Label typeLabel = new Label();
-    private Label durationLabel = new Label();
-    private FlowPane kwFlow = new FlowPane(3, 3);
-    private Label descriptionLabel = new Label();
-
-    private Button toggleBtn = new Button("Purchase Charm");
-    private Button refundBtn = new Button("Refund");
-    private Button deleteCustomBtn = new Button("Delete Custom Charm");
-    private Button editBtn = new Button("Edit Charm");
-
-    private Charm selectedCharm;
-    private javafx.beans.property.IntegerProperty currentRatingProperty;
-    private javafx.beans.value.ChangeListener<Number> ratingListener;
+    private final Button purchaseBtn = new Button();
+    private final Button refundBtn = new Button();
+    private final Button deleteCustomBtn = new Button();
+    private final Button editBtn = new Button("Edit Charm");
 
     private final Map<String, List<CubicCurve>> charmIncomingLines = new HashMap<>();
     private final Map<String, List<CubicCurve>> charmOutgoingLines = new HashMap<>();
     private final List<CubicCurve> currentlyHighlightedLines = new ArrayList<>();
 
-    public CharmTreeComponent(CharacterData data,
-            CharmDataService dataService,
-            Map<String, String> keywordDefs,
-            CharmTreeListener listener,
-            ComboBox<String> filterCombo,
-            String filterType) {
-        this(data, dataService, keywordDefs, listener, filterCombo, filterType, null, null);
-    }
-
-    public CharmTreeComponent(CharacterData data,
-            CharmDataService dataService,
-            Map<String, String> keywordDefs,
-            CharmTreeListener listener,
-            ComboBox<String> filterCombo,
-            String filterType,
-            String artifactId,
-            String artifactName) {
-        this.data = data;
-        this.dataService = dataService;
-        this.keywordDefs = keywordDefs;
-        this.listener = listener;
-        this.filterCombo = filterCombo;
-        this.filterType = filterType;
-        this.artifactId = artifactId;
-        this.artifactName = artifactName;
-
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
         getStyleClass().add("charms-split-pane");
-
         setupUI();
-        if (filterCombo != null) {
-            filterCombo.valueProperty().addListener((obs, oldV, newV) -> refresh());
-        }
-        refresh();
+        setupBindings();
+        
+        viewModel.getCurrentCharms().addListener((javafx.collections.ListChangeListener<? super Charm>) c -> render());
+        viewModel.selectedCharmProperty().addListener((obs, oldV, newV) -> {
+            updateLineHighlights(newV != null ? newV.getId() : null);
+            updateWebNodeStyles();
+        });
+        
+        // Initial render
+        render();
     }
 
     private void setupUI() {
@@ -112,33 +69,31 @@ public class CharmTreeComponent extends SplitPane {
 
         HBox controls = new HBox(15);
         controls.setAlignment(Pos.CENTER_LEFT);
-        if (filterCombo != null) {
-            Label comboLabel = new Label(filterType + ":");
-            comboLabel.getStyleClass().add("label");
-            controls.getChildren().addAll(comboLabel, filterCombo);
-        }
-
-        Button createCharmBtn = new Button(
-                "Evocation".equals(filterType) ? "Create New Evocation" : "Create New Charm");
-        createCharmBtn.getStyleClass().add("action-btn");
-        String contextId = filterCombo != null ? filterCombo.getValue() : artifactId;
-        String contextName = "Evocation".equals(filterType) ? artifactName : contextId;
-        createCharmBtn.setOnAction(e -> {
-            if (listener != null) {
-                listener.onCreateCharm(contextId, contextName, filterType, this::refresh);
-            }
-        });
-
-        controls.getChildren().add(createCharmBtn);
-
+        
         titleLabel.getStyleClass().add("section-title");
+
+        Button createCharmBtn = new Button();
+        createCharmBtn.getStyleClass().add("action-btn");
+        createCharmBtn.textProperty().bind(Bindings.createStringBinding(() -> 
+            "Evocation".equals(viewModel.filterTypeProperty().get()) ? "Create New Evocation" : "Create New Charm",
+            viewModel.filterTypeProperty()));
+        
+        createCharmBtn.setOnAction(e -> Messenger.publish("open_create_charm_dialog", 
+            new Object[]{
+                viewModel.selectionIdProperty().get(), 
+                viewModel.artifactNameProperty().get(), 
+                viewModel.filterTypeProperty().get(), 
+                (Runnable) this::refresh
+            }));
+
+        controls.getChildren().addAll(titleLabel, createCharmBtn);
 
         ScrollPane charmScroll = new ScrollPane(charmCanvas);
         charmScroll.setPannable(true);
         charmScroll.getStyleClass().add("scroll-pane-custom");
         VBox.setVgrow(charmScroll, Priority.ALWAYS);
 
-        leftPane.getChildren().addAll(controls, titleLabel, charmScroll);
+        leftPane.getChildren().addAll(controls, charmScroll);
 
         // Right Side: Sidebar Details
         VBox rightPane = new VBox(15);
@@ -151,8 +106,7 @@ public class CharmTreeComponent extends SplitPane {
         detailReqs.setWrapText(true);
 
         GridPane statsGrid = new GridPane();
-        statsGrid.setHgap(15);
-        statsGrid.setVgap(10);
+        statsGrid.setHgap(15); statsGrid.setVgap(10);
         costLabel.getStyleClass().add("sidebar-stat");
         typeLabel.getStyleClass().add("sidebar-stat");
         durationLabel.getStyleClass().add("sidebar-stat");
@@ -180,383 +134,246 @@ public class CharmTreeComponent extends SplitPane {
         descScroll.getStyleClass().add("scroll-pane-custom");
         VBox.setVgrow(descScroll, Priority.ALWAYS);
 
-        toggleBtn.getStyleClass().add("charm-btn");
-        toggleBtn.setMaxWidth(Double.MAX_VALUE);
-        HBox.setHgrow(toggleBtn, Priority.ALWAYS);
+        purchaseBtn.getStyleClass().add("charm-btn");
+        purchaseBtn.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(purchaseBtn, Priority.ALWAYS);
+        purchaseBtn.setOnAction(e -> viewModel.togglePurchase());
 
         refundBtn.getStyleClass().add("charm-btn");
         refundBtn.setStyle("-fx-base: #a03030;");
-        refundBtn.setVisible(false);
-        refundBtn.setManaged(false);
+        refundBtn.setOnAction(e -> viewModel.refundOne());
 
         editBtn.getStyleClass().add("charm-btn");
         editBtn.setStyle("-fx-base: #3c3c3c;");
-        editBtn.setVisible(false);
-        editBtn.setManaged(false);
+        editBtn.setOnAction(e -> {
+            Charm c = viewModel.selectedCharmProperty().get();
+            if (c != null) {
+                Messenger.publish("open_edit_charm_dialog", new Object[]{
+                    c, viewModel.artifactNameProperty().get(), viewModel.filterTypeProperty().get(), (Runnable) this::refresh
+                });
+            }
+        });
 
-        HBox charmButtons = new HBox(10, toggleBtn, refundBtn, deleteCustomBtn, editBtn);
+        deleteCustomBtn.getStyleClass().add("charm-btn");
+        deleteCustomBtn.setStyle("-fx-base: #a03030;");
+        deleteCustomBtn.setOnAction(e -> {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, 
+                "Are you sure you want to delete this custom charm?", ButtonType.YES, ButtonType.NO);
+            confirm.showAndWait().ifPresent(r -> { if (r == ButtonType.YES) viewModel.deleteCustom(); });
+        });
+
+        HBox charmButtons = new HBox(10, purchaseBtn, refundBtn, deleteCustomBtn, editBtn);
         rightPane.getChildren().addAll(detailTitle, detailReqs, charmButtons, statsGrid, descScroll);
 
         getItems().addAll(leftPane, rightPane);
         setDividerPositions(0.7);
     }
 
+    private void setupBindings() {
+        titleLabel.textProperty().bind(Bindings.createStringBinding(() -> {
+            String selection = viewModel.selectionIdProperty().get();
+            if (selection == null || selection.isEmpty()) return "Select an Ability to view charms";
+            if ("Evocation".equals(viewModel.filterTypeProperty().get())) {
+                return "Evocations of " + viewModel.artifactNameProperty().get() + " (" + viewModel.getCurrentCharms().size() + ")";
+            }
+            return selection + " Charms Web (" + viewModel.getCurrentCharms().size() + ")";
+        }, viewModel.selectionIdProperty(), viewModel.getCurrentCharms()));
+
+        detailTitle.textProperty().bind(viewModel.detailTitleProperty());
+        detailReqs.textProperty().bind(viewModel.detailReqsProperty());
+        costLabel.textProperty().bind(viewModel.costTextProperty());
+        typeLabel.textProperty().bind(viewModel.typeTextProperty());
+        durationLabel.textProperty().bind(viewModel.durationTextProperty());
+        descriptionLabel.textProperty().bind(viewModel.descriptionTextProperty());
+
+        purchaseBtn.textProperty().bind(viewModel.purchaseBtnTextProperty());
+        purchaseBtn.disableProperty().bind(viewModel.purchaseBtnDisabledProperty());
+        purchaseBtn.visibleProperty().bind(viewModel.purchaseBtnVisibleProperty());
+        purchaseBtn.managedProperty().bind(purchaseBtn.visibleProperty());
+        purchaseBtn.styleProperty().bind(viewModel.purchaseBtnStyleProperty());
+
+        refundBtn.textProperty().bind(viewModel.refundBtnTextProperty());
+        refundBtn.visibleProperty().bind(viewModel.refundBtnVisibleProperty());
+        refundBtn.managedProperty().bind(refundBtn.visibleProperty());
+
+        deleteCustomBtn.textProperty().bind(viewModel.deleteCustomBtnTextProperty());
+        deleteCustomBtn.visibleProperty().bind(viewModel.deleteCustomBtnVisibleProperty());
+        deleteCustomBtn.managedProperty().bind(deleteCustomBtn.visibleProperty());
+
+        editBtn.visibleProperty().bind(viewModel.editBtnVisibleProperty());
+        editBtn.managedProperty().bind(editBtn.visibleProperty());
+
+        viewModel.getKeywords().addListener((javafx.collections.ListChangeListener<? super String>) c -> {
+            kwFlow.getChildren().clear();
+            for (String kw : viewModel.getKeywords()) {
+                Label l = new Label(kw);
+                l.getStyleClass().add("sidebar-stat");
+                l.getStyleClass().add("keyword-label");
+                String def = viewModel.getKeywordDefs().get(kw);
+                if (def != null) {
+                    Tooltip tt = new Tooltip(def); tt.setWrapText(true); tt.setMaxWidth(300);
+                    l.setTooltip(tt);
+                    l.getStyleClass().add("keyword-with-def");
+                }
+                kwFlow.getChildren().add(l);
+            }
+        });
+    }
+
     public void refresh() {
-        if (charmCanvas == null)
-            return;
-            
-        String savedId = (selectedCharm != null) ? selectedCharm.getId() : null;
-            
+        viewModel.refresh();
+    }
+
+    private void render() {
+        if (charmCanvas == null) return;
         charmCanvas.getChildren().clear();
         charmNodeMap.clear();
-        currentCharms.clear();
         charmIncomingLines.clear();
         charmOutgoingLines.clear();
         currentlyHighlightedLines.clear();
-        selectedCharm = null;
 
-        if (ratingListener != null && currentRatingProperty != null) {
-            currentRatingProperty.removeListener(ratingListener);
-        }
+        Map<Integer, List<Charm>> levels = viewModel.getLevels();
+        int maxDepth = viewModel.getMaxDepth();
+        if (levels.isEmpty()) return;
 
-        String selection = filterCombo != null ? filterCombo.getValue() : artifactId;
-        if (selection == null || selection.isEmpty()) {
-            titleLabel.setText("Select a " + filterType + " to view charms");
-            return;
-        }
-
-        List<Charm> loaded;
-        if ("Evocation".equals(filterType)) {
-            CharmDataService.EvocationCollection collection = dataService.loadEvocations(selection);
-            if (collection != null) {
-                loaded = collection.evocations;
-                String displayName = (artifactName != null) ? artifactName : collection.artifactName;
-                titleLabel.setText("Evocations of " + displayName + " (" + loaded.size() + ")");
-            } else {
-                loaded = new ArrayList<>();
-            }
-        } else {
-            loaded = dataService.loadCharmsForAbility(selection);
-            titleLabel.setText(selection + " Charms Web (" + loaded.size() + ")");
-        }
-
-        if (loaded != null) {
-            currentCharms.addAll(loaded);
-            for (Charm c : loaded) {
-                if (c.getId() != null && c.getName() != null) {
-                    globalCharmNameMap.put(c.getId(), c.getName());
-                }
-            }
-        }
-
-        currentRatingProperty = "Evocation".equals(filterType) ? null : data.getAbilityPropertyByName(selection);
-        if (currentRatingProperty != null) {
-            ratingListener = (obs, ov, nv) -> {
-                updateWebNodeStyles();
-                if (selectedCharm != null)
-                    updateSidebarButton(selectedCharm);
-            };
-            currentRatingProperty.addListener(ratingListener);
-        }
-
-        drawCharmWeb(currentCharms, selection);
-
-        detailTitle.setText("No " + ("Evocation".equals(filterType) ? "Evocation" : "Charm") + " Selected");
-        detailReqs.setText("");
-        costLabel.setText("");
-        typeLabel.setText("");
-        durationLabel.setText("");
-        kwFlow.getChildren().clear();
-        descriptionLabel.setText("");
-        toggleBtn.setVisible(false);
-        refundBtn.setVisible(false);
-        refundBtn.setManaged(false);
-        deleteCustomBtn.setVisible(false);
-        deleteCustomBtn.setManaged(false);
-        editBtn.setVisible(false);
-        editBtn.setManaged(false);
-        
-        if (savedId != null) {
-            selectCharm(savedId);
-        }
-    }
-
-    private void drawCharmWeb(List<Charm> charms, String ability) {
-        // Mapping for display resolution (ID -> Name)
-        Map<String, String> idToName = new HashMap<>();
-        for (Charm c : charms)
-            idToName.put(c.getId(), c.getName());
-
-        // Topological Sort Logic - User IDs for depth calculation
-        Map<String, Integer> charmDepth = new HashMap<>();
-        boolean changed = true;
-        while (changed) {
-            changed = false;
-            for (Charm c : charms) {
-                int currentDepth = charmDepth.getOrDefault(c.getId(), 0);
-                int reqDepth = 0;
-                if (c.getPrerequisiteGroups() != null) {
-                    for (Charm.PrerequisiteGroup group : c.getPrerequisiteGroups()) {
-                        for (String reqId : group.getCharmIds()) {
-                            reqDepth = Math.max(reqDepth, charmDepth.getOrDefault(reqId, 0) + 1);
-                        }
-                    }
-                }
-                if (reqDepth > currentDepth) {
-                    charmDepth.put(c.getId(), reqDepth);
-                    changed = true;
-                }
-            }
-        }
-
-        Map<Integer, List<Charm>> levels = new HashMap<>();
-        int maxDepth = 0;
-        for (Charm c : charms) {
-            int depth = charmDepth.getOrDefault(c.getId(), 0);
-            levels.computeIfAbsent(depth, k -> new ArrayList<>()).add(c);
-            if (depth > maxDepth)
-                maxDepth = depth;
-        }
-
-        double boxWidth = 220;
-        double boxHeight = 70;
-        double gapX = 40;
-        double gapY = 80;
-
+        double boxWidth = 220, boxHeight = 70, gapX = 40, gapY = 80;
         double maxRowWidth = 0;
         for (int d = 0; d <= maxDepth; d++) {
-            List<Charm> rowCharms = levels.getOrDefault(d, new ArrayList<>());
-            double rowWidth = rowCharms.size() * boxWidth + Math.max(0, rowCharms.size() - 1) * gapX;
-            if (rowWidth > maxRowWidth)
-                maxRowWidth = rowWidth;
+            List<Charm> row = levels.getOrDefault(d, new ArrayList<>());
+            double w = row.size() * boxWidth + Math.max(0, row.size() - 1) * gapX;
+            if (w > maxRowWidth) maxRowWidth = w;
         }
-
-        double virtualCanvasWidth = Math.max(800, maxRowWidth + 100);
+        double virtualWidth = Math.max(800, maxRowWidth + 100);
 
         Map<String, Double> charmXPositions = new HashMap<>();
-
         for (int d = 0; d <= maxDepth; d++) {
-            List<Charm> rowCharms = levels.getOrDefault(d, new ArrayList<>());
-            
-            // Layout optimization: Sort charms based on the average X-position of their prerequisites
+            List<Charm> row = new ArrayList<>(levels.getOrDefault(d, new ArrayList<>()));
+            // Sorting is handled by ViewModel if we wanted, but for now we'll do the visual barycenter here
             if (d > 0) {
-                rowCharms.sort(Comparator.comparingDouble(c -> {
-                    double sumX = 0;
-                    int count = 0;
+                row.sort(Comparator.comparingDouble(c -> {
+                    double sumX = 0; int count = 0;
                     if (c.getPrerequisiteGroups() != null) {
-                        for (Charm.PrerequisiteGroup group : c.getPrerequisiteGroups()) {
-                            for (String reqId : group.getCharmIds()) {
-                                if (charmXPositions.containsKey(reqId)) {
-                                    sumX += charmXPositions.get(reqId);
-                                    count++;
-                                }
+                        for (Charm.PrerequisiteGroup g : c.getPrerequisiteGroups()) {
+                            for (String rid : g.getCharmIds()) {
+                                if (charmXPositions.containsKey(rid)) { sumX += charmXPositions.get(rid); count++; }
                             }
                         }
                     }
-                    return count > 0 ? sumX / count : virtualCanvasWidth / 2.0;
+                    return count > 0 ? sumX / count : virtualWidth / 2.0;
                 }));
             } else {
-                rowCharms.sort(Comparator.comparing(Charm::getName));
+                row.sort(Comparator.comparing(Charm::getName));
             }
 
-            double rowWidth = rowCharms.size() * boxWidth + Math.max(0, rowCharms.size() - 1) * gapX;
-            double startX = (virtualCanvasWidth - rowWidth) / 2;
+            double rowWidth = row.size() * boxWidth + Math.max(0, row.size() - 1) * gapX;
+            double startX = (virtualWidth - rowWidth) / 2;
             double y = 40 + d * (boxHeight + gapY);
 
-            for (int i = 0; i < rowCharms.size(); i++) {
-                Charm c = rowCharms.get(i);
+            for (int i = 0; i < row.size(); i++) {
+                Charm c = row.get(i);
                 double x = startX + i * (boxWidth + gapX);
                 charmXPositions.put(c.getId(), x + boxWidth / 2.0);
 
-                VBox box = new VBox(5);
-                box.setAlignment(Pos.CENTER);
-                box.setPrefSize(boxWidth, boxHeight);
-                box.getStyleClass().add("charm-node");
-
-                Label nameLbl = new Label((c.isPotentiallyProblematicImport() ? "⚠️ " : "") + c.getName());
-                nameLbl.getStyleClass().add("charm-node-title");
-                nameLbl.setWrapText(true);
-
-                Label reqLbl;
-                if ("Evocation".equals(filterType)) {
-                    reqLbl = new Label("Ess " + c.getMinEssence());
-                } else {
-                    reqLbl = new Label(c.getAbility() + " " + c.getMinAbility() + ", Ess " + c.getMinEssence());
-                }
-                reqLbl.getStyleClass().add("charm-node-reqs");
-
-                box.getChildren().addAll(nameLbl, reqLbl);
-                if (c.isPotentiallyProblematicImport()) {
-                    Tooltip tt = new Tooltip(
-                            "Warning: This charm may have incomplete data due to a problematic PDF import.");
-                    tt.setWrapText(true);
-                    tt.setMaxWidth(250);
-                    Tooltip.install(box, tt);
-                }
-                box.setLayoutX(x);
-                box.setLayoutY(y);
+                VBox box = createNodeBox(c, boxWidth, boxHeight);
+                box.setLayoutX(x); box.setLayoutY(y);
+                box.setOnMouseClicked(e -> {
+                    viewModel.selectedCharmProperty().set(c);
+                    if (e.getClickCount() == 2) Platform.runLater(purchaseBtn::fire);
+                });
 
                 charmNodeMap.put(c.getId(), box);
                 charmCanvas.getChildren().add(box);
-
-                box.setOnMouseClicked(e -> {
-                    selectedCharm = c;
-                    detailTitle.setText(c.getName());
-
-                    List<String> prereqStrings = new ArrayList<>();
-                    if (c.getPrerequisiteGroups() != null) {
-                        for (Charm.PrerequisiteGroup group : c.getPrerequisiteGroups()) {
-                            if (group.getLabel() != null && !group.getLabel().isEmpty()) {
-                                prereqStrings.add(group.getLabel());
-                            } else {
-                                List<String> names = new ArrayList<>();
-                                for (String rid : group.getCharmIds()) {
-                                    String resolvedName = globalCharmNameMap.get(rid);
-                                    if (resolvedName == null) resolvedName = idToName.getOrDefault(rid, rid);
-                                    names.add(resolvedName);
-                                }
-                                String prefix = (group.getMinCount() > 0 && group.getMinCount() < group.getCharmIds().size()) 
-                                    ? "Any " + group.getMinCount() + " of: " : "";
-                                prereqStrings.add(prefix + String.join(", ", names));
-                            }
-                        }
-                    }
-                    String prereqStr = prereqStrings.isEmpty() ? "None" : String.join("; ", prereqStrings);
-
-                    String baseReqs;
-                    if ("Evocation".equals(filterType)) {
-                        baseReqs = "Mins: Ess " + c.getMinEssence() + "\nPrereqs: " + prereqStr;
-                    } else {
-                        baseReqs = "Mins: " + c.getAbility() + " " + c.getMinAbility() + ", Ess: "
-                                + c.getMinEssence() + "\nPrereqs: " + prereqStr;
-                    }
-                    if (c.isPotentiallyProblematicImport()) {
-                        baseReqs = "⚠️ WARNING: Problematic Import\n" + baseReqs;
-                    }
-                    detailReqs.setText(baseReqs);
-                    costLabel.setText(c.getCost() != null ? c.getCost() : "");
-                    typeLabel.setText(c.getType() != null ? c.getType() : "");
-                    durationLabel.setText(c.getDuration() != null ? c.getDuration() : "");
-                    updateKeywords(c.getKeywords(), kwFlow);
-                    descriptionLabel.setText(c.getFullText() != null ? c.getFullText() : "");
-
-                    updateLineHighlights(c.getId());
-
-                    toggleBtn.setVisible(true);
-                    editBtn.setVisible(true);
-                    editBtn.setManaged(true);
-                    String contextName = "Evocation".equals(filterType) ? artifactName : filterCombo.getValue();
-                    editBtn.setOnAction(ev -> {
-                        if (listener != null) {
-                            listener.onEditCharm(c, contextName, filterType, this::refresh);
-                        }
-                    });
-                    updateSidebarButton(c);
-
-                    if (e.getClickCount() == 2) {
-                        javafx.application.Platform.runLater(() -> toggleBtn.fire());
-                    }
-                });
             }
         }
 
-        toggleBtn.setOnAction(ev -> {
-            if (selectedCharm != null) {
-                boolean stackable = selectedCharm.getKeywords() != null
-                        && selectedCharm.getKeywords().contains("Stackable");
-                if (stackable) {
-                    data.addCharm(new PurchasedCharm(selectedCharm.getId(), selectedCharm.getName(),
-                            selectedCharm.getAbility()));
-                } else if (!data.hasCharm(selectedCharm.getId())) {
-                    data.addCharm(new PurchasedCharm(selectedCharm.getId(), selectedCharm.getName(),
-                            selectedCharm.getAbility()));
-                } else {
-                    data.removeCharm(selectedCharm.getId());
-                }
-                updateSidebarButton(selectedCharm);
-                updateWebNodeStyles();
-                Messenger.publish("refresh_all_ui");
-            }
-        });
+        // Draw Lines
+        for (Charm c : viewModel.getCurrentCharms()) {
+            VBox target = charmNodeMap.get(c.getId());
+            if (target == null || c.getPrerequisiteGroups() == null) continue;
+            for (Charm.PrerequisiteGroup group : c.getPrerequisiteGroups()) {
+                for (String reqId : group.getCharmIds()) {
+                    VBox source = charmNodeMap.get(reqId);
+                    if (source != null) {
+                        double startX = source.getLayoutX() + boxWidth / 2;
+                        double startY = source.getLayoutY() + boxHeight;
+                        double endX = target.getLayoutX() + boxWidth / 2;
+                        double endY = target.getLayoutY();
 
-        refundBtn.setOnAction(ev -> {
-            if (selectedCharm != null) {
-                data.removeOneCharm(selectedCharm.getId());
-                updateSidebarButton(selectedCharm);
-                updateWebNodeStyles();
-                Messenger.publish("refresh_all_ui");
-            }
-        });
-
-        deleteCustomBtn.setOnAction(ev -> {
-            String selectedName = detailTitle.getText();
-            Charm c = currentCharms.stream().filter(ch -> ch.getName().equals(selectedName)).findFirst().orElse(null);
-            if (c != null && c.isCustom()) {
-                String term = "Evocation".equals(filterType) ? "evocation" : "charm";
-                Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-                        "Are you sure you want to delete the custom " + term + " '" + c.getName() + "'?",
-                        ButtonType.YES, ButtonType.NO);
-                confirm.showAndWait().ifPresent(response -> {
-                    if (response == ButtonType.YES) {
-                        try {
-                            dataService.deleteCustomCharm(c);
-                            if (listener != null) {
-                                listener.onRefreshAllRequested();
-                            } else {
-                                refresh();
-                            }
-                        } catch (Exception ex) {
-                            logger.error("Failed to delete custom charm: {}", c.getName(), ex);
-                        }
-                    }
-                });
-            }
-        });
-
-        for (Charm c : charms) {
-            VBox targetBox = charmNodeMap.get(c.getId());
-            if (targetBox != null && c.getPrerequisiteGroups() != null) {
-                for (Charm.PrerequisiteGroup group : c.getPrerequisiteGroups()) {
-                    for (String reqId : group.getCharmIds()) {
-                        VBox sourceBox = charmNodeMap.get(reqId);
-                        if (sourceBox != null) {
-                        double startX = sourceBox.getLayoutX() + boxWidth / 2;
-                        double startY = sourceBox.getLayoutY() + boxHeight;
-                        double endX = targetBox.getLayoutX() + boxWidth / 2;
-                        double endY = targetBox.getLayoutY();
-
-                        CubicCurve curve = new CubicCurve(startX, startY, startX, startY + gapY / 1.5, endX,
-                                endY - gapY / 1.5, endX, endY);
+                        CubicCurve curve = new CubicCurve(startX, startY, startX, startY + gapY/1.5, endX, endY - gapY/1.5, endX, endY);
                         curve.getStyleClass().add("charm-line");
                         charmCanvas.getChildren().add(curve);
                         curve.toBack();
 
-                        // Register connections for highlighting
                         charmIncomingLines.computeIfAbsent(c.getId(), k -> new ArrayList<>()).add(curve);
                         charmOutgoingLines.computeIfAbsent(reqId, k -> new ArrayList<>()).add(curve);
                     }
                 }
             }
         }
-        }
 
         double minHeight = (maxDepth + 1) * (boxHeight + gapY) + 40;
-        charmCanvas.setPrefSize(virtualCanvasWidth, minHeight);
-        charmCanvas.setMinSize(virtualCanvasWidth, minHeight);
+        charmCanvas.setPrefSize(virtualWidth, minHeight);
+        charmCanvas.setMinSize(virtualWidth, minHeight);
         updateWebNodeStyles();
     }
 
+    private VBox createNodeBox(Charm c, double w, double h) {
+        VBox box = new VBox(5);
+        box.setAlignment(Pos.CENTER);
+        box.setPrefSize(w, h);
+        box.getStyleClass().add("charm-node");
+
+        Label name = new Label((c.isPotentiallyProblematicImport() ? "⚠️ " : "") + c.getName());
+        name.getStyleClass().add("charm-node-title");
+        name.setWrapText(true);
+
+        Label reqs = new Label("Evocation".equals(viewModel.filterTypeProperty().get()) ? 
+            "Ess " + c.getMinEssence() : c.getAbility() + " " + c.getMinAbility() + ", Ess " + c.getMinEssence());
+        reqs.getStyleClass().add("charm-node-reqs");
+
+        box.getChildren().addAll(name, reqs);
+        if (c.isPotentiallyProblematicImport()) {
+            Tooltip tt = new Tooltip("Warning: This charm may have incomplete data due to a problematic PDF import.");
+            tt.setWrapText(true); tt.setMaxWidth(250);
+            Tooltip.install(box, tt);
+        }
+        return box;
+    }
+
+    private void updateWebNodeStyles() {
+        Charm selected = viewModel.selectedCharmProperty().get();
+        for (Charm c : viewModel.getCurrentCharms()) {
+            VBox box = charmNodeMap.get(c.getId());
+            if (box == null) continue;
+            box.getStyleClass().removeAll("charm-node-unselected", "charm-node-selected", "charm-node-ineligible");
+            
+            boolean isSelected = selected != null && selected.getId().equals(c.getId());
+            boolean hasCharm = viewModel.getData().hasCharm(c.getId());
+            
+            if (isSelected || hasCharm) {
+                box.getStyleClass().add("charm-node-selected");
+            } else if (c.isEligible(viewModel.getData())) {
+                box.getStyleClass().add("charm-node-unselected");
+            } else {
+                box.getStyleClass().add("charm-node-ineligible");
+            }
+
+            if (c.isCustom()) {
+                if (!box.getStyleClass().contains("charm-node-custom")) box.getStyleClass().add("charm-node-custom");
+            } else {
+                box.getStyleClass().remove("charm-node-custom");
+            }
+        }
+    }
+
     private void updateLineHighlights(String charmId) {
-        // Clear previous highlights
         for (CubicCurve line : currentlyHighlightedLines) {
             line.getStyleClass().removeAll("charm-line-highlight-prereq", "charm-line-highlight-dependent");
         }
         currentlyHighlightedLines.clear();
 
-        if (charmId == null)
-            return;
+        if (charmId == null) return;
 
-        // Highlight prerequisites (incoming)
         List<CubicCurve> incoming = charmIncomingLines.get(charmId);
         if (incoming != null) {
             for (CubicCurve line : incoming) {
@@ -565,7 +382,6 @@ public class CharmTreeComponent extends SplitPane {
             }
         }
 
-        // Highlight dependents (outgoing)
         List<CubicCurve> outgoing = charmOutgoingLines.get(charmId);
         if (outgoing != null) {
             for (CubicCurve line : outgoing) {
@@ -575,127 +391,13 @@ public class CharmTreeComponent extends SplitPane {
         }
     }
 
-    private void updateSidebarButton(Charm c) {
-        if (c == null) return;
-        int count = data.getCharmCount(c.getId());
-        boolean isOxBody = c.getName().equals("Ox-Body Technique");
-        boolean stackable = c.getKeywords() != null && c.getKeywords().contains("Stackable");
-
-        deleteCustomBtn.setVisible(c.isCustom());
-        deleteCustomBtn.setManaged(c.isCustom());
-
-        String term = "Evocation".equals(filterType) ? "Evocation" : "Charm";
-        if (stackable) {
-            int limit = isOxBody ? data.getAbility(Ability.RESISTANCE).get() : 10; // Default limit for other stackable
-            toggleBtn.setText("Purchase (" + count + "/" + limit + ")");
-            toggleBtn.setDisable(count >= limit || !c.isEligible(data));
-            toggleBtn.setStyle("-fx-base: #d4af37;");
-            refundBtn.setVisible(count > 0);
-            refundBtn.setManaged(count > 0);
-            refundBtn.setText("Refund " + term);
-        } else if (data.hasCharm(c.getId())) {
-            toggleBtn.setText("Refund " + term);
-            toggleBtn.setDisable(false);
-            toggleBtn.setStyle("-fx-base: #a03030;");
-            refundBtn.setVisible(false);
-            refundBtn.setManaged(false);
-        } else if (c.isEligible(data)) {
-            toggleBtn.setText("Purchase " + term);
-            toggleBtn.setDisable(false);
-            toggleBtn.setStyle("-fx-base: #d4af37;");
-            refundBtn.setVisible(false);
-            refundBtn.setManaged(false);
-        } else {
-            toggleBtn.setText("Requirements Not Met");
-            toggleBtn.setDisable(true);
-            toggleBtn.setStyle("-fx-base: #444444;");
-            refundBtn.setVisible(false);
-            refundBtn.setManaged(false);
-        }
-
-        deleteCustomBtn.setText("Delete Custom " + term);
-    }
-
-    public void updateWebNodeStyles() {
-        for (Charm c : currentCharms) {
-            VBox box = charmNodeMap.get(c.getId());
-            if (box != null) {
-                box.getStyleClass().removeAll("charm-node-unselected", "charm-node-selected", "charm-node-ineligible");
-                boolean bought = data.hasCharm(c.getId());
-                if (bought) {
-                    box.getStyleClass().add("charm-node-selected");
-                } else if (c.isEligible(data)) {
-                    box.getStyleClass().add("charm-node-unselected");
-                } else {
-                    box.getStyleClass().add("charm-node-ineligible");
-                }
-                if (c.isCustom()) {
-                    if (!box.getStyleClass().contains("charm-node-custom"))
-                        box.getStyleClass().add("charm-node-custom");
-                } else {
-                    box.getStyleClass().remove("charm-node-custom");
-                }
-
-                if (c.isPotentiallyProblematicImport()) {
-                    if (!box.getStyleClass().contains("charm-node-problematic"))
-                        box.getStyleClass().add("charm-node-problematic");
-                } else {
-                    box.getStyleClass().remove("charm-node-problematic");
-                }
-            }
-        }
-    }
-
-    private void updateKeywords(List<String> keywords, FlowPane kwFlow) {
-        kwFlow.getChildren().clear();
-        if (keywords == null || keywords.isEmpty()) {
-            return;
-        }
-
-        for (int i = 0; i < keywords.size(); i++) {
-            String name = keywords.get(i).trim();
-            if (name.isEmpty())
-                continue;
-
-            Label label = new Label(name);
-            label.getStyleClass().add("sidebar-stat");
-            label.getStyleClass().add("keyword-label");
-
-            String def = keywordDefs.get(name);
-            if (def != null) {
-                Tooltip tooltip = new Tooltip(def);
-                tooltip.setWrapText(true);
-                tooltip.setMaxWidth(300);
-                label.setTooltip(tooltip);
-                label.getStyleClass().add("keyword-with-def");
-            }
-
-            kwFlow.getChildren().add(label);
-
-            if (i < keywords.size() - 1) {
-                Label comma = new Label(", ");
-                comma.getStyleClass().add("sidebar-stat");
-                kwFlow.getChildren().add(comma);
-            }
-        }
-    }
-
     public void selectCharm(String charmId) {
         VBox node = charmNodeMap.get(charmId);
         if (node != null) {
-            // Simulate a click
-            javafx.application.Platform.runLater(() -> {
-                node.fireEvent(new javafx.scene.input.MouseEvent(javafx.scene.input.MouseEvent.MOUSE_CLICKED, 0, 0, 0,
-                        0, javafx.scene.input.MouseButton.PRIMARY, 1, false, false, false, false, true, false, false,
-                        true, false, false, null));
-            });
+            Platform.runLater(() -> node.fireEvent(new javafx.scene.input.MouseEvent(
+                javafx.scene.input.MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, 
+                javafx.scene.input.MouseButton.PRIMARY, 1, false, false, false, false, 
+                true, false, false, true, false, false, null)));
         }
-    }
-
-    public String getCurrentFilterValue() {
-        if (filterCombo != null) {
-            return filterCombo.getValue();
-        }
-        return artifactId;
     }
 }

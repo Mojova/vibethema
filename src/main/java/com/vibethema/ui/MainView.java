@@ -1,7 +1,6 @@
 package com.vibethema.ui;
 
 import com.vibethema.model.*;
-import com.vibethema.ui.charms.CharmTreeComponent;
 import com.vibethema.ui.equipment.DefaultEquipmentDialogService;
 import com.vibethema.ui.equipment.EquipmentTab;
 import com.vibethema.ui.experience.ExperienceTab;
@@ -43,22 +42,6 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
     private Map<String, CharmsViewModel> charmViewModels = new HashMap<>();
     private final List<NotificationObserver> observers = new ArrayList<>();
 
-    private final CharmTreeComponent.CharmTreeListener charmTreeListener = new CharmTreeComponent.CharmTreeListener() {
-        @Override
-        public void onCreateCharm(String contextId, String contextName, String filterType, Runnable onSave) {
-            showCreateCharmDialog(contextId, contextName, filterType, onSave);
-        }
-
-        @Override
-        public void onEditCharm(Charm charm, String contextName, String filterType, Runnable onSave) {
-            showEditCharmDialog(charm, contextName, filterType, onSave);
-        }
-
-        @Override
-        public void onRefreshAllRequested() {
-            charmTabs.values().forEach(CharmsTab::refresh);
-        }
-    };
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -172,6 +155,18 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
             String suggestName = (payload != null && payload.length > 0) ? (String) payload[0] : "Character.pdf";
             handleExportPdf(suggestName);
         });
+
+        addObserver("open_create_charm_dialog", (name, payload) -> {
+            if (payload != null && payload.length >= 4) {
+                showCreateCharmDialog((String) payload[0], (String) payload[1], (String) payload[2], (Runnable) payload[3]);
+            }
+        });
+
+        addObserver("open_edit_charm_dialog", (name, payload) -> {
+            if (payload != null && payload.length >= 4) {
+                showEditCharmDialog((Charm) payload[0], (String) payload[1], (String) payload[2], (Runnable) payload[3]);
+            }
+        });
     }
 
     private void addObserver(String name, NotificationObserver observer) {
@@ -189,7 +184,6 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         ViewTuple<CharmsTab, CharmsViewModel> vt = de.saxsys.mvvmfx.FluentViewLoader
                 .javaView(CharmsTab.class)
                 .viewModel(cvm)
-                .codeBehind(new CharmsTab(this.charmTreeListener))
                 .load();
         
         CharmsTab view = (CharmsTab) vt.getView();
