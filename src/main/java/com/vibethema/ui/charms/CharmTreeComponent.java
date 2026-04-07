@@ -326,8 +326,32 @@ public class CharmTreeComponent extends SplitPane {
 
         double virtualCanvasWidth = Math.max(800, maxRowWidth + 100);
 
+        Map<String, Double> charmXPositions = new HashMap<>();
+
         for (int d = 0; d <= maxDepth; d++) {
             List<Charm> rowCharms = levels.getOrDefault(d, new ArrayList<>());
+            
+            // Layout optimization: Sort charms based on the average X-position of their prerequisites
+            if (d > 0) {
+                rowCharms.sort(Comparator.comparingDouble(c -> {
+                    double sumX = 0;
+                    int count = 0;
+                    if (c.getPrerequisiteGroups() != null) {
+                        for (Charm.PrerequisiteGroup group : c.getPrerequisiteGroups()) {
+                            for (String reqId : group.getCharmIds()) {
+                                if (charmXPositions.containsKey(reqId)) {
+                                    sumX += charmXPositions.get(reqId);
+                                    count++;
+                                }
+                            }
+                        }
+                    }
+                    return count > 0 ? sumX / count : virtualCanvasWidth / 2.0;
+                }));
+            } else {
+                rowCharms.sort(Comparator.comparing(Charm::getName));
+            }
+
             double rowWidth = rowCharms.size() * boxWidth + Math.max(0, rowCharms.size() - 1) * gapX;
             double startX = (virtualCanvasWidth - rowWidth) / 2;
             double y = 40 + d * (boxHeight + gapY);
@@ -335,6 +359,7 @@ public class CharmTreeComponent extends SplitPane {
             for (int i = 0; i < rowCharms.size(); i++) {
                 Charm c = rowCharms.get(i);
                 double x = startX + i * (boxWidth + gapX);
+                charmXPositions.put(c.getId(), x + boxWidth / 2.0);
 
                 VBox box = new VBox(5);
                 box.setAlignment(Pos.CENTER);
