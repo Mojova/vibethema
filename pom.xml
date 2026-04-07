@@ -207,14 +207,16 @@
               <expandEmptyElements>false</expandEmptyElements>
             </sortPom>
           </pom>
-          <xml>
-            <includes>
-              <include>src/main/resources/**/*.xml</include>
-            </includes>
-            <eclipseWtp>
-              <type>xml</type>
-            </eclipseWtp>
-          </xml>
+          <formats>
+            <format>
+              <includes>
+                <include>src/main/resources/**/*.xml</include>
+              </includes>
+              <eclipseWtp>
+                <type>XML</type>
+              </eclipseWtp>
+            </format>
+          </formats>
         </configuration>
       </plugin>
     </plugins>
