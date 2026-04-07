@@ -3,7 +3,6 @@ package com.vibethema.service.pdf.base;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.vibethema.service.CharmDataService;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -12,13 +11,34 @@ import java.nio.file.Path;
 import java.util.*;
 
 public abstract class BaseCharmExtractor {
-    protected static final List<String> ABILITIES = Arrays.asList(
-            "Archery", "Athletics", "Awareness", "Brawl", "Bureaucracy",
-            "Craft", "Dodge", "Integrity", "Investigation", "Larceny",
-            "Linguistics", "Lore", "Martial Arts", "Medicine", "Melee",
-            "Occult", "Performance", "Presence", "Resistance", "Ride",
-            "Sail", "Socialize", "Stealth", "Survival", "Thrown", "War"
-    );
+    protected static final List<String> ABILITIES =
+            Arrays.asList(
+                    "Archery",
+                    "Athletics",
+                    "Awareness",
+                    "Brawl",
+                    "Bureaucracy",
+                    "Craft",
+                    "Dodge",
+                    "Integrity",
+                    "Investigation",
+                    "Larceny",
+                    "Linguistics",
+                    "Lore",
+                    "Martial Arts",
+                    "Medicine",
+                    "Melee",
+                    "Occult",
+                    "Performance",
+                    "Presence",
+                    "Resistance",
+                    "Ride",
+                    "Sail",
+                    "Socialize",
+                    "Stealth",
+                    "Survival",
+                    "Thrown",
+                    "War");
 
     protected final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     protected Path overrideOutputPath;
@@ -35,10 +55,10 @@ public abstract class BaseCharmExtractor {
         text = text.replaceAll("(?i)\\bE X 3\\b", "");
         text = text.replaceAll("(?i)\\bC H A R M S\\b", "");
         text = text.replaceAll("(?i)\\bE X A L T E D\\s+T H I R D\\s+E D I T I O N\\b", "");
-        
+
         // Remove standalone page numbers
         text = text.replaceAll("\\n\\s*\\d{1,3}\\s*\\n", "\n");
-        
+
         text = text.replaceAll("Syntax Warning:.*", "");
         text = text.replaceAll("[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f\\x7f]", "");
 
@@ -50,7 +70,8 @@ public abstract class BaseCharmExtractor {
             line = line.trim();
             if (line.isEmpty()) {
                 // If the previous line ended with a hyphen, we assume the paragraph continues
-                if (currentPara.length() > 0 && currentPara.charAt(currentPara.length() - 1) == '-') {
+                if (currentPara.length() > 0
+                        && currentPara.charAt(currentPara.length() - 1) == '-') {
                     continue;
                 }
                 if (currentPara.length() > 0) {
@@ -76,7 +97,8 @@ public abstract class BaseCharmExtractor {
                     continue;
                 }
 
-                boolean isBullet = line.startsWith("•") || line.startsWith("- ") || line.startsWith("* ");
+                boolean isBullet =
+                        line.startsWith("•") || line.startsWith("- ") || line.startsWith("* ");
                 boolean isContinuation = Character.isLowerCase(line.charAt(0)) || lastChar == ',';
 
                 if (isBullet || (!isContinuation && ".!? :;".indexOf(lastChar) != -1)) {
@@ -101,22 +123,25 @@ public abstract class BaseCharmExtractor {
     protected boolean isSidebarLine(String line) {
         String trimmed = line.trim();
         if (trimmed.isEmpty()) return false;
-        
+
         // Handle standalone page numbers and short page junk (e.g. "274", "EX3")
-        if (trimmed.matches("\\d{1,3}") || (trimmed.toUpperCase().equals(trimmed) && trimmed.length() <= 3)) {
+        if (trimmed.matches("\\d{1,3}")
+                || (trimmed.toUpperCase().equals(trimmed) && trimmed.length() <= 3)) {
             return true;
         }
 
         String upper = trimmed.toUpperCase();
         if (upper.startsWith("ON ") && trimmed.length() < 100) return true;
         if (upper.startsWith("C H A P T E R") || upper.contains("SOLAR CHARMS")) return true;
-        
+
         // Common 3e formatting artifacts
-        if (upper.equals("EX3") || upper.equals("CHARMS") || upper.startsWith("CHAPTER")) return true;
-        
+        if (upper.equals("EX3") || upper.equals("CHARMS") || upper.startsWith("CHAPTER"))
+            return true;
+
         // Short all-caps lines are often headers/sidebars
         if (upper.equals(trimmed) && trimmed.length() > 3 && trimmed.length() < 70) {
-            if (upper.contains("CHAPTER") || upper.contains("SOLAR") || upper.contains("EX3")) return true;
+            if (upper.contains("CHAPTER") || upper.contains("SOLAR") || upper.contains("EX3"))
+                return true;
         }
         return false;
     }
@@ -128,7 +153,7 @@ public abstract class BaseCharmExtractor {
         for (Map<String, Object> charm : charms) {
             String ability = (String) charm.get("ability");
             String currentCharmId = (String) charm.get("id");
-            
+
             @SuppressWarnings("unchecked")
             List<Object> rawPrereqs = (List<Object>) charm.get("prerequisites");
             List<Map<String, Object>> resolvedGroups = new ArrayList<>();
@@ -142,8 +167,11 @@ public abstract class BaseCharmExtractor {
                         String pName = (String) p;
                         String cleanedName = pName.replaceAll("\\s+", " ").trim();
                         if (cleanedName.isEmpty()) continue;
-                        
-                        String pId = UUID.nameUUIDFromBytes((cleanedName + "|" + ability.trim()).getBytes()).toString();
+
+                        String pId =
+                                UUID.nameUUIDFromBytes(
+                                                (cleanedName + "|" + ability.trim()).getBytes())
+                                        .toString();
                         ids.add(pId);
                         if (!allExtractedIds.contains(pId)) problematic = true;
                     }
@@ -161,7 +189,7 @@ public abstract class BaseCharmExtractor {
                         @SuppressWarnings("unchecked")
                         List<String> names = (List<String>) gMap.get("names");
                         List<String> ids = new ArrayList<>();
-                        
+
                         if (names != null) {
                             for (String name : names) {
                                 if (name.startsWith("__OTHERS")) {
@@ -171,13 +199,19 @@ public abstract class BaseCharmExtractor {
                                     boolean nonExcellency = name.contains("|non-Excellency");
 
                                     if (name.startsWith("__OTHERS_EXCEPT:")) {
-                                        String targetName = name.substring("__OTHERS_EXCEPT:".length()).split("\\|")[0].replace("__", "");
-                                        TransitiveMetadata meta = calculateTransitiveMetadata(targetName, ability, charms);
+                                        String targetName =
+                                                name.substring("__OTHERS_EXCEPT:".length())
+                                                        .split("\\|")[0]
+                                                        .replace("__", "");
+                                        TransitiveMetadata meta =
+                                                calculateTransitiveMetadata(
+                                                        targetName, ability, charms);
                                         exclusions.addAll(meta.mandatoryExcludedIds);
                                         extraMinCount = meta.additionalMinCount;
                                     }
 
-                                    // Add all other charm IDs from this ability that are not excluded
+                                    // Add all other charm IDs from this ability that are not
+                                    // excluded
                                     for (Map<String, Object> other : charms) {
                                         String otherAbility = (String) other.get("ability");
                                         if (!ability.equals(otherAbility)) continue;
@@ -185,28 +219,39 @@ public abstract class BaseCharmExtractor {
                                         String otherId = (String) other.get("id");
                                         String otherName = (String) other.get("name");
                                         if (!exclusions.contains(otherId)) {
-                                            if (nonExcellency && (otherName.toLowerCase().contains("excellency") || 
-                                                                 otherName.toLowerCase().contains("ex-cellency"))) {
+                                            if (nonExcellency
+                                                    && (otherName
+                                                                    .toLowerCase()
+                                                                    .contains("excellency")
+                                                            || otherName
+                                                                    .toLowerCase()
+                                                                    .contains("ex-cellency"))) {
                                                 continue;
                                             }
                                             ids.add(otherId);
                                         }
                                     }
-                                    
-                                    // Update minCount for this group if we added extra counts from AE's prereqs
+
+                                    // Update minCount for this group if we added extra counts from
+                                    // AE's prereqs
                                     if (extraMinCount > 0) {
-                                        int currentMinCount = (int) gMap.getOrDefault("minCount", 0);
+                                        int currentMinCount =
+                                                (int) gMap.getOrDefault("minCount", 0);
                                         gMap.put("minCount", currentMinCount + extraMinCount);
                                     }
                                 } else {
                                     String cleanedName = name.replaceAll("\\s+", " ").trim();
-                                    String pId = UUID.nameUUIDFromBytes((cleanedName + "|" + ability.trim()).getBytes()).toString();
+                                    String pId =
+                                            UUID.nameUUIDFromBytes(
+                                                            (cleanedName + "|" + ability.trim())
+                                                                    .getBytes())
+                                                    .toString();
                                     ids.add(pId);
                                     if (!allExtractedIds.contains(pId)) problematic = true;
                                 }
                             }
                         }
-                        
+
                         Map<String, Object> group = new LinkedHashMap<>();
                         if (gMap.containsKey("label")) group.put("label", gMap.get("label"));
                         group.put("charmIds", ids);
@@ -222,8 +267,17 @@ public abstract class BaseCharmExtractor {
         }
     }
 
-    protected void saveCharms(Map<String, List<Map<String, Object>>> charmsByAbility, String suffix, boolean isMartialArts) throws IOException {
-        Path outDir = overrideOutputPath != null ? overrideOutputPath : (isMartialArts ? CharmDataService.getUserMartialArtsPath() : CharmDataService.getUserCharmsPath());
+    protected void saveCharms(
+            Map<String, List<Map<String, Object>>> charmsByAbility,
+            String suffix,
+            boolean isMartialArts)
+            throws IOException {
+        Path outDir =
+                overrideOutputPath != null
+                        ? overrideOutputPath
+                        : (isMartialArts
+                                ? CharmDataService.getUserMartialArtsPath()
+                                : CharmDataService.getUserCharmsPath());
         if (!Files.exists(outDir)) Files.createDirectories(outDir);
 
         for (Map.Entry<String, List<Map<String, Object>>> entry : charmsByAbility.entrySet()) {
@@ -249,10 +303,12 @@ public abstract class BaseCharmExtractor {
     }
 
     @SuppressWarnings("unchecked")
-    private TransitiveMetadata calculateTransitiveMetadata(String targetName, String ability, Collection<Map<String, Object>> charms) {
+    private TransitiveMetadata calculateTransitiveMetadata(
+            String targetName, String ability, Collection<Map<String, Object>> charms) {
         TransitiveMetadata meta = new TransitiveMetadata();
-        String rootId = UUID.nameUUIDFromBytes((targetName + "|" + ability.trim()).getBytes()).toString();
-        
+        String rootId =
+                UUID.nameUUIDFromBytes((targetName + "|" + ability.trim()).getBytes()).toString();
+
         Set<String> visited = new HashSet<>();
         Queue<String> queue = new LinkedList<>();
         queue.add(rootId);
@@ -263,19 +319,28 @@ public abstract class BaseCharmExtractor {
             if (visited.contains(currId)) continue;
             visited.add(currId);
 
-            Map<String, Object> charm = charms.stream().filter(c -> c.get("id").equals(currId)).findFirst().orElse(null);
+            Map<String, Object> charm =
+                    charms.stream()
+                            .filter(c -> c.get("id").equals(currId))
+                            .findFirst()
+                            .orElse(null);
             if (charm == null) continue;
 
             List<Object> rawPrereqs = (List<Object>) charm.get("prerequisites");
-            List<Map<String, Object>> resolvedGroups = (List<Map<String, Object>>) charm.get("prerequisiteGroups");
-            
-            if ((rawPrereqs == null || rawPrereqs.isEmpty()) && (resolvedGroups == null || resolvedGroups.isEmpty())) continue;
+            List<Map<String, Object>> resolvedGroups =
+                    (List<Map<String, Object>>) charm.get("prerequisiteGroups");
+
+            if ((rawPrereqs == null || rawPrereqs.isEmpty())
+                    && (resolvedGroups == null || resolvedGroups.isEmpty())) continue;
 
             if (rawPrereqs != null && !rawPrereqs.isEmpty()) {
                 if (rawPrereqs.get(0) instanceof String) {
                     // Mandatory simple list
                     for (Object p : rawPrereqs) {
-                        String pId = UUID.nameUUIDFromBytes(((String) p + "|" + ability.trim()).getBytes()).toString();
+                        String pId =
+                                UUID.nameUUIDFromBytes(
+                                                ((String) p + "|" + ability.trim()).getBytes())
+                                        .toString();
                         meta.mandatoryExcludedIds.add(pId);
                         queue.add(pId);
                     }
@@ -289,7 +354,11 @@ public abstract class BaseCharmExtractor {
                         boolean isMandatory = (minCount == 0 || minCount >= names.size());
 
                         for (String pName : names) {
-                            String pId = UUID.nameUUIDFromBytes((pName.trim() + "|" + ability.trim()).getBytes()).toString();
+                            String pId =
+                                    UUID.nameUUIDFromBytes(
+                                                    (pName.trim() + "|" + ability.trim())
+                                                            .getBytes())
+                                            .toString();
                             if (isMandatory) {
                                 meta.mandatoryExcludedIds.add(pId);
                                 queue.add(pId);

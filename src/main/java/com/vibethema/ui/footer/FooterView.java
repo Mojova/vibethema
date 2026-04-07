@@ -1,18 +1,19 @@
 package com.vibethema.ui.footer;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import com.vibethema.viewmodel.footer.FooterViewModel;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
+import java.net.URL;
+import java.util.Map;
+import java.util.ResourceBundle;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -24,14 +25,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import java.net.URL;
-import java.util.Map;
-import java.util.ResourceBundle;
 
 public class FooterView extends VBox implements JavaView<FooterViewModel>, Initializable {
 
-    @InjectViewModel
-    private FooterViewModel viewModel;
+    @InjectViewModel private FooterViewModel viewModel;
 
     private final Map<String, Label> labels = new java.util.HashMap<>();
     private Button finalizeBtn;
@@ -61,14 +58,22 @@ public class FooterView extends VBox implements JavaView<FooterViewModel>, Initi
 
         finalizeBtn = new Button("Finalize Character");
         finalizeBtn.getStyleClass().add("action-btn");
-        finalizeBtn.setStyle("-fx-background-color: #d4af37; -fx-text-fill: black; -fx-font-weight: bold;");
+        finalizeBtn.setStyle(
+                "-fx-background-color: #d4af37; -fx-text-fill: black; -fx-font-weight: bold;");
 
-        row1.getChildren().addAll(
-                casteLabel, favoredLabel, attrLabel, abilitiesLabel, 
-                specialtiesLabel, charmsLabel, bpLabel, 
-                regularXpLabel, solarXpLabel, 
-                spacer, finalizeBtn
-        );
+        row1.getChildren()
+                .addAll(
+                        casteLabel,
+                        favoredLabel,
+                        attrLabel,
+                        abilitiesLabel,
+                        specialtiesLabel,
+                        charmsLabel,
+                        bpLabel,
+                        regularXpLabel,
+                        solarXpLabel,
+                        spacer,
+                        finalizeBtn);
 
         getChildren().add(row1);
 
@@ -85,7 +90,16 @@ public class FooterView extends VBox implements JavaView<FooterViewModel>, Initi
         specialtiesLabel.textProperty().bind(vm.specialtiesTextProperty());
         charmsLabel.textProperty().bind(vm.charmsTextProperty());
 
-        for (Label l : new Label[]{bpLabel, casteLabel, favoredLabel, attrLabel, abilitiesLabel, specialtiesLabel, charmsLabel}) {
+        for (Label l :
+                new Label[] {
+                    bpLabel,
+                    casteLabel,
+                    favoredLabel,
+                    attrLabel,
+                    abilitiesLabel,
+                    specialtiesLabel,
+                    charmsLabel
+                }) {
             l.visibleProperty().bind(vm.creationModeVisibleProperty());
             l.managedProperty().bind(l.visibleProperty());
         }
@@ -94,7 +108,12 @@ public class FooterView extends VBox implements JavaView<FooterViewModel>, Initi
         finalizeBtn.visibleProperty().bind(vm.creationModeVisibleProperty());
         finalizeBtn.managedProperty().bind(finalizeBtn.visibleProperty());
         finalizeBtn.disableProperty().bind(vm.finalizeDisabledProperty());
-        finalizeBtn.tooltipProperty().bind(Bindings.createObjectBinding(() -> new Tooltip(vm.finalizeTooltipProperty().get()), vm.finalizeTooltipProperty()));
+        finalizeBtn
+                .tooltipProperty()
+                .bind(
+                        Bindings.createObjectBinding(
+                                () -> new Tooltip(vm.finalizeTooltipProperty().get()),
+                                vm.finalizeTooltipProperty()));
         finalizeBtn.setOnAction(e -> vm.finalizeCharacter());
 
         // Experience Mode bindings
@@ -103,7 +122,7 @@ public class FooterView extends VBox implements JavaView<FooterViewModel>, Initi
         solarXpLabel.textProperty().bind(vm.solarXpTextProperty());
         solarXpLabel.styleProperty().bind(vm.solarXpStyleProperty());
 
-        for (Label l : new Label[]{regularXpLabel, solarXpLabel}) {
+        for (Label l : new Label[] {regularXpLabel, solarXpLabel}) {
             l.visibleProperty().bind(vm.experiencedModeVisibleProperty());
             l.managedProperty().bind(l.visibleProperty());
         }

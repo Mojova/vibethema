@@ -1,18 +1,16 @@
 package com.vibethema.model;
 
-import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class AttackPoolCalculationTest {
 
@@ -30,19 +28,19 @@ public class AttackPoolCalculationTest {
         data.getAttribute(Attribute.DEXTERITY).set(3);
         data.getAttribute(Attribute.STRENGTH).set(3);
         data.getAbility(Ability.MELEE).set(3);
-        
+
         Weapon sword = new Weapon("Steel Sword");
         sword.setRange(Weapon.WeaponRange.CLOSE);
         sword.setAccuracy(2); // Withering accuracy
         sword.setDamage(4);
         sword.setDefense(1);
         data.getWeapons().add(sword);
-        
+
         data.updateAttackPools();
-        
+
         assertEquals(1, data.getAttackPools().size());
         AttackPoolData pool = data.getAttackPools().get(0);
-        
+
         // Withering = Dex(3) + Melee(3) + Spec(0) + Acc(2) = 8
         assertEquals("8", pool.getWitheringPool());
         // Decisive = Dex(3) + Melee(3) + Spec(0) = 6
@@ -57,19 +55,19 @@ public class AttackPoolCalculationTest {
     void testArcheryAttackCalculation() {
         data.getAttribute(Attribute.DEXTERITY).set(4);
         data.getAbility(Ability.ARCHERY).set(2);
-        
+
         Weapon bow = new Weapon("Longbow");
         bow.setRange(Weapon.WeaponRange.ARCHERY);
         bow.setType(Weapon.WeaponType.MORTAL);
         bow.setCategory(Weapon.WeaponCategory.MEDIUM);
-        
+
         // These are automatically set by updateStats() in Weapon:
         // C:-2 | S:4 | M:2 | L:0 | E:-2
-        
+
         data.getWeapons().add(bow);
-        
+
         data.updateAttackPools();
-        
+
         AttackPoolData pool = data.getAttackPools().get(0);
         // Base = Dex(4) + Archery(2) = 6
         // C: 6-2=4 | S: 6+4=10 | M: 6+2=8 | L: 6+0=6 | E: 6-2=4
@@ -81,8 +79,11 @@ public class AttackPoolCalculationTest {
         Weapon sword = new Weapon("Steel Sword");
         sword.setEquipped(false);
         data.getWeapons().add(sword);
-        
+
         data.updateAttackPools();
-        assertEquals(1, data.getAttackPools().size(), "Pools should be generated even for unequipped weapons");
+        assertEquals(
+                1,
+                data.getAttackPools().size(),
+                "Pools should be generated even for unequipped weapons");
     }
 }

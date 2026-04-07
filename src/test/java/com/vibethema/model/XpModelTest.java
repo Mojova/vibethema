@@ -1,23 +1,20 @@
 package com.vibethema.model;
 
-import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
- * Unit tests for the XpAward model and the XP-related fields
- * in CharacterData and CharacterSaveState.
+ * Unit tests for the XpAward model and the XP-related fields in CharacterData and
+ * CharacterSaveState.
  */
 public class XpModelTest {
 
@@ -119,14 +116,16 @@ public class XpModelTest {
 
         assertEquals(3, data.getXpAwards().size());
 
-        int totalRegular = data.getXpAwards().stream()
-            .filter(a -> !a.isSolar())
-            .mapToInt(XpAward::getAmount)
-            .sum();
-        int totalSolar = data.getXpAwards().stream()
-            .filter(XpAward::isSolar)
-            .mapToInt(XpAward::getAmount)
-            .sum();
+        int totalRegular =
+                data.getXpAwards().stream()
+                        .filter(a -> !a.isSolar())
+                        .mapToInt(XpAward::getAmount)
+                        .sum();
+        int totalSolar =
+                data.getXpAwards().stream()
+                        .filter(XpAward::isSolar)
+                        .mapToInt(XpAward::getAmount)
+                        .sum();
 
         assertEquals(8, totalRegular);
         assertEquals(2, totalSolar);
@@ -251,6 +250,8 @@ public class XpModelTest {
         state.xpAwards = null;
         data.importState(state, new com.vibethema.service.EquipmentDataService());
 
-        assertTrue(data.getXpAwards().isEmpty(), "Importing state without awards should clear existing awards");
+        assertTrue(
+                data.getXpAwards().isEmpty(),
+                "Importing state without awards should clear existing awards");
     }
 }

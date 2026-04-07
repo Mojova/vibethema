@@ -1,41 +1,34 @@
 package com.vibethema.ui.equipment;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import com.vibethema.ui.util.UIUtils;
+import com.vibethema.viewmodel.equipment.ArmorRowViewModel;
+import com.vibethema.viewmodel.equipment.EquipmentViewModel;
+import com.vibethema.viewmodel.equipment.HearthstoneRowViewModel;
+import com.vibethema.viewmodel.equipment.OtherEquipmentRowViewModel;
+import com.vibethema.viewmodel.equipment.WeaponRowViewModel;
+import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
+import java.util.Optional;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
-import javafx.util.StringConverter;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.util.StringConverter;
 
-import com.vibethema.viewmodel.equipment.EquipmentViewModel;
-import com.vibethema.viewmodel.equipment.WeaponRowViewModel;
-import com.vibethema.viewmodel.equipment.ArmorRowViewModel;
-import com.vibethema.viewmodel.equipment.HearthstoneRowViewModel;
-import com.vibethema.viewmodel.equipment.OtherEquipmentRowViewModel;
-import com.vibethema.viewmodel.util.Messenger;
-import java.util.Optional;
-
-/**
- * A dedicated component for managing character equipment.
- */
+/** A dedicated component for managing character equipment. */
 public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewModel> {
-    
-    @InjectViewModel
-    private EquipmentViewModel viewModel;
+
+    @InjectViewModel private EquipmentViewModel viewModel;
 
     private final EquipmentDialogService dialogService;
 
@@ -53,15 +46,46 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
     public void initialize() {
         setContent(createContent());
 
-        Messenger.subscribe("show_weapon_dialog", (name, payload) -> showWeaponDialog((Weapon) (payload != null && payload.length > 0 ? payload[0] : null)));
-        Messenger.subscribe("show_armor_dialog", (name, payload) -> showArmorDialog((Armor) (payload != null && payload.length > 0 ? payload[0] : null)));
-        Messenger.subscribe("show_hearthstone_dialog", (name, payload) -> showHearthstoneDialog((Hearthstone) (payload != null && payload.length > 0 ? payload[0] : null)));
-        Messenger.subscribe("show_other_equipment_dialog", (name, payload) -> showOtherEquipmentDialog((OtherEquipment) (payload != null && payload.length > 0 ? payload[0] : null)));
+        Messenger.subscribe(
+                "show_weapon_dialog",
+                (name, payload) ->
+                        showWeaponDialog(
+                                (Weapon)
+                                        (payload != null && payload.length > 0
+                                                ? payload[0]
+                                                : null)));
+        Messenger.subscribe(
+                "show_armor_dialog",
+                (name, payload) ->
+                        showArmorDialog(
+                                (Armor)
+                                        (payload != null && payload.length > 0
+                                                ? payload[0]
+                                                : null)));
+        Messenger.subscribe(
+                "show_hearthstone_dialog",
+                (name, payload) ->
+                        showHearthstoneDialog(
+                                (Hearthstone)
+                                        (payload != null && payload.length > 0
+                                                ? payload[0]
+                                                : null)));
+        Messenger.subscribe(
+                "show_other_equipment_dialog",
+                (name, payload) ->
+                        showOtherEquipmentDialog(
+                                (OtherEquipment)
+                                        (payload != null && payload.length > 0
+                                                ? payload[0]
+                                                : null)));
 
         Messenger.subscribe("show_weapon_database", (name, payload) -> showWeaponDatabaseDialog());
         Messenger.subscribe("show_armor_database", (name, payload) -> showArmorDatabaseDialog());
-        Messenger.subscribe("show_hearthstone_database", (name, payload) -> showHearthstoneDatabaseDialog());
-        Messenger.subscribe("show_other_equipment_database", (name, payload) -> showOtherEquipmentDatabaseDialog());
+        Messenger.subscribe(
+                "show_hearthstone_database", (name, payload) -> showHearthstoneDatabaseDialog());
+        Messenger.subscribe(
+                "show_other_equipment_database",
+                (name, payload) -> showOtherEquipmentDatabaseDialog());
     }
 
     private VBox createContent() {
@@ -73,7 +97,9 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         VBox weaponsSection = UIUtils.createSection("Weapons");
         weaponsListContainer = new VBox(10);
         weaponsListContainer.getStyleClass().add("merit-row-container");
-        viewModel.getWeapons().addListener((ListChangeListener<WeaponRowViewModel>) c -> refreshWeaponsList());
+        viewModel
+                .getWeapons()
+                .addListener((ListChangeListener<WeaponRowViewModel>) c -> refreshWeaponsList());
         refreshWeaponsList();
 
         Button addWeaponBtn = new Button("+ Add Weapon");
@@ -86,7 +112,9 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         VBox armorSection = UIUtils.createSection("Armor");
         armorListContainer = new VBox(10);
         armorListContainer.getStyleClass().add("merit-row-container");
-        viewModel.getArmors().addListener((ListChangeListener<ArmorRowViewModel>) c -> refreshArmorList());
+        viewModel
+                .getArmors()
+                .addListener((ListChangeListener<ArmorRowViewModel>) c -> refreshArmorList());
         refreshArmorList();
 
         Button addArmorBtn = new Button("+ Add Armor");
@@ -99,7 +127,11 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         VBox hearthstonesSection = UIUtils.createSection("Hearthstones");
         hearthstoneListContainer = new VBox(10);
         hearthstoneListContainer.getStyleClass().add("merit-row-container");
-        viewModel.getHearthstones().addListener((ListChangeListener<HearthstoneRowViewModel>) c -> refreshHearthstoneList());
+        viewModel
+                .getHearthstones()
+                .addListener(
+                        (ListChangeListener<HearthstoneRowViewModel>)
+                                c -> refreshHearthstoneList());
         refreshHearthstoneList();
 
         Button addHearthstoneBtn = new Button("+ Add Hearthstone");
@@ -112,7 +144,11 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         VBox otherSection = UIUtils.createSection("Other Equipment");
         otherEquipmentListContainer = new VBox(10);
         otherEquipmentListContainer.getStyleClass().add("merit-row-container");
-        viewModel.getOtherEquipment().addListener((ListChangeListener<OtherEquipmentRowViewModel>) c -> refreshOtherEquipmentList());
+        viewModel
+                .getOtherEquipment()
+                .addListener(
+                        (ListChangeListener<OtherEquipmentRowViewModel>)
+                                c -> refreshOtherEquipmentList());
         refreshOtherEquipmentList();
 
         Button addOtherBtn = new Button("+ Add Equipment");
@@ -121,7 +157,8 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
 
         otherSection.getChildren().addAll(otherEquipmentListContainer, addOtherBtn);
 
-        content.getChildren().addAll(weaponsSection, armorSection, hearthstonesSection, otherSection);
+        content.getChildren()
+                .addAll(weaponsSection, armorSection, hearthstonesSection, otherSection);
         return content;
     }
 
@@ -140,20 +177,32 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
             VBox details = new VBox(5);
             Label nameLabel = new Label(wvm.nameProperty().get());
             nameLabel.getStyleClass().add("merit-name");
-            
-            String statsStr = String.format("Accuracy: %+d | Damage: %d | Defense: %+d | Overwhelming: %d", 
-                wvm.accuracyProperty().get(), wvm.damageProperty().get(), wvm.defenseProperty().get(), wvm.overwhelmingProperty().get());
-            if (wvm.attunementProperty().get() > 0) statsStr += " | Attunement: " + wvm.attunementProperty().get();
-            
+
+            String statsStr =
+                    String.format(
+                            "Accuracy: %+d | Damage: %d | Defense: %+d | Overwhelming: %d",
+                            wvm.accuracyProperty().get(),
+                            wvm.damageProperty().get(),
+                            wvm.defenseProperty().get(),
+                            wvm.overwhelmingProperty().get());
+            if (wvm.attunementProperty().get() > 0)
+                statsStr += " | Attunement: " + wvm.attunementProperty().get();
+
             Label statsLabel = new Label(statsStr);
             statsLabel.setStyle("-fx-font-size: 0.9em; -fx-text-fill: #aaa;");
-            
+
             FlowPane tagsPane = new FlowPane(5, 5);
             tagsPane.getChildren().add(new Label("Tags: "));
             for (String tagName : wvm.getWeapon().getTags()) {
                 Label tl = new Label(tagName);
-                tl.setStyle("-fx-font-style: italic; -fx-font-size: 0.85em; -fx-text-fill: #3498db; -fx-cursor: hand;");
-                tl.setTooltip(new Tooltip(viewModel.getTagDescriptions().getOrDefault(tagName, "No description available")));
+                tl.setStyle(
+                        "-fx-font-style: italic; -fx-font-size: 0.85em; -fx-text-fill: #3498db;"
+                                + " -fx-cursor: hand;");
+                tl.setTooltip(
+                        new Tooltip(
+                                viewModel
+                                        .getTagDescriptions()
+                                        .getOrDefault(tagName, "No description available")));
                 tagsPane.getChildren().add(tl);
             }
 
@@ -162,24 +211,35 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
             ComboBox<Specialty> specialtyCombo = new ComboBox<>(wvm.getAvailableSpecialties());
             specialtyCombo.setPromptText("Specialty");
             specialtyCombo.setPrefWidth(120);
-            specialtyCombo.setConverter(new StringConverter<Specialty>() {
-                @Override public String toString(Specialty s) { return s == null ? "None" : s.getName(); }
-                @Override public Specialty fromString(String string) { return null; }
-            });
+            specialtyCombo.setConverter(
+                    new StringConverter<Specialty>() {
+                        @Override
+                        public String toString(Specialty s) {
+                            return s == null ? "None" : s.getName();
+                        }
+
+                        @Override
+                        public Specialty fromString(String string) {
+                            return null;
+                        }
+                    });
 
             specialtyCombo.valueProperty().bindBidirectional(wvm.selectedSpecialtyProperty());
-            
+
             Button editBtn = new Button("✏️");
             editBtn.getStyleClass().add("edit-btn");
             editBtn.setStyle("-fx-base: #cea212;");
             editBtn.setOnAction(e -> viewModel.requestEditWeapon(wvm.getWeapon()));
-            
+
             Button evBtn = new Button("✨");
             evBtn.getStyleClass().add("action-btn-small");
             evBtn.setTooltip(new Tooltip("Evocations"));
             evBtn.setVisible(wvm.isArtifact());
             evBtn.setManaged(wvm.isArtifact());
-            evBtn.setOnAction(e -> viewModel.callEvocations(wvm.idProperty().get(), wvm.nameProperty().get()));
+            evBtn.setOnAction(
+                    e ->
+                            viewModel.callEvocations(
+                                    wvm.idProperty().get(), wvm.nameProperty().get()));
 
             Button delBtn = new Button("🗑");
             delBtn.getStyleClass().add("remove-btn");
@@ -192,13 +252,13 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
     }
 
     private boolean showWeaponDialog(Weapon existing) {
-        Optional<Weapon> result = dialogService.showWeaponDialog(
-            existing, 
-            viewModel.getEquipmentService(), 
-            viewModel.getTagDescriptions(),
-            viewModel.getCharacterData().getSpecialties(),
-            getScene().getWindow()
-        );
+        Optional<Weapon> result =
+                dialogService.showWeaponDialog(
+                        existing,
+                        viewModel.getEquipmentService(),
+                        viewModel.getTagDescriptions(),
+                        viewModel.getCharacterData().getSpecialties(),
+                        getScene().getWindow());
         result.ifPresent(weapon -> viewModel.saveWeapon(weapon, existing == null));
         return result.isPresent();
     }
@@ -207,41 +267,64 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         if (armorListContainer == null) return;
         armorListContainer.getChildren().clear();
         for (ArmorRowViewModel avm : viewModel.getArmors()) {
-            HBox row = new HBox(15); row.getStyleClass().add("merit-row"); row.setAlignment(Pos.CENTER_LEFT);
-            
+            HBox row = new HBox(15);
+            row.getStyleClass().add("merit-row");
+            row.setAlignment(Pos.CENTER_LEFT);
+
             CheckBox equippedCb = new CheckBox();
             equippedCb.setTooltip(new Tooltip("Equipped"));
             equippedCb.selectedProperty().bindBidirectional(avm.equippedProperty());
 
             VBox details = new VBox(5);
-            Label nameLabel = new Label(avm.nameProperty().get()); nameLabel.getStyleClass().add("merit-name");
-            String stats = String.format("Type: %s | Soak: +%d | Hardness: %d | Mobility Penalty: %d",
-                avm.getArmor().getType(), avm.soakProperty().get(), avm.hardnessProperty().get(), avm.mobilityPenaltyProperty().get());
-            if (avm.attunementProperty().get() > 0) stats += " | Attunement: " + avm.attunementProperty().get();
-            Label st = new Label(stats); st.setStyle("-fx-font-size: 0.9em; -fx-text-fill: #aaa;");
-            
+            Label nameLabel = new Label(avm.nameProperty().get());
+            nameLabel.getStyleClass().add("merit-name");
+            String stats =
+                    String.format(
+                            "Type: %s | Soak: +%d | Hardness: %d | Mobility Penalty: %d",
+                            avm.getArmor().getType(),
+                            avm.soakProperty().get(),
+                            avm.hardnessProperty().get(),
+                            avm.mobilityPenaltyProperty().get());
+            if (avm.attunementProperty().get() > 0)
+                stats += " | Attunement: " + avm.attunementProperty().get();
+            Label st = new Label(stats);
+            st.setStyle("-fx-font-size: 0.9em; -fx-text-fill: #aaa;");
+
             FlowPane tagsPane = new FlowPane(5, 5);
             tagsPane.getChildren().add(new Label("Tags: "));
             for (String tagName : avm.getArmor().getTags()) {
                 Label tl = new Label(tagName);
-                tl.setStyle("-fx-font-style: italic; -fx-font-size: 0.85em; -fx-text-fill: #3498db; -fx-cursor: hand;");
-                tl.setTooltip(new Tooltip(viewModel.getTagDescriptions().getOrDefault(tagName, "No description available")));
+                tl.setStyle(
+                        "-fx-font-style: italic; -fx-font-size: 0.85em; -fx-text-fill: #3498db;"
+                                + " -fx-cursor: hand;");
+                tl.setTooltip(
+                        new Tooltip(
+                                viewModel
+                                        .getTagDescriptions()
+                                        .getOrDefault(tagName, "No description available")));
                 tagsPane.getChildren().add(tl);
             }
 
             details.getChildren().addAll(nameLabel, st, tagsPane);
-            Button editBtn = new Button("✏️"); editBtn.getStyleClass().add("edit-btn"); editBtn.setStyle("-fx-base: #cea212;");
+            Button editBtn = new Button("✏️");
+            editBtn.getStyleClass().add("edit-btn");
+            editBtn.setStyle("-fx-base: #cea212;");
             editBtn.setOnAction(e -> viewModel.requestEditArmor(avm.getArmor()));
-            
+
             Button evBtn = new Button("✨");
             evBtn.getStyleClass().add("action-btn-small");
             evBtn.setTooltip(new Tooltip("Evocations"));
             evBtn.setVisible(avm.isArtifact());
             evBtn.setManaged(avm.isArtifact());
-            evBtn.setOnAction(e -> viewModel.callEvocations(avm.idProperty().get(), avm.nameProperty().get()));
+            evBtn.setOnAction(
+                    e ->
+                            viewModel.callEvocations(
+                                    avm.idProperty().get(), avm.nameProperty().get()));
 
-            Button delBtn = new Button("🗑"); delBtn.getStyleClass().add("remove-btn"); delBtn.setOnAction(e -> viewModel.removeArmor(avm.getArmor()));
-            
+            Button delBtn = new Button("🗑");
+            delBtn.getStyleClass().add("remove-btn");
+            delBtn.setOnAction(e -> viewModel.removeArmor(avm.getArmor()));
+
             HBox.setHgrow(details, Priority.ALWAYS);
             row.getChildren().addAll(equippedCb, details, editBtn, evBtn, delBtn);
             armorListContainer.getChildren().add(row);
@@ -249,7 +332,9 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
     }
 
     private boolean showArmorDialog(Armor existing) {
-        Optional<Armor> result = dialogService.showArmorDialog(existing, viewModel.getTagDescriptions(), getScene().getWindow());
+        Optional<Armor> result =
+                dialogService.showArmorDialog(
+                        existing, viewModel.getTagDescriptions(), getScene().getWindow());
         result.ifPresent(a -> viewModel.saveArmor(a, existing == null));
         return result.isPresent();
     }
@@ -258,18 +343,26 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         if (hearthstoneListContainer == null) return;
         hearthstoneListContainer.getChildren().clear();
         for (HearthstoneRowViewModel hvm : viewModel.getHearthstones()) {
-            HBox row = new HBox(15); row.getStyleClass().add("merit-row"); row.setAlignment(Pos.CENTER_LEFT);
+            HBox row = new HBox(15);
+            row.getStyleClass().add("merit-row");
+            row.setAlignment(Pos.CENTER_LEFT);
             CheckBox equippedCb = new CheckBox();
             equippedCb.setTooltip(new Tooltip("Equipped"));
             equippedCb.selectedProperty().bindBidirectional(hvm.equippedProperty());
 
             VBox details = new VBox(5);
-            Label nameLabel = new Label(hvm.nameProperty().get()); nameLabel.getStyleClass().add("merit-name");
-            Label descLabel = new Label(hvm.descriptionProperty().get()); descLabel.setStyle("-fx-font-size: 0.9em; -fx-text-fill: #aaa;");
+            Label nameLabel = new Label(hvm.nameProperty().get());
+            nameLabel.getStyleClass().add("merit-name");
+            Label descLabel = new Label(hvm.descriptionProperty().get());
+            descLabel.setStyle("-fx-font-size: 0.9em; -fx-text-fill: #aaa;");
             details.getChildren().addAll(nameLabel, descLabel);
-            Button editBtn = new Button("✏️"); editBtn.getStyleClass().add("edit-btn"); editBtn.setStyle("-fx-base: #cea212;");
+            Button editBtn = new Button("✏️");
+            editBtn.getStyleClass().add("edit-btn");
+            editBtn.setStyle("-fx-base: #cea212;");
             editBtn.setOnAction(e -> viewModel.requestEditHearthstone(hvm.getHearthstone()));
-            Button delBtn = new Button("🗑"); delBtn.getStyleClass().add("remove-btn"); delBtn.setOnAction(e -> viewModel.removeHearthstone(hvm.getHearthstone()));
+            Button delBtn = new Button("🗑");
+            delBtn.getStyleClass().add("remove-btn");
+            delBtn.setOnAction(e -> viewModel.removeHearthstone(hvm.getHearthstone()));
             HBox.setHgrow(details, Priority.ALWAYS);
             row.getChildren().addAll(equippedCb, details, editBtn, delBtn);
             hearthstoneListContainer.getChildren().add(row);
@@ -277,7 +370,8 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
     }
 
     private boolean showHearthstoneDialog(Hearthstone existing) {
-        Optional<Hearthstone> result = dialogService.showHearthstoneDialog(existing, getScene().getWindow());
+        Optional<Hearthstone> result =
+                dialogService.showHearthstoneDialog(existing, getScene().getWindow());
         result.ifPresent(h -> viewModel.saveHearthstone(h, existing == null));
         return result.isPresent();
     }
@@ -286,7 +380,9 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         if (otherEquipmentListContainer == null) return;
         otherEquipmentListContainer.getChildren().clear();
         for (OtherEquipmentRowViewModel ovm : viewModel.getOtherEquipment()) {
-            HBox row = new HBox(15); row.getStyleClass().add("merit-row"); row.setAlignment(Pos.CENTER_LEFT);
+            HBox row = new HBox(15);
+            row.getStyleClass().add("merit-row");
+            row.setAlignment(Pos.CENTER_LEFT);
             CheckBox equippedCb = new CheckBox();
             equippedCb.setTooltip(new Tooltip("Equipped"));
             equippedCb.selectedProperty().bindBidirectional(ovm.equippedProperty());
@@ -301,19 +397,27 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
             }
             Label nameLabel = new Label(name);
             nameLabel.getStyleClass().add("merit-name");
-            Label descLabel = new Label(ovm.descriptionProperty().get()); descLabel.setStyle("-fx-font-size: 0.9em; -fx-text-fill: #aaa;");
+            Label descLabel = new Label(ovm.descriptionProperty().get());
+            descLabel.setStyle("-fx-font-size: 0.9em; -fx-text-fill: #aaa;");
             details.getChildren().addAll(nameLabel, descLabel);
-            Button editBtn = new Button("✏️"); editBtn.getStyleClass().add("edit-btn"); editBtn.setStyle("-fx-base: #cea212;");
+            Button editBtn = new Button("✏️");
+            editBtn.getStyleClass().add("edit-btn");
+            editBtn.setStyle("-fx-base: #cea212;");
             editBtn.setOnAction(e -> viewModel.requestEditOtherEquipment(ovm.getOtherEquipment()));
-            
+
             Button evBtn = new Button("✨");
             evBtn.getStyleClass().add("action-btn-small");
             evBtn.setTooltip(new Tooltip("Evocations"));
             evBtn.setVisible(ovm.artifactProperty().get());
             evBtn.setManaged(ovm.artifactProperty().get());
-            evBtn.setOnAction(e -> viewModel.callEvocations(ovm.idProperty().get(), ovm.nameProperty().get()));
+            evBtn.setOnAction(
+                    e ->
+                            viewModel.callEvocations(
+                                    ovm.idProperty().get(), ovm.nameProperty().get()));
 
-            Button delBtn = new Button("🗑"); delBtn.getStyleClass().add("remove-btn"); delBtn.setOnAction(e -> viewModel.removeOtherEquipment(ovm.getOtherEquipment()));
+            Button delBtn = new Button("🗑");
+            delBtn.getStyleClass().add("remove-btn");
+            delBtn.setOnAction(e -> viewModel.removeOtherEquipment(ovm.getOtherEquipment()));
             HBox.setHgrow(details, Priority.ALWAYS);
             row.getChildren().addAll(equippedCb, details, editBtn, evBtn, delBtn);
             otherEquipmentListContainer.getChildren().add(row);
@@ -321,62 +425,83 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
     }
 
     private boolean showOtherEquipmentDialog(OtherEquipment existing) {
-        Optional<OtherEquipment> result = dialogService.showOtherEquipmentDialog(existing, getScene().getWindow());
+        Optional<OtherEquipment> result =
+                dialogService.showOtherEquipmentDialog(existing, getScene().getWindow());
         result.ifPresent(o -> viewModel.saveOtherEquipment(o, existing == null));
         return result.isPresent();
     }
 
     private void showWeaponDatabaseDialog() {
-        showGenericDatabaseDialog("Weapon", viewModel.getGlobalWeapons(), 
-            () -> showWeaponDialog(null), 
-            item -> viewModel.addWeaponFromDatabase((Weapon)item));
+        showGenericDatabaseDialog(
+                "Weapon",
+                viewModel.getGlobalWeapons(),
+                () -> showWeaponDialog(null),
+                item -> viewModel.addWeaponFromDatabase((Weapon) item));
     }
 
     private void showArmorDatabaseDialog() {
-        showGenericDatabaseDialog("Armor", viewModel.getGlobalArmors(), 
-            () -> showArmorDialog(null), 
-            item -> viewModel.addArmorFromDatabase((Armor)item));
+        showGenericDatabaseDialog(
+                "Armor",
+                viewModel.getGlobalArmors(),
+                () -> showArmorDialog(null),
+                item -> viewModel.addArmorFromDatabase((Armor) item));
     }
 
     private void showHearthstoneDatabaseDialog() {
-        showGenericDatabaseDialog("Hearthstone", viewModel.getGlobalHearthstones(), 
-            () -> showHearthstoneDialog(null), 
-            item -> viewModel.addHearthstoneFromDatabase((Hearthstone)item));
+        showGenericDatabaseDialog(
+                "Hearthstone",
+                viewModel.getGlobalHearthstones(),
+                () -> showHearthstoneDialog(null),
+                item -> viewModel.addHearthstoneFromDatabase((Hearthstone) item));
     }
 
     private void showOtherEquipmentDatabaseDialog() {
-        showGenericDatabaseDialog("Equipment", viewModel.getGlobalOtherEquipment(), 
-            () -> showOtherEquipmentDialog(null), 
-            item -> viewModel.addOtherEquipmentFromDatabase((OtherEquipment)item));
+        showGenericDatabaseDialog(
+                "Equipment",
+                viewModel.getGlobalOtherEquipment(),
+                () -> showOtherEquipmentDialog(null),
+                item -> viewModel.addOtherEquipmentFromDatabase((OtherEquipment) item));
     }
 
-    private void showGenericDatabaseDialog(String type, java.util.Collection<?> items, java.util.function.BooleanSupplier onCreateNew, java.util.function.Consumer<Object> onSelect) {
-        de.saxsys.mvvmfx.ViewTuple<EquipmentDatabaseView, com.vibethema.viewmodel.equipment.EquipmentDatabaseViewModel> tuple = 
-            de.saxsys.mvvmfx.FluentViewLoader.javaView(EquipmentDatabaseView.class).load();
-        
+    private void showGenericDatabaseDialog(
+            String type,
+            java.util.Collection<?> items,
+            java.util.function.BooleanSupplier onCreateNew,
+            java.util.function.Consumer<Object> onSelect) {
+        de.saxsys.mvvmfx.ViewTuple<
+                        EquipmentDatabaseView,
+                        com.vibethema.viewmodel.equipment.EquipmentDatabaseViewModel>
+                tuple =
+                        de.saxsys.mvvmfx.FluentViewLoader.javaView(EquipmentDatabaseView.class)
+                                .load();
+
         EquipmentDatabaseView view = (EquipmentDatabaseView) tuple.getView();
         com.vibethema.viewmodel.equipment.EquipmentDatabaseViewModel dbVm = tuple.getViewModel();
-        
+
         dbVm.titleProperty().set("Equipment Database: " + type + "s");
         dbVm.createNewTextProperty().set("+ Create New " + type);
         dbVm.setItems(items);
-        
-        dbVm.setDeleteAction(item -> {
-            try {
-                com.vibethema.service.EquipmentDataService svc = viewModel.getEquipmentService();
-                if (item instanceof Weapon) svc.deleteWeapon(((Weapon) item).getId());
-                else if (item instanceof Armor) svc.deleteArmor(((Armor) item).getId());
-                else if (item instanceof Hearthstone) svc.deleteHearthstone(((Hearthstone) item).getId());
-                else if (item instanceof OtherEquipment) svc.deleteOtherEquipment(((OtherEquipment) item).getId());
-            } catch (java.io.IOException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Deletion Failed");
-                alert.setHeaderText("Could not delete item");
-                alert.setContentText(e.getMessage());
-                alert.showAndWait();
-            }
-        });
-        
+
+        dbVm.setDeleteAction(
+                item -> {
+                    try {
+                        com.vibethema.service.EquipmentDataService svc =
+                                viewModel.getEquipmentService();
+                        if (item instanceof Weapon) svc.deleteWeapon(((Weapon) item).getId());
+                        else if (item instanceof Armor) svc.deleteArmor(((Armor) item).getId());
+                        else if (item instanceof Hearthstone)
+                            svc.deleteHearthstone(((Hearthstone) item).getId());
+                        else if (item instanceof OtherEquipment)
+                            svc.deleteOtherEquipment(((OtherEquipment) item).getId());
+                    } catch (java.io.IOException e) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Deletion Failed");
+                        alert.setHeaderText("Could not delete item");
+                        alert.setContentText(e.getMessage());
+                        alert.showAndWait();
+                    }
+                });
+
         Dialog<Object> dialog = new Dialog<>();
         dialog.setTitle(dbVm.titleProperty().get());
         dialog.initOwner(getScene().getWindow());
@@ -387,28 +512,32 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         }
 
         // Handle "Create New" - it will open the creation dialog
-        dbVm.setCreateNewAction(() -> {
-            boolean success = onCreateNew.getAsBoolean();
-            if (success) {
-                dialog.setResult(Boolean.TRUE);
-                dialog.close();
-            }
-        });
+        dbVm.setCreateNewAction(
+                () -> {
+                    boolean success = onCreateNew.getAsBoolean();
+                    if (success) {
+                        dialog.setResult(Boolean.TRUE);
+                        dialog.close();
+                    }
+                });
 
         // Handle "Add Selected"
-        view.getAddSelectedBtn().setOnAction(e -> {
-            Object selected = dbVm.getSelectedItem();
-            if (selected != null) {
-                dialog.setResult(selected);
-                dialog.close();
-                javafx.application.Platform.runLater(() -> onSelect.accept(selected));
-            }
-        });
+        view.getAddSelectedBtn()
+                .setOnAction(
+                        e -> {
+                            Object selected = dbVm.getSelectedItem();
+                            if (selected != null) {
+                                dialog.setResult(selected);
+                                dialog.close();
+                                javafx.application.Platform.runLater(
+                                        () -> onSelect.accept(selected));
+                            }
+                        });
 
         // Add standard Cancel button to the dialog pane
         // This also enables the ESC key dismissal automatically in JavaFX dialogs
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
-        
+
         dialog.showAndWait();
     }
 }

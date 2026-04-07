@@ -1,41 +1,35 @@
 package com.vibethema.ui.sorcery;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import com.vibethema.ui.util.UIUtils;
 import com.vibethema.viewmodel.SorceryViewModel;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
-
 public class SorceryTab extends ScrollPane implements JavaView<SorceryViewModel>, Initializable {
 
-    @InjectViewModel
-    private SorceryViewModel viewModel;
+    @InjectViewModel private SorceryViewModel viewModel;
 
     private Label sorceryWarningLabel;
     private VBox sorceryMainContent;
@@ -51,7 +45,8 @@ public class SorceryTab extends ScrollPane implements JavaView<SorceryViewModel>
         content.getStyleClass().add("content-area");
         content.setPadding(new Insets(20));
 
-        sorceryWarningLabel = new Label("Purchase Occult charm Terrestrial Circle Sorcery to enable sorcery.");
+        sorceryWarningLabel =
+                new Label("Purchase Occult charm Terrestrial Circle Sorcery to enable sorcery.");
         sorceryWarningLabel.getStyleClass().add("problematic-warning");
         sorceryWarningLabel.setMaxWidth(Double.MAX_VALUE);
         sorceryWarningLabel.setAlignment(Pos.CENTER);
@@ -86,7 +81,9 @@ public class SorceryTab extends ScrollPane implements JavaView<SorceryViewModel>
         content.getChildren().addAll(sorceryWarningLabel, sorceryMainContent);
 
         refreshShapingRituals();
-        viewModel.getShapingRituals().addListener((ListChangeListener<ShapingRitual>) c -> refreshShapingRituals());
+        viewModel
+                .getShapingRituals()
+                .addListener((ListChangeListener<ShapingRitual>) c -> refreshShapingRituals());
 
         refreshSpellsList();
         viewModel.getSpells().addListener((ListChangeListener<Spell>) c -> refreshSpellsList());
@@ -158,9 +155,10 @@ public class SorceryTab extends ScrollPane implements JavaView<SorceryViewModel>
             details.setVgap(5);
             details.add(new Label("Cost: " + s.getCost()), 0, 0);
             details.add(new Label("Duration: " + s.getDuration()), 1, 0);
-            
+
             if (!s.getKeywords().isEmpty()) {
-                details.add(new Label("Keywords: " + String.join(", ", s.getKeywords())), 0, 1, 2, 1);
+                details.add(
+                        new Label("Keywords: " + String.join(", ", s.getKeywords())), 0, 1, 2, 1);
             }
 
             Label desc = new Label(s.getDescription());
@@ -203,74 +201,116 @@ public class SorceryTab extends ScrollPane implements JavaView<SorceryViewModel>
         for (String circle : circlesArr) {
             Tab tab = new Tab(circle.substring(0, 1) + circle.substring(1).toLowerCase());
             tab.setClosable(false);
-            
+
             boolean eligible = true;
-            if (circle.equals("CELESTIAL") && !viewModel.getData().hasCharmByName(SystemData.CELESTIAL_CIRCLE_SORCERY)) eligible = false;
-            if (circle.equals("SOLAR") && !viewModel.getData().hasCharmByName(SystemData.SOLAR_CIRCLE_SORCERY)) eligible = false;
-            
+            if (circle.equals("CELESTIAL")
+                    && !viewModel.getData().hasCharmByName(SystemData.CELESTIAL_CIRCLE_SORCERY))
+                eligible = false;
+            if (circle.equals("SOLAR")
+                    && !viewModel.getData().hasCharmByName(SystemData.SOLAR_CIRCLE_SORCERY))
+                eligible = false;
+
             if (!eligible) {
                 tab.setDisable(true);
-                tab.setTooltip(new Tooltip("Missing " + (circle.equals("CELESTIAL") ? "Celestial" : "Solar") + " Circle Sorcery charm"));
+                tab.setTooltip(
+                        new Tooltip(
+                                "Missing "
+                                        + (circle.equals("CELESTIAL") ? "Celestial" : "Solar")
+                                        + " Circle Sorcery charm"));
             }
-            
+
             ListView<Spell> listView = new ListView<>();
             List<Spell> availableSpells = viewModel.getCharmDataService().loadSpells(circle);
             listView.getItems().addAll(availableSpells);
 
-            listView.setCellFactory(lv -> new ListCell<Spell>() {
-                @Override
-                protected void updateItem(Spell item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty || item == null) {
-                        setText(null);
-                        setGraphic(null);
-                    } else {
-                        VBox box = new VBox(2);
-                        Label name = new Label(item.getName() + (item.isCustom() ? " (Custom)" : ""));
-                        name.setStyle("-fx-font-weight: bold; -fx-text-fill: white;");
-                        Label cost = new Label(item.getCost());
-                        cost.setStyle("-fx-font-size: 0.9em; -fx-opacity: 0.8; -fx-text-fill: #cccccc;");
-                        box.getChildren().addAll(name, cost);
-                        setGraphic(box);
-                    }
-                }
-            });
+            listView.setCellFactory(
+                    lv ->
+                            new ListCell<Spell>() {
+                                @Override
+                                protected void updateItem(Spell item, boolean empty) {
+                                    super.updateItem(item, empty);
+                                    if (empty || item == null) {
+                                        setText(null);
+                                        setGraphic(null);
+                                    } else {
+                                        VBox box = new VBox(2);
+                                        Label name =
+                                                new Label(
+                                                        item.getName()
+                                                                + (item.isCustom()
+                                                                        ? " (Custom)"
+                                                                        : ""));
+                                        name.setStyle(
+                                                "-fx-font-weight: bold; -fx-text-fill: white;");
+                                        Label cost = new Label(item.getCost());
+                                        cost.setStyle(
+                                                "-fx-font-size: 0.9em; -fx-opacity: 0.8;"
+                                                        + " -fx-text-fill: #cccccc;");
+                                        box.getChildren().addAll(name, cost);
+                                        setGraphic(box);
+                                    }
+                                }
+                            });
 
-            listView.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
-                addBtn.setDisable(newV == null);
-            });
+            listView.getSelectionModel()
+                    .selectedItemProperty()
+                    .addListener(
+                            (obs, oldV, newV) -> {
+                                addBtn.setDisable(newV == null);
+                            });
 
-            filterField.textProperty().addListener((obs, ov, nv) -> {
-                String filter = nv.toLowerCase();
-                listView.getItems().setAll(availableSpells.stream()
-                    .filter(s -> s.getName().toLowerCase().contains(filter) || s.getDescription().toLowerCase().contains(filter))
-                    .collect(Collectors.toList()));
-            });
+            filterField
+                    .textProperty()
+                    .addListener(
+                            (obs, ov, nv) -> {
+                                String filter = nv.toLowerCase();
+                                listView.getItems()
+                                        .setAll(
+                                                availableSpells.stream()
+                                                        .filter(
+                                                                s ->
+                                                                        s.getName()
+                                                                                        .toLowerCase()
+                                                                                        .contains(
+                                                                                                filter)
+                                                                                || s.getDescription()
+                                                                                        .toLowerCase()
+                                                                                        .contains(
+                                                                                                filter))
+                                                        .collect(Collectors.toList()));
+                            });
 
             tab.setContent(listView);
             circlesTabPane.getTabs().add(tab);
         }
 
-        addBtn.setOnAction(e -> {
-            Tab activeTab = circlesTabPane.getSelectionModel().getSelectedItem();
-            if (activeTab != null && activeTab.getContent() instanceof ListView<?> lv) {
-                Spell selected = (Spell) lv.getSelectionModel().getSelectedItem();
-                if (selected != null && viewModel.getSpells().stream().noneMatch(existing -> existing.getName().equals(selected.getName()))) {
-                    viewModel.getSpells().add(selected);
-                    stage.close();
-                }
-            }
-        });
+        addBtn.setOnAction(
+                e -> {
+                    Tab activeTab = circlesTabPane.getSelectionModel().getSelectedItem();
+                    if (activeTab != null && activeTab.getContent() instanceof ListView<?> lv) {
+                        Spell selected = (Spell) lv.getSelectionModel().getSelectedItem();
+                        if (selected != null
+                                && viewModel.getSpells().stream()
+                                        .noneMatch(
+                                                existing ->
+                                                        existing.getName()
+                                                                .equals(selected.getName()))) {
+                            viewModel.getSpells().add(selected);
+                            stage.close();
+                        }
+                    }
+                });
 
         layout.getChildren().addAll(filterField, circlesTabPane, addBtn);
         Scene selectionScene = new Scene(layout, 600, 600);
         selectionScene.getStylesheets().addAll(getScene().getStylesheets());
 
-        selectionScene.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ESCAPE) {
-                stage.close();
-            }
-        });
+        selectionScene.setOnKeyPressed(
+                event -> {
+                    if (event.getCode() == KeyCode.ESCAPE) {
+                        stage.close();
+                    }
+                });
 
         stage.setScene(selectionScene);
         stage.show();

@@ -1,15 +1,12 @@
 package com.vibethema.model.mystic;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,18 +22,36 @@ public abstract class Charm {
         private int minCount;
 
         public PrerequisiteGroup() {}
+
         public PrerequisiteGroup(String label, List<String> charmIds, int minCount) {
             this.label = label;
             this.charmIds = charmIds;
             this.minCount = minCount;
         }
 
-        public String getLabel() { return label; }
-        public List<String> getCharmIds() { return charmIds; }
-        public int getMinCount() { return minCount; }
-        public void setLabel(String label) { this.label = label; }
-        public void setCharmIds(List<String> charmIds) { this.charmIds = charmIds; }
-        public void setMinCount(int minCount) { this.minCount = minCount; }
+        public String getLabel() {
+            return label;
+        }
+
+        public List<String> getCharmIds() {
+            return charmIds;
+        }
+
+        public int getMinCount() {
+            return minCount;
+        }
+
+        public void setLabel(String label) {
+            this.label = label;
+        }
+
+        public void setCharmIds(List<String> charmIds) {
+            this.charmIds = charmIds;
+        }
+
+        public void setMinCount(int minCount) {
+            this.minCount = minCount;
+        }
     }
 
     private String cost;

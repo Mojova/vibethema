@@ -1,21 +1,21 @@
 package com.vibethema.ui;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import com.vibethema.viewmodel.MainViewModel;
 import com.vibethema.viewmodel.StartScreenViewModel;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
 import de.saxsys.mvvmfx.ViewTuple;
+import java.io.File;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -25,16 +25,11 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import javafx.application.Platform;
-import java.io.File;
 
-/**
- * View for the initial start screen, implementing JavaView for StartScreenViewModel.
- */
+/** View for the initial start screen, implementing JavaView for StartScreenViewModel. */
 public class StartScreen extends StackPane implements JavaView<StartScreenViewModel> {
 
-    @InjectViewModel
-    private StartScreenViewModel viewModel;
+    @InjectViewModel private StartScreenViewModel viewModel;
 
     private final Button newBtn = new Button("_Create New Character");
     private final Button loadBtn = new Button("_Load Existing Character");
@@ -80,7 +75,8 @@ public class StartScreen extends StackPane implements JavaView<StartScreenViewMo
         loadBtn.setAccessibleHelp("Disabled until Core Rulebook data is imported");
 
         importBtn.setMnemonicParsing(true);
-        importBtn.setTooltip(new Tooltip("Parse the official Core Rulebook PDF to populate character data"));
+        importBtn.setTooltip(
+                new Tooltip("Parse the official Core Rulebook PDF to populate character data"));
 
         statusLabel.getStyleClass().add("problematic-warning"); // Reuse existing warning style
         statusLabel.setWrapText(true);
@@ -92,9 +88,7 @@ public class StartScreen extends StackPane implements JavaView<StartScreenViewMo
         getChildren().add(card);
     }
 
-    /**
-     * Initializes the view listeners and subscriptions.
-     */
+    /** Initializes the view listeners and subscriptions. */
     public void initialize() {
         // Now that the ViewModel is injected, we can perform bindings and set actions
         newBtn.setOnAction(e -> viewModel.onNewCharacter());
@@ -110,33 +104,44 @@ public class StartScreen extends StackPane implements JavaView<StartScreenViewMo
         statusLabel.managedProperty().bind(statusLabel.visibleProperty());
 
         // Handle transition to main view (either new or loaded)
-        Messenger.subscribe("show_main_view", (name, payload) -> {
-            ViewTuple<MainView, MainViewModel> viewTuple = com.vibethema.ui.util.ViewCache.get(MainView.class);
-            MainView mainView = (MainView) viewTuple.getView();
-            
-            // If a file was provided as payload, load it into the new view model
-            if (payload != null && payload.length > 0 && payload[0] instanceof File file) {
-                viewTuple.getViewModel().loadCharacter(file);
-            }
-            
-            getScene().setRoot(mainView);
-        });
+        Messenger.subscribe(
+                "show_main_view",
+                (name, payload) -> {
+                    ViewTuple<MainView, MainViewModel> viewTuple =
+                            com.vibethema.ui.util.ViewCache.get(MainView.class);
+                    MainView mainView = (MainView) viewTuple.getView();
+
+                    // If a file was provided as payload, load it into the new view model
+                    if (payload != null && payload.length > 0 && payload[0] instanceof File file) {
+                        viewTuple.getViewModel().loadCharacter(file);
+                    }
+
+                    getScene().setRoot(mainView);
+                });
 
         // Handle file open dialog request
-        Messenger.subscribe("request_load_file_start", (name, payload) -> {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Load Character");
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Vibethema Save File", "*.vbtm"));
-            File file = fileChooser.showOpenDialog(getScene().getWindow());
-            viewModel.onLoadFileSelected(file);
-        });
+        Messenger.subscribe(
+                "request_load_file_start",
+                (name, payload) -> {
+                    FileChooser fileChooser = new FileChooser();
+                    fileChooser.setTitle("Load Character");
+                    fileChooser
+                            .getExtensionFilters()
+                            .add(new FileChooser.ExtensionFilter("Vibethema Save File", "*.vbtm"));
+                    File file = fileChooser.showOpenDialog(getScene().getWindow());
+                    viewModel.onLoadFileSelected(file);
+                });
 
         // Handle PDF import request
-        Messenger.subscribe("request_import_pdf", (name, payload) -> {
-            PdfImportHelper.importCorePdf(getScene().getWindow(), () -> {
-                Platform.runLater(() -> viewModel.refreshStatus());
-            });
-        });
+        Messenger.subscribe(
+                "request_import_pdf",
+                (name, payload) -> {
+                    PdfImportHelper.importCorePdf(
+                            getScene().getWindow(),
+                            () -> {
+                                Platform.runLater(() -> viewModel.refreshStatus());
+                            });
+                });
 
         // Focus management: focus the most relevant action
         // and ensure ENTER triggers the focused button
@@ -144,12 +149,13 @@ public class StartScreen extends StackPane implements JavaView<StartScreenViewMo
         loadBtn.defaultButtonProperty().bind(loadBtn.focusedProperty());
         importBtn.defaultButtonProperty().bind(importBtn.focusedProperty());
 
-        Platform.runLater(() -> {
-            if (viewModel.coreDataImportedProperty().get()) {
-                newBtn.requestFocus();
-            } else {
-                importBtn.requestFocus();
-            }
-        });
+        Platform.runLater(
+                () -> {
+                    if (viewModel.coreDataImportedProperty().get()) {
+                        newBtn.requestFocus();
+                    } else {
+                        importBtn.requestFocus();
+                    }
+                });
     }
 }

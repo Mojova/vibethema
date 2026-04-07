@@ -1,24 +1,22 @@
 package com.vibethema.model.combat;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
 import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
-import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
 import com.vibethema.model.logic.*;
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class CombatStatsModel {
     private final IntegerProperty naturalSoak = new SimpleIntegerProperty(0);
@@ -45,7 +43,8 @@ public class CombatStatsModel {
     private final EquipmentModel equipmentModel;
     private final MysticModel mysticModel;
 
-    public CombatStatsModel(TraitModel traitModel, EquipmentModel equipmentModel, MysticModel mysticModel) {
+    public CombatStatsModel(
+            TraitModel traitModel, EquipmentModel equipmentModel, MysticModel mysticModel) {
         this.traitModel = traitModel;
         this.equipmentModel = equipmentModel;
         this.mysticModel = mysticModel;
@@ -95,11 +94,16 @@ public class CombatStatsModel {
 
     private boolean hasSpecialtyFor(Ability ability) {
         return traitModel.getSpecialties().stream()
-                .anyMatch(s -> ability.getDisplayName().equals(s.getAbility()) && s.getName() != null && !s.getName().trim().isEmpty());
+                .anyMatch(
+                        s ->
+                                ability.getDisplayName().equals(s.getAbility())
+                                        && s.getName() != null
+                                        && !s.getName().trim().isEmpty());
     }
 
     public void updateMotesAndHealth() {
-        // This normally would use Essence from CharacterData, we'll need to pass it or have it handled.
+        // This normally would use Essence from CharacterData, we'll need to pass it or have it
+        // handled.
         // For now, assume we'll update it from CharacterData delegation.
     }
 
@@ -107,7 +111,8 @@ public class CombatStatsModel {
         personalMotes.set((essence * 3) + 10);
         peripheralMotes.set((essence * 7) + 26);
 
-        List<String> levels = new ArrayList<>(Arrays.asList("-0", "-1", "-1", "-2", "-2", "-4", "Incap"));
+        List<String> levels =
+                new ArrayList<>(Arrays.asList("-0", "-1", "-1", "-2", "-2", "-4", "Incap"));
         int stamina = traitModel.getAttribute(Attribute.STAMINA).get();
 
         int oxBodyCount = 0;
@@ -142,8 +147,10 @@ public class CombatStatsModel {
 
         for (Weapon w : equipmentModel.getWeapons()) {
             String abilityName = Ability.MELEE.getDisplayName();
-            if (w.getRange() == Weapon.WeaponRange.ARCHERY) abilityName = Ability.ARCHERY.getDisplayName();
-            else if (w.getRange() == Weapon.WeaponRange.THROWN) abilityName = Ability.THROWN.getDisplayName();
+            if (w.getRange() == Weapon.WeaponRange.ARCHERY)
+                abilityName = Ability.ARCHERY.getDisplayName();
+            else if (w.getRange() == Weapon.WeaponRange.THROWN)
+                abilityName = Ability.THROWN.getDisplayName();
             else if (w.getTags().contains("Brawl")) abilityName = Ability.BRAWL.getDisplayName();
 
             int abil = traitModel.getAbilityRating(Ability.fromString(abilityName));
@@ -172,21 +179,71 @@ public class CombatStatsModel {
         attackPools.setAll(newPools);
     }
 
-    public IntegerProperty naturalSoakProperty() { return naturalSoak; }
-    public IntegerProperty totalSoakProperty() { return totalSoak; }
-    public IntegerProperty evasionProperty() { return evasion; }
-    public IntegerProperty evasionBonusProperty() { return evasionBonus; }
-    public BooleanProperty hasEvasionSpecialtyProperty() { return hasEvasionSpecialty; }
-    public IntegerProperty resolveProperty() { return resolve; }
-    public IntegerProperty resolveBonusProperty() { return resolveBonus; }
-    public BooleanProperty hasResolveSpecialtyProperty() { return hasResolveSpecialty; }
-    public IntegerProperty guileProperty() { return guile; }
-    public IntegerProperty guileBonusProperty() { return guileBonus; }
-    public BooleanProperty hasGuileSpecialtyProperty() { return hasGuileSpecialty; }
-    public IntegerProperty joinBattleProperty() { return joinBattle; }
-    public BooleanProperty hasJoinBattleSpecialtyProperty() { return hasJoinBattleSpecialty; }
-    public IntegerProperty personalMotesProperty() { return personalMotes; }
-    public IntegerProperty peripheralMotesProperty() { return peripheralMotes; }
-    public ObservableList<String> healthLevelsProperty() { return healthLevels; }
-    public ObservableList<AttackPoolData> getAttackPools() { return attackPools; }
+    public IntegerProperty naturalSoakProperty() {
+        return naturalSoak;
+    }
+
+    public IntegerProperty totalSoakProperty() {
+        return totalSoak;
+    }
+
+    public IntegerProperty evasionProperty() {
+        return evasion;
+    }
+
+    public IntegerProperty evasionBonusProperty() {
+        return evasionBonus;
+    }
+
+    public BooleanProperty hasEvasionSpecialtyProperty() {
+        return hasEvasionSpecialty;
+    }
+
+    public IntegerProperty resolveProperty() {
+        return resolve;
+    }
+
+    public IntegerProperty resolveBonusProperty() {
+        return resolveBonus;
+    }
+
+    public BooleanProperty hasResolveSpecialtyProperty() {
+        return hasResolveSpecialty;
+    }
+
+    public IntegerProperty guileProperty() {
+        return guile;
+    }
+
+    public IntegerProperty guileBonusProperty() {
+        return guileBonus;
+    }
+
+    public BooleanProperty hasGuileSpecialtyProperty() {
+        return hasGuileSpecialty;
+    }
+
+    public IntegerProperty joinBattleProperty() {
+        return joinBattle;
+    }
+
+    public BooleanProperty hasJoinBattleSpecialtyProperty() {
+        return hasJoinBattleSpecialty;
+    }
+
+    public IntegerProperty personalMotesProperty() {
+        return personalMotes;
+    }
+
+    public IntegerProperty peripheralMotesProperty() {
+        return peripheralMotes;
+    }
+
+    public ObservableList<String> healthLevelsProperty() {
+        return healthLevels;
+    }
+
+    public ObservableList<AttackPoolData> getAttackPools() {
+        return attackPools;
+    }
 }

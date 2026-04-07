@@ -1,32 +1,29 @@
 package com.vibethema.viewmodel.equipment;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.ListChangeListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Main ViewModel for the Equipment tab.
- * Manages the high-level collections and service interactions for equipment.
+ * Main ViewModel for the Equipment tab. Manages the high-level collections and service interactions
+ * for equipment.
  */
 public class EquipmentViewModel implements ViewModel {
     private static final Logger logger = LoggerFactory.getLogger(EquipmentViewModel.class);
@@ -38,10 +35,13 @@ public class EquipmentViewModel implements ViewModel {
 
     private final ObservableList<WeaponRowViewModel> weapons = FXCollections.observableArrayList();
     private final ObservableList<ArmorRowViewModel> armors = FXCollections.observableArrayList();
-    private final ObservableList<HearthstoneRowViewModel> hearthstones = FXCollections.observableArrayList();
-    private final ObservableList<OtherEquipmentRowViewModel> otherEquipment = FXCollections.observableArrayList();
+    private final ObservableList<HearthstoneRowViewModel> hearthstones =
+            FXCollections.observableArrayList();
+    private final ObservableList<OtherEquipmentRowViewModel> otherEquipment =
+            FXCollections.observableArrayList();
 
-    public EquipmentViewModel(CharacterData data,
+    public EquipmentViewModel(
+            CharacterData data,
             EquipmentDataService equipmentService,
             CharmDataService dataService,
             Map<String, String> tagDescriptions,
@@ -57,66 +57,107 @@ public class EquipmentViewModel implements ViewModel {
     }
 
     private void syncCollections() {
-        weapons.setAll(data.getWeapons().stream().map(w -> new WeaponRowViewModel(w, data.getSpecialties())).collect(Collectors.toList()));
-        armors.setAll(data.getArmors().stream().map(ArmorRowViewModel::new).collect(Collectors.toList()));
-        hearthstones
-                .setAll(data.getHearthstones().stream().map(HearthstoneRowViewModel::new).collect(Collectors.toList()));
+        weapons.setAll(
+                data.getWeapons().stream()
+                        .map(w -> new WeaponRowViewModel(w, data.getSpecialties()))
+                        .collect(Collectors.toList()));
+        armors.setAll(
+                data.getArmors().stream().map(ArmorRowViewModel::new).collect(Collectors.toList()));
+        hearthstones.setAll(
+                data.getHearthstones().stream()
+                        .map(HearthstoneRowViewModel::new)
+                        .collect(Collectors.toList()));
         otherEquipment.setAll(
-                data.getOtherEquipment().stream().map(OtherEquipmentRowViewModel::new).collect(Collectors.toList()));
+                data.getOtherEquipment().stream()
+                        .map(OtherEquipmentRowViewModel::new)
+                        .collect(Collectors.toList()));
     }
 
     private void setupModelListeners() {
-        data.getWeapons().addListener((ListChangeListener<Weapon>) c -> {
-            while (c.next()) {
-                if (c.wasAdded()) {
-                    weapons.addAll(
-                            c.getAddedSubList().stream().map(w -> new WeaponRowViewModel(w, data.getSpecialties())).collect(Collectors.toList()));
-                }
-                if (c.wasRemoved()) {
-                    weapons.removeIf(vm -> c.getRemoved().contains(vm.getWeapon()));
-                }
-            }
-            if (refreshSummary != null)
-                refreshSummary.run();
-        });
+        data.getWeapons()
+                .addListener(
+                        (ListChangeListener<Weapon>)
+                                c -> {
+                                    while (c.next()) {
+                                        if (c.wasAdded()) {
+                                            weapons.addAll(
+                                                    c.getAddedSubList().stream()
+                                                            .map(
+                                                                    w ->
+                                                                            new WeaponRowViewModel(
+                                                                                    w,
+                                                                                    data
+                                                                                            .getSpecialties()))
+                                                            .collect(Collectors.toList()));
+                                        }
+                                        if (c.wasRemoved()) {
+                                            weapons.removeIf(
+                                                    vm -> c.getRemoved().contains(vm.getWeapon()));
+                                        }
+                                    }
+                                    if (refreshSummary != null) refreshSummary.run();
+                                });
 
-        data.getArmors().addListener((ListChangeListener<Armor>) c -> {
-            while (c.next()) {
-                if (c.wasAdded()) {
-                    armors.addAll(
-                            c.getAddedSubList().stream().map(ArmorRowViewModel::new).collect(Collectors.toList()));
-                }
-                if (c.wasRemoved()) {
-                    armors.removeIf(vm -> c.getRemoved().contains(vm.getArmor()));
-                }
-            }
-            if (refreshSummary != null)
-                refreshSummary.run();
-        });
+        data.getArmors()
+                .addListener(
+                        (ListChangeListener<Armor>)
+                                c -> {
+                                    while (c.next()) {
+                                        if (c.wasAdded()) {
+                                            armors.addAll(
+                                                    c.getAddedSubList().stream()
+                                                            .map(ArmorRowViewModel::new)
+                                                            .collect(Collectors.toList()));
+                                        }
+                                        if (c.wasRemoved()) {
+                                            armors.removeIf(
+                                                    vm -> c.getRemoved().contains(vm.getArmor()));
+                                        }
+                                    }
+                                    if (refreshSummary != null) refreshSummary.run();
+                                });
 
-        data.getHearthstones().addListener((ListChangeListener<Hearthstone>) c -> {
-            while (c.next()) {
-                if (c.wasAdded()) {
-                    hearthstones.addAll(c.getAddedSubList().stream().map(HearthstoneRowViewModel::new)
-                            .collect(Collectors.toList()));
-                }
-                if (c.wasRemoved()) {
-                    hearthstones.removeIf(vm -> c.getRemoved().contains(vm.getHearthstone()));
-                }
-            }
-        });
+        data.getHearthstones()
+                .addListener(
+                        (ListChangeListener<Hearthstone>)
+                                c -> {
+                                    while (c.next()) {
+                                        if (c.wasAdded()) {
+                                            hearthstones.addAll(
+                                                    c.getAddedSubList().stream()
+                                                            .map(HearthstoneRowViewModel::new)
+                                                            .collect(Collectors.toList()));
+                                        }
+                                        if (c.wasRemoved()) {
+                                            hearthstones.removeIf(
+                                                    vm ->
+                                                            c.getRemoved()
+                                                                    .contains(vm.getHearthstone()));
+                                        }
+                                    }
+                                });
 
-        data.getOtherEquipment().addListener((ListChangeListener<OtherEquipment>) c -> {
-            while (c.next()) {
-                if (c.wasAdded()) {
-                    otherEquipment.addAll(c.getAddedSubList().stream().map(OtherEquipmentRowViewModel::new)
-                            .collect(Collectors.toList()));
-                }
-                if (c.wasRemoved()) {
-                    otherEquipment.removeIf(vm -> c.getRemoved().contains(vm.getOtherEquipment()));
-                }
-            }
-        });
+        data.getOtherEquipment()
+                .addListener(
+                        (ListChangeListener<OtherEquipment>)
+                                c -> {
+                                    while (c.next()) {
+                                        if (c.wasAdded()) {
+                                            otherEquipment.addAll(
+                                                    c.getAddedSubList().stream()
+                                                            .map(OtherEquipmentRowViewModel::new)
+                                                            .collect(Collectors.toList()));
+                                        }
+                                        if (c.wasRemoved()) {
+                                            otherEquipment.removeIf(
+                                                    vm ->
+                                                            c.getRemoved()
+                                                                    .contains(
+                                                                            vm
+                                                                                    .getOtherEquipment()));
+                                        }
+                                    }
+                                });
     }
 
     // List accessors for the View
@@ -137,10 +178,21 @@ public class EquipmentViewModel implements ViewModel {
     }
 
     // Database access
-    public ObservableList<Weapon> getGlobalWeapons() { return FXCollections.observableArrayList(equipmentService.getGlobalWeapons()); }
-    public ObservableList<Armor> getGlobalArmors() { return FXCollections.observableArrayList(equipmentService.getGlobalArmors()); }
-    public ObservableList<Hearthstone> getGlobalHearthstones() { return FXCollections.observableArrayList(equipmentService.getGlobalHearthstones()); }
-    public ObservableList<OtherEquipment> getGlobalOtherEquipment() { return FXCollections.observableArrayList(equipmentService.getGlobalOtherEquipment()); }
+    public ObservableList<Weapon> getGlobalWeapons() {
+        return FXCollections.observableArrayList(equipmentService.getGlobalWeapons());
+    }
+
+    public ObservableList<Armor> getGlobalArmors() {
+        return FXCollections.observableArrayList(equipmentService.getGlobalArmors());
+    }
+
+    public ObservableList<Hearthstone> getGlobalHearthstones() {
+        return FXCollections.observableArrayList(equipmentService.getGlobalHearthstones());
+    }
+
+    public ObservableList<OtherEquipment> getGlobalOtherEquipment() {
+        return FXCollections.observableArrayList(equipmentService.getGlobalOtherEquipment());
+    }
 
     public void addWeaponFromDatabase(Weapon w) {
         data.getWeapons().add(w.copy());
@@ -261,19 +313,51 @@ public class EquipmentViewModel implements ViewModel {
     }
 
     // Dialog Requests
-    public void requestAddWeapon() { Messenger.publish("show_weapon_dialog", (Object)null); }
-    public void requestEditWeapon(Weapon w) { Messenger.publish("show_weapon_dialog", w); }
-    public void requestWeaponDatabase() { Messenger.publish("show_weapon_database"); }
+    public void requestAddWeapon() {
+        Messenger.publish("show_weapon_dialog", (Object) null);
+    }
 
-    public void requestAddArmor() { Messenger.publish("show_armor_dialog", (Object)null); }
-    public void requestEditArmor(Armor a) { Messenger.publish("show_armor_dialog", a); }
-    public void requestArmorDatabase() { Messenger.publish("show_armor_database"); }
+    public void requestEditWeapon(Weapon w) {
+        Messenger.publish("show_weapon_dialog", w);
+    }
 
-    public void requestAddHearthstone() { Messenger.publish("show_hearthstone_dialog", (Object)null); }
-    public void requestEditHearthstone(Hearthstone h) { Messenger.publish("show_hearthstone_dialog", h); }
-    public void requestHearthstoneDatabase() { Messenger.publish("show_hearthstone_database"); }
+    public void requestWeaponDatabase() {
+        Messenger.publish("show_weapon_database");
+    }
 
-    public void requestAddOtherEquipment() { Messenger.publish("show_other_equipment_dialog", (Object)null); }
-    public void requestEditOtherEquipment(OtherEquipment oe) { Messenger.publish("show_other_equipment_dialog", oe); }
-    public void requestOtherEquipmentDatabase() { Messenger.publish("show_other_equipment_database"); }
+    public void requestAddArmor() {
+        Messenger.publish("show_armor_dialog", (Object) null);
+    }
+
+    public void requestEditArmor(Armor a) {
+        Messenger.publish("show_armor_dialog", a);
+    }
+
+    public void requestArmorDatabase() {
+        Messenger.publish("show_armor_database");
+    }
+
+    public void requestAddHearthstone() {
+        Messenger.publish("show_hearthstone_dialog", (Object) null);
+    }
+
+    public void requestEditHearthstone(Hearthstone h) {
+        Messenger.publish("show_hearthstone_dialog", h);
+    }
+
+    public void requestHearthstoneDatabase() {
+        Messenger.publish("show_hearthstone_database");
+    }
+
+    public void requestAddOtherEquipment() {
+        Messenger.publish("show_other_equipment_dialog", (Object) null);
+    }
+
+    public void requestEditOtherEquipment(OtherEquipment oe) {
+        Messenger.publish("show_other_equipment_dialog", oe);
+    }
+
+    public void requestOtherEquipmentDatabase() {
+        Messenger.publish("show_other_equipment_database");
+    }
 }

@@ -1,27 +1,24 @@
 package com.vibethema.viewmodel.charms;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
+
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.utils.notifications.NotificationObserver;
+import java.util.*;
 import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 public class CharmTreeViewModelTest {
 
@@ -44,12 +41,13 @@ public class CharmTreeViewModelTest {
         viewModel.filterTypeProperty().set("Evocation");
 
         final boolean[] received = {false};
-        NotificationObserver observer = (name, payload) -> {
-            received[0] = true;
-            assertEquals(c1, payload[0]);
-            assertEquals("Artifact X", payload[1]);
-            assertEquals("Evocation", payload[2]);
-        };
+        NotificationObserver observer =
+                (name, payload) -> {
+                    received[0] = true;
+                    assertEquals(c1, payload[0]);
+                    assertEquals("Artifact X", payload[1]);
+                    assertEquals("Evocation", payload[2]);
+                };
 
         try {
             Messenger.subscribe("open_edit_charm_dialog", observer);
@@ -117,7 +115,7 @@ public class CharmTreeViewModelTest {
         when(dataService.loadCharmsForAbility("Melee")).thenReturn(Arrays.asList(a1, a2, b1));
         viewModel.initialize("Ability", "Melee", "Melee", null, null);
 
-        viewModel.navigate(KeyCode.RIGHT); 
+        viewModel.navigate(KeyCode.RIGHT);
         assertEquals(a1, viewModel.selectedCharmProperty().get());
         viewModel.navigate(KeyCode.RIGHT);
         assertEquals(a2, viewModel.selectedCharmProperty().get());
@@ -131,12 +129,14 @@ public class CharmTreeViewModelTest {
     void testSelectionPreservedOnRefresh() {
         String charmId = "TEST_ID";
         Charm c1 = createCharm(charmId, "Test Charm");
-        when(dataService.loadCharmsForAbility("Archery")).thenReturn(new ArrayList<>(Arrays.asList(c1)));
+        when(dataService.loadCharmsForAbility("Archery"))
+                .thenReturn(new ArrayList<>(Arrays.asList(c1)));
         viewModel.initialize("Ability", "Archery", "Archery", null, null);
         viewModel.selectedCharmProperty().set(c1);
 
         Charm c1Prime = createCharm(charmId, "Test Charm");
-        when(dataService.loadCharmsForAbility("Archery")).thenReturn(new ArrayList<>(Arrays.asList(c1Prime)));
+        when(dataService.loadCharmsForAbility("Archery"))
+                .thenReturn(new ArrayList<>(Arrays.asList(c1Prime)));
         viewModel.refresh();
 
         assertEquals(c1Prime, viewModel.selectedCharmProperty().get());
@@ -147,7 +147,8 @@ public class CharmTreeViewModelTest {
         c.setId(id);
         c.setName(name);
         if (prereqIds.length > 0) {
-            c.setPrerequisiteGroups(Arrays.asList(new Charm.PrerequisiteGroup(null, Arrays.asList(prereqIds), 0)));
+            c.setPrerequisiteGroups(
+                    Arrays.asList(new Charm.PrerequisiteGroup(null, Arrays.asList(prereqIds), 0)));
         }
         return c;
     }

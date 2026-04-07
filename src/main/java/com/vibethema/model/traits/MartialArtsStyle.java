@@ -1,15 +1,12 @@
 package com.vibethema.model.traits;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -18,7 +15,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class MartialArtsStyle {
-    private final StringProperty id = new SimpleStringProperty(java.util.UUID.randomUUID().toString());
+    private final StringProperty id =
+            new SimpleStringProperty(java.util.UUID.randomUUID().toString());
     private final StringProperty styleName = new SimpleStringProperty("");
     private final IntegerProperty rating = new SimpleIntegerProperty(0);
     private final BooleanProperty isCaste = new SimpleBooleanProperty(false);
@@ -30,22 +28,59 @@ public class MartialArtsStyle {
         this.rating.set(rating);
     }
 
-    public StringProperty idProperty() { return id; }
-    public String getId() { return id.get(); }
+    public StringProperty idProperty() {
+        return id;
+    }
 
-    public StringProperty styleNameProperty() { return styleName; }
-    public String getStyleName() { return styleName.get(); }
-    public void setStyleName(String styleName) { this.styleName.set(styleName); }
+    public String getId() {
+        return id.get();
+    }
 
-    public IntegerProperty ratingProperty() { return rating; }
-    public int getRating() { return rating.get(); }
-    public void setRating(int rating) { this.rating.set(rating); }
+    public StringProperty styleNameProperty() {
+        return styleName;
+    }
 
-    public BooleanProperty casteProperty() { return isCaste; }
-    public boolean isCaste() { return isCaste.get(); }
-    public void setCaste(boolean caste) { this.isCaste.set(caste); }
+    public String getStyleName() {
+        return styleName.get();
+    }
 
-    public BooleanProperty favoredProperty() { return isFavored; }
-    public boolean isFavored() { return isFavored.get(); }
-    public void setFavored(boolean favored) { this.isFavored.set(favored); }
+    public void setStyleName(String styleName) {
+        this.styleName.set(styleName);
+    }
+
+    public IntegerProperty ratingProperty() {
+        return rating;
+    }
+
+    public int getRating() {
+        return rating.get();
+    }
+
+    public void setRating(int rating) {
+        this.rating.set(rating);
+    }
+
+    public BooleanProperty casteProperty() {
+        return isCaste;
+    }
+
+    public boolean isCaste() {
+        return isCaste.get();
+    }
+
+    public void setCaste(boolean caste) {
+        this.isCaste.set(caste);
+    }
+
+    public BooleanProperty favoredProperty() {
+        return isFavored;
+    }
+
+    public boolean isFavored() {
+        return isFavored.get();
+    }
+
+    public void setFavored(boolean favored) {
+        this.isFavored.set(favored);
+    }
 }

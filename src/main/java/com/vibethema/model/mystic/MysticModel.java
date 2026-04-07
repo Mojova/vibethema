@@ -1,26 +1,30 @@
 package com.vibethema.model.mystic;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
+import java.util.function.Consumer;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import java.util.function.Consumer;
 
 public class MysticModel {
-    private final ObservableList<PurchasedCharm> unlockedCharms = FXCollections.observableArrayList();
-    private final ObservableList<ShapingRitual> shapingRituals = FXCollections.observableArrayList(
-            r -> new javafx.beans.Observable[] { r.nameProperty(), r.descriptionProperty() });
-    private final ObservableList<Spell> spells = FXCollections.observableArrayList(
-            s -> new javafx.beans.Observable[] { s.nameProperty(), s.descriptionProperty(), s.circleProperty() });
+    private final ObservableList<PurchasedCharm> unlockedCharms =
+            FXCollections.observableArrayList();
+    private final ObservableList<ShapingRitual> shapingRituals =
+            FXCollections.observableArrayList(
+                    r -> new javafx.beans.Observable[] {r.nameProperty(), r.descriptionProperty()});
+    private final ObservableList<Spell> spells =
+            FXCollections.observableArrayList(
+                    s ->
+                            new javafx.beans.Observable[] {
+                                s.nameProperty(), s.descriptionProperty(), s.circleProperty()
+                            });
 
     private final BooleanProperty terrestrialSorceryAvailable = new SimpleBooleanProperty(false);
     private final BooleanProperty celestialSorceryAvailable = new SimpleBooleanProperty(false);
@@ -34,39 +38,53 @@ public class MysticModel {
         this.dirtyListener = dirtyListener;
         this.statUpdateTrigger = statUpdateTrigger;
 
-        unlockedCharms.addListener((javafx.collections.ListChangeListener<? super PurchasedCharm>) c -> {
-            updateSorceryAvailability();
-            statUpdateTrigger.run();
-            markDirty();
-        });
+        unlockedCharms.addListener(
+                (javafx.collections.ListChangeListener<? super PurchasedCharm>)
+                        c -> {
+                            updateSorceryAvailability();
+                            statUpdateTrigger.run();
+                            markDirty();
+                        });
 
-        shapingRituals.addListener((javafx.collections.ListChangeListener<? super ShapingRitual>) c -> {
-            markDirty();
-            while (c.next()) {
-                if (c.wasAdded()) {
-                    for (ShapingRitual r : c.getAddedSubList()) {
-                        r.nameProperty().addListener((obs, ov, nv) -> markDirty());
-                        r.descriptionProperty().addListener((obs, ov, nv) -> markDirty());
-                    }
-                }
-            }
-        });
+        shapingRituals.addListener(
+                (javafx.collections.ListChangeListener<? super ShapingRitual>)
+                        c -> {
+                            markDirty();
+                            while (c.next()) {
+                                if (c.wasAdded()) {
+                                    for (ShapingRitual r : c.getAddedSubList()) {
+                                        r.nameProperty().addListener((obs, ov, nv) -> markDirty());
+                                        r.descriptionProperty()
+                                                .addListener((obs, ov, nv) -> markDirty());
+                                    }
+                                }
+                            }
+                        });
 
-        spells.addListener((javafx.collections.ListChangeListener<? super Spell>) c -> {
-            markDirty();
-            while (c.next()) {
-                if (c.wasAdded()) {
-                    for (Spell s : c.getAddedSubList()) {
-                        s.nameProperty().addListener((obs, ov, nv) -> markDirty());
-                        s.descriptionProperty().addListener((obs, ov, nv) -> markDirty());
-                        s.circleProperty().addListener((obs, ov, nv) -> markDirty());
-                        s.costProperty().addListener((obs, ov, nv) -> markDirty());
-                        s.durationProperty().addListener((obs, ov, nv) -> markDirty());
-                        s.getKeywords().addListener((javafx.collections.ListChangeListener<? super String>) kc -> markDirty());
-                    }
-                }
-            }
-        });
+        spells.addListener(
+                (javafx.collections.ListChangeListener<? super Spell>)
+                        c -> {
+                            markDirty();
+                            while (c.next()) {
+                                if (c.wasAdded()) {
+                                    for (Spell s : c.getAddedSubList()) {
+                                        s.nameProperty().addListener((obs, ov, nv) -> markDirty());
+                                        s.descriptionProperty()
+                                                .addListener((obs, ov, nv) -> markDirty());
+                                        s.circleProperty()
+                                                .addListener((obs, ov, nv) -> markDirty());
+                                        s.costProperty().addListener((obs, ov, nv) -> markDirty());
+                                        s.durationProperty()
+                                                .addListener((obs, ov, nv) -> markDirty());
+                                        s.getKeywords()
+                                                .addListener(
+                                                        (javafx.collections.ListChangeListener<
+                                                                        ? super String>)
+                                                                kc -> markDirty());
+                                    }
+                                }
+                            }
+                        });
     }
 
     public void setImporting(boolean importing) {
@@ -89,10 +107,27 @@ public class MysticModel {
         return unlockedCharms.stream().anyMatch(pc -> pc.name() != null && pc.name().equals(name));
     }
 
-    public ObservableList<PurchasedCharm> getUnlockedCharms() { return unlockedCharms; }
-    public ObservableList<ShapingRitual> getShapingRituals() { return shapingRituals; }
-    public ObservableList<Spell> getSpells() { return spells; }
-    public BooleanProperty terrestrialSorceryAvailableProperty() { return terrestrialSorceryAvailable; }
-    public BooleanProperty celestialSorceryAvailableProperty() { return celestialSorceryAvailable; }
-    public BooleanProperty solarSorceryAvailableProperty() { return solarSorceryAvailable; }
+    public ObservableList<PurchasedCharm> getUnlockedCharms() {
+        return unlockedCharms;
+    }
+
+    public ObservableList<ShapingRitual> getShapingRituals() {
+        return shapingRituals;
+    }
+
+    public ObservableList<Spell> getSpells() {
+        return spells;
+    }
+
+    public BooleanProperty terrestrialSorceryAvailableProperty() {
+        return terrestrialSorceryAvailable;
+    }
+
+    public BooleanProperty celestialSorceryAvailableProperty() {
+        return celestialSorceryAvailable;
+    }
+
+    public BooleanProperty solarSorceryAvailableProperty() {
+        return solarSorceryAvailable;
+    }
 }

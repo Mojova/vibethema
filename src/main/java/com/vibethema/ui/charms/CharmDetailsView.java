@@ -1,29 +1,27 @@
 package com.vibethema.ui.charms;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import com.vibethema.viewmodel.charms.CharmDetailsViewModel;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import java.net.URL;
-import java.util.ResourceBundle;
 
-public class CharmDetailsView extends VBox implements JavaView<CharmDetailsViewModel>, Initializable {
+public class CharmDetailsView extends VBox
+        implements JavaView<CharmDetailsViewModel>, Initializable {
 
-    @InjectViewModel
-    private CharmDetailsViewModel viewModel;
+    @InjectViewModel private CharmDetailsViewModel viewModel;
 
     private final Label detailTitle = new Label();
     private final Label detailReqs = new Label();
@@ -61,7 +59,8 @@ public class CharmDetailsView extends VBox implements JavaView<CharmDetailsViewM
         detailReqs.setWrapText(true);
         detailReqs.setMaxWidth(Double.MAX_VALUE);
 
-        statsGrid.setHgap(15); statsGrid.setVgap(10);
+        statsGrid.setHgap(15);
+        statsGrid.setVgap(10);
         costLabel.getStyleClass().add("sidebar-stat");
         typeLabel.getStyleClass().add("sidebar-stat");
         durationLabel.getStyleClass().add("sidebar-stat");
@@ -87,7 +86,7 @@ public class CharmDetailsView extends VBox implements JavaView<CharmDetailsViewM
 
         descriptionLabel.getStyleClass().add("sidebar-desc");
         descriptionLabel.setWrapText(true);
-        
+
         purchaseBtn.getStyleClass().add("charm-btn");
         purchaseBtn.setMaxWidth(Double.MAX_VALUE);
         purchaseBtn.setTooltip(new Tooltip("Buy or Add Stack (ENTER / SPACE)"));
@@ -108,14 +107,23 @@ public class CharmDetailsView extends VBox implements JavaView<CharmDetailsViewM
 
         deleteCustomBtn.getStyleClass().add("charm-btn");
         deleteCustomBtn.setStyle("-fx-base: #a03030;");
-        deleteCustomBtn.setOnAction(e -> {
-            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, 
-                "Are you sure you want to delete this custom charm?", ButtonType.YES, ButtonType.NO);
-            confirm.showAndWait().ifPresent(r -> { if (r == ButtonType.YES) viewModel.deleteCustom(); });
-        });
+        deleteCustomBtn.setOnAction(
+                e -> {
+                    Alert confirm =
+                            new Alert(
+                                    Alert.AlertType.CONFIRMATION,
+                                    "Are you sure you want to delete this custom charm?",
+                                    ButtonType.YES,
+                                    ButtonType.NO);
+                    confirm.showAndWait()
+                            .ifPresent(
+                                    r -> {
+                                        if (r == ButtonType.YES) viewModel.deleteCustom();
+                                    });
+                });
 
         HBox charmButtons = new HBox(10, purchaseBtn, refundBtn, deleteCustomBtn, editBtn);
-        
+
         paddedContent.getChildren().addAll(charmButtons, statsGrid, descriptionLabel);
         sidebarContent.getChildren().addAll(detailReqs, paddedContent);
 
@@ -160,7 +168,11 @@ public class CharmDetailsView extends VBox implements JavaView<CharmDetailsViewM
         statsGrid.visibleProperty().bind(viewModel.selectedCharmProperty().isNotNull());
         statsGrid.managedProperty().bind(statsGrid.visibleProperty());
 
-        viewModel.getKeywords().addListener((javafx.collections.ListChangeListener<? super String>) c -> updateKeywordsUI());
+        viewModel
+                .getKeywords()
+                .addListener(
+                        (javafx.collections.ListChangeListener<? super String>)
+                                c -> updateKeywordsUI());
         updateKeywordsUI();
     }
 
@@ -179,7 +191,9 @@ public class CharmDetailsView extends VBox implements JavaView<CharmDetailsViewM
                 l.getStyleClass().add("keyword-label");
                 String def = viewModel.getKeywordDefs().get(kw);
                 if (def != null) {
-                    Tooltip tt = new Tooltip(def); tt.setWrapText(true); tt.setMaxWidth(300);
+                    Tooltip tt = new Tooltip(def);
+                    tt.setWrapText(true);
+                    tt.setMaxWidth(300);
                     l.setTooltip(tt);
                     l.getStyleClass().add("keyword-with-def");
                 }

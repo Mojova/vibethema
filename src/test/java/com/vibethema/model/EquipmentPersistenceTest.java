@@ -1,51 +1,62 @@
 package com.vibethema.model;
 
-import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
-import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
-import com.vibethema.model.logic.*;
-
-
-import com.vibethema.service.EquipmentDataService;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+
+import com.vibethema.model.combat.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.logic.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
+import com.vibethema.service.EquipmentDataService;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 public class EquipmentPersistenceTest {
 
     @Test
     public void testMultipleIdenticalWeaponsPersistence() {
         EquipmentDataService mockService = Mockito.mock(EquipmentDataService.class);
-        
+
         // Mock loading a weapon from the database
         String templateId = "short-sword-id";
-        Weapon prototype = new Weapon(templateId, "Short Sword", Weapon.WeaponRange.CLOSE, Weapon.WeaponType.MORTAL, Weapon.WeaponCategory.LIGHT);
-        
+        Weapon prototype =
+                new Weapon(
+                        templateId,
+                        "Short Sword",
+                        Weapon.WeaponRange.CLOSE,
+                        Weapon.WeaponType.MORTAL,
+                        Weapon.WeaponCategory.LIGHT);
+
         // Ensure loadWeapon returns a NEW instance each time (crucial)
-        when(mockService.loadWeapon(anyString())).thenAnswer(invocation -> {
-            String id = invocation.getArgument(0);
-            if (id.equals(templateId)) {
-                return new Weapon(templateId, "Short Sword", Weapon.WeaponRange.CLOSE, Weapon.WeaponType.MORTAL, Weapon.WeaponCategory.LIGHT);
-            }
-            return null;
-        });
+        when(mockService.loadWeapon(anyString()))
+                .thenAnswer(
+                        invocation -> {
+                            String id = invocation.getArgument(0);
+                            if (id.equals(templateId)) {
+                                return new Weapon(
+                                        templateId,
+                                        "Short Sword",
+                                        Weapon.WeaponRange.CLOSE,
+                                        Weapon.WeaponType.MORTAL,
+                                        Weapon.WeaponCategory.LIGHT);
+                            }
+                            return null;
+                        });
 
         CharacterData data = new CharacterData();
         data.getWeapons().clear(); // Remove default "Unarmed" if present
-        
+
         // Add two identical weapons
         Weapon w1 = prototype.copy();
         Weapon w2 = prototype.copy();
-        
+
         data.getWeapons().add(w1);
         data.getWeapons().add(w2);
-        
+
         assertEquals(2, data.getWeapons().size());
         assertNotEquals(w1.getInstanceId(), w2.getInstanceId());
 
@@ -66,8 +77,11 @@ public class EquipmentPersistenceTest {
 
         assertEquals(templateId, imported1.getId());
         assertEquals(templateId, imported2.getId());
-        assertNotEquals(imported1.getInstanceId(), imported2.getInstanceId(), "Imported instance IDs should be unique");
-        
+        assertNotEquals(
+                imported1.getInstanceId(),
+                imported2.getInstanceId(),
+                "Imported instance IDs should be unique");
+
         // Verify they are different objects
         assertNotSame(imported1, imported2);
     }

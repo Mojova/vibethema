@@ -3,7 +3,6 @@ package com.vibethema.service.pdf.core;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.vibethema.service.CharmDataService;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -43,13 +42,13 @@ public class CoreSpellExtractor {
                 continue;
             }
 
-            if (i + 1 < lines.length && lines[i+1].trim().startsWith("Cost:")) {
+            if (i + 1 < lines.length && lines[i + 1].trim().startsWith("Cost:")) {
                 String name = line;
-                String costLine = lines[i+1].trim();
+                String costLine = lines[i + 1].trim();
                 String cost = costLine.replace("Cost:", "").trim();
 
                 if (!cost.toLowerCase().contains("sm") && !cost.toLowerCase().contains("ritual")) {
-                    continue; 
+                    continue;
                 }
 
                 String keywords = "";
@@ -71,24 +70,26 @@ public class CoreSpellExtractor {
                 int k = descStartIdx;
                 while (k < lines.length) {
                     String l = lines[k].trim();
-                    if (k + 1 < lines.length && lines[k+1].trim().startsWith("Cost:")) break;
+                    if (k + 1 < lines.length && lines[k + 1].trim().startsWith("Cost:")) break;
                     if (l.contains("Circle Spells")) break;
                     if (l.startsWith("Sorcerous Workings")) break;
                     descRaw.append(lines[k]).append("\n");
                     k++;
                 }
-                
+
                 i = k - 1;
 
                 String description = cleanDescription(descRaw.toString());
-                String spellId = UUID.nameUUIDFromBytes((name.trim() + "|" + currentCircle).getBytes()).toString();
+                String spellId =
+                        UUID.nameUUIDFromBytes((name.trim() + "|" + currentCircle).getBytes())
+                                .toString();
 
                 Map<String, Object> spellMap = new LinkedHashMap<>();
                 spellMap.put("id", spellId);
                 spellMap.put("name", name);
                 spellMap.put("circle", currentCircle);
                 spellMap.put("cost", cost);
-                
+
                 List<String> kwList = new ArrayList<>();
                 if (!keywords.isEmpty() && !keywords.equalsIgnoreCase("None")) {
                     for (String kw : keywords.split(",")) {
@@ -107,8 +108,12 @@ public class CoreSpellExtractor {
         saveSpells(spellsByCircle, suffix);
     }
 
-    private void saveSpells(Map<String, List<Map<String, Object>>> spellsByCircle, String suffix) throws IOException {
-        Path outDir = overrideOutputPath != null ? overrideOutputPath : CharmDataService.getUserSpellsPath();
+    private void saveSpells(Map<String, List<Map<String, Object>>> spellsByCircle, String suffix)
+            throws IOException {
+        Path outDir =
+                overrideOutputPath != null
+                        ? overrideOutputPath
+                        : CharmDataService.getUserSpellsPath();
         if (!Files.exists(outDir)) Files.createDirectories(outDir);
 
         for (Map.Entry<String, List<Map<String, Object>>> entry : spellsByCircle.entrySet()) {

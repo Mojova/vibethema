@@ -1,31 +1,26 @@
 package com.vibethema.viewmodel;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
+
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import com.vibethema.service.SystemDataService;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.utils.notifications.NotificationObserver;
+import java.io.File;
+import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.io.File;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
-
-/**
- * Unit tests for StartScreenViewModel.
- */
+/** Unit tests for StartScreenViewModel. */
 public class StartScreenViewModelTest {
 
     private StartScreenViewModel viewModel;
@@ -39,9 +34,7 @@ public class StartScreenViewModelTest {
         viewModel = new StartScreenViewModel(systemDataService);
     }
 
-    /**
-     * Verifies that clicking "New Character" publishes the show_main_view notification.
-     */
+    /** Verifies that clicking "New Character" publishes the show_main_view notification. */
     @Test
     void testNewCharacterPublishesShowMainView() {
         AtomicReference<String> receivedMessage = new AtomicReference<>();
@@ -74,7 +67,8 @@ public class StartScreenViewModelTest {
     }
 
     /**
-     * Verifies that selecting a file publishes the show_main_view notification with the file payload.
+     * Verifies that selecting a file publishes the show_main_view notification with the file
+     * payload.
      */
     @Test
     void testLoadFileSelectedPublishesShowMainViewWithFile() {
@@ -96,7 +90,7 @@ public class StartScreenViewModelTest {
     void testStatusMessageWhenNotImported() {
         when(systemDataService.isCoreDataImported()).thenReturn(false);
         viewModel.refreshStatus();
-        
+
         assertFalse(viewModel.coreDataImportedProperty().get());
         assertTrue(viewModel.statusMessageProperty().get().contains("not been imported"));
     }
@@ -105,7 +99,7 @@ public class StartScreenViewModelTest {
     void testNewCharacterDeniedWhenNotImported() {
         when(systemDataService.isCoreDataImported()).thenReturn(false);
         viewModel.refreshStatus();
-        
+
         AtomicReference<String> receivedMessage = new AtomicReference<>();
         NotificationObserver observer = (name, payload) -> receivedMessage.set(name);
         Messenger.subscribe("show_main_view", observer);
@@ -122,7 +116,7 @@ public class StartScreenViewModelTest {
     void testLoadCharacterDeniedWhenNotImported() {
         when(systemDataService.isCoreDataImported()).thenReturn(false);
         viewModel.refreshStatus();
-        
+
         AtomicReference<String> receivedMessage = new AtomicReference<>();
         NotificationObserver observer = (name, payload) -> receivedMessage.set(name);
         Messenger.subscribe("request_load_file_start", observer);
@@ -167,7 +161,7 @@ public class StartScreenViewModelTest {
     void testLoadFileSelectedDeniedWhenNotImported() {
         when(systemDataService.isCoreDataImported()).thenReturn(false);
         viewModel.refreshStatus();
-        
+
         AtomicReference<String> receivedMessage = new AtomicReference<>();
         NotificationObserver observer = (name, payload) -> receivedMessage.set(name);
         Messenger.subscribe("show_main_view", observer);

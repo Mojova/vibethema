@@ -1,22 +1,20 @@
 package com.vibethema.viewmodel.charms;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;
+import java.util.*;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import java.util.*;
 
 public class CharmTreeViewModel implements ViewModel {
 
@@ -37,36 +35,43 @@ public class CharmTreeViewModel implements ViewModel {
     private int maxDepth = 0;
 
     private final ObjectProperty<Charm> selectedCharm = new SimpleObjectProperty<>();
-    
+
     private final StringProperty searchText = new SimpleStringProperty("");
     private final BooleanProperty showEligibleOnly = new SimpleBooleanProperty(false);
 
-    public CharmTreeViewModel(CharacterData data, CharmDataService dataService, Map<String, String> keywordDefs) {
+    public CharmTreeViewModel(
+            CharacterData data, CharmDataService dataService, Map<String, String> keywordDefs) {
         this.data = data;
         this.dataService = dataService;
         this.keywordDefs = keywordDefs;
-        
+
         setupListeners();
         Messenger.subscribe("refresh_all_ui", (name, payload) -> refresh());
     }
 
     private void setupListeners() {
-        selectedCharm.addListener((obs, oldV, newV) -> {
-            Messenger.publish("charm_selected", new Object[]{newV});
-        });
+        selectedCharm.addListener(
+                (obs, oldV, newV) -> {
+                    Messenger.publish("charm_selected", new Object[] {newV});
+                });
         showEligibleOnly.addListener((obs, oldV, newV) -> refresh());
         searchText.addListener((obs, oldV, newV) -> refresh());
     }
 
-    public void initialize(String filterType, String selectionId, String selectionName, String artifactId, String artifactName) {
+    public void initialize(
+            String filterType,
+            String selectionId,
+            String selectionName,
+            String artifactId,
+            String artifactName) {
         this.filterType.set(filterType);
         this.selectionId.set(selectionId);
         this.selectionName.set(selectionName);
         this.artifactId.set(artifactId);
         this.artifactName.set(artifactName);
-        
-        Messenger.publish("charm_context_update", new Object[]{filterType, artifactName});
-        
+
+        Messenger.publish("charm_context_update", new Object[] {filterType, artifactName});
+
         refresh();
     }
 
@@ -83,9 +88,10 @@ public class CharmTreeViewModel implements ViewModel {
         }
 
         if (loaded != null && showEligibleOnly.get()) {
-            loaded = loaded.stream()
-                .filter(c -> data.hasCharm(c.getId()) || c.isEligible(data))
-                .collect(java.util.stream.Collectors.toList());
+            loaded =
+                    loaded.stream()
+                            .filter(c -> data.hasCharm(c.getId()) || c.isEligible(data))
+                            .collect(java.util.stream.Collectors.toList());
         }
 
         if (loaded != null && !searchText.get().isEmpty()) {
@@ -99,24 +105,26 @@ public class CharmTreeViewModel implements ViewModel {
                     addCharmAndPrereqs(c, visibleIds, allLoadedMap);
                 }
             }
-            loaded = loaded.stream()
-                .filter(c -> visibleIds.contains(c.getId()))
-                .collect(java.util.stream.Collectors.toList());
+            loaded =
+                    loaded.stream()
+                            .filter(c -> visibleIds.contains(c.getId()))
+                            .collect(java.util.stream.Collectors.toList());
         }
 
         internalCalculateLayout(loaded != null ? loaded : new ArrayList<>());
-        
+
         String currentSelectedId = selectedCharm.get() != null ? selectedCharm.get().getId() : null;
         currentCharms.setAll(loaded != null ? loaded : new ArrayList<>());
-        
+
         if (currentSelectedId != null) {
-            Charm newInstance = currentCharms.stream()
-                .filter(c -> c.getId().equals(currentSelectedId))
-                .findFirst()
-                .orElse(null);
+            Charm newInstance =
+                    currentCharms.stream()
+                            .filter(c -> c.getId().equals(currentSelectedId))
+                            .findFirst()
+                            .orElse(null);
             selectedCharm.set(newInstance);
             if (newInstance != null) {
-                Messenger.publish("charm_selected", new Object[]{newInstance});
+                Messenger.publish("charm_selected", new Object[] {newInstance});
             }
         }
     }
@@ -168,22 +176,29 @@ public class CharmTreeViewModel implements ViewModel {
         if (levels.containsKey(0)) {
             levels.get(0).sort(Comparator.comparing(Charm::getName));
         }
-        
+
         Map<String, Double> logicalX = new HashMap<>();
         for (int d = 0; d <= maxDepth; d++) {
             List<Charm> row = levels.getOrDefault(d, new ArrayList<>());
             if (d > 0) {
-                row.sort(Comparator.comparingDouble(c -> {
-                    double sum = 0; int count = 0;
-                    if (c.getPrerequisiteGroups() != null) {
-                        for (Charm.PrerequisiteGroup g : c.getPrerequisiteGroups()) {
-                            for (String rid : g.getCharmIds()) {
-                                if (logicalX.containsKey(rid)) { sum += logicalX.get(rid); count++; }
-                            }
-                        }
-                    }
-                    return count > 0 ? sum / count : (row.size() / 2.0);
-                }));
+                row.sort(
+                        Comparator.comparingDouble(
+                                c -> {
+                                    double sum = 0;
+                                    int count = 0;
+                                    if (c.getPrerequisiteGroups() != null) {
+                                        for (Charm.PrerequisiteGroup g :
+                                                c.getPrerequisiteGroups()) {
+                                            for (String rid : g.getCharmIds()) {
+                                                if (logicalX.containsKey(rid)) {
+                                                    sum += logicalX.get(rid);
+                                                    count++;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    return count > 0 ? sum / count : (row.size() / 2.0);
+                                }));
             }
             for (int i = 0; i < row.size(); i++) {
                 logicalX.put(row.get(i).getId(), (double) i);
@@ -224,7 +239,14 @@ public class CharmTreeViewModel implements ViewModel {
                 if (currentDepth > 0) {
                     targetDepth = currentDepth - 1;
                     List<Charm> prevRow = levels.get(targetDepth);
-                    targetIndex = (int) Math.round((double) currentIndex * (prevRow.size() - 1) / (currentRow.size() - 1 != 0 ? currentRow.size() - 1 : 1));
+                    targetIndex =
+                            (int)
+                                    Math.round(
+                                            (double) currentIndex
+                                                    * (prevRow.size() - 1)
+                                                    / (currentRow.size() - 1 != 0
+                                                            ? currentRow.size() - 1
+                                                            : 1));
                     targetIndex = Math.max(0, Math.min(prevRow.size() - 1, targetIndex));
                 }
             }
@@ -232,7 +254,14 @@ public class CharmTreeViewModel implements ViewModel {
                 if (currentDepth < maxDepth) {
                     targetDepth = currentDepth + 1;
                     List<Charm> nextRow = levels.get(targetDepth);
-                    targetIndex = (int) Math.round((double) currentIndex * (nextRow.size() - 1) / (currentRow.size() - 1 != 0 ? currentRow.size() - 1 : 1));
+                    targetIndex =
+                            (int)
+                                    Math.round(
+                                            (double) currentIndex
+                                                    * (nextRow.size() - 1)
+                                                    / (currentRow.size() - 1 != 0
+                                                            ? currentRow.size() - 1
+                                                            : 1));
                     targetIndex = Math.max(0, Math.min(nextRow.size() - 1, targetIndex));
                 }
             }
@@ -250,7 +279,7 @@ public class CharmTreeViewModel implements ViewModel {
         if (c == null) return;
         boolean stackable = c.getKeywords() != null && c.getKeywords().contains("Stackable");
         boolean owned = data.hasCharm(c.getId());
-        
+
         if (stackable || (!owned && c.isEligible(data))) {
             data.addCharm(new PurchasedCharm(c.getId(), c.getName(), c.getAbility()));
         } else if (owned) {
@@ -262,9 +291,11 @@ public class CharmTreeViewModel implements ViewModel {
     public void onEditRequest() {
         Charm c = selectedCharm.get();
         if (c != null) {
-            Messenger.publish("open_edit_charm_dialog", new Object[]{
-                c, artifactName.get(), filterType.get(), (Runnable) this::refresh
-            });
+            Messenger.publish(
+                    "open_edit_charm_dialog",
+                    new Object[] {
+                        c, artifactName.get(), filterType.get(), (Runnable) this::refresh
+                    });
         }
     }
 
@@ -277,17 +308,55 @@ public class CharmTreeViewModel implements ViewModel {
     }
 
     // Getters
-    public CharacterData getData() { return data; }
-    public ObservableList<Charm> getCurrentCharms() { return currentCharms; }
-    public Map<Integer, List<Charm>> getLevels() { return levels; }
-    public int getMaxDepth() { return maxDepth; }
-    public ObjectProperty<Charm> selectedCharmProperty() { return selectedCharm; }
-    public StringProperty filterTypeProperty() { return filterType; }
-    public StringProperty selectionIdProperty() { return selectionId; }
-    public StringProperty selectionNameProperty() { return selectionName; }
-    public StringProperty artifactIdProperty() { return artifactId; }
-    public StringProperty artifactNameProperty() { return artifactName; }
-    public StringProperty searchTextProperty() { return searchText; }
-    public BooleanProperty showEligibleOnlyProperty() { return showEligibleOnly; }
-    public Map<String, String> getKeywordDefs() { return keywordDefs; }
+    public CharacterData getData() {
+        return data;
+    }
+
+    public ObservableList<Charm> getCurrentCharms() {
+        return currentCharms;
+    }
+
+    public Map<Integer, List<Charm>> getLevels() {
+        return levels;
+    }
+
+    public int getMaxDepth() {
+        return maxDepth;
+    }
+
+    public ObjectProperty<Charm> selectedCharmProperty() {
+        return selectedCharm;
+    }
+
+    public StringProperty filterTypeProperty() {
+        return filterType;
+    }
+
+    public StringProperty selectionIdProperty() {
+        return selectionId;
+    }
+
+    public StringProperty selectionNameProperty() {
+        return selectionName;
+    }
+
+    public StringProperty artifactIdProperty() {
+        return artifactId;
+    }
+
+    public StringProperty artifactNameProperty() {
+        return artifactName;
+    }
+
+    public StringProperty searchTextProperty() {
+        return searchText;
+    }
+
+    public BooleanProperty showEligibleOnlyProperty() {
+        return showEligibleOnly;
+    }
+
+    public Map<String, String> getKeywordDefs() {
+        return keywordDefs;
+    }
 }

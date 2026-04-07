@@ -1,18 +1,17 @@
 package com.vibethema.viewmodel.footer;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class FooterViewModelTest {
     private CharacterData data;
@@ -31,7 +30,7 @@ public class FooterViewModelTest {
 
         // 2. Modify model directly
         data.getAbility(Ability.ARCHERY).set(3);
-        
+
         // 3. Verify footer updated IMMEDIATELY (reactive)
         assertEquals("Abilities: 3/28", viewModel.abilitiesTextProperty().get());
     }

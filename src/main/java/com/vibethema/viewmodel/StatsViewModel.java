@@ -1,47 +1,51 @@
 package com.vibethema.viewmodel;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
+import com.vibethema.viewmodel.equipment.AttackPoolRowViewModel;
+import com.vibethema.viewmodel.stats.AbilityRowViewModel;
+import com.vibethema.viewmodel.stats.AttributeCategoryViewModel;
+import com.vibethema.viewmodel.stats.CraftRowViewModel;
+import com.vibethema.viewmodel.stats.SpecialtyRowViewModel;
+import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;
+import java.util.stream.Collectors;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import com.vibethema.viewmodel.util.Messenger;
-import com.vibethema.viewmodel.equipment.AttackPoolRowViewModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import com.vibethema.viewmodel.stats.AttributeCategoryViewModel;
-import com.vibethema.viewmodel.stats.AbilityRowViewModel;
-import com.vibethema.viewmodel.stats.CraftRowViewModel;
-import com.vibethema.viewmodel.stats.SpecialtyRowViewModel;
-import java.util.stream.Collectors;
 
 public class StatsViewModel implements ViewModel {
     private final CharacterData data;
     private final IntegerProperty maTotalDots = new SimpleIntegerProperty(0);
-    private final ObservableList<AttributeCategoryViewModel> attributeCategories = FXCollections.observableArrayList();
-    private final ObservableList<AbilityRowViewModel> abilityRows = FXCollections.observableArrayList();
-    private final ObservableList<AttackPoolRowViewModel> attackPoolRows = FXCollections.observableArrayList();
+    private final ObservableList<AttributeCategoryViewModel> attributeCategories =
+            FXCollections.observableArrayList();
+    private final ObservableList<AbilityRowViewModel> abilityRows =
+            FXCollections.observableArrayList();
+    private final ObservableList<AttackPoolRowViewModel> attackPoolRows =
+            FXCollections.observableArrayList();
     private final ObservableList<CraftRowViewModel> craftRows = FXCollections.observableArrayList();
-    private final ObservableList<SpecialtyRowViewModel> specialtyRows = FXCollections.observableArrayList();
+    private final ObservableList<SpecialtyRowViewModel> specialtyRows =
+            FXCollections.observableArrayList();
 
     public StatsViewModel(CharacterData data) {
         this.data = data;
-        
+
         // Initialize Row ViewModels
         attributeCategories.addAll(
-            new AttributeCategoryViewModel(data, Attribute.Category.PHYSICAL, SystemData.PHYSICAL_ATTRIBUTES),
-            new AttributeCategoryViewModel(data, Attribute.Category.SOCIAL, SystemData.SOCIAL_ATTRIBUTES),
-            new AttributeCategoryViewModel(data, Attribute.Category.MENTAL, SystemData.MENTAL_ATTRIBUTES)
-        );
+                new AttributeCategoryViewModel(
+                        data, Attribute.Category.PHYSICAL, SystemData.PHYSICAL_ATTRIBUTES),
+                new AttributeCategoryViewModel(
+                        data, Attribute.Category.SOCIAL, SystemData.SOCIAL_ATTRIBUTES),
+                new AttributeCategoryViewModel(
+                        data, Attribute.Category.MENTAL, SystemData.MENTAL_ATTRIBUTES));
 
         for (Ability ability : SystemData.ABILITIES) {
             abilityRows.add(new AbilityRowViewModel(data, ability));
@@ -49,53 +53,64 @@ public class StatsViewModel implements ViewModel {
 
         // MA total dots for Brawl min-dot logic
         updateMaTotal();
-        data.getMartialArtsStyles().addListener((ListChangeListener<? super MartialArtsStyle>) c -> {
-            updateMaTotal();
-            while (c.next()) {
-                if (c.wasAdded()) {
-                    for (MartialArtsStyle mas : c.getAddedSubList()) {
-                        mas.ratingProperty().addListener((obs, ov, nv) -> updateMaTotal());
-                    }
-                }
-            }
-        });
+        data.getMartialArtsStyles()
+                .addListener(
+                        (ListChangeListener<? super MartialArtsStyle>)
+                                c -> {
+                                    updateMaTotal();
+                                    while (c.next()) {
+                                        if (c.wasAdded()) {
+                                            for (MartialArtsStyle mas : c.getAddedSubList()) {
+                                                mas.ratingProperty()
+                                                        .addListener(
+                                                                (obs, ov, nv) -> updateMaTotal());
+                                            }
+                                        }
+                                    }
+                                });
         for (MartialArtsStyle mas : data.getMartialArtsStyles()) {
             mas.ratingProperty().addListener((obs, ov, nv) -> updateMaTotal());
         }
 
         // Sync attack pools
         updateAttackPoolRows();
-        data.getAttackPools().addListener((ListChangeListener<? super AttackPoolData>) c -> updateAttackPoolRows());
+        data.getAttackPools()
+                .addListener(
+                        (ListChangeListener<? super AttackPoolData>) c -> updateAttackPoolRows());
 
         // Sync Crafts
         updateCraftRows();
-        data.getCrafts().addListener((ListChangeListener<? super CraftAbility>) c -> updateCraftRows());
+        data.getCrafts()
+                .addListener((ListChangeListener<? super CraftAbility>) c -> updateCraftRows());
 
         // Sync Specialties
         updateSpecialtyRows();
-        data.getSpecialties().addListener((ListChangeListener<? super Specialty>) c -> updateSpecialtyRows());
+        data.getSpecialties()
+                .addListener((ListChangeListener<? super Specialty>) c -> updateSpecialtyRows());
     }
 
     private void updateCraftRows() {
-        craftRows.setAll(data.getCrafts().stream()
-                .map(CraftRowViewModel::new)
-                .collect(Collectors.toList()));
+        craftRows.setAll(
+                data.getCrafts().stream().map(CraftRowViewModel::new).collect(Collectors.toList()));
     }
 
     private void updateSpecialtyRows() {
-        specialtyRows.setAll(data.getSpecialties().stream()
-                .map(SpecialtyRowViewModel::new)
-                .collect(Collectors.toList()));
+        specialtyRows.setAll(
+                data.getSpecialties().stream()
+                        .map(SpecialtyRowViewModel::new)
+                        .collect(Collectors.toList()));
     }
 
     private void updateAttackPoolRows() {
-        attackPoolRows.setAll(data.getAttackPools().stream()
-                .map(AttackPoolRowViewModel::new)
-                .collect(Collectors.toList()));
+        attackPoolRows.setAll(
+                data.getAttackPools().stream()
+                        .map(AttackPoolRowViewModel::new)
+                        .collect(Collectors.toList()));
     }
 
     private void updateMaTotal() {
-        int total = data.getMartialArtsStyles().stream().mapToInt(MartialArtsStyle::getRating).sum();
+        int total =
+                data.getMartialArtsStyles().stream().mapToInt(MartialArtsStyle::getRating).sum();
         maTotalDots.set(total);
     }
 
@@ -142,7 +157,7 @@ public class StatsViewModel implements ViewModel {
     public void jumpToCharms(String abilityName) {
         Messenger.publish("jump_to_charms", abilityName);
     }
-    
+
     public void markDirty() {
         data.setDirty(true);
     }

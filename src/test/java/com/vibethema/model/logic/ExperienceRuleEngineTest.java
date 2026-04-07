@@ -1,21 +1,18 @@
 package com.vibethema.model.logic;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
+import com.vibethema.model.combat.*;
 import com.vibethema.model.equipment.*;
 import com.vibethema.model.mystic.*;
-import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
 import com.vibethema.model.progression.*;
-import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ExperienceRuleEngineTest {
     private static final Logger logger = LoggerFactory.getLogger(ExperienceRuleEngineTest.class);
@@ -27,7 +24,7 @@ public class ExperienceRuleEngineTest {
     void setUp() {
         data = new CharacterData();
         snapshot = new CharacterSaveState();
-        
+
         // Initialize basic snapshot structure to prevent NPEs
         snapshot.attributes = new java.util.HashMap<>();
         snapshot.abilities = new java.util.HashMap<>();
@@ -43,8 +40,9 @@ public class ExperienceRuleEngineTest {
     @Test
     void testNoSnapshotReturnsEmptyStatus() {
         data.getXpAwards().add(new XpAward("Init", 10, false));
-        ExperienceRuleEngine.ExperienceStatus status = ExperienceRuleEngine.calculateStatus(data, null);
-        
+        ExperienceRuleEngine.ExperienceStatus status =
+                ExperienceRuleEngine.calculateStatus(data, null);
+
         assertEquals(10, status.totalRegularXpAwarded);
         assertEquals(0, status.regularXpSpent);
         assertTrue(status.log.isEmpty());
@@ -55,8 +53,9 @@ public class ExperienceRuleEngineTest {
         snapshot.attributes.put(Attribute.STRENGTH.name(), 2);
         data.getAttribute(Attribute.STRENGTH).set(4);
 
-        ExperienceRuleEngine.ExperienceStatus status = ExperienceRuleEngine.calculateStatus(data, snapshot);
-        
+        ExperienceRuleEngine.ExperienceStatus status =
+                ExperienceRuleEngine.calculateStatus(data, snapshot);
+
         // 2 -> 3 (cost 8), 3 -> 4 (cost 12) = Total 20
         for (ExperiencePurchase p : status.log) {
             logger.info("PURCHASE: {} : {}", p.getDescription(), p.getCost());
@@ -71,8 +70,9 @@ public class ExperienceRuleEngineTest {
         data.getAbility(Ability.AWARENESS).set(3);
         data.getFavoredAbility(Ability.AWARENESS).set(true);
 
-        ExperienceRuleEngine.ExperienceStatus status = ExperienceRuleEngine.calculateStatus(data, snapshot);
-        
+        ExperienceRuleEngine.ExperienceStatus status =
+                ExperienceRuleEngine.calculateStatus(data, snapshot);
+
         // 1 -> 2 (cost 1*2 - 1 = 1), 2 -> 3 (cost 2*2 - 1 = 3) = Total 4
         assertEquals(4, status.regularXpSpent);
     }
@@ -84,8 +84,9 @@ public class ExperienceRuleEngineTest {
         data.getFavoredAbility(Ability.STEALTH).set(false);
         data.getCasteAbility(Ability.STEALTH).set(false);
 
-        ExperienceRuleEngine.ExperienceStatus status = ExperienceRuleEngine.calculateStatus(data, snapshot);
-        
+        ExperienceRuleEngine.ExperienceStatus status =
+                ExperienceRuleEngine.calculateStatus(data, snapshot);
+
         // 2 -> 3 (cost 4), 3 -> 4 (cost 6) = Total 10
         assertEquals(10, status.regularXpSpent);
     }
@@ -94,9 +95,10 @@ public class ExperienceRuleEngineTest {
     void testNewAbilityCost() {
         // Not in snapshot (so 0), data is 1
         data.getAbility(Ability.LARCENY).set(1);
-        
-        ExperienceRuleEngine.ExperienceStatus status = ExperienceRuleEngine.calculateStatus(data, snapshot);
-        
+
+        ExperienceRuleEngine.ExperienceStatus status =
+                ExperienceRuleEngine.calculateStatus(data, snapshot);
+
         // New ability costs 3
         assertEquals(3, status.regularXpSpent);
     }
@@ -106,8 +108,9 @@ public class ExperienceRuleEngineTest {
         snapshot.merits.put("Resources", 2);
         data.getMerits().add(new Merit("Resources", 4));
 
-        ExperienceRuleEngine.ExperienceStatus status = ExperienceRuleEngine.calculateStatus(data, snapshot);
-        
+        ExperienceRuleEngine.ExperienceStatus status =
+                ExperienceRuleEngine.calculateStatus(data, snapshot);
+
         // 2 -> 3 (cost 9), 3 -> 4 (cost 12) = Total 21
         assertEquals(21, status.regularXpSpent);
     }
@@ -115,11 +118,18 @@ public class ExperienceRuleEngineTest {
     @Test
     void testSolarCharmCostAndTypeRouting() {
         // Solar charm (ability matches core enum)
-        data.getUnlockedCharms().add(new PurchasedCharm("charm1", "Dipping Swallow Defense", "Melee"));
+        data.getUnlockedCharms()
+                .add(new PurchasedCharm("charm1", "Dipping Swallow Defense", "Melee"));
         data.getFavoredAbility(Ability.MELEE).set(true); // Favored -> 8
-        
-        data.getUnlockedCharms().add(new PurchasedCharm("charm2", "Peony Blade", "Melee")); // Non-favored would be 10, but since Melee is favored it's 8.
-        
+
+        data.getUnlockedCharms()
+                .add(
+                        new PurchasedCharm(
+                                "charm2",
+                                "Peony Blade",
+                                "Melee")); // Non-favored would be 10, but since Melee is favored
+        // it's 8.
+
         data.getUnlockedCharms().add(new PurchasedCharm("charm3", "Some Archery Charm", "Archery"));
         data.getFavoredAbility(Ability.ARCHERY).set(false); // Non-favored -> 10
 
@@ -127,7 +137,8 @@ public class ExperienceRuleEngineTest {
         data.getXpAwards().add(new XpAward("Reg", 100, false));
         data.getXpAwards().add(new XpAward("Sol", 100, true));
 
-        ExperienceRuleEngine.ExperienceStatus status = ExperienceRuleEngine.calculateStatus(data, snapshot);
+        ExperienceRuleEngine.ExperienceStatus status =
+                ExperienceRuleEngine.calculateStatus(data, snapshot);
 
         // Charms belong to core abilities, so they are solar charms and CANNOT use Solar XP!
         // Total cost: 8 + 8 + 10 = 26
@@ -139,19 +150,26 @@ public class ExperienceRuleEngineTest {
     @Test
     void testMartialArtsAndEvocationSolarXpRouting() {
         // Evocation
-        data.getUnlockedCharms().add(new PurchasedCharm("charm1", "Volcano Cutter", "Evocation")); // Cost 10
-        
+        data.getUnlockedCharms()
+                .add(new PurchasedCharm("charm1", "Volcano Cutter", "Evocation")); // Cost 10
+
         // MA Charm
         data.getMartialArtsStyles().add(new MartialArtsStyle("id", "Snake Style", 1));
-        data.getMartialArtsStyles().get(0).setCaste(true); 
-        data.getUnlockedCharms().add(new PurchasedCharm("charm2", "Striking Cobra Technique", "Snake Style")); // Favored -> Cost 8
+        data.getMartialArtsStyles().get(0).setCaste(true);
+        data.getUnlockedCharms()
+                .add(
+                        new PurchasedCharm(
+                                "charm2",
+                                "Striking Cobra Technique",
+                                "Snake Style")); // Favored -> Cost 8
 
         // Give 15 Solar XP. Costs are 21.
         data.getXpAwards().add(new XpAward("Sol", 15, true));
 
-        ExperienceRuleEngine.ExperienceStatus status = ExperienceRuleEngine.calculateStatus(data, snapshot);
-        
-        // Total cost 21. They can all use Solar XP. 
+        ExperienceRuleEngine.ExperienceStatus status =
+                ExperienceRuleEngine.calculateStatus(data, snapshot);
+
+        // Total cost 21. They can all use Solar XP.
         // 15 is eaten by Solar pool, remaining 6 spills over to Regular pool.
         assertEquals(15, status.solarXpSpent);
         assertEquals(6, status.regularXpSpent);

@@ -1,19 +1,15 @@
 package com.vibethema.model.logic;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
+import com.vibethema.model.combat.*;
 import com.vibethema.model.equipment.*;
 import com.vibethema.model.mystic.*;
-import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
 import com.vibethema.model.progression.*;
-import com.vibethema.model.logic.*;
-
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import java.util.*;
 
-/**
- * Logic engine for character creation rules (Bonus Points, starting pools).
- */
+/** Logic engine for character creation rules (Bonus Points, starting pools). */
 public class CreationRuleEngine {
 
     public static class CreationStatus {
@@ -33,36 +29,46 @@ public class CreationRuleEngine {
         // Detailed pool usage
         public int attributesSpent; // dots above 1
         public int abilitiesSpent; // total dots
-        public int meritsSpent;    // total merit dots
-        public int specialtiesSpent; // count 
-        public int charmsSpent;      // count of charms/spells
-        
+        public int meritsSpent; // total merit dots
+        public int specialtiesSpent; // count
+        public int charmsSpent; // count of charms/spells
+
         public boolean allAttributePrioritiesSet;
         public boolean isReadyToFinalize;
     }
 
     public static CreationStatus calculateStatus(CharacterData data) {
         CreationStatus status = new CreationStatus();
-        
+
         // 1. Attributes (8/6/4)
         status.physicalDots = getAttributeTotal(data, SystemData.PHYSICAL_ATTRIBUTES);
         status.socialDots = getAttributeTotal(data, SystemData.SOCIAL_ATTRIBUTES);
         status.mentalDots = getAttributeTotal(data, SystemData.MENTAL_ATTRIBUTES);
-        
+
         AttributePriority physPri = data.getAttributePriority(Attribute.Category.PHYSICAL).get();
         AttributePriority socPri = data.getAttributePriority(Attribute.Category.SOCIAL).get();
         AttributePriority mentPri = data.getAttributePriority(Attribute.Category.MENTAL).get();
 
-        boolean allPrioritiesSet = (physPri != null && socPri != null && mentPri != null) &&
-                                  (physPri != socPri && physPri != mentPri && socPri != mentPri);
+        boolean allPrioritiesSet =
+                (physPri != null && socPri != null && mentPri != null)
+                        && (physPri != socPri && physPri != mentPri && socPri != mentPri);
 
         if (allPrioritiesSet) {
-            status.bonusPointsSpent += Math.max(0, status.physicalDots - physPri.getFreeDots()) * (physPri == AttributePriority.TERTIARY ? 3 : 4);
-            status.bonusPointsSpent += Math.max(0, status.socialDots - socPri.getFreeDots()) * (socPri == AttributePriority.TERTIARY ? 3 : 4);
-            status.bonusPointsSpent += Math.max(0, status.mentalDots - mentPri.getFreeDots()) * (mentPri == AttributePriority.TERTIARY ? 3 : 4);
+            status.bonusPointsSpent +=
+                    Math.max(0, status.physicalDots - physPri.getFreeDots())
+                            * (physPri == AttributePriority.TERTIARY ? 3 : 4);
+            status.bonusPointsSpent +=
+                    Math.max(0, status.socialDots - socPri.getFreeDots())
+                            * (socPri == AttributePriority.TERTIARY ? 3 : 4);
+            status.bonusPointsSpent +=
+                    Math.max(0, status.mentalDots - mentPri.getFreeDots())
+                            * (mentPri == AttributePriority.TERTIARY ? 3 : 4);
         } else {
-            // Fallback to auto-fit for BP calculation ONLY, but validation will prevent finalization
-            int[][] permutations = {{8, 6, 4}, {8, 4, 6}, {6, 8, 4}, {6, 4, 8}, {4, 8, 6}, {4, 6, 8}};
+            // Fallback to auto-fit for BP calculation ONLY, but validation will prevent
+            // finalization
+            int[][] permutations = {
+                {8, 6, 4}, {8, 4, 6}, {6, 8, 4}, {6, 4, 8}, {4, 8, 6}, {4, 6, 8}
+            };
             int minAttrBP = Integer.MAX_VALUE;
             for (int[] p : permutations) {
                 int cost = 0;
@@ -81,7 +87,8 @@ public class CreationRuleEngine {
         for (Ability abil : SystemData.ABILITIES) {
             if (Ability.CRAFT == abil || Ability.MARTIAL_ARTS == abil) continue;
             int dots = data.getAbility(abil).get();
-            boolean isFavored = data.getCasteAbility(abil).get() || data.getFavoredAbility(abil).get();
+            boolean isFavored =
+                    data.getCasteAbility(abil).get() || data.getFavoredAbility(abil).get();
             int costPerDot = isFavored ? 1 : 2;
             for (int i = 1; i <= dots; i++) {
                 if (i > 3) mustBp += costPerDot;
@@ -111,13 +118,13 @@ public class CreationRuleEngine {
             if (freeLeft > 0) freeLeft--;
             else optPoolBp += cost;
         }
-        status.abilityDots = 28 - freeLeft; 
+        status.abilityDots = 28 - freeLeft;
         status.bonusPointsSpent += mustBp + optPoolBp;
 
         // 3. Merits & Specialties
         status.meritDots = data.getMerits().stream().mapToInt(Merit::getRating).sum();
         status.bonusPointsSpent += Math.max(0, status.meritDots - 10);
-        
+
         status.specialtyCount = data.getSpecialties().size();
         status.bonusPointsSpent += Math.max(0, status.specialtyCount - 4);
 
@@ -133,7 +140,9 @@ public class CreationRuleEngine {
             boolean isFavored = false;
             Ability enumAbil = Ability.fromString(ability);
             if (enumAbil != null) {
-                isFavored = data.getCasteAbility(enumAbil).get() || data.getFavoredAbility(enumAbil).get();
+                isFavored =
+                        data.getCasteAbility(enumAbil).get()
+                                || data.getFavoredAbility(enumAbil).get();
             } else {
                 // Check if it's a MA/Craft style
                 for (MartialArtsStyle mas : data.getMartialArtsStyles()) {
@@ -151,15 +160,17 @@ public class CreationRuleEngine {
             }
             charmCosts.add(isFavored ? 4 : 5);
         }
-        
+
         boolean hasTCS = data.hasCharmByName(SystemData.TERRESTRIAL_CIRCLE_SORCERY);
         int billableSpells = Math.max(0, data.getSpells().size() - (hasTCS ? 1 : 0));
         if (billableSpells > 0) {
-            boolean isOccultFavored = data.getCasteAbility(Ability.OCCULT).get() || data.getFavoredAbility(Ability.OCCULT).get();
+            boolean isOccultFavored =
+                    data.getCasteAbility(Ability.OCCULT).get()
+                            || data.getFavoredAbility(Ability.OCCULT).get();
             int spellCost = isOccultFavored ? 4 : 5;
             for (int i = 0; i < billableSpells; i++) charmCosts.add(spellCost);
         }
-        
+
         Collections.sort(charmCosts, Collections.reverseOrder());
         int freeCharmsLeft = 15;
         for (int cost : charmCosts) {
@@ -172,7 +183,7 @@ public class CreationRuleEngine {
         int essence = data.essenceProperty().get();
         status.personalMotes = (essence * 3) + 10;
         status.peripheralMotes = (essence * 7) + 26;
-        
+
         status.healthLevels = data.getHealthLevels();
 
         status.overBonusPoints = status.bonusPointsSpent > 15;
@@ -180,17 +191,22 @@ public class CreationRuleEngine {
         status.favoredAbilities = data.favoredAbilityCountProperty().get();
 
         // 7. Calculate "Spent" counts for each pool
-        status.attributesSpent = status.physicalDots + status.socialDots + status.mentalDots; // dots above 1
-        status.abilitiesSpent = data.getAbilities().values().stream().mapToInt(javafx.beans.property.IntegerProperty::get).sum();
+        status.attributesSpent =
+                status.physicalDots + status.socialDots + status.mentalDots; // dots above 1
+        status.abilitiesSpent =
+                data.getAbilities().values().stream()
+                        .mapToInt(javafx.beans.property.IntegerProperty::get)
+                        .sum();
         for (CraftAbility ca : data.getCrafts()) status.abilitiesSpent += ca.getRating();
-        for (MartialArtsStyle mas : data.getMartialArtsStyles()) status.abilitiesSpent += mas.getRating();
-        
+        for (MartialArtsStyle mas : data.getMartialArtsStyles())
+            status.abilitiesSpent += mas.getRating();
+
         status.meritsSpent = status.meritDots;
         status.specialtiesSpent = status.specialtyCount;
         status.charmsSpent = data.getUnlockedCharms().size() + billableSpells;
 
         // 8. Finalization Eligibility
-        // Requirements: 
+        // Requirements:
         // - At least 18 attribute dots above 1 (8/6/4)
         // - At least 28 ability dots
         // - At least 10 merit dots
@@ -198,17 +214,17 @@ public class CreationRuleEngine {
         // - At least 15 charms/spells
         // - Exactly 15 bonus points spent (strict interpretation of "all points spent")
         // - Caste/Favored counts met (5/5)
-        
-        status.isReadyToFinalize = 
-            status.attributesSpent >= 18 &&
-            status.abilitiesSpent >= 28 &&
-            status.meritsSpent >= 10 &&
-            status.specialtiesSpent >= 4 &&
-            status.charmsSpent >= 15 &&
-            status.bonusPointsSpent == 15 &&
-            status.casteAbilities == 5 &&
-            status.favoredAbilities == 5 &&
-            status.allAttributePrioritiesSet;
+
+        status.isReadyToFinalize =
+                status.attributesSpent >= 18
+                        && status.abilitiesSpent >= 28
+                        && status.meritsSpent >= 10
+                        && status.specialtiesSpent >= 4
+                        && status.charmsSpent >= 15
+                        && status.bonusPointsSpent == 15
+                        && status.casteAbilities == 5
+                        && status.favoredAbilities == 5
+                        && status.allAttributePrioritiesSet;
 
         return status;
     }

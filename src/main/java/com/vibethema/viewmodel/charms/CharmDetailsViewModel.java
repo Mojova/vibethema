@@ -1,27 +1,24 @@
 package com.vibethema.viewmodel.charms;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class CharmDetailsViewModel implements ViewModel {
     private static final Logger logger = LoggerFactory.getLogger(CharmDetailsViewModel.class);
@@ -48,41 +45,48 @@ public class CharmDetailsViewModel implements ViewModel {
     private final BooleanProperty purchaseBtnDisabled = new SimpleBooleanProperty(true);
     private final BooleanProperty purchaseBtnVisible = new SimpleBooleanProperty(false);
     private final StringProperty purchaseBtnStyle = new SimpleStringProperty("-fx-base: #d4af37;");
-    
+
     private final StringProperty refundBtnText = new SimpleStringProperty("Refund");
     private final BooleanProperty refundBtnVisible = new SimpleBooleanProperty(false);
-    
+
     private final BooleanProperty deleteCustomBtnVisible = new SimpleBooleanProperty(false);
-    private final StringProperty deleteCustomBtnText = new SimpleStringProperty("Delete Custom Charm");
-    
+    private final StringProperty deleteCustomBtnText =
+            new SimpleStringProperty("Delete Custom Charm");
+
     private final BooleanProperty editBtnVisible = new SimpleBooleanProperty(false);
 
-    public CharmDetailsViewModel(CharacterData data, CharmDataService dataService, Map<String, String> keywordDefs) {
+    public CharmDetailsViewModel(
+            CharacterData data, CharmDataService dataService, Map<String, String> keywordDefs) {
         this.data = data;
         this.dataService = dataService;
         this.keywordDefs = keywordDefs;
 
         selectedCharm.addListener((obs, oldV, newV) -> updateSidebar(newV));
-        
-        // Subscribe to selection updates from the tree
-        Messenger.subscribe("charm_selected", (name, payload) -> {
-            if (payload != null && payload.length > 0 && payload[0] instanceof Charm) {
-                selectedCharm.set((Charm) payload[0]);
-            } else if (payload != null && payload.length > 0 && payload[0] == null) {
-                selectedCharm.set(null);
-            }
-        });
-        
-        // Context info for the "term" (Charm or Evocation)
-        Messenger.subscribe("charm_context_update", (name, payload) -> {
-            if (payload != null && payload.length >= 2) {
-                filterType.set((String) payload[0]);
-                artifactName.set((String) payload[1]);
-                updateSidebar(selectedCharm.get());
-            }
-        });
 
-        Messenger.subscribe("refresh_all_ui", (name, payload) -> updateSidebar(selectedCharm.get()));
+        // Subscribe to selection updates from the tree
+        Messenger.subscribe(
+                "charm_selected",
+                (name, payload) -> {
+                    if (payload != null && payload.length > 0 && payload[0] instanceof Charm) {
+                        selectedCharm.set((Charm) payload[0]);
+                    } else if (payload != null && payload.length > 0 && payload[0] == null) {
+                        selectedCharm.set(null);
+                    }
+                });
+
+        // Context info for the "term" (Charm or Evocation)
+        Messenger.subscribe(
+                "charm_context_update",
+                (name, payload) -> {
+                    if (payload != null && payload.length >= 2) {
+                        filterType.set((String) payload[0]);
+                        artifactName.set((String) payload[1]);
+                        updateSidebar(selectedCharm.get());
+                    }
+                });
+
+        Messenger.subscribe(
+                "refresh_all_ui", (name, payload) -> updateSidebar(selectedCharm.get()));
     }
 
     public void updateSidebar(Charm c) {
@@ -102,7 +106,7 @@ public class CharmDetailsViewModel implements ViewModel {
         }
 
         detailTitle.set(c.getName());
-        
+
         // Prerequisite resolution logic (copied from CharmTreeViewModel)
         List<String> prereqStrings = new ArrayList<>();
         if (c.getPrerequisiteGroups() != null) {
@@ -117,20 +121,32 @@ public class CharmDetailsViewModel implements ViewModel {
                         boolean allSame = true;
                         for (String rid : ids) {
                             String ab = dataService.getCharmAbility(rid);
-                            if (ab == null) { allSame = false; break; }
+                            if (ab == null) {
+                                allSame = false;
+                                break;
+                            }
                             if (commonAbility == null) commonAbility = ab;
-                            else if (!commonAbility.equals(ab)) { allSame = false; break; }
+                            else if (!commonAbility.equals(ab)) {
+                                allSame = false;
+                                break;
+                            }
                         }
                         if (allSame && commonAbility != null) {
-                            String label = (min > 0 && min < ids.size()) 
-                                ? "Any " + min + " " + commonAbility + " Charm" + (min > 1 ? "s" : "")
-                                : "All " + ids.size() + " " + commonAbility + " Charms";
+                            String label =
+                                    (min > 0 && min < ids.size())
+                                            ? "Any "
+                                                    + min
+                                                    + " "
+                                                    + commonAbility
+                                                    + " Charm"
+                                                    + (min > 1 ? "s" : "")
+                                            : "All " + ids.size() + " " + commonAbility + " Charms";
                             prereqStrings.add(label);
                             continue;
                         }
                     }
                     List<String> names = new ArrayList<>();
-                    for (String rid : ids) names.add(dataService.getCharmName(rid)); 
+                    for (String rid : ids) names.add(dataService.getCharmName(rid));
                     String prefix = (min > 0 && min < ids.size()) ? "Any " + min + " of: " : "";
                     prereqStrings.add(prefix + String.join(", ", names));
                 }
@@ -138,10 +154,18 @@ public class CharmDetailsViewModel implements ViewModel {
         }
         String prereqStr = prereqStrings.isEmpty() ? "None" : String.join("; ", prereqStrings);
 
-        String baseReqs = "Evocation".equals(filterType.get()) 
-            ? "Mins: Ess " + c.getMinEssence() + "\nPrereqs: " + prereqStr
-            : "Mins: " + c.getAbility() + " " + c.getMinAbility() + ", Ess: " + c.getMinEssence() + "\nPrereqs: " + prereqStr;
-        
+        String baseReqs =
+                "Evocation".equals(filterType.get())
+                        ? "Mins: Ess " + c.getMinEssence() + "\nPrereqs: " + prereqStr
+                        : "Mins: "
+                                + c.getAbility()
+                                + " "
+                                + c.getMinAbility()
+                                + ", Ess: "
+                                + c.getMinEssence()
+                                + "\nPrereqs: "
+                                + prereqStr;
+
         if (c.isPotentiallyProblematicImport()) {
             baseReqs = "⚠️ WARNING: Problematic Import\n" + baseReqs;
         }
@@ -195,7 +219,7 @@ public class CharmDetailsViewModel implements ViewModel {
         if (c == null) return;
         boolean stackable = c.getKeywords() != null && c.getKeywords().contains("Stackable");
         boolean owned = data.hasCharm(c.getId());
-        
+
         if (stackable || (!owned && c.isEligible(data))) {
             data.addCharm(new PurchasedCharm(c.getId(), c.getName(), c.getAbility()));
         } else if (owned) {
@@ -230,9 +254,11 @@ public class CharmDetailsViewModel implements ViewModel {
     public void onEditRequest() {
         Charm c = selectedCharm.get();
         if (c != null) {
-            Messenger.publish("open_edit_charm_dialog", new Object[]{
-                c, artifactName.get(), filterType.get(), (Runnable) this::refresh
-            });
+            Messenger.publish(
+                    "open_edit_charm_dialog",
+                    new Object[] {
+                        c, artifactName.get(), filterType.get(), (Runnable) this::refresh
+                    });
         }
     }
 
@@ -241,22 +267,75 @@ public class CharmDetailsViewModel implements ViewModel {
     }
 
     // Getters
-    public ObjectProperty<Charm> selectedCharmProperty() { return selectedCharm; }
-    public StringProperty detailTitleProperty() { return detailTitle; }
-    public StringProperty detailReqsProperty() { return detailReqs; }
-    public StringProperty costTextProperty() { return costText; }
-    public StringProperty typeTextProperty() { return typeText; }
-    public StringProperty durationTextProperty() { return durationText; }
-    public ObservableList<String> getKeywords() { return keywords; }
-    public StringProperty descriptionTextProperty() { return descriptionText; }
-    public Map<String, String> getKeywordDefs() { return keywordDefs; }
-    public StringProperty purchaseBtnTextProperty() { return purchaseBtnText; }
-    public BooleanProperty purchaseBtnDisabledProperty() { return purchaseBtnDisabled; }
-    public BooleanProperty purchaseBtnVisibleProperty() { return purchaseBtnVisible; }
-    public StringProperty purchaseBtnStyleProperty() { return purchaseBtnStyle; }
-    public StringProperty refundBtnTextProperty() { return refundBtnText; }
-    public BooleanProperty refundBtnVisibleProperty() { return refundBtnVisible; }
-    public BooleanProperty deleteCustomBtnVisibleProperty() { return deleteCustomBtnVisible; }
-    public StringProperty deleteCustomBtnTextProperty() { return deleteCustomBtnText; }
-    public BooleanProperty editBtnVisibleProperty() { return editBtnVisible; }
+    public ObjectProperty<Charm> selectedCharmProperty() {
+        return selectedCharm;
+    }
+
+    public StringProperty detailTitleProperty() {
+        return detailTitle;
+    }
+
+    public StringProperty detailReqsProperty() {
+        return detailReqs;
+    }
+
+    public StringProperty costTextProperty() {
+        return costText;
+    }
+
+    public StringProperty typeTextProperty() {
+        return typeText;
+    }
+
+    public StringProperty durationTextProperty() {
+        return durationText;
+    }
+
+    public ObservableList<String> getKeywords() {
+        return keywords;
+    }
+
+    public StringProperty descriptionTextProperty() {
+        return descriptionText;
+    }
+
+    public Map<String, String> getKeywordDefs() {
+        return keywordDefs;
+    }
+
+    public StringProperty purchaseBtnTextProperty() {
+        return purchaseBtnText;
+    }
+
+    public BooleanProperty purchaseBtnDisabledProperty() {
+        return purchaseBtnDisabled;
+    }
+
+    public BooleanProperty purchaseBtnVisibleProperty() {
+        return purchaseBtnVisible;
+    }
+
+    public StringProperty purchaseBtnStyleProperty() {
+        return purchaseBtnStyle;
+    }
+
+    public StringProperty refundBtnTextProperty() {
+        return refundBtnText;
+    }
+
+    public BooleanProperty refundBtnVisibleProperty() {
+        return refundBtnVisible;
+    }
+
+    public BooleanProperty deleteCustomBtnVisibleProperty() {
+        return deleteCustomBtnVisible;
+    }
+
+    public StringProperty deleteCustomBtnTextProperty() {
+        return deleteCustomBtnText;
+    }
+
+    public BooleanProperty editBtnVisibleProperty() {
+        return editBtnVisible;
+    }
 }

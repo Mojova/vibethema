@@ -1,29 +1,28 @@
 package com.vibethema.model.equipment;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
 import com.vibethema.model.logic.*;
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
+import java.util.function.Consumer;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import java.util.function.Consumer;
 
 public class EquipmentModel {
     private final ObservableList<Weapon> weapons = FXCollections.observableArrayList();
     private final ObservableList<Armor> armors = FXCollections.observableArrayList();
     private final ObservableList<Hearthstone> hearthstones = FXCollections.observableArrayList();
-    private final ObservableList<OtherEquipment> otherEquipment = FXCollections.observableArrayList();
-    
+    private final ObservableList<OtherEquipment> otherEquipment =
+            FXCollections.observableArrayList();
+
     private final IntegerProperty armorSoak = new SimpleIntegerProperty(0);
     private final IntegerProperty totalHardness = new SimpleIntegerProperty(0);
-    
+
     private final Consumer<Void> dirtyListener;
     private final Runnable statUpdateTrigger;
     private boolean isImporting = false;
@@ -32,43 +31,54 @@ public class EquipmentModel {
         this.dirtyListener = dirtyListener;
         this.statUpdateTrigger = statUpdateTrigger;
 
-        armors.addListener((javafx.collections.ListChangeListener.Change<? extends Armor> c) -> {
-            while (c.next()) {
-                if (c.wasAdded()) {
-                    for (Armor a : c.getAddedSubList()) {
-                        a.equippedProperty().addListener((obs, old, nv) -> {
-                            if (nv && !isImporting) {
-                                for (Armor other : armors) {
-                                    if (other != a) other.setEquipped(false);
+        armors.addListener(
+                (javafx.collections.ListChangeListener.Change<? extends Armor> c) -> {
+                    while (c.next()) {
+                        if (c.wasAdded()) {
+                            for (Armor a : c.getAddedSubList()) {
+                                a.equippedProperty()
+                                        .addListener(
+                                                (obs, old, nv) -> {
+                                                    if (nv && !isImporting) {
+                                                        for (Armor other : armors) {
+                                                            if (other != a)
+                                                                other.setEquipped(false);
+                                                        }
+                                                    }
+                                                    updateArmorStats();
+                                                });
+                            }
+                        }
+                    }
+                    updateArmorStats();
+                });
+
+        weapons.addListener(
+                (javafx.collections.ListChangeListener<? super Weapon>)
+                        c -> {
+                            markDirty();
+                            statUpdateTrigger.run();
+                        });
+
+        otherEquipment.addListener(
+                (javafx.collections.ListChangeListener<? super OtherEquipment>)
+                        c -> {
+                            markDirty();
+                            while (c.next()) {
+                                if (c.wasAdded()) {
+                                    for (OtherEquipment oe : c.getAddedSubList()) {
+                                        oe.nameProperty().addListener((obs, ov, nv) -> markDirty());
+                                        oe.descriptionProperty()
+                                                .addListener((obs, ov, nv) -> markDirty());
+                                        oe.artifactProperty()
+                                                .addListener((obs, ov, nv) -> markDirty());
+                                    }
                                 }
                             }
-                            updateArmorStats();
                         });
-                    }
-                }
-            }
-            updateArmorStats();
-        });
 
-        weapons.addListener((javafx.collections.ListChangeListener<? super Weapon>) c -> {
-            markDirty();
-            statUpdateTrigger.run();
-        });
-        
-        otherEquipment.addListener((javafx.collections.ListChangeListener<? super OtherEquipment>) c -> {
-            markDirty();
-            while (c.next()) {
-                if (c.wasAdded()) {
-                    for (OtherEquipment oe : c.getAddedSubList()) {
-                        oe.nameProperty().addListener((obs, ov, nv) -> markDirty());
-                        oe.descriptionProperty().addListener((obs, ov, nv) -> markDirty());
-                        oe.artifactProperty().addListener((obs, ov, nv) -> markDirty());
-                    }
-                }
-            }
-        });
-        
-        hearthstones.addListener((javafx.collections.ListChangeListener<? super Hearthstone>) c -> markDirty());
+        hearthstones.addListener(
+                (javafx.collections.ListChangeListener<? super Hearthstone>) c -> markDirty());
     }
 
     public void setImporting(boolean importing) {
@@ -97,10 +107,27 @@ public class EquipmentModel {
         statUpdateTrigger.run();
     }
 
-    public ObservableList<Weapon> getWeapons() { return weapons; }
-    public ObservableList<Armor> getArmors() { return armors; }
-    public ObservableList<Hearthstone> getHearthstones() { return hearthstones; }
-    public ObservableList<OtherEquipment> getOtherEquipment() { return otherEquipment; }
-    public IntegerProperty armorSoakProperty() { return armorSoak; }
-    public IntegerProperty totalHardnessProperty() { return totalHardness; }
+    public ObservableList<Weapon> getWeapons() {
+        return weapons;
+    }
+
+    public ObservableList<Armor> getArmors() {
+        return armors;
+    }
+
+    public ObservableList<Hearthstone> getHearthstones() {
+        return hearthstones;
+    }
+
+    public ObservableList<OtherEquipment> getOtherEquipment() {
+        return otherEquipment;
+    }
+
+    public IntegerProperty armorSoakProperty() {
+        return armorSoak;
+    }
+
+    public IntegerProperty totalHardnessProperty() {
+        return totalHardness;
+    }
 }

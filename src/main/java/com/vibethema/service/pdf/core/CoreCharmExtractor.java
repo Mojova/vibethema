@@ -1,7 +1,6 @@
 package com.vibethema.service.pdf.core;
 
 import com.vibethema.service.pdf.base.BaseCharmExtractor;
-
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -13,8 +12,13 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
     public void extractAndSave(String text, String suffix) throws IOException {
         // Pre-process: Strip Core Book page-junk blocks before splitting
         // Patterns: "[Header/Chapter]\nEX3\n[Page#]" or similar
-        text = text.replaceAll("(?m)^(?:[A-Z\\s]{5,}|SOLAR CHARMS|MARTIAL ARTS CHARMS)\\s*\\nEX3\\s*\\n\\d{3}\\s*\\n", "\n")
-                   .replaceAll("(?m)^\\n\\d{3}\\s*\\nEX3\\s*\\n(?:[A-Z\\s]{5,})", "\n");
+        text =
+                text.replaceAll(
+                                "(?m)^(?:[A-Z\\s]{5,}|SOLAR CHARMS|MARTIAL ARTS CHARMS)\\s*\\n"
+                                        + "EX3\\s*\\n"
+                                        + "\\d{3}\\s*\\n",
+                                "\n")
+                        .replaceAll("(?m)^\\n\\d{3}\\s*\\nEX3\\s*\\n(?:[A-Z\\s]{5,})", "\n");
 
         Map<String, List<Map<String, Object>>> charmsByAbility = new HashMap<>();
         Map<String, List<Map<String, Object>>> charmsByMartialArtsStyle = new HashMap<>();
@@ -43,9 +47,9 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
             }
 
             for (int i = 0; i < lines.length - 1; i++) {
-                if (lines[i+1].trim().startsWith("Cost:")) {
+                if (lines[i + 1].trim().startsWith("Cost:")) {
                     name = lines[i].trim();
-                    costLine = lines[i+1].trim();
+                    costLine = lines[i + 1].trim();
                     descStartIdx = i + 2;
                     break;
                 }
@@ -70,7 +74,7 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
             String duration = "";
             String rawPrereqs = "";
             String currentField = "";
-            
+
             for (int i = descStartIdx; i < Math.min(lines.length, descStartIdx + 10); i++) {
                 String line = lines[i].trim();
                 if (line.isEmpty()) continue;
@@ -97,7 +101,9 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                     rawPrereqs = line.replace("Prerequisite Charms:", "").trim();
                     currentField = "Prereqs";
                     descStartIdx = i + 1;
-                } else if (!currentField.isEmpty() && !line.contains(":") && !line.contains("Cost:")) {
+                } else if (!currentField.isEmpty()
+                        && !line.contains(":")
+                        && !line.contains("Cost:")) {
                     if (isLikelyDescription(line, currentField, keywords, rawPrereqs)) break;
 
                     if (currentField.equals("Type")) type += " " + line;
@@ -120,35 +126,48 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                 if (cleanPrereqs.startsWith(",")) cleanPrereqs = cleanPrereqs.substring(1).trim();
 
                 // Join hyphenated words broken across lines
-                // Heuristic: dash followed by lowercase means a single word was broken (e.g. Intercept- ing)
+                // Heuristic: dash followed by lowercase means a single word was broken (e.g.
+                // Intercept- ing)
                 //            dash followed by uppercase means a compound word (e.g. River- Binding)
                 // We use a comprehensive set of Unicode dash characters to catch all PDF artifacts.
                 String dashPattern = "[\\u002D\\u00AD\\u2010\\u2011\\u2012\\u2013\\u2014]";
-                cleanPrereqs = cleanPrereqs.replaceAll(dashPattern + "\\s*(?=[a-z])", "")
-                                         .replaceAll(dashPattern + "\\s+(?=[A-Z])", "-");
+                cleanPrereqs =
+                        cleanPrereqs
+                                .replaceAll(dashPattern + "\\s*(?=[a-z])", "")
+                                .replaceAll(dashPattern + "\\s+(?=[A-Z])", "-");
 
                 // Detect patterns like "Any two Keen (Sense) Techniques"
-                Pattern anyKeenPattern = Pattern.compile("(?i)Any (two|three|\\d+) Keen \\(Sense\\) Techniques");
+                Pattern anyKeenPattern =
+                        Pattern.compile("(?i)Any (two|three|\\d+) Keen \\(Sense\\) Techniques");
                 Matcher keenMatcher = anyKeenPattern.matcher(cleanPrereqs);
-                
+
                 // Detect patterns like "Awakening Eye + Any 3 non-Excellency Awareness Charms"
                 // Note: PDF artifacts may result in "non-Ex- cellency"
-                Pattern complexAnyPattern = Pattern.compile("(?i)(.*?) \\+ Any (\\d+) (?:non-Ex-?\\s*cellency )?(?:[\\w\\s-]+? )?Charms");
+                Pattern complexAnyPattern =
+                        Pattern.compile(
+                                "(?i)(.*?) \\+ Any (\\d+) (?:non-Ex-?\\s*cellency )?(?:[\\w\\s-]+?"
+                                        + " )?Charms");
                 Matcher complexMatcher = complexAnyPattern.matcher(cleanPrereqs);
 
                 if (keenMatcher.find()) {
                     Map<String, Object> group = new LinkedHashMap<>();
                     group.put("label", keenMatcher.group(0));
-                    group.put("names", Arrays.asList("Keen Sight Technique", "Keen Hearing and Touch Technique", "Keen Taste and Smell Technique"));
+                    group.put(
+                            "names",
+                            Arrays.asList(
+                                    "Keen Sight Technique",
+                                    "Keen Hearing and Touch Technique",
+                                    "Keen Taste and Smell Technique"));
                     group.put("minCount", parseNumber(keenMatcher.group(1)));
                     prereqGroups.add(group);
                 } else if (complexMatcher.find()) {
                     String mandatoryName = complexMatcher.group(1).trim();
                     String countStr = complexMatcher.group(2);
                     String fullMatch = complexMatcher.group(0).toLowerCase();
-                    boolean nonExcellency = fullMatch.contains("non-excellency") || 
-                                            fullMatch.contains("non-ex-cellency") ||
-                                            fullMatch.contains("non-ex- cellency");
+                    boolean nonExcellency =
+                            fullMatch.contains("non-excellency")
+                                    || fullMatch.contains("non-ex-cellency")
+                                    || fullMatch.contains("non-ex- cellency");
 
                     // Mandatory part
                     Map<String, Object> mandatoryGroup = new LinkedHashMap<>();
@@ -159,16 +178,21 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                     // Optional part with metadata for resolution
                     Map<String, Object> optionalGroup = new LinkedHashMap<>();
                     String flags = nonExcellency ? "|non-Excellency" : "";
-                    optionalGroup.put("names", Arrays.asList("__OTHERS_EXCEPT:" + mandatoryName + flags + "__"));
+                    optionalGroup.put(
+                            "names",
+                            Arrays.asList("__OTHERS_EXCEPT:" + mandatoryName + flags + "__"));
                     optionalGroup.put("minCount", Integer.parseInt(countStr));
                     prereqGroups.add(optionalGroup);
                 } else {
                     // Fallback to simple comma-separated list
                     for (String p : cleanPrereqs.split(",")) {
                         String trimmed = p.replaceAll("\\s+", " ").trim();
-                        if (trimmed.isEmpty() || trimmed.startsWith("The ") || trimmed.length() > 100) continue;
-                        
-                        Matcher countMatcher = Pattern.compile("(.*?) \\(x(\\d+)\\)").matcher(trimmed);
+                        if (trimmed.isEmpty()
+                                || trimmed.startsWith("The ")
+                                || trimmed.length() > 100) continue;
+
+                        Matcher countMatcher =
+                                Pattern.compile("(.*?) \\(x(\\d+)\\)").matcher(trimmed);
                         Map<String, Object> group = new LinkedHashMap<>();
                         if (countMatcher.find()) {
                             group.put("names", Arrays.asList(countMatcher.group(1).trim()));
@@ -189,7 +213,10 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
 
             Pattern costPattern = Pattern.compile("Cost: (.*?);");
             Matcher costMatcher = costPattern.matcher(costLine);
-            String cost = costMatcher.find() ? costMatcher.group(1) : costLine.replace("Cost: ", "").split(";")[0];
+            String cost =
+                    costMatcher.find()
+                            ? costMatcher.group(1)
+                            : costLine.replace("Cost: ", "").split(";")[0];
 
             StringBuilder descRaw = new StringBuilder();
             for (int i = descStartIdx; i < lines.length; i++) {
@@ -200,7 +227,9 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
             }
 
             String fullText = cleanDescription(descRaw.toString());
-            String charmId = UUID.nameUUIDFromBytes((name.trim() + "|" + ability.trim()).getBytes()).toString();
+            String charmId =
+                    UUID.nameUUIDFromBytes((name.trim() + "|" + ability.trim()).getBytes())
+                            .toString();
 
             Map<String, Object> charmMap = new LinkedHashMap<>();
             charmMap.put("id", charmId);
@@ -230,7 +259,9 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
             if (charmsByAbility.containsKey(ability)) {
                 charmsByAbility.get(ability).add(charmMap);
             } else {
-                charmsByMartialArtsStyle.computeIfAbsent(ability, k -> new ArrayList<>()).add(charmMap);
+                charmsByMartialArtsStyle
+                        .computeIfAbsent(ability, k -> new ArrayList<>())
+                        .add(charmMap);
             }
         }
 
@@ -246,15 +277,17 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
     private String cleanField(String val) {
         if (val == null) return "";
         // Use a more aggressive regex to catch header/footer junk in fields
-        String cleaned = val.replaceAll("(?i)\\s*C\\s*H\\s*A\\s*R\\s*M\\s*S\\s*", " ")
-                             .replaceAll("(?i)\\s*E\\s*X\\s*3\\s*", " ")
-                             .replaceAll("\\s*\\d{3}\\s*", " ")
-                             .replaceAll("\\s+", " ")
-                             .trim();
+        String cleaned =
+                val.replaceAll("(?i)\\s*C\\s*H\\s*A\\s*R\\s*M\\s*S\\s*", " ")
+                        .replaceAll("(?i)\\s*E\\s*X\\s*3\\s*", " ")
+                        .replaceAll("\\s*\\d{3}\\s*", " ")
+                        .replaceAll("\\s+", " ")
+                        .trim();
         return cleaned;
     }
 
-    private boolean isLikelyDescription(String line, String currentField, String keywords, String rawPrereqs) {
+    private boolean isLikelyDescription(
+            String line, String currentField, String keywords, String rawPrereqs) {
         if (currentField.equals("Keywords") && keywords.equalsIgnoreCase("none")) return true;
         if (currentField.equals("Prereqs") && rawPrereqs.equalsIgnoreCase("none")) return true;
 
@@ -268,79 +301,131 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
             return true;
         }
 
-        // If we have prerequisites (the last likely field), 
+        // If we have prerequisites (the last likely field),
         // the next non-metadata line is likely the description.
         if (currentField.equals("Prereqs") && !rawPrereqs.isEmpty()) {
             // A description line almost always starts with a capital and isn't another field.
             // We differentiate from broken prerequisite fragments by length or ending punctuation.
-            if (Character.isUpperCase(trimmed.charAt(0)) && !trimmed.contains(":") && !trimmed.startsWith("Cost:")) {
+            if (Character.isUpperCase(trimmed.charAt(0))
+                    && !trimmed.contains(":")
+                    && !trimmed.startsWith("Cost:")) {
                 if (trimmed.length() > 25 || trimmed.endsWith(".")) return true;
             }
             return false;
         }
-        
+
         // Sidebar headers often start with "ON " (e.g., "ON SURPRISE ANTICIPATION METHOD")
         if (trimmed.startsWith("ON ") && trimmed.length() < 100) return true;
-        
+
         // Ability headers
         if (ABILITIES.contains(trimmed)) return true;
 
-        return trimmed.startsWith("The ") || trimmed.startsWith("This ") ||
-               trimmed.startsWith("If ") || trimmed.startsWith("When ") ||
-               trimmed.startsWith("A ") || trimmed.startsWith("An ") ||
-               trimmed.startsWith("Solar ") || trimmed.startsWith("Lawgiver ") ||
-               trimmed.startsWith("Exalt ") || trimmed.startsWith("Once ") ||
-               trimmed.startsWith("After ") || trimmed.startsWith("At ") ||
-               trimmed.startsWith("By ") || trimmed.startsWith("With ") ||
-               trimmed.startsWith("Cast ") || trimmed.startsWith("Solars ") ||
-               trimmed.startsWith("Drawing ") || trimmed.startsWith("Charging ") ||
-               trimmed.startsWith("Seething ") || trimmed.startsWith("Palming ") ||
-               trimmed.startsWith("Honing ") || trimmed.startsWith("Clearing ") ||
-               trimmed.startsWith("While ") || trimmed.startsWith("To ") ||
-               trimmed.startsWith("Holding ") || trimmed.startsWith("Sensing ") ||
-               trimmed.startsWith("Through ") || trimmed.startsWith("Even ") ||
-               trimmed.startsWith("Like ") || trimmed.startsWith("Accepting ") ||
-               trimmed.startsWith("Given ") || trimmed.startsWith("Tuning ") ||
-               trimmed.startsWith("Homing ") || trimmed.startsWith("Channeling ") ||
-               trimmed.startsWith("During ") || trimmed.startsWith("Throughout ") ||
-               trimmed.startsWith("Under ") || trimmed.startsWith("Across ") ||
-               trimmed.startsWith("Within ") || trimmed.startsWith("Upon ") ||
-               trimmed.startsWith("Because ") || trimmed.startsWith("Since ") ||
-               trimmed.startsWith("Characters ") || trimmed.startsWith("Sometimes ") ||
-               trimmed.startsWith("Striking ") || trimmed.startsWith("Summoning ") ||
-               trimmed.startsWith("Fearless ") || trimmed.startsWith("Racing ") ||
-               trimmed.startsWith("Attuned ") || trimmed.startsWith("Striving ") ||
-               trimmed.startsWith("Meditating ") || trimmed.startsWith("It is ") ||
-               trimmed.startsWith("Using ") || trimmed.startsWith("Focusing ") ||
-               trimmed.startsWith("Relentless ") || trimmed.startsWith("Once per ") ||
-               trimmed.startsWith("In ") || trimmed.startsWith("Lightening ") ||
-               trimmed.startsWith("Locked ") || trimmed.startsWith("Hardening ") ||
-               trimmed.startsWith("Empowered ") || trimmed.startsWith("As ") ||
-               trimmed.startsWith("Tearing ") || trimmed.startsWith("Hers ") ||
-               trimmed.startsWith("Feeling ") || trimmed.startsWith("Driven ") ||
-               trimmed.startsWith("Ripping ") || trimmed.startsWith("Tossing ") ||
-               trimmed.startsWith("Assuming ") || trimmed.startsWith("Lifting ") ||
-               trimmed.startsWith("Pulling ") ||
-               trimmed.startsWith("That’s ") || trimmed.startsWith("Note: ");
+        return trimmed.startsWith("The ")
+                || trimmed.startsWith("This ")
+                || trimmed.startsWith("If ")
+                || trimmed.startsWith("When ")
+                || trimmed.startsWith("A ")
+                || trimmed.startsWith("An ")
+                || trimmed.startsWith("Solar ")
+                || trimmed.startsWith("Lawgiver ")
+                || trimmed.startsWith("Exalt ")
+                || trimmed.startsWith("Once ")
+                || trimmed.startsWith("After ")
+                || trimmed.startsWith("At ")
+                || trimmed.startsWith("By ")
+                || trimmed.startsWith("With ")
+                || trimmed.startsWith("Cast ")
+                || trimmed.startsWith("Solars ")
+                || trimmed.startsWith("Drawing ")
+                || trimmed.startsWith("Charging ")
+                || trimmed.startsWith("Seething ")
+                || trimmed.startsWith("Palming ")
+                || trimmed.startsWith("Honing ")
+                || trimmed.startsWith("Clearing ")
+                || trimmed.startsWith("While ")
+                || trimmed.startsWith("To ")
+                || trimmed.startsWith("Holding ")
+                || trimmed.startsWith("Sensing ")
+                || trimmed.startsWith("Through ")
+                || trimmed.startsWith("Even ")
+                || trimmed.startsWith("Like ")
+                || trimmed.startsWith("Accepting ")
+                || trimmed.startsWith("Given ")
+                || trimmed.startsWith("Tuning ")
+                || trimmed.startsWith("Homing ")
+                || trimmed.startsWith("Channeling ")
+                || trimmed.startsWith("During ")
+                || trimmed.startsWith("Throughout ")
+                || trimmed.startsWith("Under ")
+                || trimmed.startsWith("Across ")
+                || trimmed.startsWith("Within ")
+                || trimmed.startsWith("Upon ")
+                || trimmed.startsWith("Because ")
+                || trimmed.startsWith("Since ")
+                || trimmed.startsWith("Characters ")
+                || trimmed.startsWith("Sometimes ")
+                || trimmed.startsWith("Striking ")
+                || trimmed.startsWith("Summoning ")
+                || trimmed.startsWith("Fearless ")
+                || trimmed.startsWith("Racing ")
+                || trimmed.startsWith("Attuned ")
+                || trimmed.startsWith("Striving ")
+                || trimmed.startsWith("Meditating ")
+                || trimmed.startsWith("It is ")
+                || trimmed.startsWith("Using ")
+                || trimmed.startsWith("Focusing ")
+                || trimmed.startsWith("Relentless ")
+                || trimmed.startsWith("Once per ")
+                || trimmed.startsWith("In ")
+                || trimmed.startsWith("Lightening ")
+                || trimmed.startsWith("Locked ")
+                || trimmed.startsWith("Hardening ")
+                || trimmed.startsWith("Empowered ")
+                || trimmed.startsWith("As ")
+                || trimmed.startsWith("Tearing ")
+                || trimmed.startsWith("Hers ")
+                || trimmed.startsWith("Feeling ")
+                || trimmed.startsWith("Driven ")
+                || trimmed.startsWith("Ripping ")
+                || trimmed.startsWith("Tossing ")
+                || trimmed.startsWith("Assuming ")
+                || trimmed.startsWith("Lifting ")
+                || trimmed.startsWith("Pulling ")
+                || trimmed.startsWith("That’s ")
+                || trimmed.startsWith("Note: ");
     }
 
     @Override
     protected String cleanDescription(String text) {
         // Surgical sidebar removal for Core book
         text = text.replaceAll("(?s)WHEN DO I NEED TO AIM\\?.*?waive the aim action\\.", "");
-        text = text.replaceAll("(?s)MASTER’S HAND: SOLAR MASTERY AND TERRESTRIAL EFFECTS.*?(?=CHAPTER|EX3|\\d{3})", "");
-        text = text.replaceAll("(?s)ON TEN OX MEDITATION.*?(?=ment action for the round|CHAPTER|EX3|\\d{3}\\n)", "");
+        text =
+                text.replaceAll(
+                        "(?s)MASTER’S HAND: SOLAR MASTERY AND TERRESTRIAL"
+                                + " EFFECTS.*?(?=CHAPTER|EX3|\\d{3})",
+                        "");
+        text =
+                text.replaceAll(
+                        "(?s)ON TEN OX MEDITATION.*?(?=ment action for the"
+                                + " round|CHAPTER|EX3|\\d{3}\\n"
+                                + ")",
+                        "");
         return super.cleanDescription(text);
     }
 
     private int parseNumber(String val) {
         if (val == null) return 0;
         switch (val.toLowerCase()) {
-            case "one": return 1;
-            case "two": return 2;
-            case "three": return 3;
-            case "four": return 4;
-            case "five": return 5;
+            case "one":
+                return 1;
+            case "two":
+                return 2;
+            case "three":
+                return 3;
+            case "four":
+                return 4;
+            case "five":
+                return 5;
             default:
                 try {
                     return Integer.parseInt(val);

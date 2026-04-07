@@ -1,24 +1,27 @@
 package com.vibethema.model;
 
-import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
-import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
-import com.vibethema.model.logic.*;
-
-
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.vibethema.model.combat.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.logic.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
+import org.junit.jupiter.api.Test;
 
 public class EquipmentInstanceTest {
 
     @Test
     public void testWeaponCloning() {
-        Weapon w1 = new Weapon("template-123", "Short Sword", Weapon.WeaponRange.CLOSE, Weapon.WeaponType.MORTAL, Weapon.WeaponCategory.LIGHT);
+        Weapon w1 =
+                new Weapon(
+                        "template-123",
+                        "Short Sword",
+                        Weapon.WeaponRange.CLOSE,
+                        Weapon.WeaponType.MORTAL,
+                        Weapon.WeaponCategory.LIGHT);
         Weapon w2 = w1.copy();
 
         assertEquals(w1.getId(), w2.getId(), "Template IDs should match");
@@ -29,7 +32,12 @@ public class EquipmentInstanceTest {
 
     @Test
     public void testArmorCloning() {
-        Armor a1 = new Armor("armor-123", "Buff Jacket", Armor.ArmorType.MORTAL, Armor.ArmorWeight.LIGHT);
+        Armor a1 =
+                new Armor(
+                        "armor-123",
+                        "Buff Jacket",
+                        Armor.ArmorType.MORTAL,
+                        Armor.ArmorWeight.LIGHT);
         Armor a2 = a1.copy();
 
         assertEquals(a1.getId(), a2.getId(), "Template IDs should match");
@@ -38,7 +46,8 @@ public class EquipmentInstanceTest {
 
     @Test
     public void testHearthstoneCloning() {
-        Hearthstone h1 = new Hearthstone("stone-123", "Seven Leaping Dragons Stone", "Does cool things");
+        Hearthstone h1 =
+                new Hearthstone("stone-123", "Seven Leaping Dragons Stone", "Does cool things");
         Hearthstone h2 = h1.copy();
 
         assertEquals(h1.getId(), h2.getId(), "Template IDs should match");

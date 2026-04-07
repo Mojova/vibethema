@@ -1,19 +1,16 @@
 package com.vibethema.model.logic;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
+import com.vibethema.model.combat.*;
 import com.vibethema.model.equipment.*;
 import com.vibethema.model.mystic.*;
-import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
 import com.vibethema.model.progression.*;
-import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class CreationRuleEngineTest {
 
@@ -28,7 +25,9 @@ public class CreationRuleEngineTest {
     void testSystemDataInitialization() {
         assertNotNull(SystemData.ATTRIBUTES, "SystemData.ATTRIBUTES should not be null");
         assertFalse(SystemData.ATTRIBUTES.isEmpty(), "SystemData.ATTRIBUTES should not be empty");
-        assertTrue(SystemData.ATTRIBUTES.contains(Attribute.STRENGTH), "SystemData.ATTRIBUTES should contain Strength");
+        assertTrue(
+                SystemData.ATTRIBUTES.contains(Attribute.STRENGTH),
+                "SystemData.ATTRIBUTES should contain Strength");
     }
 
     @Test
@@ -42,18 +41,19 @@ public class CreationRuleEngineTest {
     @Test
     void testAttributeDistributionNoBP() {
         // Base is 1. Standard is 8/6/4 above base.
-        // Physical: 4+4=8 dots above base (9 total Strength, Dexterity, Stamina combined sum of dots above 1)
+        // Physical: 4+4=8 dots above base (9 total Strength, Dexterity, Stamina combined sum of
+        // dots above 1)
         // Actually getAttributeTotal returns sum of (dot - 1).
         // Strengh=4 (3 above 1), Dex=4 (3 above 1), Stamina=3 (2 above 1). Total = 3+3+2 = 8.
         data.getAttribute(Attribute.STRENGTH).set(4);
         data.getAttribute(Attribute.DEXTERITY).set(4);
         data.getAttribute(Attribute.STAMINA).set(3);
-        
+
         // Social: 1/3/3 dots above base (Total 6)
         data.getAttribute(Attribute.CHARISMA).set(2);
         data.getAttribute(Attribute.MANIPULATION).set(4);
         data.getAttribute(Attribute.APPEARANCE).set(3);
-        
+
         // Mental: 2/2/1 dots above base (Total 4)
         data.getAttribute(Attribute.PERCEPTION).set(3);
         data.getAttribute(Attribute.INTELLIGENCE).set(2);
@@ -84,7 +84,7 @@ public class CreationRuleEngineTest {
         Ability abil = SystemData.ABILITIES.get(0);
         data.getAbility(abil).set(4); // 4 dots (3 free, 1 billable)
         data.getFavoredAbility(abil).set(true);
-        
+
         // Fill 28 dots
         for (int i = 1; i < 10; i++) {
             data.getAbility(SystemData.ABILITIES.get(i)).set(3);
@@ -95,7 +95,7 @@ public class CreationRuleEngineTest {
         // The loop in engine says: if (i > 3) mustBp += costPerDot.
         // So 1 dot (the 4th) costs 1 BP immediately.
         // Plus 31 dots total - 28 free = 3 extra dots.
-        
+
         CreationRuleEngine.CreationStatus status = CreationRuleEngine.calculateStatus(data);
         assertTrue(status.bonusPointsSpent > 0);
     }
@@ -108,9 +108,20 @@ public class CreationRuleEngineTest {
         assertEquals(7, status.healthLevels.size());
 
         // Add 1 Ox-Body
-        String oxBodyId = java.util.UUID.nameUUIDFromBytes(("Ox-Body Technique" + "|" + Ability.RESISTANCE.getDisplayName()).getBytes()).toString();
-        data.getUnlockedCharms().add(new PurchasedCharm(oxBodyId, "Ox-Body Technique", Ability.RESISTANCE.getDisplayName()));
-        
+        String oxBodyId =
+                java.util
+                        .UUID
+                        .nameUUIDFromBytes(
+                                ("Ox-Body Technique" + "|" + Ability.RESISTANCE.getDisplayName())
+                                        .getBytes())
+                        .toString();
+        data.getUnlockedCharms()
+                .add(
+                        new PurchasedCharm(
+                                oxBodyId,
+                                "Ox-Body Technique",
+                                Ability.RESISTANCE.getDisplayName()));
+
         status = CreationRuleEngine.calculateStatus(data);
         // At Stamina 3, Ox-Body adds -1, -2, -2 (3 levels)
         assertEquals(10, status.healthLevels.size());
@@ -136,12 +147,12 @@ public class CreationRuleEngineTest {
         data.getAttribute(Attribute.STRENGTH).set(4);
         data.getAttribute(Attribute.DEXTERITY).set(4);
         data.getAttribute(Attribute.STAMINA).set(3);
-        
+
         // Social: 3+3+3=9 dots (Total 6 dots above 1)
         data.getAttribute(Attribute.CHARISMA).set(3);
         data.getAttribute(Attribute.MANIPULATION).set(3);
         data.getAttribute(Attribute.APPEARANCE).set(3);
-        
+
         // Mental: 2+2+3=7 dots (Total 4 dots above 1)
         data.getAttribute(Attribute.PERCEPTION).set(2);
         data.getAttribute(Attribute.INTELLIGENCE).set(2);
@@ -157,7 +168,7 @@ public class CreationRuleEngineTest {
         data.getAttributePriority(Attribute.Category.PHYSICAL).set(AttributePriority.PRIMARY);
         data.getAttributePriority(Attribute.Category.SOCIAL).set(AttributePriority.SECONDARY);
         data.getAttributePriority(Attribute.Category.MENTAL).set(AttributePriority.TERTIARY);
-        
+
         status = CreationRuleEngine.calculateStatus(data);
         assertEquals(0, status.bonusPointsSpent);
         assertTrue(status.allAttributePrioritiesSet);
@@ -170,7 +181,7 @@ public class CreationRuleEngineTest {
         data.getAttributePriority(Attribute.Category.PHYSICAL).set(AttributePriority.TERTIARY);
         data.getAttributePriority(Attribute.Category.SOCIAL).set(AttributePriority.SECONDARY);
         data.getAttributePriority(Attribute.Category.MENTAL).set(AttributePriority.PRIMARY);
-        
+
         status = CreationRuleEngine.calculateStatus(data);
         assertEquals(12, status.bonusPointsSpent);
     }
@@ -182,20 +193,24 @@ public class CreationRuleEngineTest {
         data.getFavoredAbility(Ability.AWARENESS).set(true);
         data.getFavoredAbility(Ability.DODGE).set(true);
         data.getFavoredAbility(Ability.RESISTANCE).set(true);
-        
+
         assertEquals(4, data.favoredAbilityCountProperty().get());
 
         // Brawl and Martial Arts are tied properties. Setting Brawl sets Martial Arts,
         // and they count as a single total ability towards the limit.
         data.getFavoredAbility(Ability.BRAWL).set(true);
-        
+
         assertEquals(5, data.favoredAbilityCountProperty().get());
-        assertTrue(data.getFavoredAbility(Ability.MARTIAL_ARTS).get(), "Martial Arts should be tied to Brawl");
+        assertTrue(
+                data.getFavoredAbility(Ability.MARTIAL_ARTS).get(),
+                "Martial Arts should be tied to Brawl");
 
         // Unsetting Brawl should also unset Martial Arts and reduce count
         data.getFavoredAbility(Ability.BRAWL).set(false);
-        
+
         assertEquals(4, data.favoredAbilityCountProperty().get());
-        assertFalse(data.getFavoredAbility(Ability.MARTIAL_ARTS).get(), "Martial Arts should be tied to Brawl");
+        assertFalse(
+                data.getFavoredAbility(Ability.MARTIAL_ARTS).get(),
+                "Martial Arts should be tied to Brawl");
     }
 }

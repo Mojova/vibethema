@@ -1,24 +1,20 @@
 package com.vibethema.model;
 
-import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import com.vibethema.service.EquipmentDataService;
 
-/**
- * Factory for creating and initializing new character data.
- */
+/** Factory for creating and initializing new character data. */
 public class CharacterFactory {
 
     /**
      * Creates a new character and initializes it with default equipment if available.
-     * 
+     *
      * @param equipmentService The service to fetch global equipment from.
      * @return A newly initialized CharacterData instance.
      */
@@ -29,9 +25,11 @@ public class CharacterFactory {
     }
 
     /**
-     * Initializes a character with default equipment. This should be called from a background thread.
+     * Initializes a character with default equipment. This should be called from a background
+     * thread.
      */
-    public void initializeDefaultEquipment(CharacterData character, EquipmentDataService equipmentService) {
+    public void initializeDefaultEquipment(
+            CharacterData character, EquipmentDataService equipmentService) {
         if (equipmentService != null) {
             Weapon unarmed = equipmentService.loadWeapon(Weapon.UNARMED_ID);
             if (unarmed != null) {

@@ -1,27 +1,28 @@
 package com.vibethema.model.equipment;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
+import java.util.UUID;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import java.util.UUID;
 
 public class OtherEquipment {
     private final StringProperty id = new SimpleStringProperty(UUID.randomUUID().toString());
-    private final StringProperty instanceId = new SimpleStringProperty(UUID.randomUUID().toString());
+    private final StringProperty instanceId =
+            new SimpleStringProperty(UUID.randomUUID().toString());
     private final StringProperty name = new SimpleStringProperty("");
     private final StringProperty description = new SimpleStringProperty("");
-    private final javafx.beans.property.BooleanProperty artifact = new javafx.beans.property.SimpleBooleanProperty(false);
-    private final javafx.beans.property.BooleanProperty equipped = new javafx.beans.property.SimpleBooleanProperty(false);
-    private final javafx.beans.property.IntegerProperty attunement = new javafx.beans.property.SimpleIntegerProperty(0);
+    private final javafx.beans.property.BooleanProperty artifact =
+            new javafx.beans.property.SimpleBooleanProperty(false);
+    private final javafx.beans.property.BooleanProperty equipped =
+            new javafx.beans.property.SimpleBooleanProperty(false);
+    private final javafx.beans.property.IntegerProperty attunement =
+            new javafx.beans.property.SimpleIntegerProperty(0);
 
     public OtherEquipment(String name, String description) {
         this.name.set(name);
@@ -42,32 +43,85 @@ public class OtherEquipment {
         this.description.set(description);
     }
 
-    public StringProperty idProperty() { return id; }
-    public String getId() { return id.get(); }
+    public StringProperty idProperty() {
+        return id;
+    }
 
-    public StringProperty instanceIdProperty() { return instanceId; }
-    public String getInstanceId() { return instanceId.get(); }
-    public void setInstanceId(String instanceId) { this.instanceId.set(instanceId); }
+    public String getId() {
+        return id.get();
+    }
 
-    public StringProperty nameProperty() { return name; }
-    public String getName() { return name.get(); }
-    public void setName(String v) { name.set(v); }
+    public StringProperty instanceIdProperty() {
+        return instanceId;
+    }
 
-    public StringProperty descriptionProperty() { return description; }
-    public String getDescription() { return description.get(); }
-    public void setDescription(String v) { description.set(v); }
+    public String getInstanceId() {
+        return instanceId.get();
+    }
 
-    public javafx.beans.property.BooleanProperty artifactProperty() { return artifact; }
-    public boolean isArtifact() { return artifact.get(); }
-    public void setArtifact(boolean v) { artifact.set(v); }
+    public void setInstanceId(String instanceId) {
+        this.instanceId.set(instanceId);
+    }
 
-    public javafx.beans.property.BooleanProperty equippedProperty() { return equipped; }
-    public boolean isEquipped() { return equipped.get(); }
-    public void setEquipped(boolean v) { equipped.set(v); }
+    public StringProperty nameProperty() {
+        return name;
+    }
 
-    public javafx.beans.property.IntegerProperty attunementProperty() { return attunement; }
-    public int getAttunement() { return attunement.get(); }
-    public void setAttunement(int v) { attunement.set(v); }
+    public String getName() {
+        return name.get();
+    }
+
+    public void setName(String v) {
+        name.set(v);
+    }
+
+    public StringProperty descriptionProperty() {
+        return description;
+    }
+
+    public String getDescription() {
+        return description.get();
+    }
+
+    public void setDescription(String v) {
+        description.set(v);
+    }
+
+    public javafx.beans.property.BooleanProperty artifactProperty() {
+        return artifact;
+    }
+
+    public boolean isArtifact() {
+        return artifact.get();
+    }
+
+    public void setArtifact(boolean v) {
+        artifact.set(v);
+    }
+
+    public javafx.beans.property.BooleanProperty equippedProperty() {
+        return equipped;
+    }
+
+    public boolean isEquipped() {
+        return equipped.get();
+    }
+
+    public void setEquipped(boolean v) {
+        equipped.set(v);
+    }
+
+    public javafx.beans.property.IntegerProperty attunementProperty() {
+        return attunement;
+    }
+
+    public int getAttunement() {
+        return attunement.get();
+    }
+
+    public void setAttunement(int v) {
+        attunement.set(v);
+    }
 
     // --- Persistence Support (DTO) ---
     public static class OtherEquipmentData {
@@ -92,7 +146,8 @@ public class OtherEquipment {
 
     public static OtherEquipment fromData(OtherEquipmentData data) {
         if (data == null) return null;
-        OtherEquipment oe = new OtherEquipment(data.id, data.instanceId, data.name, data.description);
+        OtherEquipment oe =
+                new OtherEquipment(data.id, data.instanceId, data.name, data.description);
         oe.setArtifact(data.artifact);
         oe.setAttunement(data.attunement);
         return oe;

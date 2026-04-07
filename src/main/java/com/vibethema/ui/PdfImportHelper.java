@@ -1,18 +1,15 @@
 package com.vibethema.ui;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import com.vibethema.service.PdfExtractor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.File;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
@@ -27,26 +24,44 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-
-import java.io.File;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PdfImportHelper {
     private static final Logger logger = LoggerFactory.getLogger(PdfImportHelper.class);
 
     public static void importCorePdf(Window owner, Runnable onComplete) {
-        importPdf(owner, "Select Exalted Core 3e PDF", "", true, PdfExtractor.PdfSource.CORE, onComplete);
-    }
-
-    public static void importMosePdf(Window owner, Runnable onComplete) {
-        importPdf(owner, "Select Miracles of the Solar Exalted PDF", "-mose", false, PdfExtractor.PdfSource.MOSE,
+        importPdf(
+                owner,
+                "Select Exalted Core 3e PDF",
+                "",
+                true,
+                PdfExtractor.PdfSource.CORE,
                 onComplete);
     }
 
-    private static void importPdf(Window owner, String title, String suffix, boolean extractKeywords,
-            PdfExtractor.PdfSource source, Runnable onComplete) {
+    public static void importMosePdf(Window owner, Runnable onComplete) {
+        importPdf(
+                owner,
+                "Select Miracles of the Solar Exalted PDF",
+                "-mose",
+                false,
+                PdfExtractor.PdfSource.MOSE,
+                onComplete);
+    }
+
+    private static void importPdf(
+            Window owner,
+            String title,
+            String suffix,
+            boolean extractKeywords,
+            PdfExtractor.PdfSource source,
+            Runnable onComplete) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(title);
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+        fileChooser
+                .getExtensionFilters()
+                .add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
         File file = fileChooser.showOpenDialog(owner);
 
         if (file != null) {
@@ -54,8 +69,13 @@ public class PdfImportHelper {
         }
     }
 
-    private static void showImportProgress(Window owner, File pdfFile, String suffix, boolean extractKeywords,
-            PdfExtractor.PdfSource source, Runnable onComplete) {
+    private static void showImportProgress(
+            Window owner,
+            File pdfFile,
+            String suffix,
+            boolean extractKeywords,
+            PdfExtractor.PdfSource source,
+            Runnable onComplete) {
         Stage progressStage = new Stage();
         progressStage.initModality(Modality.WINDOW_MODAL);
         progressStage.initOwner(owner);
@@ -75,34 +95,51 @@ public class PdfImportHelper {
         progressStage.setScene(new Scene(layout));
         progressStage.show();
 
-        Task<Void> task = new Task<>() {
-            @Override
-            protected Void call() throws Exception {
-                PdfExtractor extractor = new PdfExtractor();
-                extractor.extractAll(pdfFile, suffix, extractKeywords, source, null, progress -> {
-                    Platform.runLater(() -> progressBar.setProgress(progress));
+        Task<Void> task =
+                new Task<>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        PdfExtractor extractor = new PdfExtractor();
+                        extractor.extractAll(
+                                pdfFile,
+                                suffix,
+                                extractKeywords,
+                                source,
+                                null,
+                                progress -> {
+                                    Platform.runLater(() -> progressBar.setProgress(progress));
+                                });
+                        return null;
+                    }
+                };
+
+        task.setOnSucceeded(
+                e -> {
+                    progressStage.close();
+                    Alert alert =
+                            new Alert(
+                                    Alert.AlertType.INFORMATION,
+                                    "Import complete! Charms, spells, and keywords have been"
+                                            + " updated.",
+                                    ButtonType.OK);
+                    alert.showAndWait();
+                    if (onComplete != null) {
+                        onComplete.run();
+                    }
                 });
-                return null;
-            }
-        };
 
-        task.setOnSucceeded(e -> {
-            progressStage.close();
-            Alert alert = new Alert(Alert.AlertType.INFORMATION,
-                    "Import complete! Charms, spells, and keywords have been updated.", ButtonType.OK);
-            alert.showAndWait();
-            if (onComplete != null) {
-                onComplete.run();
-            }
-        });
-
-        task.setOnFailed(e -> {
-            progressStage.close();
-            Throwable ex = task.getException();
-            logger.error("PDF Import failed for source: {}", source, ex);
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Import failed: " + ex.getMessage(), ButtonType.OK);
-            alert.showAndWait();
-        });
+        task.setOnFailed(
+                e -> {
+                    progressStage.close();
+                    Throwable ex = task.getException();
+                    logger.error("PDF Import failed for source: {}", source, ex);
+                    Alert alert =
+                            new Alert(
+                                    Alert.AlertType.ERROR,
+                                    "Import failed: " + ex.getMessage(),
+                                    ButtonType.OK);
+                    alert.showAndWait();
+                });
 
         new Thread(task).start();
     }

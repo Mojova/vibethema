@@ -12,11 +12,12 @@ public class Launcher {
             Desktop desktop = Desktop.getDesktop();
             try {
                 if (desktop.isSupported(Desktop.Action.APP_OPEN_FILE)) {
-                    desktop.setOpenFileHandler(e -> {
-                        if (!e.getFiles().isEmpty()) {
-                            Main.setPendingFile(e.getFiles().get(0));
-                        }
-                    });
+                    desktop.setOpenFileHandler(
+                            e -> {
+                                if (!e.getFiles().isEmpty()) {
+                                    Main.setPendingFile(e.getFiles().get(0));
+                                }
+                            });
                 }
             } catch (Exception e) {
                 // Ignore if not supported on this platform

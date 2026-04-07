@@ -1,22 +1,21 @@
 package com.vibethema.viewmodel.stats;
 
-import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
-import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
-import com.vibethema.model.logic.*;
-
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.vibethema.model.*;
+import com.vibethema.model.combat.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.logic.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 /**
- * Unit tests for AbilityRowViewModel, verifying business rules for
- * caste/favored selection and UI state management.
+ * Unit tests for AbilityRowViewModel, verifying business rules for caste/favored selection and UI
+ * state management.
  */
 public class AbilityRowViewModelTest {
     private CharacterData data;
@@ -62,10 +61,10 @@ public class AbilityRowViewModelTest {
         data.getFavoredAbility(Ability.BRAWL).set(true);
         data.getFavoredAbility(Ability.DODGE).set(true);
         data.getFavoredAbility(Ability.MELEE).set(true);
-        
+
         // Archery favored box should now be disabled (limit reached)
         assertTrue(viewModel.favoredBoxDisabledProperty().get());
-        
+
         // Remove one, it should re-enable
         data.getFavoredAbility(Ability.MELEE).set(false);
         assertFalse(viewModel.favoredBoxDisabledProperty().get());
@@ -85,7 +84,7 @@ public class AbilityRowViewModelTest {
         data.casteProperty().set(Caste.ZENITH);
         AbilityRowViewModel athleticsVm = new AbilityRowViewModel(data, Ability.ATHLETICS);
         assertTrue(athleticsVm.isOptionProperty().get());
-        
+
         // Switch to Dawn, athletics is NOT a Dawn ability
         data.casteProperty().set(Caste.DAWN);
         assertFalse(athleticsVm.isOptionProperty().get());

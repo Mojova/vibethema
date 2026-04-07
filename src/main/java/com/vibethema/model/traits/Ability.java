@@ -1,14 +1,12 @@
 package com.vibethema.model.traits;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
 
 public enum Ability {
     ARCHERY("Archery"),
@@ -44,7 +42,9 @@ public enum Ability {
         this.displayName = displayName;
     }
 
-    public String getDisplayName() { return displayName; }
+    public String getDisplayName() {
+        return displayName;
+    }
 
     public static Ability fromString(String name) {
         if (name == null) return null;

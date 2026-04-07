@@ -1,15 +1,13 @@
 package com.vibethema.ui.experience;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import com.vibethema.viewmodel.experience.ExperienceViewModel;
 import com.vibethema.viewmodel.experience.XpAwardRowViewModel;
 import de.saxsys.mvvmfx.InjectViewModel;
@@ -20,13 +18,10 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
-/**
- * Experience tab View — shows the XP award log and the dynamically computed spend breakdown.
- */
+/** Experience tab View — shows the XP award log and the dynamically computed spend breakdown. */
 public class ExperienceTab extends ScrollPane implements JavaView<ExperienceViewModel> {
 
-    @InjectViewModel
-    private ExperienceViewModel viewModel;
+    @InjectViewModel private ExperienceViewModel viewModel;
 
     private VBox awardsListContainer;
     private VBox spendLogContainer;
@@ -65,7 +60,9 @@ public class ExperienceTab extends ScrollPane implements JavaView<ExperienceView
         awardsListContainer = new VBox(8);
         awardsListContainer.getStyleClass().add("merit-row-container");
 
-        viewModel.getAwards().addListener((ListChangeListener<XpAwardRowViewModel>) c -> refreshAwardsList());
+        viewModel
+                .getAwards()
+                .addListener((ListChangeListener<XpAwardRowViewModel>) c -> refreshAwardsList());
         refreshAwardsList();
 
         // Add-award form
@@ -82,12 +79,14 @@ public class ExperienceTab extends ScrollPane implements JavaView<ExperienceView
 
         Button addBtn = new Button("+ Add");
         addBtn.getStyleClass().addAll("action-btn", "add-btn");
-        addBtn.setOnAction(e -> {
-            viewModel.addAward(descField.getText(), amountSpinner.getValue(), solarCheck.isSelected());
-            descField.clear();
-            amountSpinner.getValueFactory().setValue(5);
-            solarCheck.setSelected(false);
-        });
+        addBtn.setOnAction(
+                e -> {
+                    viewModel.addAward(
+                            descField.getText(), amountSpinner.getValue(), solarCheck.isSelected());
+                    descField.clear();
+                    amountSpinner.getValueFactory().setValue(5);
+                    solarCheck.setSelected(false);
+                });
 
         HBox addRow = new HBox(8, descField, amountSpinner, solarCheck, addBtn);
         addRow.setAlignment(Pos.CENTER_LEFT);
@@ -99,10 +98,17 @@ public class ExperienceTab extends ScrollPane implements JavaView<ExperienceView
         solarSummaryLabel.setStyle("-fx-text-fill: #d4af37; -fx-font-size: 0.9em;");
 
         updateSummaryLabels();
-        viewModel.getAwards().addListener((ListChangeListener<XpAwardRowViewModel>) c -> updateSummaryLabels());
+        viewModel
+                .getAwards()
+                .addListener((ListChangeListener<XpAwardRowViewModel>) c -> updateSummaryLabels());
 
-        panel.getChildren().addAll(title, awardsListContainer, new Separator(), addRow,
-                new HBox(20, regularSummaryLabel, solarSummaryLabel));
+        panel.getChildren()
+                .addAll(
+                        title,
+                        awardsListContainer,
+                        new Separator(),
+                        addRow,
+                        new HBox(20, regularSummaryLabel, solarSummaryLabel));
         return panel;
     }
 
@@ -122,7 +128,9 @@ public class ExperienceTab extends ScrollPane implements JavaView<ExperienceView
         logScroll.getStyleClass().add("scroll-pane-custom");
         VBox.setVgrow(logScroll, Priority.ALWAYS);
 
-        viewModel.getSpendLog().addListener((ListChangeListener<ExperiencePurchase>) c -> refreshSpendLog());
+        viewModel
+                .getSpendLog()
+                .addListener((ListChangeListener<ExperiencePurchase>) c -> refreshSpendLog());
         refreshSpendLog();
 
         panel.getChildren().addAll(title, logScroll);
@@ -181,9 +189,10 @@ public class ExperienceTab extends ScrollPane implements JavaView<ExperienceView
             HBox.setHgrow(descLabel, Priority.ALWAYS);
 
             Label costLabel = new Label(purchase.getCost() + " XP" + poolTag);
-            String costStyle = purchase.canUseSolarXp()
-                    ? "-fx-text-fill: #d4af37; -fx-font-size: 0.85em;"
-                    : "-fx-text-fill: #aaa; -fx-font-size: 0.85em;";
+            String costStyle =
+                    purchase.canUseSolarXp()
+                            ? "-fx-text-fill: #d4af37; -fx-font-size: 0.85em;"
+                            : "-fx-text-fill: #aaa; -fx-font-size: 0.85em;";
             costLabel.setStyle(costStyle);
 
             row.getChildren().addAll(descLabel, costLabel);
@@ -198,13 +207,25 @@ public class ExperienceTab extends ScrollPane implements JavaView<ExperienceView
 
         // Totals footer row
         var status = viewModel.getExperienceStatus();
-        Label totalReg = new Label(String.format("Regular XP: %d spent / %d awarded",
-                status.regularXpSpent, status.totalRegularXpAwarded));
-        totalReg.setStyle("-fx-text-fill: " + (status.getRegularXpRemaining() < 0 ? "red" : "white") + "; -fx-padding: 6 0 0 8;");
+        Label totalReg =
+                new Label(
+                        String.format(
+                                "Regular XP: %d spent / %d awarded",
+                                status.regularXpSpent, status.totalRegularXpAwarded));
+        totalReg.setStyle(
+                "-fx-text-fill: "
+                        + (status.getRegularXpRemaining() < 0 ? "red" : "white")
+                        + "; -fx-padding: 6 0 0 8;");
 
-        Label totalSol = new Label(String.format("Solar XP: %d spent / %d awarded",
-                status.solarXpSpent, status.totalSolarXpAwarded));
-        totalSol.setStyle("-fx-text-fill: " + (status.getSolarXpRemaining() < 0 ? "red" : "#d4af37") + "; -fx-padding: 6 0 0 8;");
+        Label totalSol =
+                new Label(
+                        String.format(
+                                "Solar XP: %d spent / %d awarded",
+                                status.solarXpSpent, status.totalSolarXpAwarded));
+        totalSol.setStyle(
+                "-fx-text-fill: "
+                        + (status.getSolarXpRemaining() < 0 ? "red" : "#d4af37")
+                        + "; -fx-padding: 6 0 0 8;");
 
         spendLogContainer.getChildren().addAll(new Separator(), totalReg, totalSol);
     }

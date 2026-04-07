@@ -1,26 +1,24 @@
 package com.vibethema.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class EquipmentDeletionTest {
 
-    @TempDir
-    Path tempDir;
+    @TempDir Path tempDir;
 
     @Test
     public void testWeaponDeletion() throws IOException {
@@ -28,22 +26,35 @@ public class EquipmentDeletionTest {
         try {
             System.setProperty("user.home", tempDir.toString());
             EquipmentDataService service = new EquipmentDataService();
-            
-            Weapon w = new Weapon("test-id", "Test Weapon", Weapon.WeaponRange.CLOSE, Weapon.WeaponType.MORTAL, Weapon.WeaponCategory.MEDIUM);
+
+            Weapon w =
+                    new Weapon(
+                            "test-id",
+                            "Test Weapon",
+                            Weapon.WeaponRange.CLOSE,
+                            Weapon.WeaponType.MORTAL,
+                            Weapon.WeaponCategory.MEDIUM);
             service.saveWeapon(w);
-            
+
             Path filePath = EquipmentDataService.getWeaponsPath().resolve("test-id.json");
             assertTrue(Files.exists(filePath), "File should be created");
 
             service.deleteWeapon("test-id");
             assertFalse(Files.exists(filePath), "File should be deleted");
-            
+
             // Test Unarmed protection
-            Weapon unarmed = new Weapon(Weapon.UNARMED_ID, "Unarmed", Weapon.WeaponRange.CLOSE, Weapon.WeaponType.MORTAL, Weapon.WeaponCategory.LIGHT);
+            Weapon unarmed =
+                    new Weapon(
+                            Weapon.UNARMED_ID,
+                            "Unarmed",
+                            Weapon.WeaponRange.CLOSE,
+                            Weapon.WeaponType.MORTAL,
+                            Weapon.WeaponCategory.LIGHT);
             service.saveWeapon(unarmed);
-            Path unarmedPath = EquipmentDataService.getWeaponsPath().resolve(Weapon.UNARMED_ID + ".json");
+            Path unarmedPath =
+                    EquipmentDataService.getWeaponsPath().resolve(Weapon.UNARMED_ID + ".json");
             assertTrue(Files.exists(unarmedPath), "Unarmed should be saved");
-            
+
             service.deleteWeapon(Weapon.UNARMED_ID);
             assertTrue(Files.exists(unarmedPath), "Unarmed should NOT be deleted from disk");
         } finally {

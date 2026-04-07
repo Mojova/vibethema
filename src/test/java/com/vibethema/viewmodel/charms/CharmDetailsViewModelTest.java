@@ -1,30 +1,27 @@
 package com.vibethema.viewmodel.charms;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.utils.notifications.NotificationObserver;
+import java.util.HashMap;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-
-import java.util.HashMap;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
 
 public class CharmDetailsViewModelTest {
 
@@ -36,11 +33,12 @@ public class CharmDetailsViewModelTest {
     void setUp() {
         data = Mockito.mock(CharacterData.class);
         dataService = Mockito.mock(CharmDataService.class);
-        
+
         when(data.essenceProperty()).thenReturn(new SimpleIntegerProperty(1));
         when(data.supernalAbilityProperty()).thenReturn(new SimpleStringProperty(""));
-        when(dataService.getCharmName(anyString())).thenAnswer(invocation -> invocation.getArgument(0));
-        
+        when(dataService.getCharmName(anyString()))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
         viewModel = new CharmDetailsViewModel(data, dataService, new HashMap<>());
     }
 
@@ -60,10 +58,11 @@ public class CharmDetailsViewModelTest {
         viewModel.selectedCharmProperty().set(c);
 
         final boolean[] received = {false};
-        NotificationObserver observer = (name, payload) -> {
-            received[0] = true;
-            assertEquals(c, payload[0]);
-        };
+        NotificationObserver observer =
+                (name, payload) -> {
+                    received[0] = true;
+                    assertEquals(c, payload[0]);
+                };
 
         try {
             Messenger.subscribe("open_edit_charm_dialog", observer);
@@ -112,7 +111,7 @@ public class CharmDetailsViewModelTest {
     @Test
     void testMessengerSelection() {
         SolarCharm c = createBasicCharm("C1", "Message Test");
-        Messenger.publish("charm_selected", new Object[]{c});
+        Messenger.publish("charm_selected", new Object[] {c});
         assertEquals(c, viewModel.selectedCharmProperty().get());
     }
 }

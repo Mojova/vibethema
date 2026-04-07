@@ -1,24 +1,22 @@
 package com.vibethema.model;
 
-import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
-import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
-import com.vibethema.model.logic.*;
-
-
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+
+import com.vibethema.model.combat.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.logic.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
+import org.junit.jupiter.api.Test;
 
 public class OtherEquipmentTest {
     @Test
     public void testEquippedProperty() {
         OtherEquipment oe = new OtherEquipment("Grappling Hook", "Use to climb walls");
         assertFalse(oe.isEquipped());
-        
+
         oe.setEquipped(true);
         assertTrue(oe.isEquipped());
     }
@@ -29,12 +27,12 @@ public class OtherEquipmentTest {
         oe.setArtifact(true);
         oe.setEquipped(true);
         oe.setAttunement(4);
-        
+
         OtherEquipment.OtherEquipmentData data = oe.toData();
         assertEquals("id-456", data.id);
         assertTrue(data.artifact);
         assertEquals(4, data.attunement);
-        
+
         OtherEquipment loaded = OtherEquipment.fromData(data);
         assertEquals("id-456", loaded.getId());
         assertTrue(loaded.isArtifact());

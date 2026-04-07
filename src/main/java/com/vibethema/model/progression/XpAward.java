@@ -1,22 +1,19 @@
 package com.vibethema.model.progression;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
+import java.util.UUID;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import java.util.UUID;
 
 public class XpAward {
     private final String id;
@@ -39,17 +36,43 @@ public class XpAward {
         this.isSolar = new SimpleBooleanProperty(isSolar);
     }
 
-    public String getId() { return id; }
-    
-    public String getDescription() { return description.get(); }
-    public void setDescription(String val) { description.set(val); }
-    public StringProperty descriptionProperty() { return description; }
+    public String getId() {
+        return id;
+    }
 
-    public int getAmount() { return amount.get(); }
-    public void setAmount(int val) { amount.set(val); }
-    public IntegerProperty amountProperty() { return amount; }
+    public String getDescription() {
+        return description.get();
+    }
 
-    public boolean isSolar() { return isSolar.get(); }
-    public void setSolar(boolean val) { isSolar.set(val); }
-    public BooleanProperty isSolarProperty() { return isSolar; }
+    public void setDescription(String val) {
+        description.set(val);
+    }
+
+    public StringProperty descriptionProperty() {
+        return description;
+    }
+
+    public int getAmount() {
+        return amount.get();
+    }
+
+    public void setAmount(int val) {
+        amount.set(val);
+    }
+
+    public IntegerProperty amountProperty() {
+        return amount;
+    }
+
+    public boolean isSolar() {
+        return isSolar.get();
+    }
+
+    public void setSolar(boolean val) {
+        isSolar.set(val);
+    }
+
+    public BooleanProperty isSolarProperty() {
+        return isSolar;
+    }
 }

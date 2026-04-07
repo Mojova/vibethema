@@ -1,8 +1,7 @@
 package com.vibethema.util;
 
-import com.vibethema.service.PdfExtractor;
 import com.vibethema.service.PathService;
-
+import com.vibethema.service.PdfExtractor;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,8 +9,9 @@ import java.nio.file.Path;
 import java.util.stream.Stream;
 
 /**
- * CLI utility to run the PDF extraction process and inspect the results.
- * Usage: mvn compile exec:java -Dexec.mainClass="com.vibethema.util.PdfImportTool" -Dexec.args="<pdf-path> [output-dir]"
+ * CLI utility to run the PDF extraction process and inspect the results. Usage: mvn compile
+ * exec:java -Dexec.mainClass="com.vibethema.util.PdfImportTool" -Dexec.args="<pdf-path>
+ * [output-dir]"
  */
 public class PdfImportTool {
 
@@ -28,7 +28,8 @@ public class PdfImportTool {
             System.setProperty("vibethema.data.dir", outputDir);
             System.out.println("Using custom data directory: " + outputDir);
         } else {
-            System.out.println("Using default application data directory: " + PathService.getDataPath());
+            System.out.println(
+                    "Using default application data directory: " + PathService.getDataPath());
         }
 
         File pdfFile = new File(pdfPath);
@@ -41,13 +42,15 @@ public class PdfImportTool {
         System.out.println("Starting extraction from: " + pdfFile.getAbsolutePath());
 
         try {
-            extractor.extractAll(pdfFile, progress -> {
-                System.out.printf("Progress: %.1f%%\r", progress * 100);
-            });
+            extractor.extractAll(
+                    pdfFile,
+                    progress -> {
+                        System.out.printf("Progress: %.1f%%\r", progress * 100);
+                    });
             System.out.println("\nExtraction Complete!");
-            
+
             inspectResults();
-            
+
         } catch (IOException e) {
             System.err.println("\nError during extraction: " + e.getMessage());
             e.printStackTrace();
@@ -65,14 +68,16 @@ public class PdfImportTool {
         if (Files.exists(charmsPath)) {
             try (Stream<Path> files = Files.list(charmsPath)) {
                 files.filter(f -> f.toString().endsWith(".json"))
-                     .forEach(f -> {
-                         try {
-                             long count = countCharmsInFile(f);
-                             System.out.printf("  - %-20s: %d charms\n", f.getFileName(), count);
-                         } catch (IOException e) {
-                             System.err.println("Error reading " + f.getFileName());
-                         }
-                     });
+                        .forEach(
+                                f -> {
+                                    try {
+                                        long count = countCharmsInFile(f);
+                                        System.out.printf(
+                                                "  - %-20s: %d charms\n", f.getFileName(), count);
+                                    } catch (IOException e) {
+                                        System.err.println("Error reading " + f.getFileName());
+                                    }
+                                });
             } catch (IOException e) {
                 System.err.println("Could not list charms directory.");
             }
@@ -85,7 +90,7 @@ public class PdfImportTool {
         if (Files.exists(spellsPath)) {
             try (Stream<Path> files = Files.list(spellsPath)) {
                 files.filter(f -> f.toString().endsWith(".json"))
-                     .forEach(f -> System.out.println("  - " + f.getFileName()));
+                        .forEach(f -> System.out.println("  - " + f.getFileName()));
             } catch (IOException e) {
                 System.err.println("Could not list spells directory.");
             }
@@ -98,14 +103,14 @@ public class PdfImportTool {
         if (Files.exists(equipPath)) {
             try (Stream<Path> files = Files.list(equipPath)) {
                 files.filter(f -> f.toString().endsWith(".json"))
-                     .forEach(f -> System.out.println("  - " + f.getFileName()));
+                        .forEach(f -> System.out.println("  - " + f.getFileName()));
             } catch (IOException e) {
                 System.err.println("Could not list equipment directory.");
             }
         } else {
             System.out.println("  No equipment directory found.");
         }
-        
+
         System.out.println("\n--- Inspection Finished ---");
     }
 
@@ -118,7 +123,7 @@ public class PdfImportTool {
             count++;
             lastIndex += 5;
         }
-        // Subtract 1 if the file itself has an ID (like a wrapper object), 
+        // Subtract 1 if the file itself has an ID (like a wrapper object),
         // but our JSON schema has "id" for each charm.
         // Actually, checking for 'name' might be safer for charm count.
         return count;

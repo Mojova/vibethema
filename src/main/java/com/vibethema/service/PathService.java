@@ -5,11 +5,11 @@ import java.nio.file.Paths;
 
 /**
  * Centralized service for determining platform-specific application data and configuration paths.
- * 
- * Standard Locations:
- * - macOS: ~/Library/Application Support/Vibethema/ (Data) & ~/Library/Preferences/Vibethema/ (Config)
- * - Windows: %AppData%/Vibethema/Data/ & %AppData%/Vibethema/Config/
- * - Linux: ~/.local/share/vibethema/ (Data) & ~/.config/vibethema/ (Config)
+ *
+ * <p>Standard Locations: - macOS: ~/Library/Application Support/Vibethema/ (Data) &
+ * ~/Library/Preferences/Vibethema/ (Config) - Windows: %AppData%/Vibethema/Data/ &
+ * %AppData%/Vibethema/Config/ - Linux: ~/.local/share/vibethema/ (Data) & ~/.config/vibethema/
+ * (Config)
  */
 public class PathService {
 
@@ -42,13 +42,12 @@ public class PathService {
             if (xdgData != null && !xdgData.isEmpty()) {
                 return Paths.get(xdgData, DEVELOPER_NAME.toLowerCase(), APP_NAME.toLowerCase());
             }
-            return Paths.get(home, ".local", "share", DEVELOPER_NAME.toLowerCase(), APP_NAME.toLowerCase());
+            return Paths.get(
+                    home, ".local", "share", DEVELOPER_NAME.toLowerCase(), APP_NAME.toLowerCase());
         }
     }
 
-    /**
-     * Returns the standard base path for application configuration (user settings).
-     */
+    /** Returns the standard base path for application configuration (user settings). */
     public static Path getConfigPath() {
         String override = System.getProperty("vibethema.config.dir");
         if (override != null && !override.isEmpty()) {

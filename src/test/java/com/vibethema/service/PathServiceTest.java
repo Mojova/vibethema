@@ -1,10 +1,11 @@
 package com.vibethema.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.nio.file.Path;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.nio.file.Path;
-import static org.junit.jupiter.api.Assertions.*;
 
 class PathServiceTest {
 
@@ -31,8 +32,13 @@ class PathServiceTest {
         Path dataPath = PathService.getDataPath();
         Path configPath = PathService.getConfigPath();
 
-        assertTrue(dataPath.toString().contains("/Users/tester/Library/Application Support/Mojova/Vibethema"));
-        assertTrue(configPath.toString().contains("/Users/tester/Library/Preferences/Mojova/Vibethema"));
+        assertTrue(
+                dataPath.toString()
+                        .contains("/Users/tester/Library/Application Support/Mojova/Vibethema"));
+        assertTrue(
+                configPath
+                        .toString()
+                        .contains("/Users/tester/Library/Preferences/Mojova/Vibethema"));
     }
 
     @Test
@@ -45,8 +51,14 @@ class PathServiceTest {
         Path dataPath = PathService.getDataPath();
         Path configPath = PathService.getConfigPath();
 
-        assertTrue(dataPath.toString().contains("Mojova") && dataPath.toString().contains("Vibethema") && dataPath.toString().contains("Data"));
-        assertTrue(configPath.toString().contains("Mojova") && configPath.toString().contains("Vibethema") && configPath.toString().contains("Config"));
+        assertTrue(
+                dataPath.toString().contains("Mojova")
+                        && dataPath.toString().contains("Vibethema")
+                        && dataPath.toString().contains("Data"));
+        assertTrue(
+                configPath.toString().contains("Mojova")
+                        && configPath.toString().contains("Vibethema")
+                        && configPath.toString().contains("Config"));
     }
 
     @Test

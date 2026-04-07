@@ -1,18 +1,15 @@
 package com.vibethema.model.traits;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import java.util.UUID;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import java.util.UUID;
 
 public class Specialty {
     private final StringProperty id = new SimpleStringProperty(UUID.randomUUID().toString());
@@ -30,14 +27,35 @@ public class Specialty {
         this.ability.set(ability);
     }
 
-    public StringProperty idProperty() { return id; }
-    public String getId() { return id.get(); }
+    public StringProperty idProperty() {
+        return id;
+    }
 
-    public StringProperty nameProperty() { return name; }
-    public String getName() { return name.get(); }
-    public void setName(String name) { this.name.set(name); }
+    public String getId() {
+        return id.get();
+    }
 
-    public StringProperty abilityProperty() { return ability; }
-    public String getAbility() { return ability.get(); }
-    public void setAbility(String ability) { this.ability.set(ability); }
+    public StringProperty nameProperty() {
+        return name;
+    }
+
+    public String getName() {
+        return name.get();
+    }
+
+    public void setName(String name) {
+        this.name.set(name);
+    }
+
+    public StringProperty abilityProperty() {
+        return ability;
+    }
+
+    public String getAbility() {
+        return ability.get();
+    }
+
+    public void setAbility(String ability) {
+        this.ability.set(ability);
+    }
 }

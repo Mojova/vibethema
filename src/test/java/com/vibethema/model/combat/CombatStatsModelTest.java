@@ -1,16 +1,14 @@
 package com.vibethema.model.combat;
 
-import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
-import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
-import com.vibethema.model.logic.*;
-
-
 import static org.junit.jupiter.api.Assertions.*;
+
+import com.vibethema.model.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.logic.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +30,7 @@ public class CombatStatsModelTest {
     void testEvasionCalculation() {
         traitModel.getAttribute(Attribute.DEXTERITY).set(3);
         traitModel.getAbility(Ability.DODGE).set(2);
-        
+
         model.updateDerivedStats();
         // Base: (3+2)/2 = 2.5 -> 3
         assertEquals(3, model.evasionProperty().get());
@@ -41,7 +39,7 @@ public class CombatStatsModelTest {
     @Test
     void testSoakCalculation() {
         traitModel.getAttribute(Attribute.STAMINA).set(4);
-        
+
         Armor armor = new Armor("Armor");
         armor.setType(Armor.ArmorType.MORTAL);
         armor.setWeight(Armor.ArmorWeight.LIGHT); // Soak 3
@@ -63,10 +61,18 @@ public class CombatStatsModelTest {
     @Test
     void testHealthLevelCalculation() {
         traitModel.getAttribute(Attribute.STAMINA).set(3);
-        
+
         // Add Ox-Body Technique
-        mysticModel.getUnlockedCharms().add(new PurchasedCharm("1", "Shadow Dancing", Ability.DODGE.getDisplayName())); // Dummy
-        mysticModel.getUnlockedCharms().add(new PurchasedCharm("2", "Ox-Body Technique", Ability.RESISTANCE.getDisplayName()));
+        mysticModel
+                .getUnlockedCharms()
+                .add(
+                        new PurchasedCharm(
+                                "1", "Shadow Dancing", Ability.DODGE.getDisplayName())); // Dummy
+        mysticModel
+                .getUnlockedCharms()
+                .add(
+                        new PurchasedCharm(
+                                "2", "Ox-Body Technique", Ability.RESISTANCE.getDisplayName()));
 
         model.updateMotesAndHealth(1);
         // Base 7 + Ox-Body (Stamina 3: adds one -1 and two -2) = 10

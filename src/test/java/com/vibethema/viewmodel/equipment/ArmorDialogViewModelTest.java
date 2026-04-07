@@ -1,22 +1,20 @@
 package com.vibethema.viewmodel.equipment;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import com.vibethema.service.EquipmentDataService.Tag;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.util.List;
-import static org.junit.jupiter.api.Assertions.*;
-
-import static org.mockito.Mockito.*;
 
 public class ArmorDialogViewModelTest {
 
@@ -41,13 +39,13 @@ public class ArmorDialogViewModelTest {
     void testInitializesFromExistingArmor() {
         Armor armor = new Armor("id1", "Silk", Armor.ArmorType.ARTIFACT, Armor.ArmorWeight.LIGHT);
         armor.getTags().add("Concealable");
-        
+
         ArmorDialogViewModel vm = new ArmorDialogViewModel(armor, allTags);
-        
+
         assertEquals("Silk", vm.nameProperty().get());
         assertEquals(Armor.ArmorType.ARTIFACT, vm.typeProperty().get());
         assertEquals(Armor.ArmorWeight.LIGHT, vm.weightProperty().get());
-        
+
         // Tags
         assertTrue(vm.getAvailableTags().get(0).isSelected()); // Concealable
         assertFalse(vm.getAvailableTags().get(1).isSelected()); // Buoyant
@@ -58,7 +56,7 @@ public class ArmorDialogViewModelTest {
         ArmorDialogViewModel vm = new ArmorDialogViewModel(null, allTags);
         assertEquals("", vm.nameProperty().get());
         assertEquals(Armor.ArmorType.MORTAL, vm.typeProperty().get());
-        
+
         for (ArmorDialogViewModel.TagSelectionViewModel tvm : vm.getAvailableTags()) {
             assertFalse(tvm.isSelected());
         }
@@ -68,14 +66,14 @@ public class ArmorDialogViewModelTest {
     void testApplyToExistingArmor() {
         Armor armor = new Armor("id1", "Test", Armor.ArmorType.MORTAL, Armor.ArmorWeight.MEDIUM);
         ArmorDialogViewModel vm = new ArmorDialogViewModel(armor, allTags);
-        
+
         vm.nameProperty().set("New Name");
         vm.typeProperty().set(Armor.ArmorType.ARTIFACT);
         vm.weightProperty().set(Armor.ArmorWeight.HEAVY);
         vm.getAvailableTags().get(1).selectedProperty().set(true); // "Buoyant"
-        
+
         vm.applyTo(armor);
-        
+
         assertEquals("New Name", armor.getName());
         assertEquals(Armor.ArmorType.ARTIFACT, armor.getType());
         assertEquals(Armor.ArmorWeight.HEAVY, armor.getWeight());

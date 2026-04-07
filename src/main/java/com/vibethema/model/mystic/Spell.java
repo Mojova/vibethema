@@ -1,24 +1,24 @@
 package com.vibethema.model.mystic;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
+import java.util.List;
+import java.util.UUID;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import java.util.UUID;
-import java.util.List;
 
 public class Spell {
     public enum Circle {
-        TERRESTRIAL, CELESTIAL, SOLAR;
+        TERRESTRIAL,
+        CELESTIAL,
+        SOLAR;
 
         @Override
         public String toString() {
@@ -43,7 +43,14 @@ public class Spell {
         this.circle.set(circle.name());
     }
 
-    public Spell(String id, String name, String circle, String cost, List<String> keywords, String duration, String description) {
+    public Spell(
+            String id,
+            String name,
+            String circle,
+            String cost,
+            List<String> keywords,
+            String duration,
+            String description) {
         this.id.set(id);
         this.name.set(name);
         this.circle.set(circle);
@@ -53,31 +60,83 @@ public class Spell {
         this.description.set(description);
     }
 
-    public StringProperty idProperty() { return id; }
-    public String getId() { return id.get(); }
+    public StringProperty idProperty() {
+        return id;
+    }
 
-    public StringProperty nameProperty() { return name; }
-    public String getName() { return name.get(); }
-    public void setName(String name) { this.name.set(name); }
+    public String getId() {
+        return id.get();
+    }
 
-    public StringProperty circleProperty() { return circle; }
-    public String getCircle() { return circle.get(); }
-    public void setCircle(String circle) { this.circle.set(circle); }
+    public StringProperty nameProperty() {
+        return name;
+    }
 
-    public StringProperty costProperty() { return cost; }
-    public String getCost() { return cost.get(); }
-    public void setCost(String cost) { this.cost.set(cost); }
+    public String getName() {
+        return name.get();
+    }
 
-    public ObservableList<String> getKeywords() { return keywords; }
+    public void setName(String name) {
+        this.name.set(name);
+    }
 
-    public StringProperty durationProperty() { return duration; }
-    public String getDuration() { return duration.get(); }
-    public void setDuration(String duration) { this.duration.set(duration); }
+    public StringProperty circleProperty() {
+        return circle;
+    }
 
-    public StringProperty descriptionProperty() { return description; }
-    public String getDescription() { return description.get(); }
-    public void setDescription(String description) { this.description.set(description); }
+    public String getCircle() {
+        return circle.get();
+    }
 
-    public boolean isCustom() { return custom; }
-    public void setCustom(boolean custom) { this.custom = custom; }
+    public void setCircle(String circle) {
+        this.circle.set(circle);
+    }
+
+    public StringProperty costProperty() {
+        return cost;
+    }
+
+    public String getCost() {
+        return cost.get();
+    }
+
+    public void setCost(String cost) {
+        this.cost.set(cost);
+    }
+
+    public ObservableList<String> getKeywords() {
+        return keywords;
+    }
+
+    public StringProperty durationProperty() {
+        return duration;
+    }
+
+    public String getDuration() {
+        return duration.get();
+    }
+
+    public void setDuration(String duration) {
+        this.duration.set(duration);
+    }
+
+    public StringProperty descriptionProperty() {
+        return description;
+    }
+
+    public String getDescription() {
+        return description.get();
+    }
+
+    public void setDescription(String description) {
+        this.description.set(description);
+    }
+
+    public boolean isCustom() {
+        return custom;
+    }
+
+    public void setCustom(boolean custom) {
+        this.custom = custom;
+    }
 }

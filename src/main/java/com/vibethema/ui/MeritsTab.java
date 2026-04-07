@@ -1,18 +1,19 @@
 package com.vibethema.ui;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import com.vibethema.viewmodel.MeritsViewModel;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
+import java.net.URL;
+import java.util.ResourceBundle;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -24,15 +25,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.collections.ListChangeListener;
-
-import java.net.URL;
-import java.util.ResourceBundle;
 
 public class MeritsTab extends ScrollPane implements JavaView<MeritsViewModel>, Initializable {
 
-    @InjectViewModel
-    private MeritsViewModel viewModel;
+    @InjectViewModel private MeritsViewModel viewModel;
 
     private VBox meritsList;
 

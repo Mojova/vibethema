@@ -1,18 +1,18 @@
 package com.vibethema.ui;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import com.vibethema.viewmodel.IntimaciesViewModel;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -20,16 +20,12 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+public class IntimaciesTab extends ScrollPane
+        implements JavaView<IntimaciesViewModel>, Initializable {
 
-public class IntimaciesTab extends ScrollPane implements JavaView<IntimaciesViewModel>, Initializable {
-
-    @InjectViewModel
-    private IntimaciesViewModel viewModel;
+    @InjectViewModel private IntimaciesViewModel viewModel;
 
     private VBox intimaciesList;
 
@@ -49,7 +45,9 @@ public class IntimaciesTab extends ScrollPane implements JavaView<IntimaciesView
         intimaciesList.getStyleClass().add("merit-row-container");
 
         refreshIntimacies();
-        viewModel.getIntimacies().addListener((ListChangeListener<Intimacy>) c -> refreshIntimacies());
+        viewModel
+                .getIntimacies()
+                .addListener((ListChangeListener<Intimacy>) c -> refreshIntimacies());
 
         Button addBtn = new Button("+ Add Intimacy");
         addBtn.getStyleClass().add("action-btn");

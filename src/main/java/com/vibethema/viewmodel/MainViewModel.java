@@ -1,34 +1,32 @@
 package com.vibethema.viewmodel;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
 import com.vibethema.service.SystemDataService;
 import com.vibethema.viewmodel.footer.FooterViewModel;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.List;
+import java.util.Map;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.util.List;
-import java.util.Map;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +38,8 @@ public class MainViewModel implements ViewModel {
     private final CharmDataService charmDataService;
     private final SystemDataService systemDataService;
 
-    private final Map<String, String> tagDescriptions = new java.util.concurrent.ConcurrentHashMap<>();
+    private final Map<String, String> tagDescriptions =
+            new java.util.concurrent.ConcurrentHashMap<>();
     private final Map<String, String> keywordDefs = new java.util.concurrent.ConcurrentHashMap<>();
 
     private final ObjectProperty<File> currentFile = new SimpleObjectProperty<>();
@@ -53,7 +52,11 @@ public class MainViewModel implements ViewModel {
     }
 
     public MainViewModel(EquipmentDataService equipmentService, CharmDataService charmDataService) {
-        this(CharacterFactory.createNewCharacter(), new SystemDataService(), equipmentService, charmDataService);
+        this(
+                CharacterFactory.createNewCharacter(),
+                new SystemDataService(),
+                equipmentService,
+                charmDataService);
     }
 
     public MainViewModel(CharacterData data) {
@@ -64,8 +67,11 @@ public class MainViewModel implements ViewModel {
         this(data, systemDataService, new EquipmentDataService(), new CharmDataService());
     }
 
-    public MainViewModel(CharacterData data, SystemDataService systemDataService, 
-                        EquipmentDataService equipmentService, CharmDataService charmDataService) {
+    public MainViewModel(
+            CharacterData data,
+            SystemDataService systemDataService,
+            EquipmentDataService equipmentService,
+            CharmDataService charmDataService) {
         this.systemDataService = systemDataService;
         this.equipmentService = equipmentService;
         this.charmDataService = charmDataService;
@@ -78,18 +84,23 @@ public class MainViewModel implements ViewModel {
         this.footerViewModel = new FooterViewModel(data, this::handleFinalization);
         this.dirty.unbind();
         this.dirty.bind(data.dirtyProperty());
-        
-        new Thread(() -> {
-            // Load global data
-            loadTagDescriptions();
-            loadKeywords();
-            
-            // Load character-specific defaults if this is a new character (no weapons yet)
-            if (data.getWeapons().isEmpty()) {
-                new CharacterFactory().initializeDefaultEquipment(data, equipmentService);
-            }
-        }, "MainViewModel-Data-Loader").start();
-        
+
+        new Thread(
+                        () -> {
+                            // Load global data
+                            loadTagDescriptions();
+                            loadKeywords();
+
+                            // Load character-specific defaults if this is a new character (no
+                            // weapons yet)
+                            if (data.getWeapons().isEmpty()) {
+                                new CharacterFactory()
+                                        .initializeDefaultEquipment(data, equipmentService);
+                            }
+                        },
+                        "MainViewModel-Data-Loader")
+                .start();
+
         updateWindowTitle();
         currentFile.addListener((obs, oldV, newV) -> updateWindowTitle());
         dirty.addListener((obs, oldV, newV) -> updateWindowTitle());
@@ -127,17 +138,45 @@ public class MainViewModel implements ViewModel {
     }
 
     // Accessors
-    public CharacterData getData() { return data; }
-    public FooterViewModel getFooterViewModel() { return footerViewModel; }
-    public EquipmentDataService getEquipmentService() { return equipmentService; }
-    public CharmDataService getCharmDataService() { return charmDataService; }
-    public Map<String, String> getTagDescriptions() { return tagDescriptions; }
-    public Map<String, String> getKeywordDefs() { return keywordDefs; }
-    
-    public StringProperty windowTitleProperty() { return windowTitle; }
-    public ObjectProperty<File> currentFileProperty() { return currentFile; }
-    public BooleanProperty dirtyProperty() { return dirty; }
-    public BooleanProperty coreDataImportedProperty() { return coreDataImported; }
+    public CharacterData getData() {
+        return data;
+    }
+
+    public FooterViewModel getFooterViewModel() {
+        return footerViewModel;
+    }
+
+    public EquipmentDataService getEquipmentService() {
+        return equipmentService;
+    }
+
+    public CharmDataService getCharmDataService() {
+        return charmDataService;
+    }
+
+    public Map<String, String> getTagDescriptions() {
+        return tagDescriptions;
+    }
+
+    public Map<String, String> getKeywordDefs() {
+        return keywordDefs;
+    }
+
+    public StringProperty windowTitleProperty() {
+        return windowTitle;
+    }
+
+    public ObjectProperty<File> currentFileProperty() {
+        return currentFile;
+    }
+
+    public BooleanProperty dirtyProperty() {
+        return dirty;
+    }
+
+    public BooleanProperty coreDataImportedProperty() {
+        return coreDataImported;
+    }
 
     // Actions
     public void saveCharacter(File file) {
@@ -191,7 +230,10 @@ public class MainViewModel implements ViewModel {
         if (currentFile.get() != null) {
             saveCharacter(currentFile.get());
         } else {
-            String suggestName = data.nameProperty().get().trim().isEmpty() ? "Character.vbtm" : data.nameProperty().get().trim() + ".vbtm";
+            String suggestName =
+                    data.nameProperty().get().trim().isEmpty()
+                            ? "Character.vbtm"
+                            : data.nameProperty().get().trim() + ".vbtm";
             Messenger.publish("request_save_as", suggestName);
         }
     }

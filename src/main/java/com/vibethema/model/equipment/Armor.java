@@ -1,15 +1,13 @@
 package com.vibethema.model.equipment;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
+import java.util.UUID;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -20,11 +18,11 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import java.util.UUID;
 
 public class Armor {
     public enum ArmorType {
-        MORTAL, ARTIFACT;
+        MORTAL,
+        ARTIFACT;
 
         @Override
         public String toString() {
@@ -34,7 +32,9 @@ public class Armor {
     }
 
     public enum ArmorWeight {
-        LIGHT, MEDIUM, HEAVY;
+        LIGHT,
+        MEDIUM,
+        HEAVY;
 
         @Override
         public String toString() {
@@ -44,10 +44,12 @@ public class Armor {
     }
 
     private final StringProperty id = new SimpleStringProperty(UUID.randomUUID().toString());
-    private final StringProperty instanceId = new SimpleStringProperty(UUID.randomUUID().toString());
+    private final StringProperty instanceId =
+            new SimpleStringProperty(UUID.randomUUID().toString());
     private final StringProperty name = new SimpleStringProperty("");
     private final ObjectProperty<ArmorType> type = new SimpleObjectProperty<>(ArmorType.MORTAL);
-    private final ObjectProperty<ArmorWeight> weight = new SimpleObjectProperty<>(ArmorWeight.MEDIUM);
+    private final ObjectProperty<ArmorWeight> weight =
+            new SimpleObjectProperty<>(ArmorWeight.MEDIUM);
     private final ObservableList<String> tags = FXCollections.observableArrayList();
     private final BooleanProperty equipped = new SimpleBooleanProperty(false);
 
@@ -96,56 +98,147 @@ public class Armor {
             attunement.set(0);
             hardness.set(0);
             switch (w) {
-                case LIGHT: soak.set(3); mobilityPenalty.set(0); break;
-                case MEDIUM: soak.set(5); mobilityPenalty.set(-1); break;
-                case HEAVY: soak.set(7); mobilityPenalty.set(-2); break;
+                case LIGHT:
+                    soak.set(3);
+                    mobilityPenalty.set(0);
+                    break;
+                case MEDIUM:
+                    soak.set(5);
+                    mobilityPenalty.set(-1);
+                    break;
+                case HEAVY:
+                    soak.set(7);
+                    mobilityPenalty.set(-2);
+                    break;
             }
         } else { // ARTIFACT
             switch (w) {
-                case LIGHT: soak.set(5); hardness.set(4); mobilityPenalty.set(0); attunement.set(4); break;
-                case MEDIUM: soak.set(8); hardness.set(7); mobilityPenalty.set(-1); attunement.set(5); break;
-                case HEAVY: soak.set(11); hardness.set(10); mobilityPenalty.set(-2); attunement.set(6); break;
+                case LIGHT:
+                    soak.set(5);
+                    hardness.set(4);
+                    mobilityPenalty.set(0);
+                    attunement.set(4);
+                    break;
+                case MEDIUM:
+                    soak.set(8);
+                    hardness.set(7);
+                    mobilityPenalty.set(-1);
+                    attunement.set(5);
+                    break;
+                case HEAVY:
+                    soak.set(11);
+                    hardness.set(10);
+                    mobilityPenalty.set(-2);
+                    attunement.set(6);
+                    break;
             }
         }
     }
 
     // Accessors
-    public StringProperty idProperty() { return id; }
-    public String getId() { return id.get(); }
+    public StringProperty idProperty() {
+        return id;
+    }
 
-    public StringProperty instanceIdProperty() { return instanceId; }
-    public String getInstanceId() { return instanceId.get(); }
-    public void setInstanceId(String instanceId) { this.instanceId.set(instanceId); }
-    
-    public StringProperty nameProperty() { return name; }
-    public String getName() { return name.get(); }
-    public void setName(String v) { name.set(v); }
+    public String getId() {
+        return id.get();
+    }
 
-    public ObjectProperty<ArmorType> typeProperty() { return type; }
-    public ArmorType getType() { return type.get(); }
-    public void setType(ArmorType v) { type.set(v); }
+    public StringProperty instanceIdProperty() {
+        return instanceId;
+    }
 
-    public ObjectProperty<ArmorWeight> weightProperty() { return weight; }
-    public ArmorWeight getWeight() { return weight.get(); }
-    public void setWeight(ArmorWeight v) { weight.set(v); }
+    public String getInstanceId() {
+        return instanceId.get();
+    }
 
-    public ObservableList<String> getTags() { return tags; }
+    public void setInstanceId(String instanceId) {
+        this.instanceId.set(instanceId);
+    }
 
-    public BooleanProperty equippedProperty() { return equipped; }
-    public boolean isEquipped() { return equipped.get(); }
-    public void setEquipped(boolean v) { equipped.set(v); }
+    public StringProperty nameProperty() {
+        return name;
+    }
 
-    public IntegerProperty soakProperty() { return soak; }
-    public int getSoak() { return soak.get(); }
+    public String getName() {
+        return name.get();
+    }
 
-    public IntegerProperty mobilityPenaltyProperty() { return mobilityPenalty; }
-    public int getMobilityPenalty() { return mobilityPenalty.get(); }
+    public void setName(String v) {
+        name.set(v);
+    }
 
-    public IntegerProperty hardnessProperty() { return hardness; }
-    public int getHardness() { return hardness.get(); }
+    public ObjectProperty<ArmorType> typeProperty() {
+        return type;
+    }
 
-    public IntegerProperty attunementProperty() { return attunement; }
-    public int getAttunement() { return attunement.get(); }
+    public ArmorType getType() {
+        return type.get();
+    }
+
+    public void setType(ArmorType v) {
+        type.set(v);
+    }
+
+    public ObjectProperty<ArmorWeight> weightProperty() {
+        return weight;
+    }
+
+    public ArmorWeight getWeight() {
+        return weight.get();
+    }
+
+    public void setWeight(ArmorWeight v) {
+        weight.set(v);
+    }
+
+    public ObservableList<String> getTags() {
+        return tags;
+    }
+
+    public BooleanProperty equippedProperty() {
+        return equipped;
+    }
+
+    public boolean isEquipped() {
+        return equipped.get();
+    }
+
+    public void setEquipped(boolean v) {
+        equipped.set(v);
+    }
+
+    public IntegerProperty soakProperty() {
+        return soak;
+    }
+
+    public int getSoak() {
+        return soak.get();
+    }
+
+    public IntegerProperty mobilityPenaltyProperty() {
+        return mobilityPenalty;
+    }
+
+    public int getMobilityPenalty() {
+        return mobilityPenalty.get();
+    }
+
+    public IntegerProperty hardnessProperty() {
+        return hardness;
+    }
+
+    public int getHardness() {
+        return hardness.get();
+    }
+
+    public IntegerProperty attunementProperty() {
+        return attunement;
+    }
+
+    public int getAttunement() {
+        return attunement.get();
+    }
 
     // --- Persistence Support (DTO) ---
     public static class ArmorData {

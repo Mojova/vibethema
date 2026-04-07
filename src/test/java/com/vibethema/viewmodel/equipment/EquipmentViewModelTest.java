@@ -1,58 +1,55 @@
 package com.vibethema.viewmodel.equipment;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
+import com.vibethema.viewmodel.util.Messenger;
+import de.saxsys.mvvmfx.utils.notifications.NotificationObserver;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import com.vibethema.viewmodel.util.Messenger;
-import de.saxsys.mvvmfx.utils.notifications.NotificationObserver;
-
 @ExtendWith(MockitoExtension.class)
 public class EquipmentViewModelTest {
     private CharacterData data;
     private EquipmentViewModel viewModel;
 
-    @Mock
-    private EquipmentDataService equipmentService;
-    @Mock
-    private CharmDataService dataService;
-    @Mock
-    private Runnable refreshSummary;
+    @Mock private EquipmentDataService equipmentService;
+    @Mock private CharmDataService dataService;
+    @Mock private Runnable refreshSummary;
 
     @BeforeEach
     void setUp() {
         data = new CharacterData();
         // Add a mock 'Unarmed' to simulate a character created with default gear
-        data.getWeapons().add(new Weapon(Weapon.UNARMED_ID, "Unarmed", Weapon.WeaponRange.CLOSE, Weapon.WeaponType.MORTAL, Weapon.WeaponCategory.LIGHT));
+        data.getWeapons()
+                .add(
+                        new Weapon(
+                                Weapon.UNARMED_ID,
+                                "Unarmed",
+                                Weapon.WeaponRange.CLOSE,
+                                Weapon.WeaponType.MORTAL,
+                                Weapon.WeaponCategory.LIGHT));
         data.setDirty(false);
 
-        viewModel = new EquipmentViewModel(
-            data, 
-            equipmentService, 
-            dataService,
-            new HashMap<>(), 
-            refreshSummary
-        );
+        viewModel =
+                new EquipmentViewModel(
+                        data, equipmentService, dataService, new HashMap<>(), refreshSummary);
     }
 
     @Test
@@ -72,12 +69,13 @@ public class EquipmentViewModelTest {
         Weapon artifact = new Weapon("Soul Mirror");
         artifact.setType(Weapon.WeaponType.ARTIFACT);
         data.getWeapons().add(artifact);
-        
+
         artifact.setName("Soul Mirror (Awakened)");
         viewModel.saveWeapon(artifact, false);
 
         assertTrue(data.isDirty());
-        verify(dataService, times(1)).updateEvocationCollectionName(artifact.getId(), "Soul Mirror (Awakened)");
+        verify(dataService, times(1))
+                .updateEvocationCollectionName(artifact.getId(), "Soul Mirror (Awakened)");
     }
 
     @Test
@@ -123,11 +121,12 @@ public class EquipmentViewModelTest {
     @Test
     void testCallEvocationsTrigger() {
         AtomicReference<String[]> ref = new AtomicReference<>();
-        NotificationObserver observer = (name, payload) -> ref.set(new String[]{(String)payload[0], (String)payload[1]});
+        NotificationObserver observer =
+                (name, payload) -> ref.set(new String[] {(String) payload[0], (String) payload[1]});
         Messenger.subscribe("jump_to_evocations", observer);
         try {
             viewModel.callEvocations("art123", "Daiklave");
-            assertArrayEquals(new String[]{"art123", "Daiklave"}, ref.get());
+            assertArrayEquals(new String[] {"art123", "Daiklave"}, ref.get());
         } finally {
             Messenger.unsubscribe(null, observer);
         }
@@ -154,14 +153,17 @@ public class EquipmentViewModelTest {
     void testRequestDialogsPublishNotifications() {
         AtomicReference<String> lastMessage = new AtomicReference<>();
         AtomicReference<Object[]> lastPayload = new AtomicReference<>();
-        NotificationObserver observer = (name, payload) -> {
-            lastMessage.set(name);
-            lastPayload.set(payload);
-        };
+        NotificationObserver observer =
+                (name, payload) -> {
+                    lastMessage.set(name);
+                    lastPayload.set(payload);
+                };
 
         String[] messages = {
-            "show_weapon_dialog", "show_armor_dialog", "show_hearthstone_dialog", "show_other_equipment_dialog",
-            "show_weapon_database", "show_armor_database", "show_hearthstone_database", "show_other_equipment_database"
+            "show_weapon_dialog", "show_armor_dialog", "show_hearthstone_dialog",
+                    "show_other_equipment_dialog",
+            "show_weapon_database", "show_armor_database", "show_hearthstone_database",
+                    "show_other_equipment_database"
         };
 
         for (String msg : messages) {
@@ -184,7 +186,7 @@ public class EquipmentViewModelTest {
             viewModel.requestAddArmor();
             assertEquals("show_armor_dialog", lastMessage.get());
             assertNull(lastPayload.get()[0]);
-            
+
             viewModel.requestArmorDatabase();
             assertEquals("show_armor_database", lastMessage.get());
         } finally {

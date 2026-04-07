@@ -1,14 +1,12 @@
 package com.vibethema.model.logic;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
+import com.vibethema.model.combat.*;
 import com.vibethema.model.equipment.*;
 import com.vibethema.model.mystic.*;
-import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
 import com.vibethema.model.progression.*;
-import com.vibethema.model.logic.*;
-
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +30,8 @@ public class ExperienceRuleEngine {
         }
     }
 
-    public static ExperienceStatus calculateStatus(CharacterData current, CharacterSaveState snapshot) {
+    public static ExperienceStatus calculateStatus(
+            CharacterData current, CharacterSaveState snapshot) {
         ExperienceStatus status = new ExperienceStatus();
 
         // Tally awarded XP
@@ -56,19 +55,28 @@ public class ExperienceRuleEngine {
         // 1. Attributes
         for (Attribute attr : SystemData.ATTRIBUTES) {
             int currentVal = current.getAttribute(attr).get();
-            int snapVal = snapshot.attributes != null ? snapshot.attributes.getOrDefault(attr.name(), 1) : 1;
-            
+            int snapVal =
+                    snapshot.attributes != null
+                            ? snapshot.attributes.getOrDefault(attr.name(), 1)
+                            : 1;
+
             for (int i = snapVal; i < currentVal; i++) {
                 int cost = i * 4;
-                purchases.add(new ExperiencePurchase(attr.getDisplayName() + " " + i + "->" + (i + 1), cost, true));
+                purchases.add(
+                        new ExperiencePurchase(
+                                attr.getDisplayName() + " " + i + "->" + (i + 1), cost, true));
             }
         }
 
         // 2. Abilities
         for (Ability abil : SystemData.ABILITIES) {
             int currentVal = current.getAbility(abil).get();
-            int snapVal = snapshot.abilities != null ? snapshot.abilities.getOrDefault(abil.name(), 0) : 0;
-            boolean isFavored = current.getCasteAbility(abil).get() || current.getFavoredAbility(abil).get();
+            int snapVal =
+                    snapshot.abilities != null
+                            ? snapshot.abilities.getOrDefault(abil.name(), 0)
+                            : 0;
+            boolean isFavored =
+                    current.getCasteAbility(abil).get() || current.getFavoredAbility(abil).get();
 
             for (int i = snapVal; i < currentVal; i++) {
                 int cost;
@@ -77,7 +85,9 @@ public class ExperienceRuleEngine {
                 } else {
                     cost = isFavored ? (i * 2) - 1 : (i * 2);
                 }
-                purchases.add(new ExperiencePurchase(abil.getDisplayName() + " " + i + "->" + (i + 1), cost, true));
+                purchases.add(
+                        new ExperiencePurchase(
+                                abil.getDisplayName() + " " + i + "->" + (i + 1), cost, true));
             }
         }
 
@@ -94,7 +104,7 @@ public class ExperienceRuleEngine {
                     }
                 }
             }
-            
+
             for (int i = snapVal; i < currentVal; i++) {
                 int cost;
                 if (i == 0) {
@@ -102,7 +112,11 @@ public class ExperienceRuleEngine {
                 } else {
                     cost = isFavored ? (i * 2) - 1 : (i * 2);
                 }
-                purchases.add(new ExperiencePurchase("Craft (" + craft.getExpertise() + ") " + i + "->" + (i + 1), cost, true));
+                purchases.add(
+                        new ExperiencePurchase(
+                                "Craft (" + craft.getExpertise() + ") " + i + "->" + (i + 1),
+                                cost,
+                                true));
             }
         }
 
@@ -127,7 +141,11 @@ public class ExperienceRuleEngine {
                 } else {
                     cost = isFavored ? (i * 2) - 1 : (i * 2);
                 }
-                purchases.add(new ExperiencePurchase("Martial Arts (" + mas.getStyleName() + ") " + i + "->" + (i + 1), cost, true));
+                purchases.add(
+                        new ExperiencePurchase(
+                                "Martial Arts (" + mas.getStyleName() + ") " + i + "->" + (i + 1),
+                                cost,
+                                true));
             }
         }
 
@@ -141,7 +159,7 @@ public class ExperienceRuleEngine {
         // 6. Merits
         for (Merit currentMerit : current.getMerits()) {
             if (currentMerit.getName() == null || currentMerit.getName().trim().isEmpty()) continue;
-            
+
             int currentRating = currentMerit.getRating();
             int snapRating = 0;
             if (snapshot.merits != null && snapshot.merits.containsKey(currentMerit.getName())) {
@@ -151,15 +169,21 @@ public class ExperienceRuleEngine {
             if (currentRating > snapRating) {
                 for (int i = snapRating; i < currentRating; i++) {
                     int cost = (i + 1) * 3;
-                    purchases.add(new ExperiencePurchase("Merit: " + currentMerit.getName() + " " + i + "->" + (i + 1), cost, true));
+                    purchases.add(
+                            new ExperiencePurchase(
+                                    "Merit: " + currentMerit.getName() + " " + i + "->" + (i + 1),
+                                    cost,
+                                    true));
                 }
             }
         }
 
         // 7. Specialties
-        int currentSpCount = (int) current.getSpecialties().stream()
-                .filter(s -> s.getName() != null && !s.getName().trim().isEmpty())
-                .count();
+        int currentSpCount =
+                (int)
+                        current.getSpecialties().stream()
+                                .filter(s -> s.getName() != null && !s.getName().trim().isEmpty())
+                                .count();
         int snapSpCount = snapshot.specialties != null ? snapshot.specialties.size() : 0;
         int newSpCount = Math.max(0, currentSpCount - snapSpCount);
         for (int i = 0; i < newSpCount; i++) {
@@ -183,7 +207,9 @@ public class ExperienceRuleEngine {
                 boolean isSolarCharm = false;
 
                 if (enumAbil != null) {
-                    isFavored = current.getCasteAbility(enumAbil).get() || current.getFavoredAbility(enumAbil).get();
+                    isFavored =
+                            current.getCasteAbility(enumAbil).get()
+                                    || current.getFavoredAbility(enumAbil).get();
                     isSolarCharm = true;
                 } else {
                     // Check if it's a Craft ability
@@ -208,7 +234,8 @@ public class ExperienceRuleEngine {
                 int cost = isFavored ? 8 : 10;
                 boolean canUseSolarXp = !isSolarCharm; // Evocations and MA charms can use Solar XP
 
-                String desc = isSolarCharm ? "Solar Charm: " + pc.name() : pc.name() + " (Evocation/MA)";
+                String desc =
+                        isSolarCharm ? "Solar Charm: " + pc.name() : pc.name() + " (Evocation/MA)";
                 purchases.add(new ExperiencePurchase(desc, cost, canUseSolarXp));
             }
         }
@@ -221,19 +248,28 @@ public class ExperienceRuleEngine {
             }
         }
 
-        boolean isOccultFavored = current.getCasteAbility(Ability.OCCULT).get() || current.getFavoredAbility(Ability.OCCULT).get();
+        boolean isOccultFavored =
+                current.getCasteAbility(Ability.OCCULT).get()
+                        || current.getFavoredAbility(Ability.OCCULT).get();
         int spellCost = isOccultFavored ? 8 : 10;
 
         for (Spell spell : current.getSpells()) {
             if (!snapSpellIds.contains(spell.getId())) {
                 // Determine if this spell is the free TCS spell
-                boolean wasTCSFreeAtCreation = snapshot.spells != null && 
-                    snapshot.spells.stream().anyMatch(s -> s.name.equals(SystemData.TERRESTRIAL_CIRCLE_SORCERY));
-                
+                boolean wasTCSFreeAtCreation =
+                        snapshot.spells != null
+                                && snapshot.spells.stream()
+                                        .anyMatch(
+                                                s ->
+                                                        s.name.equals(
+                                                                SystemData
+                                                                        .TERRESTRIAL_CIRCLE_SORCERY));
+
                 // If it wasn't bought at creation, maybe it's the free one now
                 boolean isTCS = spell.getName().equals(SystemData.TERRESTRIAL_CIRCLE_SORCERY);
-                boolean isFirstSpellAndTCS = isTCS && current.getSpells().get(0).getId().equals(spell.getId());
-                
+                boolean isFirstSpellAndTCS =
+                        isTCS && current.getSpells().get(0).getId().equals(spell.getId());
+
                 if (isFirstSpellAndTCS && !wasTCSFreeAtCreation) {
                     continue; // Skip calculating cost for the free TCS initiation spell
                 }
@@ -247,7 +283,7 @@ public class ExperienceRuleEngine {
 
         for (ExperiencePurchase purchase : purchases) {
             status.log.add(purchase);
-            
+
             if (!purchase.canUseSolarXp()) {
                 // Must use Regular XP
                 status.regularXpSpent += purchase.getCost();

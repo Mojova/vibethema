@@ -1,48 +1,47 @@
 package com.vibethema.viewmodel.equipment;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 
-
 /**
- * A generic ViewModel for browsing and selecting items from the equipment database.
- * Supports filtering/searching and custom actions for creation.
+ * A generic ViewModel for browsing and selecting items from the equipment database. Supports
+ * filtering/searching and custom actions for creation.
  */
 public class EquipmentDatabaseViewModel implements ViewModel {
-    
+
     private final ObservableList<Object> allItems = FXCollections.observableArrayList();
     private final FilteredList<Object> filteredItems = new FilteredList<>(allItems);
-    
+
     private final StringProperty searchQuery = new SimpleStringProperty("");
     private final ObjectProperty<Object> selectedItem = new SimpleObjectProperty<>();
     private final StringProperty title = new SimpleStringProperty("Database");
     private final StringProperty createNewText = new SimpleStringProperty("+ Create New");
-    
+
     private Runnable createNewAction;
     private java.util.function.Consumer<Object> deleteAction;
-    
+
     public EquipmentDatabaseViewModel() {
         // Setup search filtering
-        searchQuery.addListener((obs, oldVal, newVal) -> {
-            filteredItems.setPredicate(item -> {
-                if (newVal == null || newVal.isEmpty()) return true;
-                String lower = newVal.toLowerCase();
-                return item.toString().toLowerCase().contains(lower);
-            });
-        });
+        searchQuery.addListener(
+                (obs, oldVal, newVal) -> {
+                    filteredItems.setPredicate(
+                            item -> {
+                                if (newVal == null || newVal.isEmpty()) return true;
+                                String lower = newVal.toLowerCase();
+                                return item.toString().toLowerCase().contains(lower);
+                            });
+                });
     }
 
     public void setItems(java.util.Collection<?> items) {
@@ -50,7 +49,7 @@ public class EquipmentDatabaseViewModel implements ViewModel {
             allItems.clear();
             return;
         }
-        
+
         java.util.List<Object> sortedList = new java.util.ArrayList<>(items);
         sortedList.sort((a, b) -> a.toString().compareToIgnoreCase(b.toString()));
         allItems.setAll(sortedList);
@@ -73,7 +72,8 @@ public class EquipmentDatabaseViewModel implements ViewModel {
     public void onDeleteRequest() {
         Object selected = selectedItem.get();
         if (selected != null) {
-            com.vibethema.viewmodel.util.Messenger.publish("confirm_database_deletion", selected.toString());
+            com.vibethema.viewmodel.util.Messenger.publish(
+                    "confirm_database_deletion", selected.toString());
         }
     }
 
@@ -87,16 +87,15 @@ public class EquipmentDatabaseViewModel implements ViewModel {
 
     public javafx.beans.binding.BooleanExpression canDeleteSelectedProperty() {
         return javafx.beans.binding.Bindings.createBooleanBinding(
-            () -> {
-                Object selected = selectedItem.get();
-                if (selected == null) return false;
-                if (selected instanceof com.vibethema.model.equipment.Weapon w) {
-                    return !com.vibethema.model.equipment.Weapon.UNARMED_ID.equals(w.getId());
-                }
-                return true;
-            },
-            selectedItem
-        );
+                () -> {
+                    Object selected = selectedItem.get();
+                    if (selected == null) return false;
+                    if (selected instanceof com.vibethema.model.equipment.Weapon w) {
+                        return !com.vibethema.model.equipment.Weapon.UNARMED_ID.equals(w.getId());
+                    }
+                    return true;
+                },
+                selectedItem);
     }
 
     public ObservableList<Object> getFilteredItems() {
@@ -110,7 +109,7 @@ public class EquipmentDatabaseViewModel implements ViewModel {
     public ObjectProperty<Object> selectedItemProperty() {
         return selectedItem;
     }
-    
+
     public StringProperty titleProperty() {
         return title;
     }

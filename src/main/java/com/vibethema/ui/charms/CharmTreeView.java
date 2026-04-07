@@ -1,19 +1,19 @@
 package com.vibethema.ui.charms;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import com.vibethema.viewmodel.charms.CharmTreeViewModel;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
+import java.net.URL;
+import java.util.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.Initializable;
@@ -22,17 +22,14 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.shape.CubicCurve;
-import java.net.URL;
-import java.util.*;
 
 /**
- * A standalone UI component that renders a charm web.
- * Refactored to focus purely on the graphical representation of charms.
+ * A standalone UI component that renders a charm web. Refactored to focus purely on the graphical
+ * representation of charms.
  */
 public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>, Initializable {
 
-    @InjectViewModel
-    private CharmTreeViewModel viewModel;
+    @InjectViewModel private CharmTreeViewModel viewModel;
 
     private ScrollPane charmScroll;
     private Pane charmCanvas = new Pane();
@@ -49,16 +46,21 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
         getStyleClass().add("charms-tree-view");
         setupUI();
         setupBindings();
-        
-        viewModel.getCurrentCharms().addListener((javafx.collections.ListChangeListener<? super Charm>) c -> render());
-        viewModel.selectedCharmProperty().addListener((obs, oldV, newV) -> {
-            updateLineHighlights(newV != null ? newV.getId() : null);
-            updateWebNodeStyles();
-            if (newV != null) scrollToNode(newV.getId());
-        });
-        
+
+        viewModel
+                .getCurrentCharms()
+                .addListener((javafx.collections.ListChangeListener<? super Charm>) c -> render());
+        viewModel
+                .selectedCharmProperty()
+                .addListener(
+                        (obs, oldV, newV) -> {
+                            updateLineHighlights(newV != null ? newV.getId() : null);
+                            updateWebNodeStyles();
+                            if (newV != null) scrollToNode(newV.getId());
+                        });
+
         setupKeyHandlers();
-        
+
         // Initial render
         render();
     }
@@ -67,29 +69,34 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
         setFocusTraversable(false);
         charmScroll.setFocusTraversable(true);
 
-        charmCanvas.setOnMousePressed(e -> {
-            if (!charmScroll.isFocused()) charmScroll.requestFocus();
-        });
+        charmCanvas.setOnMousePressed(
+                e -> {
+                    if (!charmScroll.isFocused()) charmScroll.requestFocus();
+                });
 
-        charmScroll.addEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, e -> {
-            javafx.scene.input.KeyCode code = e.getCode();
-            if (code.isArrowKey()) {
-                if (e.isShortcutDown() || e.isShiftDown()) {
-                    return;
-                }
-                viewModel.navigate(code);
-                e.consume();
-            } else if (code == javafx.scene.input.KeyCode.ENTER || code == javafx.scene.input.KeyCode.SPACE) {
-                viewModel.togglePurchase();
-                e.consume();
-            } else if (code == javafx.scene.input.KeyCode.BACK_SPACE || code == javafx.scene.input.KeyCode.DELETE) {
-                viewModel.refundOne();
-                e.consume();
-            } else if (code == javafx.scene.input.KeyCode.E) {
-                viewModel.onEditRequest();
-                e.consume();
-            }
-        });
+        charmScroll.addEventHandler(
+                javafx.scene.input.KeyEvent.KEY_PRESSED,
+                e -> {
+                    javafx.scene.input.KeyCode code = e.getCode();
+                    if (code.isArrowKey()) {
+                        if (e.isShortcutDown() || e.isShiftDown()) {
+                            return;
+                        }
+                        viewModel.navigate(code);
+                        e.consume();
+                    } else if (code == javafx.scene.input.KeyCode.ENTER
+                            || code == javafx.scene.input.KeyCode.SPACE) {
+                        viewModel.togglePurchase();
+                        e.consume();
+                    } else if (code == javafx.scene.input.KeyCode.BACK_SPACE
+                            || code == javafx.scene.input.KeyCode.DELETE) {
+                        viewModel.refundOne();
+                        e.consume();
+                    } else if (code == javafx.scene.input.KeyCode.E) {
+                        viewModel.onEditRequest();
+                        e.consume();
+                    }
+                });
     }
 
     private void scrollToNode(String charmId) {
@@ -98,7 +105,7 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
 
         double width = charmCanvas.getBoundsInLocal().getWidth();
         double height = charmCanvas.getBoundsInLocal().getHeight();
-        
+
         double nx = node.getLayoutX() + node.getBoundsInLocal().getWidth() / 2;
         double ny = node.getLayoutY() + node.getBoundsInLocal().getHeight() / 2;
 
@@ -118,22 +125,31 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
 
         HBox controls = new HBox(15);
         controls.setAlignment(Pos.CENTER_LEFT);
-        
+
         titleLabel.getStyleClass().add("section-title");
 
         Button createCharmBtn = new Button();
         createCharmBtn.getStyleClass().add("action-btn");
-        createCharmBtn.textProperty().bind(Bindings.createStringBinding(() -> 
-            "Evocation".equals(viewModel.filterTypeProperty().get()) ? "Create New Evocation" : "Create New Charm",
-            viewModel.filterTypeProperty()));
-        
-        createCharmBtn.setOnAction(e -> Messenger.publish("open_create_charm_dialog", 
-            new Object[]{
-                viewModel.selectionIdProperty().get(), 
-                viewModel.artifactNameProperty().get(), 
-                viewModel.filterTypeProperty().get(), 
-                (Runnable) this::refresh
-            }));
+        createCharmBtn
+                .textProperty()
+                .bind(
+                        Bindings.createStringBinding(
+                                () ->
+                                        "Evocation".equals(viewModel.filterTypeProperty().get())
+                                                ? "Create New Evocation"
+                                                : "Create New Charm",
+                                viewModel.filterTypeProperty()));
+
+        createCharmBtn.setOnAction(
+                e ->
+                        Messenger.publish(
+                                "open_create_charm_dialog",
+                                new Object[] {
+                                    viewModel.selectionIdProperty().get(),
+                                    viewModel.artifactNameProperty().get(),
+                                    viewModel.filterTypeProperty().get(),
+                                    (Runnable) this::refresh
+                                }));
 
         CheckBox eligibleFilter = new CheckBox("Show Eligible Only");
         eligibleFilter.getStyleClass().add("label");
@@ -156,14 +172,28 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
     }
 
     private void setupBindings() {
-        titleLabel.textProperty().bind(Bindings.createStringBinding(() -> {
-            String selection = viewModel.selectionIdProperty().get();
-            if (selection == null || selection.isEmpty()) return "Select an Ability to view charms";
-            if ("Evocation".equals(viewModel.filterTypeProperty().get())) {
-                return "Evocations of " + viewModel.artifactNameProperty().get() + " (" + viewModel.getCurrentCharms().size() + ")";
-            }
-            return selection + " Charms Web (" + viewModel.getCurrentCharms().size() + ")";
-        }, viewModel.selectionIdProperty(), viewModel.getCurrentCharms()));
+        titleLabel
+                .textProperty()
+                .bind(
+                        Bindings.createStringBinding(
+                                () -> {
+                                    String selection = viewModel.selectionIdProperty().get();
+                                    if (selection == null || selection.isEmpty())
+                                        return "Select an Ability to view charms";
+                                    if ("Evocation".equals(viewModel.filterTypeProperty().get())) {
+                                        return "Evocations of "
+                                                + viewModel.artifactNameProperty().get()
+                                                + " ("
+                                                + viewModel.getCurrentCharms().size()
+                                                + ")";
+                                    }
+                                    return selection
+                                            + " Charms Web ("
+                                            + viewModel.getCurrentCharms().size()
+                                            + ")";
+                                },
+                                viewModel.selectionIdProperty(),
+                                viewModel.getCurrentCharms()));
     }
 
     public void refresh() {
@@ -203,11 +233,13 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
                 double x = startX + i * (boxWidth + gapX);
 
                 Pane box = createNodeBox(c, boxWidth, boxHeight);
-                box.setLayoutX(x); box.setLayoutY(y);
-                box.setOnMouseClicked(e -> {
-                    viewModel.selectedCharmProperty().set(c);
-                    if (e.getClickCount() == 2) viewModel.togglePurchase();
-                });
+                box.setLayoutX(x);
+                box.setLayoutY(y);
+                box.setOnMouseClicked(
+                        e -> {
+                            viewModel.selectedCharmProperty().set(c);
+                            if (e.getClickCount() == 2) viewModel.togglePurchase();
+                        });
 
                 charmCanvas.getChildren().add(box);
             }
@@ -226,13 +258,26 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
                         double endX = target.getLayoutX() + boxWidth / 2;
                         double endY = target.getLayoutY();
 
-                        CubicCurve curve = new CubicCurve(startX, startY, startX, startY + gapY/1.5, endX, endY - gapY/1.5, endX, endY);
+                        CubicCurve curve =
+                                new CubicCurve(
+                                        startX,
+                                        startY,
+                                        startX,
+                                        startY + gapY / 1.5,
+                                        endX,
+                                        endY - gapY / 1.5,
+                                        endX,
+                                        endY);
                         curve.getStyleClass().add("charm-line");
                         charmCanvas.getChildren().add(curve);
                         curve.toBack();
 
-                        charmIncomingLines.computeIfAbsent(c.getId(), k -> new ArrayList<>()).add(curve);
-                        charmOutgoingLines.computeIfAbsent(reqId, k -> new ArrayList<>()).add(curve);
+                        charmIncomingLines
+                                .computeIfAbsent(c.getId(), k -> new ArrayList<>())
+                                .add(curve);
+                        charmOutgoingLines
+                                .computeIfAbsent(reqId, k -> new ArrayList<>())
+                                .add(curve);
                     }
                 }
             }
@@ -257,23 +302,34 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
         name.getStyleClass().add("charm-node-title");
         name.setWrapText(true);
 
-        Label reqs = new Label("Evocation".equals(viewModel.filterTypeProperty().get()) ? 
-            "Ess " + c.getMinEssence() : c.getAbility() + " " + c.getMinAbility() + ", Ess " + c.getMinEssence());
+        Label reqs =
+                new Label(
+                        "Evocation".equals(viewModel.filterTypeProperty().get())
+                                ? "Ess " + c.getMinEssence()
+                                : c.getAbility()
+                                        + " "
+                                        + c.getMinAbility()
+                                        + ", Ess "
+                                        + c.getMinEssence());
         reqs.getStyleClass().add("charm-node-reqs");
 
         content.getChildren().addAll(name, reqs);
-        
+
         Label checkLabel = new Label("✓");
         checkLabel.getStyleClass().add("charm-node-check");
         checkLabel.setVisible(false);
         StackPane.setAlignment(checkLabel, Pos.TOP_RIGHT);
         StackPane.setMargin(checkLabel, new Insets(5));
-        
+
         root.getChildren().addAll(content, checkLabel);
-        
+
         if (c.isPotentiallyProblematicImport()) {
-            Tooltip tt = new Tooltip("Warning: This charm may have incomplete data due to a problematic PDF import.");
-            tt.setWrapText(true); tt.setMaxWidth(250);
+            Tooltip tt =
+                    new Tooltip(
+                            "Warning: This charm may have incomplete data due to a problematic PDF"
+                                    + " import.");
+            tt.setWrapText(true);
+            tt.setMaxWidth(250);
             Tooltip.install(root, tt);
         }
 
@@ -288,21 +344,28 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
         for (Charm c : viewModel.getCurrentCharms()) {
             Pane container = charmNodeMap.get(c.getId());
             if (container == null) continue;
-            
-            container.getStyleClass().removeAll("charm-node-unselected", "charm-node-selected", "charm-node-ineligible", "charm-node-bought", "charm-node-eligible");
-            
+
+            container
+                    .getStyleClass()
+                    .removeAll(
+                            "charm-node-unselected",
+                            "charm-node-selected",
+                            "charm-node-ineligible",
+                            "charm-node-bought",
+                            "charm-node-eligible");
+
             boolean isSelected = selected != null && selected.getId().equals(c.getId());
             boolean hasCharm = viewModel.getData().hasCharm(c.getId());
             boolean eligible = c.isEligible(viewModel.getData());
-            
+
             if (isSelected) {
                 container.getStyleClass().add("charm-node-selected");
             }
-            
+
             if (hasCharm) {
                 container.getStyleClass().add("charm-node-bought");
             }
-            
+
             if (!eligible && !hasCharm) {
                 container.getStyleClass().add("charm-node-ineligible");
             } else if (!hasCharm) {
@@ -315,7 +378,8 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
             }
 
             if (c.isCustom()) {
-                if (!container.getStyleClass().contains("charm-node-custom")) container.getStyleClass().add("charm-node-custom");
+                if (!container.getStyleClass().contains("charm-node-custom"))
+                    container.getStyleClass().add("charm-node-custom");
             } else {
                 container.getStyleClass().remove("charm-node-custom");
             }
@@ -324,7 +388,8 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
 
     private void updateLineHighlights(String charmId) {
         for (CubicCurve line : currentlyHighlightedLines) {
-            line.getStyleClass().removeAll("charm-line-highlight-prereq", "charm-line-highlight-dependent");
+            line.getStyleClass()
+                    .removeAll("charm-line-highlight-prereq", "charm-line-highlight-dependent");
         }
         currentlyHighlightedLines.clear();
 
@@ -350,13 +415,30 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
     public void selectCharm(String charmId) {
         Pane node = charmNodeMap.get(charmId);
         if (node != null) {
-            Platform.runLater(() -> {
-                if (!charmScroll.isFocused()) charmScroll.requestFocus();
-                node.fireEvent(new javafx.scene.input.MouseEvent(
-                    javafx.scene.input.MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, 
-                    javafx.scene.input.MouseButton.PRIMARY, 1, false, false, false, false, 
-                    true, false, false, true, false, false, null));
-            });
+            Platform.runLater(
+                    () -> {
+                        if (!charmScroll.isFocused()) charmScroll.requestFocus();
+                        node.fireEvent(
+                                new javafx.scene.input.MouseEvent(
+                                        javafx.scene.input.MouseEvent.MOUSE_CLICKED,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        javafx.scene.input.MouseButton.PRIMARY,
+                                        1,
+                                        false,
+                                        false,
+                                        false,
+                                        false,
+                                        true,
+                                        false,
+                                        false,
+                                        true,
+                                        false,
+                                        false,
+                                        null));
+                    });
         }
     }
 }

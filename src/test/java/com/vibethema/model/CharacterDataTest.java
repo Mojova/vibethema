@@ -1,16 +1,14 @@
 package com.vibethema.model;
 
-import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
-import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
-import com.vibethema.model.logic.*;
-
-
 import static org.junit.jupiter.api.Assertions.*;
+
+import com.vibethema.model.combat.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.logic.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -39,9 +37,10 @@ public class CharacterDataTest {
     void testEvasionWithSpecialty() {
         data.getAttribute(Attribute.DEXTERITY).set(3);
         data.getAbility(Ability.DODGE).set(2);
-        
-        data.getSpecialties().add(new Specialty("1", "Shadow Dancing", Ability.DODGE.getDisplayName()));
-        
+
+        data.getSpecialties()
+                .add(new Specialty("1", "Shadow Dancing", Ability.DODGE.getDisplayName()));
+
         assertTrue(data.hasEvasionSpecialtyProperty().get());
         // Base was 3. Total with spec: (3+2+1)/2 = 3. Bonus is 0.
         assertEquals(3, data.evasionProperty().get());
@@ -92,9 +91,9 @@ public class CharacterDataTest {
     void testJoinBattleWithSpecialty() {
         data.getAttribute(Attribute.WITS).set(4);
         data.getAbility(Ability.AWARENESS).set(3);
-        
+
         data.getSpecialties().add(new Specialty("2", "Ambush", Ability.AWARENESS.getDisplayName()));
-        
+
         assertTrue(data.hasJoinBattleSpecialtyProperty().get());
         assertEquals(7, data.joinBattleProperty().get());
     }
@@ -131,19 +130,21 @@ public class CharacterDataTest {
         data.getAttribute(Attribute.DEXTERITY).set(3);
         data.getAttribute(Attribute.STRENGTH).set(2);
         data.getAbility(Ability.MELEE).set(4);
-        
+
         Weapon sword = new Weapon("Sword");
         sword.setRange(Weapon.WeaponRange.CLOSE);
         sword.setAccuracy(2);
         sword.setDamage(3);
         sword.setDefense(1);
         data.getWeapons().add(sword);
-        
+
         // Find the attack pool data for the sword
-        AttackPoolData apd = data.getAttackPools().stream()
-                .filter(p -> p.getWeaponName().equals("Sword"))
-                .findFirst().orElseThrow();
-        
+        AttackPoolData apd =
+                data.getAttackPools().stream()
+                        .filter(p -> p.getWeaponName().equals("Sword"))
+                        .findFirst()
+                        .orElseThrow();
+
         // Dex 3 + Melee 4 + Accuracy 2 = 9
         assertEquals("9", apd.getWitheringPool());
         // Dex 3 + Melee 4 = 7
@@ -158,18 +159,21 @@ public class CharacterDataTest {
     void testAttackPoolReactiveUpdate() {
         data.getAttribute(Attribute.DEXTERITY).set(3);
         data.getAbility(Ability.MELEE).set(2);
-        
+
         Weapon sword = new Weapon("Sword");
         sword.setRange(Weapon.WeaponRange.CLOSE);
         data.getWeapons().add(sword);
-        
-        assertEquals(5, data.getAttackPools().get(data.getAttackPools().size()-1).getDecisivePool());
-        
+
+        assertEquals(
+                5, data.getAttackPools().get(data.getAttackPools().size() - 1).getDecisivePool());
+
         data.getAttribute(Attribute.DEXTERITY).set(4);
-        assertEquals(6, data.getAttackPools().get(data.getAttackPools().size()-1).getDecisivePool());
-        
+        assertEquals(
+                6, data.getAttackPools().get(data.getAttackPools().size() - 1).getDecisivePool());
+
         data.getAbility(Ability.MELEE).set(5);
-        assertEquals(9, data.getAttackPools().get(data.getAttackPools().size()-1).getDecisivePool());
+        assertEquals(
+                9, data.getAttackPools().get(data.getAttackPools().size() - 1).getDecisivePool());
     }
 
     @Test
@@ -183,7 +187,7 @@ public class CharacterDataTest {
 
         data.getAbility(Ability.DODGE).set(3);
         assertEquals(3, data.evasionProperty().get());
-        
+
         data.getAbility(Ability.DODGE).set(4);
         assertEquals(4, data.evasionProperty().get());
     }
@@ -208,20 +212,26 @@ public class CharacterDataTest {
 
         // Add Ox-Body Technique (simulated)
         // Ox-Body ID calculation
-        String oxBodyId = java.util.UUID.nameUUIDFromBytes(
-                ("Ox-Body Technique" + "|" + Ability.RESISTANCE.getDisplayName())
-                .getBytes(java.nio.charset.StandardCharsets.UTF_8)).toString();
-        
-        data.addCharm(new PurchasedCharm(oxBodyId, "Ox-Body Technique", Ability.RESISTANCE.getDisplayName()));
-        
+        String oxBodyId =
+                java.util
+                        .UUID
+                        .nameUUIDFromBytes(
+                                ("Ox-Body Technique" + "|" + Ability.RESISTANCE.getDisplayName())
+                                        .getBytes(java.nio.charset.StandardCharsets.UTF_8))
+                        .toString();
+
+        data.addCharm(
+                new PurchasedCharm(
+                        oxBodyId, "Ox-Body Technique", Ability.RESISTANCE.getDisplayName()));
+
         // Stamina 1: Ox-Body adds one -1 and one -2
         // Total should be 9 levels
         assertEquals(9, data.healthLevelsProperty().size());
-        
+
         long zeroCount = data.healthLevelsProperty().stream().filter(l -> l.equals("-0")).count();
         long oneCount = data.healthLevelsProperty().stream().filter(l -> l.equals("-1")).count();
         long twoCount = data.healthLevelsProperty().stream().filter(l -> l.equals("-2")).count();
-        
+
         assertEquals(1, zeroCount);
         assertEquals(3, oneCount);
         assertEquals(3, twoCount);
@@ -267,7 +277,8 @@ public class CharacterDataTest {
         assertFalse(data.excellencyProperty(Ability.ARCHERY).get());
 
         // Adding a charm should also grant it
-        data.getUnlockedCharms().add(new PurchasedCharm("1", "Any Charm", Ability.ARCHERY.getDisplayName()));
+        data.getUnlockedCharms()
+                .add(new PurchasedCharm("1", "Any Charm", Ability.ARCHERY.getDisplayName()));
         assertTrue(data.excellencyProperty(Ability.ARCHERY).get());
     }
 }

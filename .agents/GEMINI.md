@@ -79,6 +79,13 @@ The project uses **JaCoCo** for measuring test code coverage.
 - **Report Location**: `target/site/jacoco/index.html`
 - **Goal**: Maintain high coverage for core logic in `com.vibethema.model` and `com.vibethema.service`.
 
+### Code Style & Formatting (Spotless)
+The project uses **Spotless** to automate code style enforcement and import optimization.
+- **Rules**: Uses `google-java-format` (AOSP style for 4-space indentation) and standard XML formatting.
+- **Execution**: Run `./scripts/format.sh` or `mvn spotless:apply` to format the codebase.
+- **Check**: Run `mvn spotless:check` to verify compliance without applying changes.
+- **Imports**: Unused imports are automatically removed, and imports are sorted by the plugin.
+
 ## Key Rules & Logic
 
 | Feature | Creation Rule | Scaling / BP Cost |
@@ -115,5 +122,6 @@ The project uses **JaCoCo** for measuring test code coverage.
 3. **Logging**: Use SLF4J: `private static final Logger logger = LoggerFactory.getLogger(ClassName.class);`
 4. **Architecture**: Always check if a change requires a new View-ViewModel pair.
 5. **Compile**: Verify changes with `mvn compile` or `mvn test`.
-6. **Update this file**: Keep this file synchronized with architecture changes.
-7. **Commits**: Descriptive messages with logical task breakdown.
+6. **Formatting**: Always run `./scripts/format.sh` before committing to ensure consistent style and optimized imports.
+7. **Update this file**: Keep this file synchronized with architecture changes.
+8. **Commits**: Descriptive messages with logical task breakdown.

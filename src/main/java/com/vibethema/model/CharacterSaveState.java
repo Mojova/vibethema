@@ -1,14 +1,12 @@
 package com.vibethema.model;
 
-import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +22,7 @@ public class CharacterSaveState {
     public int limit;
     public Map<String, Integer> attributes;
     public Map<String, String> attributePriorities;
-    
+
     public Map<String, Integer> abilities;
     public List<String> casteAbilities;
     public List<String> favoredAbilities;
@@ -38,14 +36,14 @@ public class CharacterSaveState {
     public List<HearthstoneLink> hearthstones = new ArrayList<>();
     public List<OtherEquipmentLink> otherEquipment = new ArrayList<>();
     public List<IntimacyData> intimacies = new ArrayList<>();
-    
+
     public List<ShapingRitualData> shapingRituals = new ArrayList<>();
-    
+
     public List<SpellData> spells = new ArrayList<>();
 
     public CharacterSaveState creationSnapshot;
     public List<XpAwardData> xpAwards = new ArrayList<>();
-        
+
     public static class WeaponLink {
         public String id;
         public String instanceId;
@@ -92,7 +90,6 @@ public class CharacterSaveState {
         public boolean isFavored;
     }
 
-
     public static class IntimacyData {
         public String id;
         public String name;
@@ -107,8 +104,11 @@ public class CharacterSaveState {
         public String description;
 
         public ShapingRitualData() {}
+
         public ShapingRitualData(String id, String name, String description) {
-            this.id = id; this.name = name; this.description = description;
+            this.id = id;
+            this.name = name;
+            this.description = description;
         }
     }
 
@@ -122,9 +122,22 @@ public class CharacterSaveState {
         public String description;
 
         public SpellData() {}
-        public SpellData(String id, String name, String circle, String cost, List<String> keywords, String duration, String description) {
-            this.id = id; this.name = name; this.circle = circle; this.cost = cost;
-            this.keywords = keywords; this.duration = duration; this.description = description;
+
+        public SpellData(
+                String id,
+                String name,
+                String circle,
+                String cost,
+                List<String> keywords,
+                String duration,
+                String description) {
+            this.id = id;
+            this.name = name;
+            this.circle = circle;
+            this.cost = cost;
+            this.keywords = keywords;
+            this.duration = duration;
+            this.description = description;
         }
     }
 
@@ -135,8 +148,12 @@ public class CharacterSaveState {
         public boolean isSolar;
 
         public XpAwardData() {}
+
         public XpAwardData(String id, String description, int amount, boolean isSolar) {
-            this.id = id; this.description = description; this.amount = amount; this.isSolar = isSolar;
+            this.id = id;
+            this.description = description;
+            this.amount = amount;
+            this.isSolar = isSolar;
         }
     }
 }

@@ -1,21 +1,19 @@
 package com.vibethema.viewmodel;
 
 import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
 import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-
-
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
 import com.vibethema.service.CharmDataService;
 import de.saxsys.mvvmfx.ViewModel;
-import javafx.collections.ObservableList;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.binding.Bindings;
+import javafx.collections.ObservableList;
 
 public class SorceryViewModel implements ViewModel {
     private final CharacterData data;
@@ -25,12 +23,12 @@ public class SorceryViewModel implements ViewModel {
     public SorceryViewModel(CharacterData data, CharmDataService charmDataService) {
         this.data = data;
         this.charmDataService = charmDataService;
-        
+
         // Sorcery is enabled if the character has the "Terrestrial Circle Sorcery" charm
-        sorceryEnabled.bind(Bindings.createBooleanBinding(() -> 
-            data.hasCharmByName("Terrestrial Circle Sorcery"), 
-            data.getUnlockedCharms()
-        ));
+        sorceryEnabled.bind(
+                Bindings.createBooleanBinding(
+                        () -> data.hasCharmByName("Terrestrial Circle Sorcery"),
+                        data.getUnlockedCharms()));
     }
 
     public ObservableList<ShapingRitual> getShapingRituals() {

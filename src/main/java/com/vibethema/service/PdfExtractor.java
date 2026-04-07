@@ -1,21 +1,18 @@
 package com.vibethema.service;
 
-import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.mystic.*;
-import com.vibethema.model.combat.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.progression.*;
-import com.vibethema.model.logic.*;
-
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
-
+import com.vibethema.model.*;
+import com.vibethema.model.combat.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.logic.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.traits.*;
+import com.vibethema.service.pdf.core.CoreCharmExtractor;
+import com.vibethema.service.pdf.core.CoreEquipmentExtractor;
+import com.vibethema.service.pdf.core.CoreSpellExtractor;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
@@ -26,10 +23,9 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.vibethema.service.pdf.core.CoreCharmExtractor;
-import com.vibethema.service.pdf.core.CoreSpellExtractor;
-import com.vibethema.service.pdf.core.CoreEquipmentExtractor;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 
 public class PdfExtractor {
     public enum PdfSource {
@@ -43,10 +39,17 @@ public class PdfExtractor {
         extractAll(pdfFile, "", true, PdfSource.CORE, null, progressCallback);
     }
 
-    public void extractAll(File pdfFile, String suffix, boolean extractKeywords, PdfSource source, Path outputBasePath, Consumer<Double> progressCallback) throws IOException {
+    public void extractAll(
+            File pdfFile,
+            String suffix,
+            boolean extractKeywords,
+            PdfSource source,
+            Path outputBasePath,
+            Consumer<Double> progressCallback)
+            throws IOException {
         try (PDDocument document = Loader.loadPDF(pdfFile)) {
             PDFTextStripper stripper = new PDFTextStripper();
-            
+
             if (source == PdfSource.CORE) {
                 // 1. Solar Charms (Pages 250 - 466)
                 if (progressCallback != null) progressCallback.accept(0.1);
@@ -54,7 +57,8 @@ public class PdfExtractor {
                 stripper.setEndPage(466);
                 String charmText = stripper.getText(document);
                 CoreCharmExtractor charmExtractor = new CoreCharmExtractor();
-                if (outputBasePath != null) charmExtractor.setOverrideOutputPath(outputBasePath.resolve("charms"));
+                if (outputBasePath != null)
+                    charmExtractor.setOverrideOutputPath(outputBasePath.resolve("charms"));
                 charmExtractor.extractAndSave(charmText, suffix);
 
                 // 2. Sorcery (Pages 470 - 495)
@@ -63,7 +67,8 @@ public class PdfExtractor {
                 stripper.setEndPage(495);
                 String spellText = stripper.getText(document);
                 CoreSpellExtractor spellExtractor = new CoreSpellExtractor();
-                if (outputBasePath != null) spellExtractor.setOverrideOutputPath(outputBasePath.resolve("spells"));
+                if (outputBasePath != null)
+                    spellExtractor.setOverrideOutputPath(outputBasePath.resolve("spells"));
                 spellExtractor.extractAndSave(spellText, suffix);
 
                 // 3. Equipment Tags & Gear (Pages 585 - 610)
@@ -88,10 +93,12 @@ public class PdfExtractor {
                 if (progressCallback != null) progressCallback.accept(0.1);
                 String fullText = stripper.getText(document);
                 CoreCharmExtractor charmExtractor = new CoreCharmExtractor();
-                if (outputBasePath != null) charmExtractor.setOverrideOutputPath(outputBasePath.resolve("charms"));
-                charmExtractor.extractAndSave(fullText, suffix); // Fallback to Core extractor for MoSE
+                if (outputBasePath != null)
+                    charmExtractor.setOverrideOutputPath(outputBasePath.resolve("charms"));
+                charmExtractor.extractAndSave(
+                        fullText, suffix); // Fallback to Core extractor for MoSE
             }
-            
+
             if (progressCallback != null) progressCallback.accept(1.0);
         }
     }
@@ -111,11 +118,16 @@ public class PdfExtractor {
         unarmed.put("equipped", false);
         unarmed.put("tags", Arrays.asList("Bashing", "Brawl", "Grappling", "Natural"));
 
-        Path outDir = outputBasePath != null ? outputBasePath.resolve("equipment").resolve("weapons") : com.vibethema.service.EquipmentDataService.getWeaponsPath();
+        Path outDir =
+                outputBasePath != null
+                        ? outputBasePath.resolve("equipment").resolve("weapons")
+                        : com.vibethema.service.EquipmentDataService.getWeaponsPath();
         if (outDir == null) {
-            outDir = java.nio.file.Paths.get(System.getProperty("user.home"), ".vibethema", "equipment", "weapons");
+            outDir =
+                    java.nio.file.Paths.get(
+                            System.getProperty("user.home"), ".vibethema", "equipment", "weapons");
         }
-        
+
         if (!Files.exists(outDir)) Files.createDirectories(outDir);
         Path filePath = outDir.resolve(com.vibethema.model.equipment.Weapon.UNARMED_ID + ".json");
         try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
@@ -125,12 +137,26 @@ public class PdfExtractor {
 
     private void extractAndSaveKeywords(String text, Path outputBasePath) throws IOException {
         // Keyword list is relatively stable across books
-        List<String> keywordsToFind = Arrays.asList(
-            "Aggravated", "Bridge", "Clash", "Counterattack", "Decisive-only",
-            "Dual", "Form", "Mastery", "Mute", "Perilous", "Pilot",
-            "Psyche", "Salient", "Stackable", "Terrestrial", "Uniform",
-            "Withering-only", "Written-only"
-        );
+        List<String> keywordsToFind =
+                Arrays.asList(
+                        "Aggravated",
+                        "Bridge",
+                        "Clash",
+                        "Counterattack",
+                        "Decisive-only",
+                        "Dual",
+                        "Form",
+                        "Mastery",
+                        "Mute",
+                        "Perilous",
+                        "Pilot",
+                        "Psyche",
+                        "Salient",
+                        "Stackable",
+                        "Terrestrial",
+                        "Uniform",
+                        "Withering-only",
+                        "Written-only");
 
         List<Map<String, String>> outputKeywords = new ArrayList<>();
         StringBuilder sb = new StringBuilder("•[^A-Z]*?(");
@@ -139,13 +165,13 @@ public class PdfExtractor {
             if (i < keywordsToFind.size() - 1) sb.append("|");
         }
         sb.append("):");
-        
+
         Pattern pattern = Pattern.compile(sb.toString());
         Matcher matcher = pattern.matcher(text);
-        
+
         int lastEnd = 0;
         String currentKeyword = null;
-        
+
         while (matcher.find()) {
             if (currentKeyword != null) {
                 String desc = text.substring(lastEnd, matcher.start()).trim();
@@ -154,12 +180,15 @@ public class PdfExtractor {
             currentKeyword = matcher.group(1);
             lastEnd = matcher.end();
         }
-        
+
         if (currentKeyword != null) {
             addKeyword(outputKeywords, currentKeyword, text.substring(lastEnd));
         }
 
-        Path outDir = outputBasePath != null ? outputBasePath.resolve("charms") : CharmDataService.getUserCharmsPath();
+        Path outDir =
+                outputBasePath != null
+                        ? outputBasePath.resolve("charms")
+                        : CharmDataService.getUserCharmsPath();
         if (!Files.exists(outDir)) Files.createDirectories(outDir);
         Path filePath = outDir.resolve("keywords.json");
         try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
