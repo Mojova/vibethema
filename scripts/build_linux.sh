@@ -72,6 +72,7 @@ jpackage \
   --license-file LICENSE.txt \
   --linux-shortcut \
   --linux-menu-group "Utility" \
+  --linux-package-deps "libgtk-3-0, libasound2, libpango-1.0-0, libfreetype6, libfontconfig1, libx11-6, libxext6, libxi6, libxrender1, libxtst6" \
   --dest target/dist \
   --file-associations src/main/resources/vbtm.properties \
   --verbose
@@ -91,6 +92,7 @@ jpackage \
   --license-file LICENSE.txt \
   --linux-shortcut \
   --linux-menu-group "Utility" \
+  --linux-package-deps "libgtk-3-0, pango, freetype, fontconfig, alsa-lib, libX11, libXext, libXi, libXrender, libXtst" \
   --dest target/dist \
   --file-associations src/main/resources/vbtm.properties \
   --verbose
