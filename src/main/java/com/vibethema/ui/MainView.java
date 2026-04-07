@@ -429,9 +429,14 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
 
         ComboBox<Caste> casteBox = new ComboBox<>();
         casteBox.getItems().addAll(Caste.values());
-        casteBox.valueProperty().bindBidirectional(viewModel.getData().casteProperty());
-        casteBox.valueProperty()
-                .addListener((obs, oldV, newV) -> Messenger.publish("refresh_all_ui"));
+        casteBox.setValue(viewModel.getData().casteProperty().get());
+        casteBox.focusedProperty()
+                .addListener(
+                        (obs, oldV, newV) -> {
+                            if (!newV) { // Focus lost (blur)
+                                handleCasteChange(casteBox);
+                            }
+                        });
 
         ComboBox<String> supernalDropdown = new ComboBox<>();
         supernalDropdown.setPrefWidth(120);
@@ -455,6 +460,131 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
 
         header.getChildren().addAll(titleText, basicInfo);
         return header;
+    }
+
+    private void handleCasteChange(ComboBox<Caste> combo) {
+        Caste newCaste = combo.getValue();
+        Caste oldCaste = viewModel.getData().casteProperty().get();
+
+        if (newCaste == oldCaste) return;
+
+        CharacterData data = viewModel.getData();
+        List<Ability> lostCasteAbilities = new ArrayList<>();
+        String supernalLossDetail = null;
+        List<String> illegalCharms = new ArrayList<>();
+
+        // 1. Identify Invalid Caste Abilities
+        for (Ability abil : SystemData.ABILITIES) {
+            if (data.getCasteAbility(abil).get()) {
+                if (!SystemData.CASTE_OPTIONS.get(newCaste).contains(abil)) {
+                    lostCasteAbilities.add(abil);
+                }
+            }
+        }
+
+        // 2. Identify Supernal Loss (Model resets this automatically, but we need to warn)
+        String currentSupernal = data.supernalAbilityProperty().get();
+        boolean supernalWillBeLost = false;
+        if (!currentSupernal.isEmpty()) {
+            supernalWillBeLost =
+                    lostCasteAbilities.stream()
+                            .anyMatch(a -> a.getDisplayName().equalsIgnoreCase(currentSupernal));
+            if (supernalWillBeLost) {
+                supernalLossDetail = currentSupernal;
+            }
+        }
+
+        // 3. Identify Illegal Charms (Due to Essence Requirement and No Supernal)
+        if (data.getMode() == CharacterMode.CREATION) {
+            int essenceLevel = data.essenceProperty().get();
+            for (com.vibethema.model.mystic.PurchasedCharm pc : data.getUnlockedCharms()) {
+                // Look up def from service
+                List<com.vibethema.model.mystic.Charm> abilityCharms =
+                        viewModel.getCharmDataService().loadCharmsForAbility(pc.ability());
+                com.vibethema.model.mystic.Charm def =
+                        abilityCharms.stream()
+                                .filter(c -> c.getId().equals(pc.id()))
+                                .findFirst()
+                                .orElse(null);
+
+                if (def != null && def.getMinEssence() > essenceLevel) {
+                    // It was only legal because of Supernal or Caste status?
+                    // Actually check if it WOULD BE legal under the new state.
+                    boolean wouldBeSupernal =
+                            !supernalWillBeLost
+                                    && def.getAbility().equalsIgnoreCase(currentSupernal);
+                    // Special case: if Supernal is "Martial Arts" or "Craft", it covers all
+                    // styles/expertises
+                    if (!wouldBeSupernal && !currentSupernal.isEmpty()) {
+                        if ("Martial Arts".equalsIgnoreCase(currentSupernal)
+                                && data.isMartialArtsStyle(def.getAbility()))
+                            wouldBeSupernal = true;
+                        if ("Craft".equalsIgnoreCase(currentSupernal)
+                                && data.isCraftExpertise(def.getAbility())) wouldBeSupernal = true;
+                    }
+
+                    if (!wouldBeSupernal) {
+                        illegalCharms.add(pc.name());
+                    }
+                }
+            }
+        }
+
+        if (lostCasteAbilities.isEmpty() && supernalLossDetail == null && illegalCharms.isEmpty()) {
+            // Safe to apply
+            data.casteProperty().set(newCaste);
+            Messenger.publish("refresh_all_ui");
+            return;
+        }
+
+        // Show Warning
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Caste Change Warning");
+        alert.setHeaderText(
+                "Changing Caste to " + newCaste.toString() + " will invalidate some data.");
+
+        StringBuilder content =
+                new StringBuilder("The following selections will be removed/deselected:\n\n");
+        if (!lostCasteAbilities.isEmpty()) {
+            content.append("Caste Abilities: ")
+                    .append(
+                            lostCasteAbilities.stream()
+                                    .map(Ability::getDisplayName)
+                                    .collect(java.util.stream.Collectors.joining(", ")))
+                    .append("\n");
+        }
+        if (supernalLossDetail != null) {
+            content.append("Supernal Ability: ")
+                    .append(supernalLossDetail)
+                    .append(" (no longer a Caste ability)\n");
+        }
+        if (!illegalCharms.isEmpty()) {
+            content.append("Invalid Charms (Essence requirement): ")
+                    .append(String.join(", ", illegalCharms))
+                    .append("\n");
+        }
+        content.append("\nContinue with Caste change?");
+
+        alert.setContentText(content.toString());
+        alert.getDialogPane().setPrefWidth(500);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            // Apply changes
+            data.casteProperty().set(newCaste);
+            // Cascading manual cleanup
+            for (Ability abil : lostCasteAbilities) {
+                data.getCasteAbility(abil).set(false);
+            }
+            if (!illegalCharms.isEmpty()) {
+                // Collect IDs/Names of charms to remove
+                data.getUnlockedCharms().removeIf(pc -> illegalCharms.contains(pc.name()));
+            }
+            Messenger.publish("refresh_all_ui");
+        } else {
+            // Revert ComboBox
+            combo.setValue(oldCaste);
+        }
     }
 
     private void handleSaveAs(String suggestName) {
