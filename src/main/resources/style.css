@@ -90,6 +90,15 @@
 .scroll-pane-custom {
     -fx-background: #1e1e1e;
     -fx-border-color: transparent;
+    -fx-border-width: 2px;
+}
+.scroll-pane-custom:focused {
+    -fx-border-color: #d4af37; /* Gold focus border */
+}
+.charm-tree-scroll:focused {
+    -fx-border-color: #d4af37;
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(212, 175, 55, 0.4), 10, 0, 0, 0);
 }
 .scroll-pane-custom > .viewport {
     -fx-background-color: transparent;

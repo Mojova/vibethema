@@ -25,6 +25,7 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
     @InjectViewModel
     private CharmTreeViewModel viewModel;
 
+    private ScrollPane charmScroll;
     private Pane charmCanvas = new Pane();
     private final Map<String, VBox> charmNodeMap = new HashMap<>();
 
@@ -56,10 +57,63 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
         viewModel.selectedCharmProperty().addListener((obs, oldV, newV) -> {
             updateLineHighlights(newV != null ? newV.getId() : null);
             updateWebNodeStyles();
+            if (newV != null) scrollToNode(newV.getId());
         });
+        
+        setupKeyHandlers();
         
         // Initial render
         render();
+    }
+
+    private void setupKeyHandlers() {
+        setFocusTraversable(false); // SplitPane itself doesn't need focus
+        charmScroll.setFocusTraversable(true);
+
+        // Request focus when the tree area is clicked so we can capture keys
+        charmCanvas.setOnMousePressed(e -> {
+            if (!charmScroll.isFocused()) charmScroll.requestFocus();
+        });
+
+        // Navigation only via the scroll pane when it's focused
+        charmScroll.addEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, e -> {
+            if (e.getCode().isArrowKey()) {
+                if (e.isShortcutDown() || e.isShiftDown()) {
+                    // Let default ScrollPane handling occur for scrolling
+                    return;
+                }
+                viewModel.navigate(e.getCode());
+                e.consume();
+            }
+        });
+    }
+
+    private void scrollToNode(String charmId) {
+        VBox node = charmNodeMap.get(charmId);
+        if (node == null) return;
+
+        // Find the ScrollPane
+        javafx.scene.Node parent = getParent();
+        while (parent != null && !(parent instanceof ScrollPane)) {
+            parent = parent.getParent();
+        }
+        
+        if (parent instanceof ScrollPane scroll) {
+            double width = charmCanvas.getBoundsInLocal().getWidth();
+            double height = charmCanvas.getBoundsInLocal().getHeight();
+            
+            double x = node.getLayoutX() + node.getBoundsInLocal().getWidth() / 2;
+            double y = node.getLayoutY() + node.getBoundsInLocal().getHeight() / 2;
+
+            double viewportWidth = scroll.getViewportBounds().getWidth();
+            double viewportHeight = scroll.getViewportBounds().getHeight();
+
+            double hValue = (x - viewportWidth / 2) / (width - viewportWidth);
+            double vValue = (y - viewportHeight / 2) / (height - viewportHeight);
+
+            scroll.setHvalue(Math.max(0, Math.min(1, hValue)));
+            scroll.setVvalue(Math.max(0, Math.min(1, vValue)));
+        }
     }
 
     private void setupUI() {
@@ -97,9 +151,10 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
 
         controls.getChildren().addAll(titleLabel, createCharmBtn, eligibleFilter, searchField);
 
-        ScrollPane charmScroll = new ScrollPane(charmCanvas);
+        charmScroll = new ScrollPane(charmCanvas);
         charmScroll.setPannable(true);
         charmScroll.getStyleClass().add("scroll-pane-custom");
+        charmScroll.getStyleClass().add("charm-tree-scroll");
         VBox.setVgrow(charmScroll, Priority.ALWAYS);
 
         leftPane.getChildren().addAll(controls, charmScroll);
@@ -256,24 +311,7 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
 
         Map<String, Double> charmXPositions = new HashMap<>();
         for (int d = 0; d <= maxDepth; d++) {
-            List<Charm> row = new ArrayList<>(levels.getOrDefault(d, new ArrayList<>()));
-            // Sorting is handled by ViewModel if we wanted, but for now we'll do the visual barycenter here
-            if (d > 0) {
-                row.sort(Comparator.comparingDouble(c -> {
-                    double sumX = 0; int count = 0;
-                    if (c.getPrerequisiteGroups() != null) {
-                        for (Charm.PrerequisiteGroup g : c.getPrerequisiteGroups()) {
-                            for (String rid : g.getCharmIds()) {
-                                if (charmXPositions.containsKey(rid)) { sumX += charmXPositions.get(rid); count++; }
-                            }
-                        }
-                    }
-                    return count > 0 ? sumX / count : virtualWidth / 2.0;
-                }));
-            } else {
-                row.sort(Comparator.comparing(Charm::getName));
-            }
-
+            List<Charm> row = levels.getOrDefault(d, new ArrayList<>());
             double rowWidth = row.size() * boxWidth + Math.max(0, row.size() - 1) * gapX;
             double startX = (virtualWidth - rowWidth) / 2;
             double y = 40 + d * (boxHeight + gapY);
@@ -403,10 +441,13 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
     public void selectCharm(String charmId) {
         VBox node = charmNodeMap.get(charmId);
         if (node != null) {
-            Platform.runLater(() -> node.fireEvent(new javafx.scene.input.MouseEvent(
-                javafx.scene.input.MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, 
-                javafx.scene.input.MouseButton.PRIMARY, 1, false, false, false, false, 
-                true, false, false, true, false, false, null)));
+            Platform.runLater(() -> {
+                if (!charmScroll.isFocused()) charmScroll.requestFocus();
+                node.fireEvent(new javafx.scene.input.MouseEvent(
+                    javafx.scene.input.MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, 
+                    javafx.scene.input.MouseButton.PRIMARY, 1, false, false, false, false, 
+                    true, false, false, true, false, false, null));
+            });
         }
     }
 }
