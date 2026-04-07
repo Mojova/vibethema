@@ -9,12 +9,12 @@ import com.vibethema.model.social.*;
 import com.vibethema.model.traits.*;
 
 public enum Caste {
+    NONE,
     DAWN,
     ZENITH,
     TWILIGHT,
     NIGHT,
-    ECLIPSE,
-    NONE;
+    ECLIPSE;
 
     @Override
     public String toString() {
