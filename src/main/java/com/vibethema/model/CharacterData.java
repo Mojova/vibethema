@@ -397,6 +397,14 @@ public class CharacterData {
         return favoredAbilities.get(name);
     }
 
+    public ObservableMap<Ability, BooleanProperty> getCasteAbilities() {
+        return casteAbilities;
+    }
+
+    public ObservableMap<Ability, BooleanProperty> getFavoredAbilities() {
+        return favoredAbilities;
+    }
+
     public ObjectProperty<AttributePriority> getAttributePriority(Attribute.Category category) {
         return attributePriorities.get(category);
     }

@@ -6,12 +6,13 @@ import com.vibethema.model.logic.CreationRuleEngine;
 import com.vibethema.model.logic.CreationRuleEngine.CreationStatus;
 import com.vibethema.model.logic.ExperienceRuleEngine;
 import com.vibethema.model.logic.ExperienceRuleEngine.ExperienceStatus;
-import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.ListChangeListener;
+import javafx.beans.value.ChangeListener;
 
 public class FooterViewModel implements ViewModel {
     private final CharacterData data;
@@ -44,14 +45,32 @@ public class FooterViewModel implements ViewModel {
         this.data = data;
         this.finalizeAction = finalizeAction;
         
-        // Initial update
+        setupListeners();
         update();
+    }
+
+    private void setupListeners() {
+        ChangeListener<Object> updater = (obs, oldV, newV) -> update();
+        ListChangeListener<Object> listUpdater = c -> update();
+
+        data.modeProperty().addListener(updater);
+        data.casteProperty().addListener(updater);
+        data.supernalAbilityProperty().addListener(updater);
+        data.essenceProperty().addListener(updater);
+        data.willpowerProperty().addListener(updater);
         
-        // Listeners
-        data.modeProperty().addListener((obs, oldV, newV) -> update());
+        data.getAttributes().values().forEach(p -> p.addListener(updater));
+        data.getAbilities().values().forEach(p -> p.addListener(updater));
+        data.getCasteAbilities().values().forEach(p -> p.addListener(updater));
+        data.getFavoredAbilities().values().forEach(p -> p.addListener(updater));
+        data.getAttributePriorities().values().forEach(p -> p.addListener(updater));
         
-        // Subscribe to global refresh triggers
-        Messenger.subscribe("refresh_all_ui", (name, payload) -> update());
+        data.getUnlockedCharms().addListener(listUpdater);
+        data.getMerits().addListener(listUpdater);
+        data.getSpecialties().addListener(listUpdater);
+        data.getCrafts().addListener(listUpdater);
+        data.getMartialArtsStyles().addListener(listUpdater);
+        data.getXpAwards().addListener(listUpdater);
     }
 
     public void update() {
