@@ -10,6 +10,8 @@ import com.vibethema.viewmodel.*;
 import com.vibethema.viewmodel.equipment.EquipmentViewModel;
 import com.vibethema.viewmodel.experience.ExperienceViewModel;
 import com.vibethema.viewmodel.footer.FooterViewModel;
+import com.vibethema.ui.charms.EditCharmView;
+import com.vibethema.viewmodel.charms.EditCharmViewModel;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
@@ -17,7 +19,6 @@ import de.saxsys.mvvmfx.ViewTuple;
 import de.saxsys.mvvmfx.utils.notifications.NotificationObserver;
 import javafx.application.Platform;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
@@ -29,7 +30,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class MainView extends BorderPane implements JavaView<MainViewModel>, Initializable {
 
@@ -399,61 +399,27 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
     }
 
     private void showEditCharmDialog(Charm charm, String contextName, String filterType, Runnable onSave) {
-        // Implementation ported from BuilderUI
+        EditCharmViewModel editViewModel = new EditCharmViewModel(charm, viewModel.getCharmDataService(), contextName, filterType, onSave);
+        ViewTuple<EditCharmView, EditCharmViewModel> viewTuple = de.saxsys.mvvmfx.FluentViewLoader
+                .javaView(EditCharmView.class)
+                .viewModel(editViewModel)
+                .load();
+
         Dialog<ButtonType> dialog = new Dialog<>();
         String term = "Evocation".equals(filterType) || "evocation".equals(charm.getCategory()) ? "Evocation" : "Charm";
-        dialog.setTitle("Edit " + term + ": " + charm.getName());
+        dialog.setTitle("Edit " + term + ": " + editViewModel.getCharmName());
+
         DialogPane dialogPane = dialog.getDialogPane();
         dialogPane.getStyleClass().add("dialog-pane-custom");
+        dialogPane.setContent(viewTuple.getView());
 
-        GridPane grid = new GridPane();
-        grid.setHgap(15); grid.setVgap(10);
-        grid.setPadding(new Insets(20));
-
-        TextField nameField = new TextField(charm.getName());
-        ComboBox<String> abCombo = new ComboBox<>();
-        abCombo.getItems().addAll(SystemData.ABILITIES.stream().map(Ability::getDisplayName).collect(Collectors.toList()));
-        abCombo.getItems().addAll(viewModel.getCharmDataService().getAvailableMartialArtsStyles());
-        abCombo.setValue(charm.getAbility());
-
-        Spinner<Integer> minAb = new Spinner<>(0, 5, charm.getMinAbility());
-        Spinner<Integer> minEss = new Spinner<>(1, 5, charm.getMinEssence());
-        TextField costField = new TextField(charm.getCost());
-        TextField typeField = new TextField(charm.getType());
-        TextField durationField = new TextField(charm.getDuration());
-        TextArea descArea = new TextArea(charm.getFullText());
-        descArea.setWrapText(true);
-
-        grid.add(new Label("Name:"), 0, 0); grid.add(nameField, 1, 0);
-        grid.add(new Label("Ability:"), 0, 1); grid.add(abCombo, 1, 1);
-        grid.add(new Label("Min Ability:"), 0, 2); grid.add(minAb, 1, 2);
-        grid.add(new Label("Min Essence:"), 0, 3); grid.add(minEss, 1, 3);
-        grid.add(new Label("Cost:"), 0, 4); grid.add(costField, 1, 4);
-        grid.add(new Label("Type:"), 0, 5); grid.add(typeField, 1, 5);
-        grid.add(new Label("Duration:"), 0, 6); grid.add(durationField, 1, 6);
-
-        dialogPane.setContent(grid);
         ButtonType saveType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
         dialogPane.getButtonTypes().addAll(saveType, ButtonType.CANCEL);
 
         dialog.setResultConverter(bt -> {
             if (bt == saveType) {
-                charm.setName(nameField.getText());
-                charm.setAbility(abCombo.getValue());
-                charm.setMinAbility(minAb.getValue());
-                charm.setMinEssence(minEss.getValue());
-                charm.setCost(costField.getText());
-                charm.setType(typeField.getText());
-                charm.setDuration(durationField.getText());
-                charm.setFullText(descArea.getText());
-
                 try {
-                    if ("evocation".equals(charm.getCategory())) {
-                        viewModel.getCharmDataService().saveEvocation(charm.getAbility(), contextName, charm);
-                    } else {
-                        viewModel.getCharmDataService().saveCharm(charm);
-                    }
-                    if (onSave != null) onSave.run();
+                    editViewModel.save();
                 } catch (IOException ex) {
                     new Alert(Alert.AlertType.ERROR, "Failed to save: " + ex.getMessage()).showAndWait();
                 }
