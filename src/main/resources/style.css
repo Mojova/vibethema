@@ -71,6 +71,14 @@
     -fx-effect: dropshadow(three-pass-box, rgba(212, 175, 55, 0.4), 8, 0, 0, 0);
 }
 
+.dot-selector:disabled {
+    -fx-opacity: 0.4;
+}
+
+.dot-selector:disabled .dot {
+    -fx-cursor: default;
+}
+
 .dot {
     -fx-fill: transparent;
     -fx-stroke: #888888;
