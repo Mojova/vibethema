@@ -6,8 +6,14 @@ import com.vibethema.viewmodel.MainViewModel;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.ViewTuple;
 import javafx.application.Application;
+import javafx.animation.FadeTransition;
+import javafx.concurrent.Task;
 import javafx.scene.Scene;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,21 +32,59 @@ public class Main extends Application {
         if (pendingFile != null) {
             loadAndStart(primaryStage, pendingFile);
         } else {
-            StartScreen root = (StartScreen) FluentViewLoader.javaView(StartScreen.class).load().getView();
-            Scene scene = new Scene(root, 1200, 800);
-            scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+            showSplashScreen(primaryStage);
+        }
+    }
 
-            primaryStage.setTitle("Vibethema");
-            primaryStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("/icon.png")));
-            primaryStage.setScene(scene);
-            primaryStage.setOnCloseRequest(e -> {
-                if (scene.getRoot() instanceof MainView view) {
+    private void showSplashScreen(Stage mainStage) {
+        Stage splashStage = new Stage(StageStyle.UNDECORATED);
+        javafx.scene.image.Image splashImg = new javafx.scene.image.Image(getClass().getResourceAsStream("/splash.jpg"));
+        ImageView splashView = new ImageView(splashImg);
+        splashView.setPreserveRatio(true);
+        splashView.setFitWidth(800); // Standard splash width
+
+        StackPane root = new StackPane(splashView);
+        Scene splashScene = new Scene(root);
+        splashStage.setScene(splashScene);
+        splashStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("/icon.png")));
+        splashStage.show();
+
+        // Load content in background
+        Task<Scene> loadTask = new Task<>() {
+            @Override
+            protected Scene call() {
+                // Heavy lifting here: Load the StartScreen and CSS
+                StartScreen startRoot = (StartScreen) FluentViewLoader.javaView(StartScreen.class).load().getView();
+                Scene scene = new Scene(startRoot, 1200, 800);
+                scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+                return scene;
+            }
+        };
+
+        loadTask.setOnSucceeded(e -> {
+            Scene mainScene = loadTask.getValue();
+            mainStage.setTitle("Vibethema");
+            mainStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("/icon.png")));
+            mainStage.setScene(mainScene);
+            mainStage.setOnCloseRequest(ev -> {
+                if (mainScene.getRoot() instanceof MainView view) {
                     if (!view.confirmDiscardChanges())
-                        e.consume();
+                        ev.consume();
                 }
             });
-            primaryStage.show();
-        }
+
+            // Professional transition
+            FadeTransition fadeOut = new FadeTransition(Duration.seconds(1.2), root);
+            fadeOut.setFromValue(1.0);
+            fadeOut.setToValue(0.0);
+            fadeOut.setOnFinished(ev -> {
+                splashStage.close();
+                mainStage.show();
+            });
+            fadeOut.play();
+        });
+
+        new Thread(loadTask).start();
     }
 
     private void loadAndStart(Stage stage, File file) {
