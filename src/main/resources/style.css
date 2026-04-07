@@ -420,7 +420,9 @@
     -fx-background-color: #d4af37;
     -fx-text-fill: #1e1e1e;
     -fx-font-weight: bold;
-    -fx-padding: 8px 15px;
+    -fx-padding: 6px 13px; /* Reduced from 8px 15px to account for 2px border */
+    -fx-border-color: transparent;
+    -fx-border-width: 2px;
     -fx-border-radius: 4px;
     -fx-background-radius: 4px;
     -fx-cursor: hand;
