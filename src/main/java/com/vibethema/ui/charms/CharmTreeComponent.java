@@ -77,12 +77,19 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
 
         // Navigation only via the scroll pane when it's focused
         charmScroll.addEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, e -> {
-            if (e.getCode().isArrowKey()) {
+            javafx.scene.input.KeyCode code = e.getCode();
+            if (code.isArrowKey()) {
                 if (e.isShortcutDown() || e.isShiftDown()) {
                     // Let default ScrollPane handling occur for scrolling
                     return;
                 }
-                viewModel.navigate(e.getCode());
+                viewModel.navigate(code);
+                e.consume();
+            } else if (code == javafx.scene.input.KeyCode.ENTER || code == javafx.scene.input.KeyCode.SPACE) {
+                viewModel.togglePurchase();
+                e.consume();
+            } else if (code == javafx.scene.input.KeyCode.BACK_SPACE || code == javafx.scene.input.KeyCode.DELETE) {
+                viewModel.refundOne();
                 e.consume();
             }
         });
