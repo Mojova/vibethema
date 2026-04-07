@@ -53,6 +53,17 @@ public class EditCharmView extends GridPane implements JavaView<EditCharmViewMod
         descArea.setWrapText(true);
         descArea.setPrefRowCount(4);
 
+        // Enable tabbing out of the description area
+        descArea.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == javafx.scene.input.KeyCode.TAB && !event.isControlDown()) {
+                javafx.scene.Node parent = descArea.getParent();
+                if (parent != null) {
+                    parent.fireEvent(event.copyFor(parent, parent));
+                    event.consume();
+                }
+            }
+        });
+
         // Layout
         add(new Label("Name:"), 0, 0); add(nameField, 1, 0);
         add(new Label("Ability:"), 0, 1); add(abCombo, 1, 1);
