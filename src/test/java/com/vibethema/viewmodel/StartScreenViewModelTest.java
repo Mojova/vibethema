@@ -81,4 +81,98 @@ public class StartScreenViewModelTest {
             Messenger.unsubscribe("show_main_view", observer);
         }
     }
+
+    @Test
+    void testStatusMessageWhenNotImported() {
+        when(systemDataService.isCoreDataImported()).thenReturn(false);
+        viewModel.refreshStatus();
+        
+        assertFalse(viewModel.coreDataImportedProperty().get());
+        assertTrue(viewModel.statusMessageProperty().get().contains("not been imported"));
+    }
+
+    @Test
+    void testNewCharacterDeniedWhenNotImported() {
+        when(systemDataService.isCoreDataImported()).thenReturn(false);
+        viewModel.refreshStatus();
+        
+        AtomicReference<String> receivedMessage = new AtomicReference<>();
+        NotificationObserver observer = (name, payload) -> receivedMessage.set(name);
+        Messenger.subscribe("show_main_view", observer);
+
+        try {
+            viewModel.onNewCharacter();
+            assertNull(receivedMessage.get(), "Should not publish when data is missing");
+        } finally {
+            Messenger.unsubscribe("show_main_view", observer);
+        }
+    }
+
+    @Test
+    void testLoadCharacterDeniedWhenNotImported() {
+        when(systemDataService.isCoreDataImported()).thenReturn(false);
+        viewModel.refreshStatus();
+        
+        AtomicReference<String> receivedMessage = new AtomicReference<>();
+        NotificationObserver observer = (name, payload) -> receivedMessage.set(name);
+        Messenger.subscribe("request_load_file_start", observer);
+
+        try {
+            viewModel.onLoadCharacter();
+            assertNull(receivedMessage.get(), "Should not publish when data is missing");
+        } finally {
+            Messenger.unsubscribe("request_load_file_start", observer);
+        }
+    }
+
+    @Test
+    void testImportPdfPublishesRequest() {
+        AtomicReference<String> receivedMessage = new AtomicReference<>();
+        NotificationObserver observer = (name, payload) -> receivedMessage.set(name);
+        Messenger.subscribe("request_import_pdf", observer);
+
+        try {
+            viewModel.onImportPdf();
+            assertEquals("request_import_pdf", receivedMessage.get());
+        } finally {
+            Messenger.unsubscribe("request_import_pdf", observer);
+        }
+    }
+
+    @Test
+    void testLoadFileSelectedWithNullDoesNothing() {
+        AtomicReference<String> receivedMessage = new AtomicReference<>();
+        NotificationObserver observer = (name, payload) -> receivedMessage.set(name);
+        Messenger.subscribe("show_main_view", observer);
+
+        try {
+            viewModel.onLoadFileSelected(null);
+            assertNull(receivedMessage.get());
+        } finally {
+            Messenger.unsubscribe("show_main_view", observer);
+        }
+    }
+
+    @Test
+    void testLoadFileSelectedDeniedWhenNotImported() {
+        when(systemDataService.isCoreDataImported()).thenReturn(false);
+        viewModel.refreshStatus();
+        
+        AtomicReference<String> receivedMessage = new AtomicReference<>();
+        NotificationObserver observer = (name, payload) -> receivedMessage.set(name);
+        Messenger.subscribe("show_main_view", observer);
+
+        try {
+            viewModel.onLoadFileSelected(new File("test.vbtm"));
+            assertNull(receivedMessage.get(), "Should not publish when data is missing");
+        } finally {
+            Messenger.unsubscribe("show_main_view", observer);
+        }
+    }
+
+    @Test
+    void testDefaultConstructor() {
+        StartScreenViewModel vm = new StartScreenViewModel();
+        assertNotNull(vm.statusMessageProperty());
+    }
 }
