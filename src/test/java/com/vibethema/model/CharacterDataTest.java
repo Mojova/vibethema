@@ -177,4 +177,51 @@ public class CharacterDataTest {
         data.getAbility(Ability.DODGE).set(4);
         assertEquals(4, data.evasionProperty().get());
     }
+
+    @Test
+    void testMoteCalculation() {
+        // Base Essence 1: Personal 13, Peripheral 33
+        assertEquals(13, data.personalMotesProperty().get());
+        assertEquals(33, data.peripheralMotesProperty().get());
+
+        data.essenceProperty().set(3);
+        // Essence 3: Personal (3*3)+10=19, Peripheral (3*7)+26=47
+        assertEquals(19, data.personalMotesProperty().get());
+        assertEquals(47, data.peripheralMotesProperty().get());
+    }
+
+    @Test
+    void testHealthLevelCalculation() {
+        // Base health levels: -0, -1, -1, -2, -2, -4, Incap
+        assertTrue(data.healthLevelsProperty().contains("-0"));
+        assertEquals(7, data.healthLevelsProperty().size());
+
+        // Add Ox-Body Technique (simulated)
+        // Ox-Body ID calculation
+        String oxBodyId = java.util.UUID.nameUUIDFromBytes(
+                ("Ox-Body Technique" + "|" + Ability.RESISTANCE.getDisplayName())
+                .getBytes(java.nio.charset.StandardCharsets.UTF_8)).toString();
+        
+        data.addCharm(new PurchasedCharm(oxBodyId, "Ox-Body Technique", Ability.RESISTANCE.getDisplayName()));
+        
+        // Stamina 1: Ox-Body adds one -1 and one -2
+        // Total should be 9 levels
+        assertEquals(9, data.healthLevelsProperty().size());
+        
+        long zeroCount = data.healthLevelsProperty().stream().filter(l -> l.equals("-0")).count();
+        long oneCount = data.healthLevelsProperty().stream().filter(l -> l.equals("-1")).count();
+        long twoCount = data.healthLevelsProperty().stream().filter(l -> l.equals("-2")).count();
+        
+        assertEquals(1, zeroCount);
+        assertEquals(3, oneCount);
+        assertEquals(3, twoCount);
+
+        // Increase Stamina to 3
+        data.getAttribute(Attribute.STAMINA).set(3);
+        // Stamina 3: Ox-Body adds one -1 and two -2
+        assertEquals(10, data.healthLevelsProperty().size());
+        assertEquals(1, data.healthLevelsProperty().stream().filter(l -> l.equals("-0")).count());
+        assertEquals(3, data.healthLevelsProperty().stream().filter(l -> l.equals("-1")).count());
+        assertEquals(4, data.healthLevelsProperty().stream().filter(l -> l.equals("-2")).count());
+    }
 }

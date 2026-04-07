@@ -88,6 +88,10 @@ public class CharacterData {
 
     private final ObservableList<AttackPoolData> attackPools = FXCollections.observableArrayList();
 
+    private final IntegerProperty personalMotes = new SimpleIntegerProperty(0);
+    private final IntegerProperty peripheralMotes = new SimpleIntegerProperty(0);
+    private final ObservableList<String> healthLevels = FXCollections.observableArrayList();
+
     private final BooleanProperty terrestrialSorceryAvailable = new SimpleBooleanProperty(false);
     private final BooleanProperty celestialSorceryAvailable = new SimpleBooleanProperty(false);
     private final BooleanProperty solarSorceryAvailable = new SimpleBooleanProperty(false);
@@ -153,7 +157,10 @@ public class CharacterData {
             updateCombatStats();
         });
 
-        attributes.get(Attribute.STAMINA).addListener((obs, oldV, newV) -> updateCombatStats());
+        attributes.get(Attribute.STAMINA).addListener((obs, oldV, newV) -> {
+            updateCombatStats();
+            updateDerivedStats();
+        });
         attributes.get(Attribute.DEXTERITY).addListener((obs, oldV, newV) -> updateDerivedStats());
         attributes.get(Attribute.WITS).addListener((obs, oldV, newV) -> updateDerivedStats());
         attributes.get(Attribute.MANIPULATION).addListener((obs, oldV, newV) -> updateDerivedStats());
@@ -194,7 +201,10 @@ public class CharacterData {
         name.addListener((obs, oldV, newV) -> markDirty());
         caste.addListener((obs, oldV, newV) -> markDirty());
         supernalAbility.addListener((obs, oldV, newV) -> markDirty());
-        essence.addListener((obs, oldV, newV) -> markDirty());
+        essence.addListener((obs, oldV, newV) -> {
+            updateDerivedStats();
+            markDirty();
+        });
         willpower.addListener((obs, oldV, newV) -> markDirty());
         limitTrigger.addListener((obs, oldV, newV) -> markDirty());
         limit.addListener((obs, oldV, newV) -> markDirty());
@@ -264,6 +274,7 @@ public class CharacterData {
 
         unlockedCharms.addListener((javafx.collections.ListChangeListener<? super PurchasedCharm>) c -> {
             updateSorceryAvailability();
+            updateDerivedStats();
             markDirty();
         });
 
@@ -430,6 +441,18 @@ public class CharacterData {
         return essence;
     }
 
+    public int getPersonalMotes() {
+        return personalMotes.get();
+    }
+
+    public int getPeripheralMotes() {
+        return peripheralMotes.get();
+    }
+
+    public List<String> getHealthLevels() {
+        return new ArrayList<>(healthLevels);
+    }
+
     public IntegerProperty willpowerProperty() {
         return willpower;
     }
@@ -440,6 +463,18 @@ public class CharacterData {
 
     public IntegerProperty limitProperty() {
         return limit;
+    }
+
+    public IntegerProperty personalMotesProperty() {
+        return personalMotes;
+    }
+
+    public IntegerProperty peripheralMotesProperty() {
+        return peripheralMotes;
+    }
+
+    public ObservableList<String> healthLevelsProperty() {
+        return healthLevels;
     }
 
     public IntegerProperty evasionProperty() {
@@ -686,6 +721,42 @@ public class CharacterData {
         hasResolveSpecialty.set(resolveSpec);
         hasGuileSpecialty.set(guileSpec);
         hasJoinBattleSpecialty.set(joinBattleSpec);
+
+        updateMotesAndHealth();
+    }
+
+    private void updateMotesAndHealth() {
+        int e = essence.get();
+        personalMotes.set((e * 3) + 10);
+        peripheralMotes.set((e * 7) + 26);
+
+        List<String> levels = new ArrayList<>(Arrays.asList("-0", "-1", "-1", "-2", "-2", "-4", "Incap"));
+        int stamina = attributes.get(Attribute.STAMINA).get();
+
+        String oxBodyId = java.util.UUID.nameUUIDFromBytes(
+                ("Ox-Body Technique" + "|" + Ability.RESISTANCE.getDisplayName())
+                .getBytes(java.nio.charset.StandardCharsets.UTF_8)).toString();
+        int oxBodyCount = getCharmCount(oxBodyId);
+        if (oxBodyCount == 0) {
+            oxBodyCount = getCharmCount("Ox-Body Technique");
+        }
+
+        for (int i = 0; i < oxBodyCount; i++) {
+            if (stamina >= 5) {
+                levels.add("-0");
+                levels.add("-1");
+                levels.add("-2");
+            } else if (stamina >= 3) {
+                levels.add("-1");
+                levels.add("-2");
+                levels.add("-2");
+            } else {
+                levels.add("-1");
+                levels.add("-2");
+            }
+        }
+        Collections.sort(levels);
+        healthLevels.setAll(levels);
     }
 
     public void updateAttackPools() {
@@ -834,45 +905,6 @@ public class CharacterData {
                 .anyMatch(c -> c.ability() != null && c.ability().equals(ability.getDisplayName()));
     }
 
-    public int getPersonalMotes() {
-        return (essence.get() * 3) + 10;
-    }
-
-    public int getPeripheralMotes() {
-        return (essence.get() * 7) + 26;
-    }
-
-    public List<String> getHealthLevels() {
-        List<String> levels = new ArrayList<>(Arrays.asList("-0", "-1", "-1", "-2", "-2", "-4", "Incap"));
-        int stamina = attributes.get(Attribute.STAMINA).get();
-
-        // Solar Ox-Body Technique ID calculation - specify UTF-8 for consistency
-        String oxBodyId = java.util.UUID.nameUUIDFromBytes(
-                ("Ox-Body Technique" + "|" + Ability.RESISTANCE.getDisplayName())
-                .getBytes(java.nio.charset.StandardCharsets.UTF_8)).toString();
-        int oxBodyCount = getCharmCount(oxBodyId);
-        if (oxBodyCount == 0) {
-            // Fallback to name search if ID doesn't match (e.g. legacy or custom ID)
-            oxBodyCount = getCharmCount("Ox-Body Technique");
-        }
-
-        for (int i = 0; i < oxBodyCount; i++) {
-            if (stamina >= 5) {
-                levels.add("-0");
-                levels.add("-1");
-                levels.add("-2");
-            } else if (stamina >= 3) {
-                levels.add("-1");
-                levels.add("-2");
-                levels.add("-2");
-            } else {
-                levels.add("-1");
-                levels.add("-2");
-            }
-        }
-        Collections.sort(levels);
-        return levels;
-    }
 
     public CharacterSaveState exportState() {
         CharacterSaveState state = new CharacterSaveState();

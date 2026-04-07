@@ -1,8 +1,6 @@
 package com.vibethema.ui;
 
 import com.vibethema.model.*;
-import com.vibethema.model.logic.CreationRuleEngine;
-import com.vibethema.model.logic.CreationRuleEngine.CreationStatus;
 import com.vibethema.viewmodel.StatsViewModel;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.InjectViewModel;
@@ -18,6 +16,9 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 import com.vibethema.viewmodel.equipment.AttackPoolRowViewModel;
+import com.vibethema.viewmodel.stats.CraftRowViewModel;
+import com.vibethema.viewmodel.stats.SpecialtyRowViewModel;
+import javafx.collections.ListChangeListener;
 
 public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, Initializable {
 
@@ -98,21 +99,14 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         Label motesLabel = new Label("Mote Pools");
         motesLabel.getStyleClass().add("subsection-title");
         personalLabel = new Label();
+        personalLabel.textProperty().bind(Bindings.concat("Personal: ", viewModel.personalMotesProperty().asString()));
         peripheralLabel = new Label();
+        peripheralLabel.textProperty().bind(Bindings.concat("Peripheral: ", viewModel.peripheralMotesProperty().asString()));
         motesBox.getChildren().addAll(motesLabel, personalLabel, peripheralLabel);
-
-        updateMotes(data);
-        data.essenceProperty().addListener((obs, oldV, newV) -> updateMotes(data));
 
         topRow.getChildren().addAll(wpBox, essBox, motesBox);
         section.getChildren().addAll(advTitle, topRow);
         return section;
-    }
-
-    private void updateMotes(CharacterData data) {
-        CreationStatus status = CreationRuleEngine.calculateStatus(data);
-        personalLabel.setText("Personal: " + status.personalMotes);
-        peripheralLabel.setText("Peripheral: " + status.peripheralMotes);
     }
 
     private VBox createAttributesSection(CharacterData data) {
@@ -200,8 +194,8 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
     private VBox createCraftsSection(CharacterData data) {
         VBox section = new VBox(10);
         craftList = new VBox(8);
-        refreshCraftsContent(data);
-        data.getCrafts().addListener((javafx.collections.ListChangeListener<? super CraftAbility>) c -> refreshCraftsContent(data));
+        refreshCraftsContent();
+        viewModel.getCraftRows().addListener((ListChangeListener<? super CraftRowViewModel>) c -> refreshCraftsContent());
         
         Button addBtn = new Button("+ Add Craft");
         addBtn.setOnAction(e -> data.getCrafts().add(new CraftAbility("", 0)));
@@ -209,20 +203,21 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         return section;
     }
 
-    private void refreshCraftsContent(CharacterData data) {
+    private void refreshCraftsContent() {
         if (craftList == null) return;
         craftList.getChildren().clear();
+        CharacterData data = viewModel.getData();
         int totalDots = data.getCrafts().stream().mapToInt(CraftAbility::getRating).sum();
-        for (CraftAbility ca : data.getCrafts()) {
+        for (CraftRowViewModel rvm : viewModel.getCraftRows()) {
             HBox row = new HBox(12);
             TextField f = new TextField();
             f.setPromptText("Expertise");
-            f.textProperty().bindBidirectional(ca.expertiseProperty());
-            DotSelector ds = new DotSelector(ca.ratingProperty(), 0);
+            f.textProperty().bindBidirectional(rvm.expertiseProperty());
+            DotSelector ds = new DotSelector(rvm.ratingProperty(), 0);
             ds.minDotsProperty().bind(Bindings.createIntegerBinding(() -> {
                 if (!data.getFavoredAbility(Ability.CRAFT).get()) return 0;
-                return (totalDots - ca.getRating() > 0) ? 0 : 1;
-            }, data.getFavoredAbility(Ability.CRAFT)));
+                return (totalDots - rvm.ratingProperty().get() > 0) ? 0 : 1;
+            }, data.getFavoredAbility(Ability.CRAFT), rvm.ratingProperty()));
             row.getChildren().addAll(f, ds);
             craftList.getChildren().add(row);
         }
@@ -231,9 +226,9 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
     private VBox createSpecialtiesSection(CharacterData data) {
         VBox section = new VBox(10);
         specList = new VBox(8);
-        refreshSpecsContent(data);
-        data.getSpecialties().addListener((javafx.collections.ListChangeListener<? super Specialty>) c -> {
-            refreshSpecsContent(data);
+        refreshSpecsContent();
+        viewModel.getSpecialtyRows().addListener((ListChangeListener<? super SpecialtyRowViewModel>) c -> {
+            refreshSpecsContent();
             Messenger.publish("refresh_all_ui");
         });
         
@@ -243,16 +238,16 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         return section;
     }
 
-    private void refreshSpecsContent(CharacterData data) {
+    private void refreshSpecsContent() {
         if (specList == null) return;
         specList.getChildren().clear();
-        for (Specialty s : data.getSpecialties()) {
+        for (SpecialtyRowViewModel rvm : viewModel.getSpecialtyRows()) {
             HBox row = new HBox(12);
             TextField f = new TextField();
-            f.textProperty().bindBidirectional(s.nameProperty());
+            f.textProperty().bindBidirectional(rvm.nameProperty());
             ComboBox<String> cb = new ComboBox<>();
             cb.getItems().addAll(SystemData.ABILITIES.stream().map(Ability::getDisplayName).collect(Collectors.toList()));
-            cb.valueProperty().bindBidirectional(s.abilityProperty());
+            cb.valueProperty().bindBidirectional(rvm.abilityProperty());
             row.getChildren().addAll(f, cb);
             specList.getChildren().add(row);
         }
@@ -268,19 +263,17 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         VBox healthBox = new VBox(5);
         healthBox.getChildren().add(new Label("Health Levels"));
         trackBoxes = new VBox(8);
-        updateHealth(data);
-        data.getAttribute(Attribute.STAMINA).addListener((obs, old, nv) -> updateHealth(data));
-        data.getAbility(Ability.RESISTANCE).addListener((obs, old, nv) -> updateHealth(data));
-        data.getUnlockedCharms().addListener((javafx.collections.ListChangeListener<? super PurchasedCharm>) c -> updateHealth(data));
+        updateHealth();
+        viewModel.healthLevelsProperty().addListener((ListChangeListener<? super String>) c -> updateHealth());
         healthBox.getChildren().add(trackBoxes);
         return healthBox;
     }
 
-    private void updateHealth(CharacterData data) {
+    private void updateHealth() {
         if (trackBoxes == null) return;
         trackBoxes.getChildren().clear();
         
-        List<String> levels = data.getHealthLevels();
+        List<String> levels = viewModel.healthLevelsProperty();
         // Group by penalty, preserving order as much as possible, or using a fixed order.
         Map<String, Integer> counts = new LinkedHashMap<>();
         for (String lvl : levels) {

@@ -40,4 +40,22 @@ public class StatsViewModelTest {
             Messenger.unsubscribe("jump_to_charms", observer);
         }
     }
+
+    @Test
+    void testMotePropertiesDelegateToModel() {
+        assertEquals(data.personalMotesProperty().get(), viewModel.personalMotesProperty().get());
+        assertEquals(data.peripheralMotesProperty().get(), viewModel.peripheralMotesProperty().get());
+
+        data.essenceProperty().set(5);
+        assertEquals(data.personalMotesProperty().get(), viewModel.personalMotesProperty().get());
+        assertEquals(data.peripheralMotesProperty().get(), viewModel.peripheralMotesProperty().get());
+    }
+
+    @Test
+    void testHealthLevelsPropertyDelegatesToModel() {
+        assertEquals(data.healthLevelsProperty().size(), viewModel.healthLevelsProperty().size());
+        
+        data.getAttribute(com.vibethema.model.Attribute.STAMINA).set(5);
+        assertEquals(data.healthLevelsProperty().size(), viewModel.healthLevelsProperty().size());
+    }
 }
