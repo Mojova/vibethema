@@ -130,6 +130,11 @@ public class StartScreen extends StackPane implements JavaView<StartScreenViewMo
         });
 
         // Focus management: focus the most relevant action
+        // and ensure ENTER triggers the focused button
+        newBtn.defaultButtonProperty().bind(newBtn.focusedProperty());
+        loadBtn.defaultButtonProperty().bind(loadBtn.focusedProperty());
+        importBtn.defaultButtonProperty().bind(importBtn.focusedProperty());
+
         Platform.runLater(() -> {
             if (viewModel.coreDataImportedProperty().get()) {
                 newBtn.requestFocus();
