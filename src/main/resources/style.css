@@ -270,6 +270,18 @@
     -fx-fill: transparent;
 }
 
+.charm-line-highlight-prereq {
+    -fx-stroke: #00ccff; /* Cyan for prerequisites */
+    -fx-stroke-width: 4;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 204, 255, 0.6), 8, 0, 0, 0);
+}
+
+.charm-line-highlight-dependent {
+    -fx-stroke: #ffcc00; /* Gold for dependents */
+    -fx-stroke-width: 4;
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 204, 0, 0.6), 8, 0, 0, 0);
+}
+
 .charm-node {
     -fx-padding: 8px;
     -fx-border-radius: 4px;

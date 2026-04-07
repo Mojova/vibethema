@@ -66,6 +66,10 @@ public class CharmTreeComponent extends SplitPane {
     private javafx.beans.property.IntegerProperty currentRatingProperty;
     private javafx.beans.value.ChangeListener<Number> ratingListener;
 
+    private final Map<String, List<CubicCurve>> charmIncomingLines = new HashMap<>();
+    private final Map<String, List<CubicCurve>> charmOutgoingLines = new HashMap<>();
+    private final List<CubicCurve> currentlyHighlightedLines = new ArrayList<>();
+
     public CharmTreeComponent(CharacterData data,
             CharmDataService dataService,
             Map<String, String> keywordDefs,
@@ -206,6 +210,9 @@ public class CharmTreeComponent extends SplitPane {
         charmCanvas.getChildren().clear();
         charmNodeMap.clear();
         currentCharms.clear();
+        charmIncomingLines.clear();
+        charmOutgoingLines.clear();
+        currentlyHighlightedLines.clear();
         selectedCharm = null;
 
         if (ratingListener != null && currentRatingProperty != null) {
@@ -433,6 +440,8 @@ public class CharmTreeComponent extends SplitPane {
                     updateKeywords(c.getKeywords(), kwFlow);
                     descriptionLabel.setText(c.getFullText() != null ? c.getFullText() : "");
 
+                    updateLineHighlights(c.getId());
+
                     toggleBtn.setVisible(true);
                     editBtn.setVisible(true);
                     editBtn.setManaged(true);
@@ -510,7 +519,7 @@ public class CharmTreeComponent extends SplitPane {
                 for (Charm.PrerequisiteGroup group : c.getPrerequisiteGroups()) {
                     for (String reqId : group.getCharmIds()) {
                         VBox sourceBox = charmNodeMap.get(reqId);
-                    if (sourceBox != null) {
+                        if (sourceBox != null) {
                         double startX = sourceBox.getLayoutX() + boxWidth / 2;
                         double startY = sourceBox.getLayoutY() + boxHeight;
                         double endX = targetBox.getLayoutX() + boxWidth / 2;
@@ -521,16 +530,49 @@ public class CharmTreeComponent extends SplitPane {
                         curve.getStyleClass().add("charm-line");
                         charmCanvas.getChildren().add(curve);
                         curve.toBack();
+
+                        // Register connections for highlighting
+                        charmIncomingLines.computeIfAbsent(c.getId(), k -> new ArrayList<>()).add(curve);
+                        charmOutgoingLines.computeIfAbsent(reqId, k -> new ArrayList<>()).add(curve);
                     }
                 }
             }
         }
-    }
+        }
 
         double minHeight = (maxDepth + 1) * (boxHeight + gapY) + 40;
         charmCanvas.setPrefSize(virtualCanvasWidth, minHeight);
         charmCanvas.setMinSize(virtualCanvasWidth, minHeight);
         updateWebNodeStyles();
+    }
+
+    private void updateLineHighlights(String charmId) {
+        // Clear previous highlights
+        for (CubicCurve line : currentlyHighlightedLines) {
+            line.getStyleClass().removeAll("charm-line-highlight-prereq", "charm-line-highlight-dependent");
+        }
+        currentlyHighlightedLines.clear();
+
+        if (charmId == null)
+            return;
+
+        // Highlight prerequisites (incoming)
+        List<CubicCurve> incoming = charmIncomingLines.get(charmId);
+        if (incoming != null) {
+            for (CubicCurve line : incoming) {
+                line.getStyleClass().add("charm-line-highlight-prereq");
+                currentlyHighlightedLines.add(line);
+            }
+        }
+
+        // Highlight dependents (outgoing)
+        List<CubicCurve> outgoing = charmOutgoingLines.get(charmId);
+        if (outgoing != null) {
+            for (CubicCurve line : outgoing) {
+                line.getStyleClass().add("charm-line-highlight-dependent");
+                currentlyHighlightedLines.add(line);
+            }
+        }
     }
 
     private void updateSidebarButton(Charm c) {
