@@ -550,3 +550,45 @@
     -fx-border-color: #444;
 }
 
+/* Dialog Custom Styling */
+.dialog-pane-custom {
+    -fx-background-color: #1e1e1e;
+    -fx-border-color: #d4af37;
+    -fx-border-width: 1.5px;
+    -fx-padding: 0;
+}
+
+.dialog-pane-custom > .header-panel {
+    -fx-background-color: #2a2a2a;
+    -fx-padding: 15px;
+    -fx-border-color: #333;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.dialog-pane-custom > .header-panel > .label {
+    -fx-text-fill: #d4af37;
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+}
+
+.dialog-pane-custom .button-bar {
+    -fx-padding: 15px;
+    -fx-background-color: #1a1a1a;
+    -fx-border-color: #333;
+    -fx-border-width: 1px 0 0 0;
+}
+
+.text-area-custom {
+    -fx-control-inner-background: #2d2d2d;
+    -fx-text-fill: white;
+    -fx-border-color: #444;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 14px;
+}
+
+.text-area-custom:focused {
+    -fx-border-color: #d4af37;
+}
+

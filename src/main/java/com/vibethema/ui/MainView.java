@@ -410,6 +410,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         dialog.setTitle("Edit " + term + ": " + editViewModel.getCharmName());
 
         DialogPane dialogPane = dialog.getDialogPane();
+        dialogPane.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
         dialogPane.getStyleClass().add("dialog-pane-custom");
         dialogPane.setContent(viewTuple.getView());
 
