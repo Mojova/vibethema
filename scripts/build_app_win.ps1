@@ -25,8 +25,19 @@ if ($DOTS -lt 2 -and $RAW_VERSION.Contains("-SNAPSHOT")) {
     $VERSION = "${VERSION}.0"
 }
 
+# 2.2 Create a minimal JRE with jlink
+Write-Host "Creating minimal runtime with jlink..."
+if (Test-Path "target/runtime") { Remove-Item -Recurse -Force "target/runtime" }
+jlink `
+  --add-modules java.base,java.desktop,java.management,java.naming,java.scripting,java.sql,java.xml,java.logging,jdk.jfr,jdk.unsupported `
+  --strip-debug `
+  --no-man-pages `
+  --no-header-files `
+  --compress zip-9 `
+  --output target/runtime
+
 # 3. Create the native app
-Write-Host "Packaging native app v$VERSION with jpackage..."
+Write-Host "Packaging native app v$VERSION with jpackage and minimal runtime..."
 if (Test-Path "target/dist") { Remove-Item -Recurse -Force "target/dist" }
 New-Item -ItemType Directory -Path "target/dist" | Out-Null
 
@@ -35,6 +46,7 @@ jpackage `
   --main-jar vibethema.jar `
   --main-class com.vibethema.Launcher `
   --type msi `
+  --runtime-image target/runtime `
   --icon $ICO_TARGET `
   --name "Vibethema" `
   --dest target/dist `

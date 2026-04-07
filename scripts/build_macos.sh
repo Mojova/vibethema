@@ -43,8 +43,19 @@ if [ "$DOTS" -lt 2 ] && [[ "$RAW_VERSION" == *"-SNAPSHOT"* ]]; then
     VERSION="${VERSION}.0"
 fi
 
+# 2.2 Create a minimal JRE with jlink
+echo "Creating minimal runtime with jlink..."
+rm -rf target/runtime
+jlink \
+  --add-modules java.base,java.desktop,java.management,java.naming,java.scripting,java.sql,java.xml,java.logging,jdk.jfr,jdk.unsupported \
+  --strip-debug \
+  --no-man-pages \
+  --no-header-files \
+  --compress zip-9 \
+  --output target/runtime
+
 # 3. Create the native app
-echo "Packaging native app v$VERSION with jpackage..."
+echo "Packaging native app v$VERSION with jpackage and minimal runtime..."
 rm -rf target/dist
 mkdir -p target/dist
 
@@ -53,6 +64,7 @@ jpackage \
   --main-jar vibethema.jar \
   --main-class com.vibethema.Launcher \
   --type dmg \
+  --runtime-image target/runtime \
   --icon "$ICNS_TARGET" \
   --name "Vibethema" \
   --app-version "$VERSION" \
