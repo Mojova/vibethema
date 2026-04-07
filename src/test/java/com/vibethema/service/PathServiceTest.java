@@ -31,8 +31,8 @@ class PathServiceTest {
         Path dataPath = PathService.getDataPath();
         Path configPath = PathService.getConfigPath();
 
-        assertTrue(dataPath.toString().contains("/Users/tester/Library/Application Support/Vibethema"));
-        assertTrue(configPath.toString().contains("/Users/tester/Library/Preferences/Vibethema"));
+        assertTrue(dataPath.toString().contains("/Users/tester/Library/Application Support/Mojova/Vibethema"));
+        assertTrue(configPath.toString().contains("/Users/tester/Library/Preferences/Mojova/Vibethema"));
     }
 
     @Test
@@ -45,8 +45,8 @@ class PathServiceTest {
         Path dataPath = PathService.getDataPath();
         Path configPath = PathService.getConfigPath();
 
-        assertTrue(dataPath.toString().contains("Vibethema") && dataPath.toString().contains("Data"));
-        assertTrue(configPath.toString().contains("Vibethema") && configPath.toString().contains("Config"));
+        assertTrue(dataPath.toString().contains("Mojova") && dataPath.toString().contains("Vibethema") && dataPath.toString().contains("Data"));
+        assertTrue(configPath.toString().contains("Mojova") && configPath.toString().contains("Vibethema") && configPath.toString().contains("Config"));
     }
 
     @Test
@@ -57,7 +57,7 @@ class PathServiceTest {
         Path dataPath = PathService.getDataPath();
         Path configPath = PathService.getConfigPath();
 
-        assertTrue(dataPath.toString().contains("/home/tester/.local/share/vibethema"));
-        assertTrue(configPath.toString().contains("/home/tester/.config/vibethema"));
+        assertTrue(dataPath.toString().contains("/home/tester/.local/share/mojova/vibethema"));
+        assertTrue(configPath.toString().contains("/home/tester/.config/mojova/vibethema"));
     }
 }
