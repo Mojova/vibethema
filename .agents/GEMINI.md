@@ -73,6 +73,12 @@ To ensure parsing logic remains consistent without committing copyrighted materi
 - **Manual Extraction**: Use `com.vibethema.util.PdfImportTool` to run the extraction process from the command line and inspect the resulting JSON data.
     - Usage: `mvn compile exec:java -Dexec.mainClass="com.vibethema.util.PdfImportTool" -Dexec.args="<pdf-path> [output-dir]"`
 
+### Test Coverage
+The project uses **JaCoCo** for measuring test code coverage.
+- **Generation**: Run `mvn clean test` to execute tests and generate the coverage report.
+- **Report Location**: `target/site/jacoco/index.html`
+- **Goal**: Maintain high coverage for core logic in `com.vibethema.model` and `com.vibethema.service`.
+
 ## Key Rules & Logic
 
 | Feature | Creation Rule | Scaling / BP Cost |
@@ -105,8 +111,9 @@ To ensure parsing logic remains consistent without committing copyrighted materi
 
 ## AI Workflow
 1. **Unit tests**: MANDATORY for all model, service, and ViewModel logic. Use JUnit 5 and Mockito.
-2. **Logging**: Use SLF4J: `private static final Logger logger = LoggerFactory.getLogger(ClassName.class);`
-3. **Architecture**: Always check if a change requires a new View-ViewModel pair.
-4. **Compile**: Verify changes with `mvn compile` or `mvn test`.
-5. **Update this file**: Keep this file synchronized with architecture changes.
-6. **Commits**: Descriptive messages with logical task breakdown.
+2. **Coverage**: Run `mvn test jacoco:report` to verify the impact of your changes on code coverage. Avoid decreasing coverage for core logic.
+3. **Logging**: Use SLF4J: `private static final Logger logger = LoggerFactory.getLogger(ClassName.class);`
+4. **Architecture**: Always check if a change requires a new View-ViewModel pair.
+5. **Compile**: Verify changes with `mvn compile` or `mvn test`.
+6. **Update this file**: Keep this file synchronized with architecture changes.
+7. **Commits**: Descriptive messages with logical task breakdown.
