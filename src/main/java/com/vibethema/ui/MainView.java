@@ -1,12 +1,7 @@
 package com.vibethema.ui;
 
 import com.vibethema.model.*;
-import com.vibethema.model.combat.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.logic.*;
 import com.vibethema.model.mystic.*;
-import com.vibethema.model.progression.*;
-import com.vibethema.model.social.*;
 import com.vibethema.model.traits.*;
 import com.vibethema.ui.charms.CharmsTab;
 import com.vibethema.ui.charms.EditCharmView;
@@ -32,6 +27,7 @@ import java.net.URL;
 import java.util.*;
 import javafx.application.Platform;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
@@ -448,6 +444,17 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                 .valueProperty()
                 .addListener((obs, oldV, newV) -> Messenger.publish("refresh_all_ui"));
 
+        Label supernalLabel = new Label("Supernal:");
+        Button helpBtn = new Button("?");
+        helpBtn.getStyleClass().add("help-btn");
+        helpBtn.setTooltip(
+                new Tooltip(
+                        "Only abilities selected as 'Caste' in the Stats tab can be chosen as your Supernal ability."));
+
+        HBox supernalContainer = new HBox(5);
+        supernalContainer.setAlignment(Pos.CENTER_LEFT);
+        supernalContainer.getChildren().addAll(supernalDropdown, helpBtn);
+
         basicInfo
                 .getChildren()
                 .addAll(
@@ -455,8 +462,8 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                         nameField,
                         new Label("Caste:"),
                         casteBox,
-                        new Label("Supernal:"),
-                        supernalDropdown);
+                        supernalLabel,
+                        supernalContainer);
 
         header.getChildren().addAll(titleText, basicInfo);
         return header;

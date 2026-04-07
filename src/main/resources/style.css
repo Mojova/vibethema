@@ -84,7 +84,7 @@
     -fx-stroke: #888888;
     -fx-stroke-width: 1.5;
     -fx-cursor: hand;
-    -fx-transition: -fx-fill 0.2s, -fx-stroke 0.2s;
+    -fx-transition: -fx-fill 0.08s, -fx-stroke 0.08s;
 }
 
 .dot:hover {
@@ -674,5 +674,29 @@
 
 .text-area-custom:focused {
     -fx-border-color: #d4af37;
+}
+
+/* Help Button Styling */
+.help-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: #666;
+    -fx-border-width: 1px;
+    -fx-border-radius: 50%;
+    -fx-background-radius: 50%;
+    -fx-text-fill: #999;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+    -fx-min-width: 18px;
+    -fx-max-width: 18px;
+    -fx-min-height: 18px;
+    -fx-max-height: 18px;
+    -fx-padding: 0;
+    -fx-cursor: help;
+    -fx-transition: -fx-border-color 0.08s, -fx-text-fill 0.08s;
+}
+
+.help-btn:hover {
+    -fx-border-color: #ffaa00;
+    -fx-text-fill: #ffaa00;
 }
 
