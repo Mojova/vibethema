@@ -90,7 +90,12 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
         eligibleFilter.getStyleClass().add("label"); // reuse label style or add custom
         eligibleFilter.selectedProperty().bindBidirectional(viewModel.showEligibleOnlyProperty());
 
-        controls.getChildren().addAll(titleLabel, createCharmBtn, eligibleFilter);
+        TextField searchField = new TextField();
+        searchField.setPromptText("Search Charms...");
+        searchField.setPrefWidth(180);
+        searchField.textProperty().bindBidirectional(viewModel.searchTextProperty());
+
+        controls.getChildren().addAll(titleLabel, createCharmBtn, eligibleFilter, searchField);
 
         ScrollPane charmScroll = new ScrollPane(charmCanvas);
         charmScroll.setPannable(true);

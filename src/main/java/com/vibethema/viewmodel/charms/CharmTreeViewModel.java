@@ -58,6 +58,7 @@ public class CharmTreeViewModel implements ViewModel {
     private final BooleanProperty deleteCustomBtnVisible = new SimpleBooleanProperty(false);
     private final StringProperty deleteCustomBtnText = new SimpleStringProperty("Delete Custom Charm");
     
+    private final StringProperty searchText = new SimpleStringProperty("");
     private final BooleanProperty showEligibleOnly = new SimpleBooleanProperty(false);
     
     private final BooleanProperty editBtnVisible = new SimpleBooleanProperty(false);
@@ -74,6 +75,7 @@ public class CharmTreeViewModel implements ViewModel {
     private void setupListeners() {
         selectedCharm.addListener((obs, oldV, newV) -> updateSidebar(newV));
         showEligibleOnly.addListener((obs, oldV, newV) -> refresh());
+        searchText.addListener((obs, oldV, newV) -> refresh());
     }
 
     public void initialize(String filterType, String selectionId, String selectionName, String artifactId, String artifactName) {
@@ -103,6 +105,22 @@ public class CharmTreeViewModel implements ViewModel {
                 .collect(java.util.stream.Collectors.toList());
         }
 
+        if (loaded != null && !searchText.get().isEmpty()) {
+            final String query = searchText.get().toLowerCase();
+            Map<String, Charm> allLoadedMap = new HashMap<>();
+            for (Charm c : loaded) allLoadedMap.put(c.getId(), c);
+
+            Set<String> visibleIds = new HashSet<>();
+            for (Charm c : loaded) {
+                if (c.getName().toLowerCase().contains(query)) {
+                    addCharmAndPrereqs(c, visibleIds, allLoadedMap);
+                }
+            }
+            loaded = loaded.stream()
+                .filter(c -> visibleIds.contains(c.getId()))
+                .collect(java.util.stream.Collectors.toList());
+        }
+
         // Must calculate level state BEFORE updating the observable list
         // so listeners (render()) have access to the new layout data.
         internalCalculateLayout(loaded != null ? loaded : new ArrayList<>());
@@ -114,6 +132,18 @@ public class CharmTreeViewModel implements ViewModel {
             selectedCharm.set(null);
         } else if (selectedCharm.get() != null) {
             updateSidebar(selectedCharm.get());
+        }
+    }
+
+    private void addCharmAndPrereqs(Charm c, Set<String> ids, Map<String, Charm> map) {
+        if (c == null || ids.contains(c.getId())) return;
+        ids.add(c.getId());
+        if (c.getPrerequisiteGroups() != null) {
+            for (Charm.PrerequisiteGroup group : c.getPrerequisiteGroups()) {
+                for (String rid : group.getCharmIds()) {
+                    addCharmAndPrereqs(map.get(rid), ids, map);
+                }
+            }
         }
     }
 
@@ -308,5 +338,6 @@ public class CharmTreeViewModel implements ViewModel {
     public BooleanProperty deleteCustomBtnVisibleProperty() { return deleteCustomBtnVisible; }
     public StringProperty deleteCustomBtnTextProperty() { return deleteCustomBtnText; }
     public BooleanProperty showEligibleOnlyProperty() { return showEligibleOnly; }
+    public StringProperty searchTextProperty() { return searchText; }
     public BooleanProperty editBtnVisibleProperty() { return editBtnVisible; }
 }
