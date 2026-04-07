@@ -169,6 +169,50 @@ public class CharmTreeViewModelTest {
         assertSame(c1Prime, viewModel.selectedCharmProperty().get(), "Selection should be the exact new instance from the reloaded list");
     }
 
+    @Test
+    void testUpdateSidebarWithEmptyKeywords() {
+        // Arrange
+        Charm c = createCharm("TEST", "No Keywords");
+        c.setKeywords(null); 
+        
+        // Act
+        viewModel.updateSidebar(c);
+        
+        // Assert
+        assertTrue(viewModel.getKeywords().isEmpty(), "Keywords list should be empty when charm has none");
+    }
+
+    @Test
+    void testUpdateSidebarWithNoPrerequisites() {
+        // Arrange
+        Charm c = createCharm("TEST", "No Prereqs");
+        c.setPrerequisiteGroups(null);
+        
+        // Act
+        viewModel.updateSidebar(c);
+        
+        // Assert
+        assertTrue(viewModel.detailReqsProperty().get().contains("Prereqs: None"), 
+            "Requirements text should show 'None' for prerequisites");
+    }
+
+    @Test
+    void testUpdateSidebarWithNullCharm() {
+        // Arrange: Start with a selection
+        Charm c = createCharm("TEST", "Test");
+        viewModel.updateSidebar(c);
+        assertNotEquals("No Charm Selected", viewModel.detailTitleProperty().get());
+
+        // Act: Clear selection
+        viewModel.updateSidebar(null);
+        
+        // Assert
+        assertEquals("No Charm Selected", viewModel.detailTitleProperty().get());
+        assertEquals("", viewModel.detailReqsProperty().get());
+        assertTrue(viewModel.getKeywords().isEmpty());
+        assertFalse(viewModel.purchaseBtnVisibleProperty().get());
+    }
+
     private Charm createCharm(String id, String name, String... prereqIds) {
         SolarCharm c = new SolarCharm();
         c.setId(id);

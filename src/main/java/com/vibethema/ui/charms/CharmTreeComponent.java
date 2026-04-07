@@ -37,6 +37,7 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
     private final Label typeLabel = new Label();
     private final Label durationLabel = new Label();
     private final FlowPane kwFlow = new FlowPane(3, 3);
+    private final GridPane statsGrid = new GridPane();
     private final Label descriptionLabel = new Label();
 
     private final Button purchaseBtn = new Button();
@@ -59,6 +60,7 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
             updateLineHighlights(newV != null ? newV.getId() : null);
             updateWebNodeStyles();
             if (newV != null) scrollToNode(newV.getId());
+            updateKeywordsUI();
         });
         
         setupKeyHandlers();
@@ -189,7 +191,6 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
         detailReqs.setWrapText(true);
         detailReqs.setMaxWidth(Double.MAX_VALUE);
 
-        GridPane statsGrid = new GridPane();
         statsGrid.setHgap(15); statsGrid.setVgap(10);
         costLabel.getStyleClass().add("sidebar-stat");
         typeLabel.getStyleClass().add("sidebar-stat");
@@ -300,9 +301,29 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
 
         editBtn.visibleProperty().bind(viewModel.editBtnVisibleProperty());
         editBtn.managedProperty().bind(editBtn.visibleProperty());
+        
+        detailReqs.visibleProperty().bind(viewModel.selectedCharmProperty().isNotNull());
+        detailReqs.managedProperty().bind(detailReqs.visibleProperty());
+        
+        descriptionLabel.visibleProperty().bind(viewModel.selectedCharmProperty().isNotNull());
+        descriptionLabel.managedProperty().bind(descriptionLabel.visibleProperty());
+        
+        statsGrid.visibleProperty().bind(viewModel.selectedCharmProperty().isNotNull());
+        statsGrid.managedProperty().bind(statsGrid.visibleProperty());
 
-        viewModel.getKeywords().addListener((javafx.collections.ListChangeListener<? super String>) c -> {
-            kwFlow.getChildren().clear();
+        viewModel.getKeywords().addListener((javafx.collections.ListChangeListener<? super String>) c -> updateKeywordsUI());
+        updateKeywordsUI();
+    }
+
+    private void updateKeywordsUI() {
+        kwFlow.getChildren().clear();
+        if (viewModel.selectedCharmProperty().get() == null) return;
+
+        if (viewModel.getKeywords().isEmpty()) {
+            Label l = new Label("None");
+            l.getStyleClass().add("sidebar-stat");
+            kwFlow.getChildren().add(l);
+        } else {
             for (String kw : viewModel.getKeywords()) {
                 Label l = new Label(kw);
                 l.getStyleClass().add("sidebar-stat");
@@ -315,7 +336,7 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
                 }
                 kwFlow.getChildren().add(l);
             }
-        });
+        }
     }
 
     public void refresh() {
