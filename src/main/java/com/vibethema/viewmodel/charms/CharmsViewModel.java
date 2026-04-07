@@ -1,11 +1,10 @@
-package com.vibethema.viewmodel;
+package com.vibethema.viewmodel.charms;
 
 import com.vibethema.model.Ability;
 import com.vibethema.model.CharacterData;
+import com.vibethema.model.SystemData;
 import com.vibethema.service.CharmDataService;
 import de.saxsys.mvvmfx.ViewModel;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -33,7 +32,7 @@ public class CharmsViewModel implements ViewModel {
     private void setupFilterOptions() {
         filterOptions.clear();
         if ("Ability".equals(filterType.get())) {
-            for (Ability abil : com.vibethema.model.SystemData.ABILITIES) {
+            for (Ability abil : SystemData.ABILITIES) {
                 if (abil != Ability.MARTIAL_ARTS && abil != Ability.CRAFT) {
                     filterOptions.add(abil.getDisplayName());
                 }

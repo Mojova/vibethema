@@ -1,12 +1,14 @@
 package com.vibethema.ui;
 
 import com.vibethema.model.*;
+import com.vibethema.ui.charms.CharmsTab;
 import com.vibethema.ui.equipment.DefaultEquipmentDialogService;
 import com.vibethema.ui.equipment.EquipmentTab;
 import com.vibethema.ui.experience.ExperienceTab;
 import com.vibethema.ui.footer.FooterView;
 import com.vibethema.ui.sorcery.SorceryTab;
 import com.vibethema.viewmodel.*;
+import com.vibethema.viewmodel.charms.CharmsViewModel;
 import com.vibethema.viewmodel.equipment.EquipmentViewModel;
 import com.vibethema.viewmodel.experience.ExperienceViewModel;
 import com.vibethema.viewmodel.footer.FooterViewModel;
@@ -274,7 +276,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         loadItem.setAccelerator(KeyCombination.keyCombination("Shortcut+O"));
         loadItem.setOnAction(e -> viewModel.onLoadRequest());
         loadItem.disableProperty().bind(viewModel.coreDataImportedProperty().not());
-
+        
         MenuItem exportPdf = new MenuItem("Export to PDF...");
         exportPdf.setAccelerator(KeyCombination.keyCombination("Shortcut+E"));
         exportPdf.setOnAction(e -> viewModel.onExportPdfRequest());

@@ -1,6 +1,5 @@
 package com.vibethema.viewmodel.charms;
 
-import com.vibethema.model.Ability;
 import com.vibethema.model.CharacterData;
 import com.vibethema.model.Charm;
 import com.vibethema.model.SolarCharm;

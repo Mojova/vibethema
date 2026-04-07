@@ -20,7 +20,7 @@ import java.util.*;
  * A standalone UI component that renders a charm web.
  * Refactored to focus purely on the graphical representation of charms.
  */
-public class CharmTreeComponent extends VBox implements JavaView<CharmTreeViewModel>, Initializable {
+public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>, Initializable {
 
     @InjectViewModel
     private CharmTreeViewModel viewModel;
@@ -37,7 +37,7 @@ public class CharmTreeComponent extends VBox implements JavaView<CharmTreeViewMo
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        getStyleClass().add("charms-tree-component");
+        getStyleClass().add("charms-tree-view");
         setupUI();
         setupBindings();
         

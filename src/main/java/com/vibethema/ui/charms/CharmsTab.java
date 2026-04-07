@@ -1,8 +1,6 @@
-package com.vibethema.ui;
+package com.vibethema.ui.charms;
 
-import com.vibethema.ui.charms.CharmDetailsView;
-import com.vibethema.ui.charms.CharmTreeComponent;
-import com.vibethema.viewmodel.CharmsViewModel;
+import com.vibethema.viewmodel.charms.CharmsViewModel;
 import com.vibethema.viewmodel.charms.CharmDetailsViewModel;
 import com.vibethema.viewmodel.charms.CharmTreeViewModel;
 import de.saxsys.mvvmfx.InjectViewModel;
@@ -21,7 +19,7 @@ public class CharmsTab extends BorderPane implements JavaView<CharmsViewModel>, 
     @InjectViewModel
     private CharmsViewModel viewModel;
 
-    private CharmTreeComponent charmTree;
+    private CharmTreeView charmTree;
     private CharmTreeViewModel charmTreeViewModel;
     private CharmDetailsView charmDetails;
     private CharmDetailsViewModel charmDetailsViewModel;
@@ -41,8 +39,8 @@ public class CharmsTab extends BorderPane implements JavaView<CharmsViewModel>, 
             viewModel.getKeywordDefs()
         );
         
-        ViewTuple<CharmTreeComponent, CharmTreeViewModel> vtTree = de.saxsys.mvvmfx.FluentViewLoader
-                .javaView(CharmTreeComponent.class)
+        ViewTuple<CharmTreeView, CharmTreeViewModel> vtTree = de.saxsys.mvvmfx.FluentViewLoader
+                .javaView(CharmTreeView.class)
                 .viewModel(charmTreeViewModel)
                 .load();
         
