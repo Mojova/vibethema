@@ -6,14 +6,12 @@ import com.vibethema.viewmodel.MainViewModel;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.ViewTuple;
 import javafx.application.Application;
-import javafx.animation.FadeTransition;
 import javafx.concurrent.Task;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,15 +71,9 @@ public class Main extends Application {
                 }
             });
 
-            // Professional transition
-            FadeTransition fadeOut = new FadeTransition(Duration.seconds(1.2), root);
-            fadeOut.setFromValue(1.0);
-            fadeOut.setToValue(0.0);
-            fadeOut.setOnFinished(ev -> {
-                splashStage.close();
-                mainStage.show();
-            });
-            fadeOut.play();
+            // Instant transition
+            splashStage.close();
+            mainStage.show();
         });
 
         new Thread(loadTask).start();
