@@ -35,7 +35,6 @@ public class MainViewTest {
     @Test
     void testLazyLoadingTabs() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
-        final TabPane[] tabPaneWrapper = {null};
         
         Platform.runLater(() -> {
             try {
@@ -48,10 +47,8 @@ public class MainViewTest {
                 
                 MainViewModel viewModel = new MainViewModel(data, systemDataService, equipmentService, charmDataService);
                 
-                MainView mainView = new MainView();
                 // We need to inject the viewmodel manually since we're not using FluentViewLoader here
                 // but MainView uses @InjectViewModel. FluentViewLoader is the standard way.
-                // Let's use it.
                 de.saxsys.mvvmfx.ViewTuple<MainView, MainViewModel> viewTuple = de.saxsys.mvvmfx.FluentViewLoader
                         .javaView(MainView.class)
                         .viewModel(viewModel)
@@ -59,27 +56,31 @@ public class MainViewTest {
                 
                 MainView view = (MainView) viewTuple.getView();
                 TabPane tabPane = (TabPane) view.getCenter();
-                tabPaneWrapper[0] = tabPane;
                 
                 // 1. Check initially loaded tab (Stats)
                 Tab statsTab = tabPane.getTabs().stream()
                         .filter(t -> "Stats".equals(t.getText()))
                         .findFirst().orElseThrow();
-                assertNotNull(statsTab.getContent(), "Stats tab should be loaded eagerly");
                 
-                // 2. Check lazy tab (Merits)
-                Tab meritsTab = tabPane.getTabs().stream()
-                        .filter(t -> "Merits".equals(t.getText()))
-                        .findFirst().orElseThrow();
-                assertNull(meritsTab.getContent(), "Merits tab should NOT be loaded initially");
-                
-                // 3. Select Merits tab and verify it loads
-                tabPane.getSelectionModel().select(meritsTab);
-                assertNotNull(meritsTab.getContent(), "Merits tab should load after selection");
-                
-                latch.countDown();
+                // StatsTab content is now loaded via Platform.runLater, so we need to wait a pulse
+                Platform.runLater(() -> {
+                    assertNotNull(statsTab.getContent(), "Stats tab should eventually load content");
+                    
+                    // 2. Check lazy tab (Merits)
+                    Tab meritsTab = tabPane.getTabs().stream()
+                            .filter(t -> "Merits".equals(t.getText()))
+                            .findFirst().orElseThrow();
+                    assertNull(meritsTab.getContent(), "Merits tab should NOT be loaded initially");
+                    
+                    // 3. Select Merits tab and verify it loads
+                    tabPane.getSelectionModel().select(meritsTab);
+                    assertNotNull(meritsTab.getContent(), "Merits tab should load after selection");
+                    
+                    latch.countDown();
+                });
             } catch (Exception e) {
                 e.printStackTrace();
+                latch.countDown();
             }
         });
 

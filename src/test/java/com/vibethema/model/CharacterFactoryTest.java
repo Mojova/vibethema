@@ -11,18 +11,26 @@ import static org.mockito.Mockito.when;
 class CharacterFactoryTest {
 
     @Test
-    void testCreateNewCharacterWithUnarmed() {
+    void testCreateNewCharacter() {
+        CharacterData character = CharacterFactory.createNewCharacter();
+        assertNotNull(character);
+        assertTrue(character.getWeapons().isEmpty());
+    }
+
+    @Test
+    void testInitializeDefaultEquipment() {
         // Setup mock service
         EquipmentDataService mockService = Mockito.mock(EquipmentDataService.class);
         Weapon unarmedStored = new Weapon(Weapon.UNARMED_ID, "Unarmed", Weapon.WeaponRange.CLOSE, Weapon.WeaponType.MORTAL, Weapon.WeaponCategory.LIGHT);
         
         when(mockService.loadWeapon(Weapon.UNARMED_ID)).thenReturn(unarmedStored);
         
-        // Execute factory
-        CharacterData character = CharacterFactory.createNewCharacter(mockService);
+        CharacterData character = CharacterFactory.createNewCharacter();
+        
+        // Execute initialization
+        new CharacterFactory().initializeDefaultEquipment(character, mockService);
         
         // Verify
-        assertNotNull(character);
         assertEquals(1, character.getWeapons().size());
         Weapon weaponInChar = character.getWeapons().get(0);
         assertEquals("Unarmed", weaponInChar.getName());
@@ -31,16 +39,15 @@ class CharacterFactoryTest {
     }
 
     @Test
-    void testCreateNewCharacterWithoutUnarmed() {
+    void testInitializeDefaultEquipmentEmptyDB() {
         // Setup mock service where loadWeapon returns null
         EquipmentDataService mockService = Mockito.mock(EquipmentDataService.class);
         when(mockService.loadWeapon(anyString())).thenReturn(null);
         
-        // Execute factory
-        CharacterData character = CharacterFactory.createNewCharacter(mockService);
+        CharacterData character = CharacterFactory.createNewCharacter();
         
-        // Verify character starts empty if DB has no Unarmed weapon
-        assertNotNull(character);
+        new CharacterFactory().initializeDefaultEquipment(character, mockService);
+        
         assertTrue(character.getWeapons().isEmpty());
     }
 }

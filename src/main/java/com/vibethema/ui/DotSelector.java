@@ -43,7 +43,6 @@ public class DotSelector extends HBox {
                     valueProperty.set(dotIndex);
                     Messenger.publish("refresh_all_ui");
                 }
-                updateDots();
             });
             
             dots[i] = dot;

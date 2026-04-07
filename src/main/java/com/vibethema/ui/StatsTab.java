@@ -36,12 +36,21 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
     private Label personalLabel, peripheralLabel;
     private GridPane attackGrid;
 
+    private boolean contentLoaded = false;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setFitToWidth(true);
         getStyleClass().add("scroll-pane-custom");
-        if (viewModel != null) {
-            setContent(createContent());
+        
+        if (viewModel != null && !contentLoaded) {
+            // Fill content in the next pulse to allow MainView to show immediately
+            javafx.application.Platform.runLater(() -> {
+                if (!contentLoaded) {
+                    setContent(createContent());
+                    contentLoaded = true;
+                }
+            });
         }
     }
 

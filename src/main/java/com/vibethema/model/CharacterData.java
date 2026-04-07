@@ -267,14 +267,19 @@ public class CharacterData {
             markDirty();
         });
 
-        merits.add(new Merit("", 1));
-        specialties.add(new Specialty("", ""));
-        updateCombatStats();
-        updateDerivedStats();
-        updateValidSupernalAbilities();
-        updateAttackPools();
-        updateSorceryAvailability();
-        updateCasteFavoredCounts();
+        isImporting = true;
+        try {
+            merits.add(new Merit("", 1));
+            specialties.add(new Specialty("", ""));
+            updateCombatStats();
+            updateDerivedStats();
+            updateValidSupernalAbilities();
+            updateAttackPools();
+            updateSorceryAvailability();
+            updateCasteFavoredCounts();
+        } finally {
+            isImporting = false;
+        }
         dirty.set(false);
     }
 

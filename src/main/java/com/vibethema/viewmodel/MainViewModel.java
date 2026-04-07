@@ -44,7 +44,7 @@ public class MainViewModel implements ViewModel {
     }
 
     public MainViewModel(EquipmentDataService equipmentService, CharmDataService charmDataService) {
-        this(CharacterFactory.createNewCharacter(equipmentService), new SystemDataService(), equipmentService, charmDataService);
+        this(CharacterFactory.createNewCharacter(), new SystemDataService(), equipmentService, charmDataService);
     }
 
     public MainViewModel(CharacterData data) {
@@ -71,8 +71,14 @@ public class MainViewModel implements ViewModel {
         this.dirty.bind(data.dirtyProperty());
         
         new Thread(() -> {
+            // Load global data
             loadTagDescriptions();
             loadKeywords();
+            
+            // Load character-specific defaults if this is a new character (no weapons yet)
+            if (data.getWeapons().isEmpty()) {
+                new CharacterFactory().initializeDefaultEquipment(data, equipmentService);
+            }
         }, "MainViewModel-Data-Loader").start();
         
         updateWindowTitle();

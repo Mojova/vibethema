@@ -17,6 +17,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.ArgumentMatchers.anyString;
 
 public class MainViewModelTest {
 
@@ -35,6 +37,9 @@ public class MainViewModelTest {
         
         // By default, assume core data is imported for these tests
         when(systemDataService.isCoreDataImported()).thenReturn(true);
+        // Important: loadWeapon should be stubbed to return null (or a mock) to avoid race conditions 
+        // with the background thread during mock setup for other methods.
+        when(equipmentService.loadWeapon(anyString())).thenReturn(null); 
         when(equipmentService.loadEquipmentTags()).thenReturn(new HashMap<>());
         when(charmDataService.loadKeywords()).thenReturn(Collections.emptyList());
         
@@ -46,14 +51,16 @@ public class MainViewModelTest {
         // Prepare mock data
         Map<String, List<EquipmentDataService.Tag>> mockTags = new HashMap<>();
         mockTags.put("weapon", List.of(new EquipmentDataService.Tag("Lethal", "Causes lethal damage")));
-        when(equipmentService.loadEquipmentTags()).thenReturn(mockTags);
         
         com.vibethema.model.Keyword mockKeyword = new com.vibethema.model.Keyword();
         mockKeyword.setName("Aggravated");
         mockKeyword.setDescription("Causes aggravated damage");
-        when(charmDataService.loadKeywords()).thenReturn(List.of(mockKeyword));
+        
+        // Use doReturn for cleaner thread safety if the mock is being accessed concurrently
+        doReturn(mockTags).when(equipmentService).loadEquipmentTags();
+        doReturn(List.of(mockKeyword)).when(charmDataService).loadKeywords();
 
-        // Re-initialize to trigger background loading
+        // Trigger background loading by creating ViewModel
         viewModel = new MainViewModel(data, systemDataService, equipmentService, charmDataService);
         
         // Wait briefly for the background thread to complete
