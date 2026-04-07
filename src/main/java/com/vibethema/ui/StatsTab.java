@@ -2,10 +2,13 @@ package com.vibethema.ui;
 
 import com.vibethema.model.*;
 import com.vibethema.viewmodel.StatsViewModel;
-import com.vibethema.viewmodel.util.Messenger;
+import com.vibethema.viewmodel.stats.*;
+import com.vibethema.viewmodel.equipment.AttackPoolRowViewModel;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
 import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -15,10 +18,6 @@ import javafx.scene.layout.*;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
-import com.vibethema.viewmodel.equipment.AttackPoolRowViewModel;
-import com.vibethema.viewmodel.stats.CraftRowViewModel;
-import com.vibethema.viewmodel.stats.SpecialtyRowViewModel;
-import javafx.collections.ListChangeListener;
 
 public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, Initializable {
 
@@ -35,7 +34,7 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
     private Label resolveBaseLabel;
     private Label guileBaseLabel;
     private Label personalLabel, peripheralLabel;
-    private GridPane attackGrid;
+    private VBox attackList;
 
     private boolean contentLoaded = false;
 
@@ -115,49 +114,12 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         title.getStyleClass().add("section-title");
 
         HBox columns = new HBox(30);
-        columns.getChildren().addAll(
-                createAttributeColumn("Physical", Attribute.Category.PHYSICAL, SystemData.PHYSICAL_ATTRIBUTES, data),
-                createAttributeColumn("Social", Attribute.Category.SOCIAL, SystemData.SOCIAL_ATTRIBUTES, data),
-                createAttributeColumn("Mental", Attribute.Category.MENTAL, SystemData.MENTAL_ATTRIBUTES, data)
-        );
+        for (AttributeCategoryViewModel catVm : viewModel.getAttributeCategories()) {
+            columns.getChildren().add(new AttributeCategoryView(catVm));
+        }
+        
         section.getChildren().addAll(title, columns);
         return section;
-    }
-
-    private VBox createAttributeColumn(String title, Attribute.Category category, List<Attribute> attrs, CharacterData data) {
-        VBox col = new VBox(10);
-        HBox header = new HBox(10);
-        header.setAlignment(Pos.CENTER_LEFT);
-        Label l = new Label(title);
-        l.getStyleClass().add("subsection-title");
-        
-        ComboBox<AttributePriority> priorityBox = new ComboBox<>();
-        priorityBox.getItems().setAll(AttributePriority.values());
-        priorityBox.valueProperty().bindBidirectional(data.getAttributePriority(category));
-        priorityBox.valueProperty().addListener((obs, oldV, newV) -> Messenger.publish("refresh_all_ui"));
-        priorityBox.visibleProperty().bind(data.modeProperty().isEqualTo(CharacterMode.CREATION));
-        priorityBox.managedProperty().bind(priorityBox.visibleProperty());
-
-        Label priorityLabel = new Label();
-        priorityLabel.textProperty().bind(Bindings.createStringBinding(() -> {
-            AttributePriority p = data.getAttributePriority(category).get();
-            return p == null ? "" : p.name();
-        }, data.getAttributePriority(category)));
-        priorityLabel.visibleProperty().bind(data.modeProperty().isEqualTo(CharacterMode.EXPERIENCED));
-        priorityLabel.managedProperty().bind(priorityLabel.visibleProperty());
-
-        header.getChildren().addAll(l, priorityBox, priorityLabel);
-        col.getChildren().add(header);
-
-        for (Attribute a : attrs) {
-            HBox row = new HBox(10);
-            row.setAlignment(Pos.CENTER_LEFT);
-            Label name = new Label(a.getDisplayName());
-            name.setPrefWidth(80);
-            row.getChildren().addAll(name, new DotSelector(data.getAttribute(a), 1));
-            col.getChildren().add(row);
-        }
-        return col;
     }
 
     private HBox createAbilitiesAndSideStuff(CharacterData data) {
@@ -168,18 +130,19 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         abilGrid.setHgap(20); abilGrid.setVgap(10);
 
         int rowCount = 0, colCount = 0;
-        for (Ability abil : SystemData.ABILITIES) {
+        for (AbilityRowViewModel rowVm : viewModel.getAbilityRows()) {
+            Ability abil = rowVm.getAbility();
             if (abil == Ability.CRAFT || abil == Ability.MARTIAL_ARTS) continue;
-            AbilitySelectionComponent comp = new AbilitySelectionComponent(data, abil, data.getAbility(abil), 
-                data.getCasteAbility(abil), data.getFavoredAbility(abil));
-            comp.setOnNameClick(e -> { if (e.getClickCount() == 2) viewModel.jumpToCharms(abil.getDisplayName()); });
             
-            if (abil == Ability.BRAWL) {
-                comp.getSelector().minDotsProperty().bind(Bindings.createIntegerBinding(() -> {
-                    return (!data.getFavoredAbility(Ability.BRAWL).get() || viewModel.maTotalDotsProperty().get() > 0) ? 0 : 1;
-                }, data.getFavoredAbility(Ability.BRAWL), viewModel.maTotalDotsProperty()));
-            }
-            abilGrid.add(comp, colCount, rowCount++);
+            AbilityRowView rowView = new AbilityRowView(rowVm);
+            rowView.setOnNameClick(e -> { 
+                if (e.getClickCount() == 2) viewModel.jumpToCharms(abil.getDisplayName()); 
+            });
+            
+            // We use the minDotsProperty directly from the ViewModel now
+            rowView.getSelector().minDotsProperty().bind(rowVm.minDotsProperty());
+            
+            abilGrid.add(rowView, colCount, rowCount++);
             if (rowCount >= 13) { rowCount = 0; colCount++; }
         }
         abilitiesSection.getChildren().add(abilGrid);
@@ -194,8 +157,23 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
     private VBox createCraftsSection(CharacterData data) {
         VBox section = new VBox(10);
         craftList = new VBox(8);
-        refreshCraftsContent();
-        viewModel.getCraftRows().addListener((ListChangeListener<? super CraftRowViewModel>) c -> refreshCraftsContent());
+        
+        // Use declarative binding for the craft list
+        Bindings.bindContent(craftList.getChildren(), viewModel.getCraftRows().stream()
+                .map(rvm -> {
+                    CraftRowView view = new CraftRowView(rvm);
+                    // Special min-dot logic for favored crafts
+                    view.getChildren().stream()
+                        .filter(n -> n instanceof DotSelector)
+                        .map(n -> (DotSelector) n)
+                        .findFirst()
+                        .ifPresent(ds -> ds.minDotsProperty().bind(Bindings.createIntegerBinding(() -> {
+                            if (!data.getFavoredAbility(Ability.CRAFT).get()) return 0;
+                            int totalDots = data.getCrafts().stream().mapToInt(CraftAbility::getRating).sum();
+                            return (totalDots - rvm.ratingProperty().get() > 0) ? 0 : 1;
+                        }, data.getFavoredAbility(Ability.CRAFT), rvm.ratingProperty())));
+                    return view;
+                }).collect(Collectors.collectingAndThen(Collectors.toList(), FXCollections::observableArrayList)));
         
         Button addBtn = new Button("+ Add Craft");
         addBtn.setOnAction(e -> data.getCrafts().add(new CraftAbility("", 0)));
@@ -203,54 +181,19 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         return section;
     }
 
-    private void refreshCraftsContent() {
-        if (craftList == null) return;
-        craftList.getChildren().clear();
-        CharacterData data = viewModel.getData();
-        int totalDots = data.getCrafts().stream().mapToInt(CraftAbility::getRating).sum();
-        for (CraftRowViewModel rvm : viewModel.getCraftRows()) {
-            HBox row = new HBox(12);
-            TextField f = new TextField();
-            f.setPromptText("Expertise");
-            f.textProperty().bindBidirectional(rvm.expertiseProperty());
-            DotSelector ds = new DotSelector(rvm.ratingProperty(), 0);
-            ds.minDotsProperty().bind(Bindings.createIntegerBinding(() -> {
-                if (!data.getFavoredAbility(Ability.CRAFT).get()) return 0;
-                return (totalDots - rvm.ratingProperty().get() > 0) ? 0 : 1;
-            }, data.getFavoredAbility(Ability.CRAFT), rvm.ratingProperty()));
-            row.getChildren().addAll(f, ds);
-            craftList.getChildren().add(row);
-        }
-    }
-
     private VBox createSpecialtiesSection(CharacterData data) {
         VBox section = new VBox(10);
         specList = new VBox(8);
-        refreshSpecsContent();
-        viewModel.getSpecialtyRows().addListener((ListChangeListener<? super SpecialtyRowViewModel>) c -> {
-            refreshSpecsContent();
-            Messenger.publish("refresh_all_ui");
-        });
+        
+        // Use declarative binding for the specialties list
+        Bindings.bindContent(specList.getChildren(), viewModel.getSpecialtyRows().stream()
+                .map(SpecialtyRowView::new)
+                .collect(Collectors.collectingAndThen(Collectors.toList(), FXCollections::observableArrayList)));
         
         Button addBtn = new Button("+ Add Specialty");
         addBtn.setOnAction(e -> data.getSpecialties().add(new Specialty("", "")));
         section.getChildren().addAll(new Label("Specialties"), specList, addBtn);
         return section;
-    }
-
-    private void refreshSpecsContent() {
-        if (specList == null) return;
-        specList.getChildren().clear();
-        for (SpecialtyRowViewModel rvm : viewModel.getSpecialtyRows()) {
-            HBox row = new HBox(12);
-            TextField f = new TextField();
-            f.textProperty().bindBidirectional(rvm.nameProperty());
-            ComboBox<String> cb = new ComboBox<>();
-            cb.getItems().addAll(SystemData.ABILITIES.stream().map(Ability::getDisplayName).collect(Collectors.toList()));
-            cb.valueProperty().bindBidirectional(rvm.abilityProperty());
-            row.getChildren().addAll(f, cb);
-            specList.getChildren().add(row);
-        }
     }
 
     private HBox createStatsRow(CharacterData data) {
@@ -352,65 +295,31 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         Label title = new Label("Attack Pools");
         title.getStyleClass().add("subsection-title");
 
-        attackGrid = new GridPane();
-        attackGrid.setHgap(20); attackGrid.setVgap(8);
-        attackGrid.getStyleClass().add("merit-row-container");
-        attackGrid.setPadding(new Insets(10));
-
-        refreshAttackPools();
-        viewModel.getAttackPoolRows().addListener((javafx.collections.ListChangeListener<? super AttackPoolRowViewModel>) c -> refreshAttackPools());
-
-        section.getChildren().addAll(title, attackGrid);
-        return section;
-    }
-
-    private void refreshAttackPools() {
-        if (attackGrid == null) return;
-        attackGrid.getChildren().clear();
-
+        attackList = new VBox(8);
+        attackList.getStyleClass().add("merit-row-container");
+        attackList.setPadding(new Insets(10));
+        
+        // Headers row
+        HBox headerRow = new HBox(15);
+        headerRow.setAlignment(Pos.CENTER_LEFT);
         String[] headers = { "St", "Weapon", "Withering", "Decisive", "Damage", "Parry" };
+        int[] widths = { 20, 120, 100, 60, 60, 50 };
         for (int i = 0; i < headers.length; i++) {
             Label hl = new Label(headers[i]);
             hl.getStyleClass().add("sidebar-stat-header");
-            attackGrid.add(hl, i, 0);
-        }
-
-        int rowCount = 1;
-        for (AttackPoolRowViewModel rvm : viewModel.getAttackPoolRows()) {
-            Label stLabel = new Label();
-            stLabel.textProperty().bind(rvm.statusProperty());
-            stLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #e67e22;");
-            
-            Label nameLabel = new Label();
-            nameLabel.textProperty().bind(rvm.nameProperty());
-            
-            Label witheringLabel = new Label();
-            witheringLabel.textProperty().bind(rvm.witheringProperty());
-            
-            Label decisiveLabel = new Label();
-            decisiveLabel.textProperty().bind(rvm.decisiveProperty());
-            
-            Label damageLabel = new Label();
-            damageLabel.textProperty().bind(rvm.damageProperty());
-            
-            Label parryLabel = new Label();
-            parryLabel.textProperty().bind(rvm.parryProperty());
-
-            attackGrid.add(stLabel, 0, rowCount);
-            attackGrid.add(nameLabel, 1, rowCount);
-            attackGrid.add(witheringLabel, 2, rowCount);
-            attackGrid.add(decisiveLabel, 3, rowCount);
-            attackGrid.add(damageLabel, 4, rowCount);
-            attackGrid.add(parryLabel, 5, rowCount);
-            
-            rowCount++;
+            hl.setPrefWidth(widths[i]);
+            headerRow.getChildren().add(hl);
         }
         
-        if (rowCount == 1) {
-            Label placeholder = new Label("Add weapons in the Equipment tab to see attack pools.");
-            placeholder.setStyle("-fx-font-style: italic; -fx-text-fill: #888;");
-            attackGrid.add(placeholder, 0, 1, 6, 1);
-        }
+        VBox listContainer = new VBox(8);
+        Bindings.bindContent(listContainer.getChildren(), viewModel.getAttackPoolRows().stream()
+                .map(AttackPoolRowView::new)
+                .collect(Collectors.collectingAndThen(Collectors.toList(), FXCollections::observableArrayList)));
+        
+        attackList.getChildren().addAll(headerRow, listContainer);
+
+        section.getChildren().addAll(title, attackList);
+        return section;
     }
 
     private VBox createGreatCurseSection(CharacterData data) {

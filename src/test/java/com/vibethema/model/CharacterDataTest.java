@@ -224,4 +224,40 @@ public class CharacterDataTest {
         assertEquals(3, data.healthLevelsProperty().stream().filter(l -> l.equals("-1")).count());
         assertEquals(4, data.healthLevelsProperty().stream().filter(l -> l.equals("-2")).count());
     }
+
+    @Test
+    void testCasteFavoredMutualExclusivity() {
+        data.getFavoredAbility(Ability.ARCHERY).set(true);
+        assertTrue(data.getFavoredAbility(Ability.ARCHERY).get());
+        assertFalse(data.getCasteAbility(Ability.ARCHERY).get());
+
+        // Setting caste should untoggle favored
+        data.getCasteAbility(Ability.ARCHERY).set(true);
+        assertTrue(data.getCasteAbility(Ability.ARCHERY).get());
+        assertFalse(data.getFavoredAbility(Ability.ARCHERY).get());
+
+        // Setting favored should untoggle caste
+        data.getFavoredAbility(Ability.ARCHERY).set(true);
+        assertTrue(data.getFavoredAbility(Ability.ARCHERY).get());
+        assertFalse(data.getCasteAbility(Ability.ARCHERY).get());
+    }
+
+    @Test
+    void testReactiveExcellencyProperty() {
+        // Initially no excellency
+        assertFalse(data.excellencyProperty(Ability.ARCHERY).get());
+
+        // Favored + Dot > 0 should grant excellency
+        data.getFavoredAbility(Ability.ARCHERY).set(true);
+        data.getAbility(Ability.ARCHERY).set(1);
+        assertTrue(data.excellencyProperty(Ability.ARCHERY).get());
+
+        // Setting back to 0 dots should remove it
+        data.getAbility(Ability.ARCHERY).set(0);
+        assertFalse(data.excellencyProperty(Ability.ARCHERY).get());
+
+        // Adding a charm should also grant it
+        data.getUnlockedCharms().add(new PurchasedCharm("1", "Any Charm", Ability.ARCHERY.getDisplayName()));
+        assertTrue(data.excellencyProperty(Ability.ARCHERY).get());
+    }
 }

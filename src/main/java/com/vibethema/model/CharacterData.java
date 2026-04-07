@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -127,12 +129,18 @@ public class CharacterData {
             abilities.get(ability).addListener((obs, oldV, newV) -> markDirty());
             casteAbilities.put(ability, new SimpleBooleanProperty(false));
             casteAbilities.get(ability).addListener((obs, oldV, newV) -> {
+                if (newV && !isImporting) {
+                    favoredAbilities.get(ability).set(false);
+                }
                 updateCasteFavoredCounts();
                 updateValidSupernalAbilities();
                 markDirty();
             });
             favoredAbilities.put(ability, new SimpleBooleanProperty(false));
             favoredAbilities.get(ability).addListener((obs, oldV, newV) -> {
+                if (newV && !isImporting) {
+                    casteAbilities.get(ability).set(false);
+                }
                 updateCasteFavoredCounts();
                 markDirty();
             });
@@ -904,6 +912,7 @@ public class CharacterData {
     }
 
     public boolean hasExcellency(Ability ability) {
+        if (ability == null) return false;
         if (casteAbilities.containsKey(ability)) {
             boolean isFavored = casteAbilities.get(ability).get() || favoredAbilities.get(ability).get();
             if (isFavored && abilities.get(ability).get() > 0)
@@ -911,6 +920,15 @@ public class CharacterData {
         }
         return unlockedCharms.stream()
                 .anyMatch(c -> c.ability() != null && c.ability().equals(ability.getDisplayName()));
+    }
+
+    public BooleanBinding excellencyProperty(Ability ability) {
+        return Bindings.createBooleanBinding(() -> hasExcellency(ability),
+                unlockedCharms,
+                essence,
+                casteAbilities.get(ability),
+                favoredAbilities.get(ability),
+                abilities.get(ability));
     }
 
 

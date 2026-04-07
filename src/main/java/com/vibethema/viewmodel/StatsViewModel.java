@@ -9,6 +9,8 @@ import com.vibethema.viewmodel.equipment.AttackPoolRowViewModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import com.vibethema.viewmodel.stats.AttributeCategoryViewModel;
+import com.vibethema.viewmodel.stats.AbilityRowViewModel;
 import com.vibethema.viewmodel.stats.CraftRowViewModel;
 import com.vibethema.viewmodel.stats.SpecialtyRowViewModel;
 import java.util.stream.Collectors;
@@ -16,6 +18,8 @@ import java.util.stream.Collectors;
 public class StatsViewModel implements ViewModel {
     private final CharacterData data;
     private final IntegerProperty maTotalDots = new SimpleIntegerProperty(0);
+    private final ObservableList<AttributeCategoryViewModel> attributeCategories = FXCollections.observableArrayList();
+    private final ObservableList<AbilityRowViewModel> abilityRows = FXCollections.observableArrayList();
     private final ObservableList<AttackPoolRowViewModel> attackPoolRows = FXCollections.observableArrayList();
     private final ObservableList<CraftRowViewModel> craftRows = FXCollections.observableArrayList();
     private final ObservableList<SpecialtyRowViewModel> specialtyRows = FXCollections.observableArrayList();
@@ -23,6 +27,17 @@ public class StatsViewModel implements ViewModel {
     public StatsViewModel(CharacterData data) {
         this.data = data;
         
+        // Initialize Row ViewModels
+        attributeCategories.addAll(
+            new AttributeCategoryViewModel(data, Attribute.Category.PHYSICAL, SystemData.PHYSICAL_ATTRIBUTES),
+            new AttributeCategoryViewModel(data, Attribute.Category.SOCIAL, SystemData.SOCIAL_ATTRIBUTES),
+            new AttributeCategoryViewModel(data, Attribute.Category.MENTAL, SystemData.MENTAL_ATTRIBUTES)
+        );
+
+        for (Ability ability : SystemData.ABILITIES) {
+            abilityRows.add(new AbilityRowViewModel(data, ability));
+        }
+
         // MA total dots for Brawl min-dot logic
         updateMaTotal();
         data.getMartialArtsStyles().addListener((ListChangeListener<? super MartialArtsStyle>) c -> {
@@ -77,6 +92,14 @@ public class StatsViewModel implements ViewModel {
 
     public CharacterData getData() {
         return data;
+    }
+
+    public ObservableList<AttributeCategoryViewModel> getAttributeCategories() {
+        return attributeCategories;
+    }
+
+    public ObservableList<AbilityRowViewModel> getAbilityRows() {
+        return abilityRows;
     }
 
     public IntegerProperty maTotalDotsProperty() {
