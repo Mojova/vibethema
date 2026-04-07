@@ -27,7 +27,8 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
 
     private ScrollPane charmScroll;
     private Pane charmCanvas = new Pane();
-    private final Map<String, VBox> charmNodeMap = new HashMap<>();
+    private final Map<String, Pane> charmNodeMap = new HashMap<>();
+    private final Map<String, Label> charmCheckMap = new HashMap<>();
 
     private final Label titleLabel = new Label();
     private final Label detailTitle = new Label();
@@ -96,7 +97,7 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
     }
 
     private void scrollToNode(String charmId) {
-        VBox node = charmNodeMap.get(charmId);
+        Pane node = charmNodeMap.get(charmId);
         if (node == null) return;
 
         // Find the ScrollPane
@@ -328,25 +329,24 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
                 double x = startX + i * (boxWidth + gapX);
                 charmXPositions.put(c.getId(), x + boxWidth / 2.0);
 
-                VBox box = createNodeBox(c, boxWidth, boxHeight);
+                Pane box = createNodeBox(c, boxWidth, boxHeight);
                 box.setLayoutX(x); box.setLayoutY(y);
                 box.setOnMouseClicked(e -> {
                     viewModel.selectedCharmProperty().set(c);
                     if (e.getClickCount() == 2) Platform.runLater(purchaseBtn::fire);
                 });
 
-                charmNodeMap.put(c.getId(), box);
                 charmCanvas.getChildren().add(box);
             }
         }
 
         // Draw Lines
         for (Charm c : viewModel.getCurrentCharms()) {
-            VBox target = charmNodeMap.get(c.getId());
+            Pane target = charmNodeMap.get(c.getId());
             if (target == null || c.getPrerequisiteGroups() == null) continue;
             for (Charm.PrerequisiteGroup group : c.getPrerequisiteGroups()) {
                 for (String reqId : group.getCharmIds()) {
-                    VBox source = charmNodeMap.get(reqId);
+                    Pane source = charmNodeMap.get(reqId);
                     if (source != null) {
                         double startX = source.getLayoutX() + boxWidth / 2;
                         double startY = source.getLayoutY() + boxHeight;
@@ -371,11 +371,15 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
         updateWebNodeStyles();
     }
 
-    private VBox createNodeBox(Charm c, double w, double h) {
-        VBox box = new VBox(5);
-        box.setAlignment(Pos.CENTER);
-        box.setPrefSize(w, h);
-        box.getStyleClass().add("charm-node");
+    private Pane createNodeBox(Charm c, double w, double h) {
+        // We use a StackPane as the outer container to allow overlaying the checkmark icon
+        StackPane root = new StackPane();
+        root.setPrefSize(w, h);
+        root.getStyleClass().add("charm-node");
+
+        VBox content = new VBox(5);
+        content.setAlignment(Pos.CENTER);
+        content.setPrefSize(w, h);
 
         Label name = new Label((c.isPotentiallyProblematicImport() ? "⚠️ " : "") + c.getName());
         name.getStyleClass().add("charm-node-title");
@@ -385,37 +389,65 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
             "Ess " + c.getMinEssence() : c.getAbility() + " " + c.getMinAbility() + ", Ess " + c.getMinEssence());
         reqs.getStyleClass().add("charm-node-reqs");
 
-        box.getChildren().addAll(name, reqs);
+        content.getChildren().addAll(name, reqs);
+        
+        // Add Checkmark Label
+        Label checkLabel = new Label("✓");
+        checkLabel.getStyleClass().add("charm-node-check");
+        checkLabel.setVisible(false);
+        StackPane.setAlignment(checkLabel, Pos.TOP_RIGHT);
+        StackPane.setMargin(checkLabel, new Insets(5));
+        
+        root.getChildren().addAll(content, checkLabel);
+        
         if (c.isPotentiallyProblematicImport()) {
             Tooltip tt = new Tooltip("Warning: This charm may have incomplete data due to a problematic PDF import.");
             tt.setWrapText(true); tt.setMaxWidth(250);
-            Tooltip.install(box, tt);
+            Tooltip.install(root, tt);
         }
-        return box;
+
+        charmNodeMap.put(c.getId(), root);
+        charmCheckMap.put(c.getId(), checkLabel);
+
+        return root;
     }
 
     private void updateWebNodeStyles() {
         Charm selected = viewModel.selectedCharmProperty().get();
         for (Charm c : viewModel.getCurrentCharms()) {
-            VBox box = charmNodeMap.get(c.getId());
-            if (box == null) continue;
-            box.getStyleClass().removeAll("charm-node-unselected", "charm-node-selected", "charm-node-ineligible");
+            Pane container = charmNodeMap.get(c.getId());
+            if (container == null) continue;
+            
+            container.getStyleClass().removeAll("charm-node-unselected", "charm-node-selected", "charm-node-ineligible", "charm-node-bought", "charm-node-eligible");
             
             boolean isSelected = selected != null && selected.getId().equals(c.getId());
             boolean hasCharm = viewModel.getData().hasCharm(c.getId());
+            boolean eligible = c.isEligible(viewModel.getData());
             
-            if (isSelected || hasCharm) {
-                box.getStyleClass().add("charm-node-selected");
-            } else if (c.isEligible(viewModel.getData())) {
-                box.getStyleClass().add("charm-node-unselected");
-            } else {
-                box.getStyleClass().add("charm-node-ineligible");
+            if (isSelected) {
+                container.getStyleClass().add("charm-node-selected");
+            }
+            
+            if (hasCharm) {
+                container.getStyleClass().add("charm-node-bought");
+            }
+            
+            if (!eligible && !hasCharm) {
+                container.getStyleClass().add("charm-node-ineligible");
+            } else if (!hasCharm) {
+                container.getStyleClass().add("charm-node-eligible");
+            }
+
+            // Update Checkmark visibility
+            Label check = charmCheckMap.get(c.getId());
+            if (check != null) {
+                check.setVisible(hasCharm);
             }
 
             if (c.isCustom()) {
-                if (!box.getStyleClass().contains("charm-node-custom")) box.getStyleClass().add("charm-node-custom");
+                if (!container.getStyleClass().contains("charm-node-custom")) container.getStyleClass().add("charm-node-custom");
             } else {
-                box.getStyleClass().remove("charm-node-custom");
+                container.getStyleClass().remove("charm-node-custom");
             }
         }
     }
@@ -446,7 +478,7 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
     }
 
     public void selectCharm(String charmId) {
-        VBox node = charmNodeMap.get(charmId);
+        Pane node = charmNodeMap.get(charmId);
         if (node != null) {
             Platform.runLater(() -> {
                 if (!charmScroll.isFocused()) charmScroll.requestFocus();
