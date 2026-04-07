@@ -125,13 +125,21 @@ public class CharmTreeViewModel implements ViewModel {
         // so listeners (render()) have access to the new layout data.
         internalCalculateLayout(loaded != null ? loaded : new ArrayList<>());
         
+        // Preserve selection by ID
+        String currentSelectedId = selectedCharm.get() != null ? selectedCharm.get().getId() : null;
+        
         currentCharms.setAll(loaded != null ? loaded : new ArrayList<>());
         
-        // Reset sidebar if current selection is gone
-        if (selectedCharm.get() != null && !currentCharms.contains(selectedCharm.get())) {
-            selectedCharm.set(null);
-        } else if (selectedCharm.get() != null) {
-            updateSidebar(selectedCharm.get());
+        // Restore selection from the new list if possible
+        if (currentSelectedId != null) {
+            Charm newInstance = currentCharms.stream()
+                .filter(c -> c.getId().equals(currentSelectedId))
+                .findFirst()
+                .orElse(null);
+            selectedCharm.set(newInstance);
+            if (newInstance != null) {
+                updateSidebar(newInstance);
+            }
         }
     }
 

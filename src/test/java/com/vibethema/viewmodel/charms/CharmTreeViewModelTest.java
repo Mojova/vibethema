@@ -142,6 +142,33 @@ public class CharmTreeViewModelTest {
         assertEquals(a1, viewModel.selectedCharmProperty().get());
     }
 
+    @Test
+    void testSelectionPreservedOnRefresh() {
+        // Arrange
+        String charmId = "TEST_ID";
+        Charm c1 = createCharm(charmId, "Test Charm");
+        when(dataService.loadCharmsForAbility("Archery")).thenReturn(new ArrayList<>(Arrays.asList(c1)));
+        
+        viewModel.initialize("Ability", "Archery", "Archery", null, null);
+        viewModel.selectedCharmProperty().set(c1);
+        assertEquals(c1, viewModel.selectedCharmProperty().get());
+
+        // Create a different instance with the same ID (simulating a reload)
+        Charm c1Prime = createCharm(charmId, "Test Charm");
+        assertNotSame(c1, c1Prime, "Should be different instances for this test");
+        assertEquals(c1, c1Prime, "Should be equal by ID");
+        
+        when(dataService.loadCharmsForAbility("Archery")).thenReturn(new ArrayList<>(Arrays.asList(c1Prime)));
+
+        // Act
+        viewModel.refresh();
+
+        // Assert
+        assertNotNull(viewModel.selectedCharmProperty().get(), "Selection should not be lost");
+        assertEquals(c1Prime, viewModel.selectedCharmProperty().get(), "Selection should update to the new instance");
+        assertSame(c1Prime, viewModel.selectedCharmProperty().get(), "Selection should be the exact new instance from the reloaded list");
+    }
+
     private Charm createCharm(String id, String name, String... prereqIds) {
         SolarCharm c = new SolarCharm();
         c.setId(id);

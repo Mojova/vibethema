@@ -156,4 +156,17 @@ public abstract class Charm {
     public abstract int getMinAbility();
 
     public abstract void setMinAbility(int minAbility);
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Charm charm = (Charm) o;
+        return java.util.Objects.equals(id, charm.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(id);
+    }
 }
