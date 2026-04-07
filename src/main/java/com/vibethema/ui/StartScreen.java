@@ -10,6 +10,7 @@ import de.saxsys.mvvmfx.ViewTuple;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -26,9 +27,9 @@ public class StartScreen extends StackPane implements JavaView<StartScreenViewMo
     @InjectViewModel
     private StartScreenViewModel viewModel;
 
-    private final Button newBtn = new Button("Create New Character");
-    private final Button loadBtn = new Button("Load Existing Character");
-    private final Button importBtn = new Button("Import Core PDF");
+    private final Button newBtn = new Button("_Create New Character");
+    private final Button loadBtn = new Button("_Load Existing Character");
+    private final Button importBtn = new Button("_Import Core PDF");
     private final Label statusLabel = new Label();
 
     public StartScreen() {
@@ -59,6 +60,18 @@ public class StartScreen extends StackPane implements JavaView<StartScreenViewMo
 
         importBtn.getStyleClass().add("start-button-secondary");
         importBtn.setPrefWidth(280);
+
+        // Accessibility settings
+        newBtn.setMnemonicParsing(true);
+        newBtn.setTooltip(new Tooltip("Start a new character creation process"));
+        newBtn.setAccessibleHelp("Disabled until Core Rulebook data is imported");
+
+        loadBtn.setMnemonicParsing(true);
+        loadBtn.setTooltip(new Tooltip("Open an existing .vbtm character save file"));
+        loadBtn.setAccessibleHelp("Disabled until Core Rulebook data is imported");
+
+        importBtn.setMnemonicParsing(true);
+        importBtn.setTooltip(new Tooltip("Parse the official Core Rulebook PDF to populate character data"));
 
         statusLabel.getStyleClass().add("problematic-warning"); // Reuse existing warning style
         statusLabel.setWrapText(true);
@@ -114,6 +127,15 @@ public class StartScreen extends StackPane implements JavaView<StartScreenViewMo
             PdfImportHelper.importCorePdf(getScene().getWindow(), () -> {
                 Platform.runLater(() -> viewModel.refreshStatus());
             });
+        });
+
+        // Focus management: focus the most relevant action
+        Platform.runLater(() -> {
+            if (viewModel.coreDataImportedProperty().get()) {
+                newBtn.requestFocus();
+            } else {
+                importBtn.requestFocus();
+            }
         });
     }
 }
