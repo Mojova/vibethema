@@ -11,6 +11,7 @@ import com.vibethema.model.traits.*;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Pos;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Circle;
 
@@ -54,6 +55,22 @@ public class DotSelector extends HBox {
             dots[i] = dot;
             getChildren().add(dot);
         }
+
+        // Keyboard navigation
+        setOnKeyPressed(
+                e -> {
+                    if (e.getCode() == KeyCode.RIGHT || e.getCode() == KeyCode.UP) {
+                        if (valueProperty.get() < maxDots) {
+                            valueProperty.set(valueProperty.get() + 1);
+                        }
+                        e.consume();
+                    } else if (e.getCode() == KeyCode.LEFT || e.getCode() == KeyCode.DOWN) {
+                        if (valueProperty.get() > minDotsProperty.get()) {
+                            valueProperty.set(valueProperty.get() - 1);
+                        }
+                        e.consume();
+                    }
+                });
 
         valueProperty.addListener((obs, oldVal, newVal) -> updateDots());
         minDotsProperty.addListener(
