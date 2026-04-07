@@ -1,5 +1,15 @@
 package com.vibethema.service;
 
+import com.vibethema.model.*;
+import com.vibethema.model.traits.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.combat.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.logic.*;
+
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.pdfbox.Loader;
@@ -88,7 +98,7 @@ public class PdfExtractor {
 
     private void saveDefaultUnarmedWeapon(Path outputBasePath) throws IOException {
         Map<String, Object> unarmed = new LinkedHashMap<>();
-        unarmed.put("id", com.vibethema.model.Weapon.UNARMED_ID);
+        unarmed.put("id", com.vibethema.model.equipment.Weapon.UNARMED_ID);
         unarmed.put("name", "Unarmed");
         unarmed.put("range", "CLOSE");
         unarmed.put("type", "MORTAL");
@@ -107,7 +117,7 @@ public class PdfExtractor {
         }
         
         if (!Files.exists(outDir)) Files.createDirectories(outDir);
-        Path filePath = outDir.resolve(com.vibethema.model.Weapon.UNARMED_ID + ".json");
+        Path filePath = outDir.resolve(com.vibethema.model.equipment.Weapon.UNARMED_ID + ".json");
         try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
             gson.toJson(unarmed, writer);
         }

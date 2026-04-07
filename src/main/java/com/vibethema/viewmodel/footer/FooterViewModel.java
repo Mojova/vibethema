@@ -1,11 +1,15 @@
 package com.vibethema.viewmodel.footer;
 
-import com.vibethema.model.CharacterData;
-import com.vibethema.model.CharacterMode;
-import com.vibethema.model.logic.CreationRuleEngine;
-import com.vibethema.model.logic.CreationRuleEngine.CreationStatus;
-import com.vibethema.model.logic.ExperienceRuleEngine;
-import com.vibethema.model.logic.ExperienceRuleEngine.ExperienceStatus;
+import com.vibethema.model.*;
+import com.vibethema.model.traits.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.combat.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.logic.*;
+
+
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -86,7 +90,7 @@ public class FooterViewModel implements ViewModel {
     }
 
     private void updateCreationStatus() {
-        CreationStatus status = CreationRuleEngine.calculateStatus(data);
+        CreationRuleEngine.CreationStatus status = CreationRuleEngine.calculateStatus(data);
         bpSpentText.set("BP Spent: " + status.bonusPointsSpent + "/15");
         bpStyle.set(status.overBonusPoints ? "-fx-text-fill: red; -fx-font-weight: bold;" : "-fx-text-fill: white;");
         casteText.set("Caste: " + data.casteAbilityCountProperty().get() + "/5");
@@ -105,7 +109,7 @@ public class FooterViewModel implements ViewModel {
     }
 
     private void updateExperiencedStatus() {
-        ExperienceStatus status = ExperienceRuleEngine.calculateStatus(data, data.getCreationSnapshot());
+        ExperienceRuleEngine.ExperienceStatus status = ExperienceRuleEngine.calculateStatus(data, data.getCreationSnapshot());
         regularXpText.set("Regular XP: " + status.regularXpSpent + "/" + status.totalRegularXpAwarded);
         regularXpStyle.set(status.getRegularXpRemaining() < 0 ? "-fx-text-fill: red; -fx-font-weight: bold;" : "-fx-text-fill: white;");
         solarXpText.set("Solar XP: " + status.solarXpSpent + "/" + status.totalSolarXpAwarded);

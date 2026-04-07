@@ -1,5 +1,15 @@
 package com.vibethema.ui.equipment;
 
+import com.vibethema.model.*;
+import com.vibethema.model.traits.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.combat.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.logic.*;
+
+
 import com.vibethema.ui.util.UIUtils;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
@@ -16,11 +26,6 @@ import com.vibethema.viewmodel.equipment.WeaponRowViewModel;
 import com.vibethema.viewmodel.equipment.ArmorRowViewModel;
 import com.vibethema.viewmodel.equipment.HearthstoneRowViewModel;
 import com.vibethema.viewmodel.equipment.OtherEquipmentRowViewModel;
-import com.vibethema.model.Weapon;
-import com.vibethema.model.Armor;
-import com.vibethema.model.Hearthstone;
-import com.vibethema.model.OtherEquipment;
-import com.vibethema.model.Specialty;
 import com.vibethema.viewmodel.util.Messenger;
 import java.util.Optional;
 

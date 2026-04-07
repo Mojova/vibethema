@@ -1,7 +1,15 @@
 package com.vibethema.viewmodel.charms;
 
-import com.vibethema.model.Charm;
-import com.vibethema.model.SolarCharm;
+import com.vibethema.model.*;
+import com.vibethema.model.traits.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.combat.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.logic.*;
+
+
 import com.vibethema.service.CharmDataService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,8 +42,8 @@ class EditCharmViewModelTest {
         when(dataService.loadCharmsForAbility("Archery")).thenReturn(Arrays.asList(charm, p1, p2));
         when(dataService.getAvailableMartialArtsStyles()).thenReturn(Collections.emptyList());
         
-        com.vibethema.model.Keyword k1 = new com.vibethema.model.Keyword(); k1.setName("Mute");
-        com.vibethema.model.Keyword k2 = new com.vibethema.model.Keyword(); k2.setName("Stackable");
+        com.vibethema.model.mystic.Keyword k1 = new com.vibethema.model.mystic.Keyword(); k1.setName("Mute");
+        com.vibethema.model.mystic.Keyword k2 = new com.vibethema.model.mystic.Keyword(); k2.setName("Stackable");
         when(dataService.loadKeywords()).thenReturn(Arrays.asList(k1, k2));
 
         viewModel = new EditCharmViewModel(charm, dataService, "test-context", "solar", null);

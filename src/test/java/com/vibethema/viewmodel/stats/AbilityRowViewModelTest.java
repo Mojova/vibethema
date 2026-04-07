@@ -1,8 +1,15 @@
 package com.vibethema.viewmodel.stats;
 
-import com.vibethema.model.Ability;
-import com.vibethema.model.Caste;
-import com.vibethema.model.CharacterData;
+import com.vibethema.model.*;
+import com.vibethema.model.traits.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.combat.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.logic.*;
+
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

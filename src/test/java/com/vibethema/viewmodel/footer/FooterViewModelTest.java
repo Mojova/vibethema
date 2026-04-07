@@ -1,7 +1,15 @@
 package com.vibethema.viewmodel.footer;
 
-import com.vibethema.model.Ability;
-import com.vibethema.model.CharacterData;
+import com.vibethema.model.*;
+import com.vibethema.model.traits.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.combat.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.logic.*;
+
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,7 +48,7 @@ public class FooterViewModelTest {
         data.essenceProperty().set(3);
         // Essence 3: Personal 19 (Check CreationRuleEngine logic)
         // Actually, the Footer might not show motes directly, let's check one it DOES show.
-        data.getAttribute(com.vibethema.model.Attribute.STRENGTH).set(4);
+        data.getAttribute(com.vibethema.model.traits.Attribute.STRENGTH).set(4);
         assertTrue(viewModel.attrTextProperty().get().contains("3/"));
     }
 }

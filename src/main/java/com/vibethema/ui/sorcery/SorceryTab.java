@@ -1,8 +1,15 @@
 package com.vibethema.ui.sorcery;
 
-import com.vibethema.model.Spell;
-import com.vibethema.model.ShapingRitual;
-import com.vibethema.model.SystemData;
+import com.vibethema.model.*;
+import com.vibethema.model.traits.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.combat.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.logic.*;
+
+
 import com.vibethema.ui.util.UIUtils;
 import com.vibethema.viewmodel.SorceryViewModel;
 import de.saxsys.mvvmfx.InjectViewModel;

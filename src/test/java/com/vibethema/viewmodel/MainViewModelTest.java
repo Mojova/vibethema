@@ -1,6 +1,15 @@
 package com.vibethema.viewmodel;
 
-import com.vibethema.model.CharacterData;
+import com.vibethema.model.*;
+import com.vibethema.model.traits.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.combat.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.logic.*;
+
+
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
 import com.vibethema.service.SystemDataService;
@@ -52,7 +61,7 @@ public class MainViewModelTest {
         Map<String, List<EquipmentDataService.Tag>> mockTags = new HashMap<>();
         mockTags.put("weapon", List.of(new EquipmentDataService.Tag("Lethal", "Causes lethal damage")));
         
-        com.vibethema.model.Keyword mockKeyword = new com.vibethema.model.Keyword();
+        com.vibethema.model.mystic.Keyword mockKeyword = new com.vibethema.model.mystic.Keyword();
         mockKeyword.setName("Aggravated");
         mockKeyword.setDescription("Causes aggravated damage");
         

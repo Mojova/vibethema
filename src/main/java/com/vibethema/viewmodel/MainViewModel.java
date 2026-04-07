@@ -1,6 +1,15 @@
 package com.vibethema.viewmodel;
 
 import com.vibethema.model.*;
+import com.vibethema.model.traits.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.combat.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.logic.*;
+
+
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
 import com.vibethema.service.SystemDataService;
@@ -100,8 +109,8 @@ public class MainViewModel implements ViewModel {
     }
 
     private void loadKeywords() {
-        List<com.vibethema.model.Keyword> keywords = charmDataService.loadKeywords();
-        for (com.vibethema.model.Keyword kw : keywords) {
+        List<com.vibethema.model.mystic.Keyword> keywords = charmDataService.loadKeywords();
+        for (com.vibethema.model.mystic.Keyword kw : keywords) {
             keywordDefs.put(kw.getName(), kw.getDescription());
         }
     }

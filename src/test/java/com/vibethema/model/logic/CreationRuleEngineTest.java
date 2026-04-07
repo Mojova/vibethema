@@ -1,7 +1,15 @@
 package com.vibethema.model.logic;
 
 import com.vibethema.model.*;
-import com.vibethema.model.logic.CreationRuleEngine.CreationStatus;
+import com.vibethema.model.traits.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.combat.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.logic.*;
+
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +34,7 @@ public class CreationRuleEngineTest {
     @Test
     void testInitialMotePools() {
         data.essenceProperty().set(1);
-        CreationStatus status = CreationRuleEngine.calculateStatus(data);
+        CreationRuleEngine.CreationStatus status = CreationRuleEngine.calculateStatus(data);
         assertEquals(13, status.personalMotes);
         assertEquals(33, status.peripheralMotes);
     }
@@ -51,7 +59,7 @@ public class CreationRuleEngineTest {
         data.getAttribute(Attribute.INTELLIGENCE).set(2);
         data.getAttribute(Attribute.WITS).set(2);
 
-        CreationStatus status = CreationRuleEngine.calculateStatus(data);
+        CreationRuleEngine.CreationStatus status = CreationRuleEngine.calculateStatus(data);
         assertEquals(0, status.bonusPointsSpent, "Standard 8/6/4 distribution should cost 0 BP");
     }
 
@@ -66,7 +74,7 @@ public class CreationRuleEngineTest {
         data.getAbility(SystemData.ABILITIES.get(8)).set(3); // 27 dots
         data.getAbility(SystemData.ABILITIES.get(9)).set(1); // 28 dots total
 
-        CreationStatus status = CreationRuleEngine.calculateStatus(data);
+        CreationRuleEngine.CreationStatus status = CreationRuleEngine.calculateStatus(data);
         assertEquals(0, status.bonusPointsSpent, "28 dots at 3 or less should be 0 BP");
     }
 
@@ -88,7 +96,7 @@ public class CreationRuleEngineTest {
         // So 1 dot (the 4th) costs 1 BP immediately.
         // Plus 31 dots total - 28 free = 3 extra dots.
         
-        CreationStatus status = CreationRuleEngine.calculateStatus(data);
+        CreationRuleEngine.CreationStatus status = CreationRuleEngine.calculateStatus(data);
         assertTrue(status.bonusPointsSpent > 0);
     }
 
@@ -96,7 +104,7 @@ public class CreationRuleEngineTest {
     void testOxBodyHealthLevels() {
         // Default health: -0, -1, -1, -2, -2, -4, Incap (7 levels)
         data.getAttribute(Attribute.STAMINA).set(3);
-        CreationStatus status = CreationRuleEngine.calculateStatus(data);
+        CreationRuleEngine.CreationStatus status = CreationRuleEngine.calculateStatus(data);
         assertEquals(7, status.healthLevels.size());
 
         // Add 1 Ox-Body
@@ -113,7 +121,7 @@ public class CreationRuleEngineTest {
     @Test
     void testWillpowerBP() {
         data.willpowerProperty().set(5);
-        CreationStatus status = CreationRuleEngine.calculateStatus(data);
+        CreationRuleEngine.CreationStatus status = CreationRuleEngine.calculateStatus(data);
         assertEquals(0, status.bonusPointsSpent);
 
         data.willpowerProperty().set(7); // +2 willpower costs 4 BP
@@ -140,7 +148,7 @@ public class CreationRuleEngineTest {
         data.getAttribute(Attribute.WITS).set(3);
 
         // 1. No priority set -> BP should be 0 (auto-fit fallback)
-        CreationStatus status = CreationRuleEngine.calculateStatus(data);
+        CreationRuleEngine.CreationStatus status = CreationRuleEngine.calculateStatus(data);
         assertEquals(0, status.bonusPointsSpent);
         assertFalse(status.allAttributePrioritiesSet);
         assertFalse(status.isReadyToFinalize);
@@ -191,5 +199,3 @@ public class CreationRuleEngineTest {
         assertFalse(data.getFavoredAbility(Ability.MARTIAL_ARTS).get(), "Martial Arts should be tied to Brawl");
     }
 }
-
-

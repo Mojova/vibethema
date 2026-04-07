@@ -1,8 +1,15 @@
 package com.vibethema.viewmodel.charms;
 
-import com.vibethema.model.Ability;
-import com.vibethema.model.Charm;
-import com.vibethema.model.SystemData;
+import com.vibethema.model.*;
+import com.vibethema.model.traits.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.combat.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.logic.*;
+
+
 import com.vibethema.service.CharmDataService;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.*;
@@ -64,7 +71,7 @@ public class EditCharmViewModel implements ViewModel {
 
         // Load available keywords and initialize selections
         availableKeywords.addAll(dataService.loadKeywords().stream()
-                .map(com.vibethema.model.Keyword::getName)
+                .map(com.vibethema.model.mystic.Keyword::getName)
                 .sorted(String.CASE_INSENSITIVE_ORDER)
                 .collect(Collectors.toList()));
 

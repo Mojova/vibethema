@@ -1,16 +1,15 @@
 package com.vibethema.service;
 
-import com.vibethema.model.Ability;
-import com.vibethema.model.Armor;
-import com.vibethema.model.AttackPoolData;
-import com.vibethema.model.Attribute;
-import com.vibethema.model.CharacterData;
-import com.vibethema.model.CraftAbility;
-import com.vibethema.model.MartialArtsStyle;
-import com.vibethema.model.Merit;
-import com.vibethema.model.Specialty;
-import com.vibethema.model.SystemData;
-import com.vibethema.model.Weapon;
+import com.vibethema.model.*;
+import com.vibethema.model.traits.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.combat.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.logic.*;
+
+
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;

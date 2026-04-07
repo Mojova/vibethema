@@ -1,6 +1,15 @@
 package com.vibethema.viewmodel;
 
-import com.vibethema.model.CharacterData;
+import com.vibethema.model.*;
+import com.vibethema.model.traits.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.combat.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.logic.*;
+
+
 import de.saxsys.mvvmfx.utils.notifications.NotificationObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,7 +64,7 @@ public class StatsViewModelTest {
     void testHealthLevelsPropertyDelegatesToModel() {
         assertEquals(data.healthLevelsProperty().size(), viewModel.healthLevelsProperty().size());
         
-        data.getAttribute(com.vibethema.model.Attribute.STAMINA).set(5);
+        data.getAttribute(com.vibethema.model.traits.Attribute.STAMINA).set(5);
         assertEquals(data.healthLevelsProperty().size(), viewModel.healthLevelsProperty().size());
     }
 }

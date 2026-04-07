@@ -1,10 +1,15 @@
 package com.vibethema.viewmodel.stats;
 
-import com.vibethema.model.Ability;
-import com.vibethema.model.Caste;
-import com.vibethema.model.CharacterData;
-import com.vibethema.model.CharacterMode;
-import com.vibethema.model.SystemData;
+import com.vibethema.model.*;
+import com.vibethema.model.traits.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.combat.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.logic.*;
+
+
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;

@@ -1,7 +1,15 @@
 package com.vibethema.model.logic;
 
 import com.vibethema.model.*;
-import com.vibethema.model.logic.CreationRuleEngine.CreationStatus;
+import com.vibethema.model.traits.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.combat.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.logic.*;
+
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +27,7 @@ public class FinalizationTest {
 
     @Test
     void testInitialStateNotReady() {
-        CreationStatus status = CreationRuleEngine.calculateStatus(data);
+        CreationRuleEngine.CreationStatus status = CreationRuleEngine.calculateStatus(data);
         assertFalse(status.isReadyToFinalize, "New character should not be ready to finalize");
     }
 
@@ -105,7 +113,7 @@ public class FinalizationTest {
         data.getAttributePriority(Attribute.Category.SOCIAL).set(AttributePriority.SECONDARY);
         data.getAttributePriority(Attribute.Category.MENTAL).set(AttributePriority.TERTIARY);
         
-        CreationStatus status = CreationRuleEngine.calculateStatus(data);
+        CreationRuleEngine.CreationStatus status = CreationRuleEngine.calculateStatus(data);
         assertEquals(15, status.bonusPointsSpent, "Should have 15 BP spent");
         assertEquals(18, status.attributesSpent, "Should have 18 attribute dots above 1");
         assertEquals(28, status.abilitiesSpent, "Should have 28 ability dots");
@@ -162,7 +170,7 @@ public class FinalizationTest {
         data.getAttributePriority(Attribute.Category.MENTAL).set(AttributePriority.TERTIARY);
         
         // 0 BP spent. Not 15.
-        CreationStatus status = CreationRuleEngine.calculateStatus(data);
+        CreationRuleEngine.CreationStatus status = CreationRuleEngine.calculateStatus(data);
         assertFalse(status.isReadyToFinalize, "Should not be ready with 0 BP spent");
     }
 }

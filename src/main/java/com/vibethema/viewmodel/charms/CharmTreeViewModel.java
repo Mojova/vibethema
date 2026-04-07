@@ -1,8 +1,15 @@
 package com.vibethema.viewmodel.charms;
 
-import com.vibethema.model.CharacterData;
-import com.vibethema.model.Charm;
-import com.vibethema.model.PurchasedCharm;
+import com.vibethema.model.*;
+import com.vibethema.model.traits.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.combat.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.logic.*;
+
+
 import com.vibethema.service.CharmDataService;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;

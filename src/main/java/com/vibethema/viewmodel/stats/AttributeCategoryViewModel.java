@@ -1,9 +1,15 @@
 package com.vibethema.viewmodel.stats;
 
-import com.vibethema.model.Attribute;
-import com.vibethema.model.AttributePriority;
-import com.vibethema.model.CharacterData;
-import com.vibethema.model.CharacterMode;
+import com.vibethema.model.*;
+import com.vibethema.model.traits.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.combat.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.logic.*;
+
+
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;

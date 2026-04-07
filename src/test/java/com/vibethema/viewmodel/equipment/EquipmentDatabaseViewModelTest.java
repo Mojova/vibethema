@@ -1,5 +1,15 @@
 package com.vibethema.viewmodel.equipment;
 
+import com.vibethema.model.*;
+import com.vibethema.model.traits.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.combat.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.logic.*;
+
+
 import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
@@ -57,8 +67,8 @@ public class EquipmentDatabaseViewModelTest {
     public void testCanDeleteProperty() {
         EquipmentDatabaseViewModel vm = new EquipmentDatabaseViewModel();
         
-        com.vibethema.model.Weapon w1 = new com.vibethema.model.Weapon("sword", "Steel Sword", com.vibethema.model.Weapon.WeaponRange.CLOSE, com.vibethema.model.Weapon.WeaponType.MORTAL, com.vibethema.model.Weapon.WeaponCategory.MEDIUM);
-        com.vibethema.model.Weapon unarmed = new com.vibethema.model.Weapon(com.vibethema.model.Weapon.UNARMED_ID, "Unarmed", com.vibethema.model.Weapon.WeaponRange.CLOSE, com.vibethema.model.Weapon.WeaponType.MORTAL, com.vibethema.model.Weapon.WeaponCategory.LIGHT);
+        com.vibethema.model.equipment.Weapon w1 = new com.vibethema.model.equipment.Weapon("sword", "Steel Sword", com.vibethema.model.equipment.Weapon.WeaponRange.CLOSE, com.vibethema.model.equipment.Weapon.WeaponType.MORTAL, com.vibethema.model.equipment.Weapon.WeaponCategory.MEDIUM);
+        com.vibethema.model.equipment.Weapon unarmed = new com.vibethema.model.equipment.Weapon(com.vibethema.model.equipment.Weapon.UNARMED_ID, "Unarmed", com.vibethema.model.equipment.Weapon.WeaponRange.CLOSE, com.vibethema.model.equipment.Weapon.WeaponType.MORTAL, com.vibethema.model.equipment.Weapon.WeaponCategory.LIGHT);
         
         // Nothing selected
         assertFalse(vm.canDeleteSelectedProperty().get());

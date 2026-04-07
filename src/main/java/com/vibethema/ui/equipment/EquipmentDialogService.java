@@ -1,10 +1,15 @@
 package com.vibethema.ui.equipment;
 
-import com.vibethema.model.Armor;
-import com.vibethema.model.Hearthstone;
-import com.vibethema.model.OtherEquipment;
-import com.vibethema.model.Specialty;
-import com.vibethema.model.Weapon;
+import com.vibethema.model.*;
+import com.vibethema.model.traits.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.combat.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.logic.*;
+
+
 import com.vibethema.service.EquipmentDataService;
 import javafx.stage.Window;
 
@@ -22,7 +27,7 @@ public interface EquipmentDialogService {
         Weapon existing, 
         EquipmentDataService equipmentService, 
         Map<String, String> tagDescriptions,
-        javafx.collections.ObservableList<com.vibethema.model.Specialty> characterSpecialties,
+        javafx.collections.ObservableList<com.vibethema.model.traits.Specialty> characterSpecialties,
         Window owner
     );
 

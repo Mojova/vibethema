@@ -1,5 +1,15 @@
 package com.vibethema.service;
 
+import com.vibethema.model.*;
+import com.vibethema.model.traits.*;
+import com.vibethema.model.equipment.*;
+import com.vibethema.model.mystic.*;
+import com.vibethema.model.combat.*;
+import com.vibethema.model.social.*;
+import com.vibethema.model.progression.*;
+import com.vibethema.model.logic.*;
+
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
@@ -88,50 +98,50 @@ public class EquipmentDataService {
     }
 
     // --- Specific API ---
-    public void saveWeapon(com.vibethema.model.Weapon w) throws IOException { saveGlobalItem(w.toData(), w.getId(), getWeaponsPath()); }
-    public com.vibethema.model.Weapon loadWeapon(String id) { 
-        return com.vibethema.model.Weapon.fromData(loadGlobalItem(id, getWeaponsPath(), com.vibethema.model.Weapon.WeaponData.class)); 
+    public void saveWeapon(com.vibethema.model.equipment.Weapon w) throws IOException { saveGlobalItem(w.toData(), w.getId(), getWeaponsPath()); }
+    public com.vibethema.model.equipment.Weapon loadWeapon(String id) { 
+        return com.vibethema.model.equipment.Weapon.fromData(loadGlobalItem(id, getWeaponsPath(), com.vibethema.model.equipment.Weapon.WeaponData.class)); 
     }
     public void deleteWeapon(String id) throws IOException { 
-        if (com.vibethema.model.Weapon.UNARMED_ID.equals(id)) return;
+        if (com.vibethema.model.equipment.Weapon.UNARMED_ID.equals(id)) return;
         deleteGlobalItem(id, getWeaponsPath()); 
     }
-    public List<com.vibethema.model.Weapon> getGlobalWeapons() { 
-        return listGlobalItems(getWeaponsPath(), com.vibethema.model.Weapon.WeaponData.class).stream()
-                .map(com.vibethema.model.Weapon::fromData)
+    public List<com.vibethema.model.equipment.Weapon> getGlobalWeapons() { 
+        return listGlobalItems(getWeaponsPath(), com.vibethema.model.equipment.Weapon.WeaponData.class).stream()
+                .map(com.vibethema.model.equipment.Weapon::fromData)
                 .collect(java.util.stream.Collectors.toList()); 
     }
 
-    public void saveArmor(com.vibethema.model.Armor a) throws IOException { saveGlobalItem(a.toData(), a.getId(), getArmorsPath()); }
-    public com.vibethema.model.Armor loadArmor(String id) { 
-        return com.vibethema.model.Armor.fromData(loadGlobalItem(id, getArmorsPath(), com.vibethema.model.Armor.ArmorData.class)); 
+    public void saveArmor(com.vibethema.model.equipment.Armor a) throws IOException { saveGlobalItem(a.toData(), a.getId(), getArmorsPath()); }
+    public com.vibethema.model.equipment.Armor loadArmor(String id) { 
+        return com.vibethema.model.equipment.Armor.fromData(loadGlobalItem(id, getArmorsPath(), com.vibethema.model.equipment.Armor.ArmorData.class)); 
     }
     public void deleteArmor(String id) throws IOException { deleteGlobalItem(id, getArmorsPath()); }
-    public List<com.vibethema.model.Armor> getGlobalArmors() { 
-        return listGlobalItems(getArmorsPath(), com.vibethema.model.Armor.ArmorData.class).stream()
-                .map(com.vibethema.model.Armor::fromData)
+    public List<com.vibethema.model.equipment.Armor> getGlobalArmors() { 
+        return listGlobalItems(getArmorsPath(), com.vibethema.model.equipment.Armor.ArmorData.class).stream()
+                .map(com.vibethema.model.equipment.Armor::fromData)
                 .collect(java.util.stream.Collectors.toList()); 
     }
 
-    public void saveHearthstone(com.vibethema.model.Hearthstone h) throws IOException { saveGlobalItem(h.toData(), h.getId(), getHearthstonesPath()); }
-    public com.vibethema.model.Hearthstone loadHearthstone(String id) { 
-        return com.vibethema.model.Hearthstone.fromData(loadGlobalItem(id, getHearthstonesPath(), com.vibethema.model.Hearthstone.HearthstoneData.class)); 
+    public void saveHearthstone(com.vibethema.model.equipment.Hearthstone h) throws IOException { saveGlobalItem(h.toData(), h.getId(), getHearthstonesPath()); }
+    public com.vibethema.model.equipment.Hearthstone loadHearthstone(String id) { 
+        return com.vibethema.model.equipment.Hearthstone.fromData(loadGlobalItem(id, getHearthstonesPath(), com.vibethema.model.equipment.Hearthstone.HearthstoneData.class)); 
     }
     public void deleteHearthstone(String id) throws IOException { deleteGlobalItem(id, getHearthstonesPath()); }
-    public List<com.vibethema.model.Hearthstone> getGlobalHearthstones() { 
-        return listGlobalItems(getHearthstonesPath(), com.vibethema.model.Hearthstone.HearthstoneData.class).stream()
-                .map(com.vibethema.model.Hearthstone::fromData)
+    public List<com.vibethema.model.equipment.Hearthstone> getGlobalHearthstones() { 
+        return listGlobalItems(getHearthstonesPath(), com.vibethema.model.equipment.Hearthstone.HearthstoneData.class).stream()
+                .map(com.vibethema.model.equipment.Hearthstone::fromData)
                 .collect(java.util.stream.Collectors.toList()); 
     }
 
-    public void saveOtherEquipment(com.vibethema.model.OtherEquipment oe) throws IOException { saveGlobalItem(oe.toData(), oe.getId(), getOtherEquipmentPath()); }
-    public com.vibethema.model.OtherEquipment loadOtherEquipment(String id) { 
-        return com.vibethema.model.OtherEquipment.fromData(loadGlobalItem(id, getOtherEquipmentPath(), com.vibethema.model.OtherEquipment.OtherEquipmentData.class)); 
+    public void saveOtherEquipment(com.vibethema.model.equipment.OtherEquipment oe) throws IOException { saveGlobalItem(oe.toData(), oe.getId(), getOtherEquipmentPath()); }
+    public com.vibethema.model.equipment.OtherEquipment loadOtherEquipment(String id) { 
+        return com.vibethema.model.equipment.OtherEquipment.fromData(loadGlobalItem(id, getOtherEquipmentPath(), com.vibethema.model.equipment.OtherEquipment.OtherEquipmentData.class)); 
     }
     public void deleteOtherEquipment(String id) throws IOException { deleteGlobalItem(id, getOtherEquipmentPath()); }
-    public List<com.vibethema.model.OtherEquipment> getGlobalOtherEquipment() { 
-        return listGlobalItems(getOtherEquipmentPath(), com.vibethema.model.OtherEquipment.OtherEquipmentData.class).stream()
-                .map(com.vibethema.model.OtherEquipment::fromData)
+    public List<com.vibethema.model.equipment.OtherEquipment> getGlobalOtherEquipment() { 
+        return listGlobalItems(getOtherEquipmentPath(), com.vibethema.model.equipment.OtherEquipment.OtherEquipmentData.class).stream()
+                .map(com.vibethema.model.equipment.OtherEquipment::fromData)
                 .collect(java.util.stream.Collectors.toList()); 
     }
 
