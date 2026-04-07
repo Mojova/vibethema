@@ -42,7 +42,7 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
     private final Button purchaseBtn = new Button();
     private final Button refundBtn = new Button();
     private final Button deleteCustomBtn = new Button();
-    private final Button editBtn = new Button("Edit Charm");
+    private final Button editBtn = new Button("_Edit Charm");
 
     private final Map<String, List<CubicCurve>> charmIncomingLines = new HashMap<>();
     private final Map<String, List<CubicCurve>> charmOutgoingLines = new HashMap<>();
@@ -92,6 +92,11 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
             } else if (code == javafx.scene.input.KeyCode.BACK_SPACE || code == javafx.scene.input.KeyCode.DELETE) {
                 viewModel.refundOne();
                 e.consume();
+            } else if (code == javafx.scene.input.KeyCode.E) {
+                if (editBtn.isVisible() && !editBtn.isDisabled()) {
+                    editBtn.fire();
+                    e.consume();
+                }
             }
         });
     }
@@ -216,6 +221,7 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
         refundBtn.setOnAction(e -> viewModel.refundOne());
 
         editBtn.getStyleClass().add("charm-btn");
+        editBtn.setMnemonicParsing(true);
         editBtn.setStyle("-fx-base: #3c3c3c;");
         editBtn.setOnAction(e -> {
             Charm c = viewModel.selectedCharmProperty().get();
