@@ -17,10 +17,11 @@ if (Test-Path $ICON_SOURCE) {
 Write-Host "Building fat JAR..."
 mvn clean package -DskipTests
 
-# 2.1 Extract version from pom.xml (e.g., 0.9-SNAPSHOT -> 0.9.0)
+# 2.1 Extract version from pom.xml (e.g., 0.9-SNAPSHOT -> 0.9.0, 0.9.0-SNAPSHOT -> 0.9.0)
 $RAW_VERSION = (mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
 $VERSION = $RAW_VERSION.Replace("-SNAPSHOT", "")
-if ($RAW_VERSION.Contains("-SNAPSHOT")) {
+$DOTS = ($VERSION.ToCharArray() | Where-Object { $_ -eq '.' }).Count
+if ($DOTS -lt 2 -and $RAW_VERSION.Contains("-SNAPSHOT")) {
     $VERSION = "${VERSION}.0"
 }
 

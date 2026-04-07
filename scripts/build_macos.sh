@@ -35,10 +35,11 @@ fi
 echo "Building fat JAR..."
 mvn clean package -DskipTests
 
-# 2.1 Extract version from pom.xml (e.g., 0.9-SNAPSHOT -> 0.9.0)
+# 2.1 Extract version from pom.xml (e.g., 0.9-SNAPSHOT -> 0.9.0, 0.9.0-SNAPSHOT -> 0.9.0)
 RAW_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
 VERSION=$(echo "$RAW_VERSION" | sed 's/-SNAPSHOT//')
-if [[ "$RAW_VERSION" == *"-SNAPSHOT"* ]]; then
+DOTS=$(echo "$VERSION" | tr -cd '.' | wc -c | xargs)
+if [ "$DOTS" -lt 2 ] && [[ "$RAW_VERSION" == *"-SNAPSHOT"* ]]; then
     VERSION="${VERSION}.0"
 fi
 
