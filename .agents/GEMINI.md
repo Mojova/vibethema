@@ -8,14 +8,21 @@ A JavaFX-based character creator for Exalted 3rd Edition. The application focuse
 ## Core Architecture
 
 ### Model Layer (`com.vibethema.model`)
-- **`CharacterData`**: The "Source of Truth".
-    - Uses JavaFX Properties (`StringProperty`, `IntegerProperty`, `BooleanProperty`) for reactive UI updates.
-    - Centralized calculations for **Bonus Points**, **Mote Pools**, and **Health Levels**.
-    - Tracks "Dirty" state for unsaved changes.
-    - Handles **Charm Prerequisites**.
-- **`CharacterSaveState`**: A DTO for GSON serialization. Use `exportState()` and `importState()` in `CharacterData`.
-- **Specialized Entities**: `Merit`, `Specialty`, `CraftAbility`, `MartialArtsStyle`, `Intimacy`, `Weapon`, `Armor`, `OtherEquipment`, `Charm`.
-- **Reactive Updates**: Relies on listeners in `setupListeners()` to refresh the footer and other dynamic elements.
+The model is reorganized into logical, functional sub-packages to improve maintainability. `CharacterData` serves as the central facade for all sub-models.
+
+- **`com.vibethema.model.traits`**: Attributes, Abilities, Merits, and Specialties.
+- **`com.vibethema.model.equipment`**: Weapons, Armor, and Gear management.
+- **`com.vibethema.model.mystic`**: Charms, Spells, and Shaping Rituals.
+- **`com.vibethema.model.combat`**: Combat pools (Evasion, Parry, Soak, Join Battle) and Health/Motes.
+- **`com.vibethema.model.social`**: Intimacies and social traits.
+- **`com.vibethema.model.progression`**: Experience (XP) tracking and awards.
+- **`com.vibethema.model.logic`**: Rule engines (`CreationRuleEngine`, `ExperienceRuleEngine`) and complex calculators.
+
+**Key Concepts:**
+- **`CharacterData`**: The "Source of Truth". Uses composition to delegate to sub-models.
+- **Reactive Properties**: Uses JavaFX Properties (`IntegerProperty`, etc.) for real-time UI synchronization.
+- **`CharacterSaveState`**: Central DTO for GSON serialization. Use `exportState()` and `importState()` in `CharacterData`.
+- **`CharacterFactory`**: Responsible for initializing new character data with default values (e.g., Unarmed weapon).
 
 ### MVVM Pattern (`de.saxsys.mvvmfx`)
 The project strictly follows the **Model-View-ViewModel (MVVM)** pattern using the **mvvmFX** framework.
@@ -111,7 +118,9 @@ The project uses **Spotless** to automate code style enforcement and import opti
 - `src/main/java/com/vibethema/Main.java`: App Launcher.
 - `src/main/java/com/vibethema/ui/`: JavaView implementations (StatsTab, MainView, etc.).
 - `src/main/java/com/vibethema/viewmodel/`: ViewModel implementations.
-- `src/main/java/com/vibethema/model/`: Domain models and calculation logic.
+- `src/main/java/com/vibethema/model/`: Central facade (`CharacterData`) and serialization (`CharacterSaveState`).
+    - `traits/`, `equipment/`, `mystic/`, `combat/`, `social/`, `progression/`: Functional model partitions.
+    - `logic/`: Rule engines and calculation logic.
 - `src/main/java/com/vibethema/service/`: Business services (PDF, Charms, Equipment).
 - `src/main/resources/`: CSS, JSON data, and Logback configuration.
 - `src/main/java/com/vibethema/util/PdfImportTool.java`: CLI for PDF extraction and inspection.
