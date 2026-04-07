@@ -13,6 +13,7 @@ import java.nio.file.Paths;
  */
 public class PathService {
 
+    private static final String DEVELOPER_NAME = "Mojova";
     private static final String APP_NAME = "Vibethema";
 
     /**
@@ -28,20 +29,20 @@ public class PathService {
         String home = System.getProperty("user.home");
 
         if (os.contains("mac")) {
-            return Paths.get(home, "Library", "Application Support", APP_NAME);
+            return Paths.get(home, "Library", "Application Support", DEVELOPER_NAME, APP_NAME);
         } else if (os.contains("win")) {
             String appData = System.getenv("APPDATA");
             if (appData != null) {
-                return Paths.get(appData, APP_NAME, "Data");
+                return Paths.get(appData, DEVELOPER_NAME, APP_NAME, "Data");
             }
-            return Paths.get(home, "AppData", "Roaming", APP_NAME, "Data");
+            return Paths.get(home, "AppData", "Roaming", DEVELOPER_NAME, APP_NAME, "Data");
         } else {
             // Linux/Unix (XDG)
             String xdgData = System.getenv("XDG_DATA_HOME");
             if (xdgData != null && !xdgData.isEmpty()) {
-                return Paths.get(xdgData, APP_NAME.toLowerCase());
+                return Paths.get(xdgData, DEVELOPER_NAME.toLowerCase(), APP_NAME.toLowerCase());
             }
-            return Paths.get(home, ".local", "share", APP_NAME.toLowerCase());
+            return Paths.get(home, ".local", "share", DEVELOPER_NAME.toLowerCase(), APP_NAME.toLowerCase());
         }
     }
 
@@ -58,20 +59,20 @@ public class PathService {
         String home = System.getProperty("user.home");
 
         if (os.contains("mac")) {
-            return Paths.get(home, "Library", "Preferences", APP_NAME);
+            return Paths.get(home, "Library", "Preferences", DEVELOPER_NAME, APP_NAME);
         } else if (os.contains("win")) {
             String appData = System.getenv("APPDATA");
             if (appData != null) {
-                return Paths.get(appData, APP_NAME, "Config");
+                return Paths.get(appData, DEVELOPER_NAME, APP_NAME, "Config");
             }
-            return Paths.get(home, "AppData", "Roaming", APP_NAME, "Config");
+            return Paths.get(home, "AppData", "Roaming", DEVELOPER_NAME, APP_NAME, "Config");
         } else {
             // Linux/Unix (XDG)
             String xdgConfig = System.getenv("XDG_CONFIG_HOME");
             if (xdgConfig != null && !xdgConfig.isEmpty()) {
-                return Paths.get(xdgConfig, APP_NAME.toLowerCase());
+                return Paths.get(xdgConfig, DEVELOPER_NAME.toLowerCase(), APP_NAME.toLowerCase());
             }
-            return Paths.get(home, ".config", APP_NAME.toLowerCase());
+            return Paths.get(home, ".config", DEVELOPER_NAME.toLowerCase(), APP_NAME.toLowerCase());
         }
     }
 }

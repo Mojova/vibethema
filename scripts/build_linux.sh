@@ -52,6 +52,7 @@ jpackage \
   --vendor "Mojova" \
   --copyright "Copyright © 2026 Mojova" \
   --description "Character management for Exalted 3rd Edition" \
+  --license-file LICENSE.txt \
   --dest target/dist/AppDir-Base \
   --java-options "--enable-native-access=ALL-UNNAMED" \
   --verbose
@@ -68,6 +69,7 @@ jpackage \
   --vendor "Mojova" \
   --copyright "Copyright © 2026 Mojova" \
   --description "Character management for Exalted 3rd Edition" \
+  --license-file LICENSE.txt \
   --linux-shortcut \
   --linux-menu-group "Utility" \
   --dest target/dist \
@@ -86,6 +88,7 @@ jpackage \
   --vendor "Mojova" \
   --copyright "Copyright © 2026 Mojova" \
   --description "Character management for Exalted 3rd Edition" \
+  --license-file LICENSE.txt \
   --linux-shortcut \
   --linux-menu-group "Utility" \
   --dest target/dist \

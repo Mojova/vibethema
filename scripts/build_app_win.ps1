@@ -54,6 +54,7 @@ jpackage `
   --copyright "Copyright © 2026 Mojova" `
   --description "Character management for Exalted 3rd Edition" `
   --app-version "$VERSION" `
+  --license-file LICENSE.txt `
   --win-shortcut `
   --win-menu `
   --win-shortcut-prompt `

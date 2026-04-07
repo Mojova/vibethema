@@ -4,6 +4,9 @@ import java.awt.Desktop;
 
 public class Launcher {
     public static void main(String[] args) {
+        // Set up the log directory before anything else initializes logging
+        System.setProperty("log.dir", com.vibethema.service.PathService.getDataPath().toString());
+
         // Handle macOS double-click events
         if (Desktop.isDesktopSupported()) {
             Desktop desktop = Desktop.getDesktop();

@@ -71,6 +71,7 @@ jpackage \
   --vendor "Mojova" \
   --copyright "Copyright © 2026 Mojova" \
   --description "Character management for Exalted 3rd Edition" \
+  --license-file LICENSE.txt \
   --dest target/dist \
   --java-options "--enable-native-access=ALL-UNNAMED" \
   --file-associations src/main/resources/vbtm.properties \
