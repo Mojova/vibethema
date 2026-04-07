@@ -59,7 +59,7 @@
 }
 
 .dot-selector {
-    -fx-padding: 3px 6px;
+    -fx-padding: 3px 6px 3px 0;
     -fx-border-color: transparent;
     -fx-border-width: 1.5px;
     -fx-border-radius: 6px;
