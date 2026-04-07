@@ -593,7 +593,7 @@
 
 .dialog-pane-custom > .header-panel {
     -fx-background-color: #2a2a2a;
-    -fx-padding: 15px;
+    -fx-padding: 20px;
     -fx-border-color: #333;
     -fx-border-width: 0 0 1px 0;
 }
@@ -604,11 +604,62 @@
     -fx-font-size: 18px;
 }
 
+.dialog-pane-custom > .content {
+    -fx-padding: 20px;
+    -fx-background-color: #1e1e1e;
+    -fx-text-fill: #e0e0e0;
+    -fx-font-size: 14px;
+    -fx-line-spacing: 0.4em;
+}
+
 .dialog-pane-custom .button-bar {
     -fx-padding: 15px;
     -fx-background-color: #1a1a1a;
     -fx-border-color: #333;
     -fx-border-width: 1px 0 0 0;
+}
+
+.dialog-pane-custom .button {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: #e0e0e0;
+    -fx-border-color: #444;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+    -fx-padding: 6px 15px;
+}
+
+.dialog-pane-custom .button:hover, .dialog-pane-custom .button:focused {
+    -fx-background-color: #3d3d3d;
+    -fx-border-color: #d4af37;
+    -fx-text-fill: white;
+}
+
+.dialog-pane-custom .button:default {
+    -fx-background-color: #d4af37;
+    -fx-text-fill: #1e1e1e;
+    -fx-font-weight: bold;
+}
+
+.dialog-pane-custom .button:default:hover {
+    -fx-background-color: #f9f6e6;
+}
+
+/* Warning Modifier for Dialogs */
+.warning-dialog {
+    -fx-border-color: #ffaa00;
+}
+
+.warning-dialog > .header-panel > .label {
+    -fx-text-fill: #ffaa00;
+}
+
+.warning-dialog .button:default {
+    -fx-background-color: #ffaa00;
+}
+
+.warning-dialog .button:default:hover {
+    -fx-background-color: #ffcc66;
 }
 
 .text-area-custom {

@@ -482,6 +482,11 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         alert.setHeaderText(
                 "Changing Caste to " + newCaste.toString() + " will invalidate some data.");
 
+        // Style the dialog
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+        dialogPane.getStyleClass().addAll("dialog-pane-custom", "warning-dialog");
+
         StringBuilder content =
                 new StringBuilder("The following selections will be removed/deselected:\n\n");
         if (!report.lostCasteAbilities().isEmpty()) {
