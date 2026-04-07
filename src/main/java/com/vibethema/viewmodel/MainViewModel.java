@@ -19,6 +19,8 @@ import de.saxsys.mvvmfx.ViewModel;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javafx.beans.property.BooleanProperty;
@@ -137,6 +139,15 @@ public class MainViewModel implements ViewModel {
         windowTitle.set(title);
     }
 
+    public record CasteChangeReport(
+            List<Ability> lostCasteAbilities, String lostSupernal, List<String> illegalCharmNames) {
+        public boolean isEmpty() {
+            return lostCasteAbilities.isEmpty()
+                    && lostSupernal == null
+                    && illegalCharmNames.isEmpty();
+        }
+    }
+
     // Accessors
     public CharacterData getData() {
         return data;
@@ -253,6 +264,86 @@ public class MainViewModel implements ViewModel {
             suggestName = currentFile.get().getName().replace(".vbtm", ".pdf");
         }
         Messenger.publish("request_pdf_export", suggestName);
+    }
+
+    public CasteChangeReport validateCasteChange(Caste newCaste) {
+        Caste oldCaste = data.casteProperty().get();
+        if (newCaste == oldCaste) {
+            return new CasteChangeReport(Collections.emptyList(), null, Collections.emptyList());
+        }
+
+        List<Ability> lostCasteAbilities = new ArrayList<>();
+        String supernalLossDetail = null;
+        List<String> illegalCharms = new ArrayList<>();
+
+        // 1. Identify Invalid Caste Abilities
+        for (Ability abil : SystemData.ABILITIES) {
+            if (data.getCasteAbility(abil).get()) {
+                if (!SystemData.CASTE_OPTIONS.get(newCaste).contains(abil)) {
+                    lostCasteAbilities.add(abil);
+                }
+            }
+        }
+
+        // 2. Identify Supernal Loss
+        String currentSupernal = data.supernalAbilityProperty().get();
+        boolean supernalWillBeLost = false;
+        if (!currentSupernal.isEmpty()) {
+            supernalWillBeLost =
+                    lostCasteAbilities.stream()
+                            .anyMatch(a -> a.getDisplayName().equalsIgnoreCase(currentSupernal));
+            if (supernalWillBeLost) {
+                supernalLossDetail = currentSupernal;
+            }
+        }
+
+        // 3. Identify Illegal Charms
+        if (data.getMode() == CharacterMode.CREATION) {
+            int essenceLevel = data.essenceProperty().get();
+            for (com.vibethema.model.mystic.PurchasedCharm pc : data.getUnlockedCharms()) {
+                List<com.vibethema.model.mystic.Charm> abilityCharms =
+                        charmDataService.loadCharmsForAbility(pc.ability());
+                com.vibethema.model.mystic.Charm def =
+                        abilityCharms.stream()
+                                .filter(c -> c.getId().equals(pc.id()))
+                                .findFirst()
+                                .orElse(null);
+
+                if (def != null && def.getMinEssence() > essenceLevel) {
+                    boolean wouldBeSupernal =
+                            !supernalWillBeLost
+                                    && def.getAbility().equalsIgnoreCase(currentSupernal);
+                    if (!wouldBeSupernal && !currentSupernal.isEmpty()) {
+                        if ("Martial Arts".equalsIgnoreCase(currentSupernal)
+                                && data.isMartialArtsStyle(def.getAbility()))
+                            wouldBeSupernal = true;
+                        if ("Craft".equalsIgnoreCase(currentSupernal)
+                                && data.isCraftExpertise(def.getAbility())) wouldBeSupernal = true;
+                    }
+
+                    if (!wouldBeSupernal) {
+                        illegalCharms.add(pc.name());
+                    }
+                }
+            }
+        }
+
+        return new CasteChangeReport(lostCasteAbilities, supernalLossDetail, illegalCharms);
+    }
+
+    public void applyCasteChange(Caste newCaste, CasteChangeReport report) {
+        data.casteProperty().set(newCaste);
+        // Cleanup based on report
+        if (report != null) {
+            for (Ability abil : report.lostCasteAbilities()) {
+                data.getCasteAbility(abil).set(false);
+            }
+            if (!report.illegalCharmNames().isEmpty()) {
+                data.getUnlockedCharms()
+                        .removeIf(pc -> report.illegalCharmNames().contains(pc.name()));
+            }
+        }
+        Messenger.publish("refresh_all_ui");
     }
 
     public void resetToNew() {

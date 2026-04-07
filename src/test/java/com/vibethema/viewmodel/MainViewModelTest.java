@@ -177,4 +177,76 @@ public class MainViewModelTest {
                 "CharacterData instance must be preserved for bindings");
         assertEquals("", viewModel.getData().nameProperty().get());
     }
+
+    @Test
+    void testValidateCasteChangeNoConflicts() {
+        data.casteProperty().set(Caste.DAWN);
+        MainViewModel.CasteChangeReport report = viewModel.validateCasteChange(Caste.ZENITH);
+
+        assertTrue(report.isEmpty());
+        assertEquals(0, report.lostCasteAbilities().size());
+        assertNull(report.lostSupernal());
+        assertTrue(report.illegalCharmNames().isEmpty());
+    }
+
+    @Test
+    void testValidateCasteChangeWithAbilityLoss() {
+        data.casteProperty().set(Caste.DAWN);
+        data.getCasteAbility(Ability.ARCHERY).set(true); // Dawn ability
+        data.getCasteAbility(Ability.MELEE).set(true); // Dawn ability
+
+        // Zenith does not have Archery or Melee in its list
+        MainViewModel.CasteChangeReport report = viewModel.validateCasteChange(Caste.ZENITH);
+
+        assertFalse(report.isEmpty());
+        assertEquals(2, report.lostCasteAbilities().size());
+        assertTrue(report.lostCasteAbilities().contains(Ability.ARCHERY));
+        assertTrue(report.lostCasteAbilities().contains(Ability.MELEE));
+    }
+
+    @Test
+    void testValidateCasteChangeWithSupernalAndCharmLoss() {
+        data.casteProperty().set(Caste.DAWN);
+        data.getCasteAbility(Ability.ARCHERY).set(true);
+        data.supernalAbilityProperty().set("Archery");
+        data.essenceProperty().set(1);
+
+        // Add a charm that requires Essence 3
+        PurchasedCharm pc = new PurchasedCharm("charm-1", "Blazing Solar Bolt", "Archery");
+        data.getUnlockedCharms().add(pc);
+
+        SolarCharm def = new SolarCharm();
+        def.setId("charm-1");
+        def.setName("Blazing Solar Bolt");
+        def.setAbility("Archery");
+        def.setMinEssence(3);
+
+        when(charmDataService.loadCharmsForAbility("Archery")).thenReturn(List.of(def));
+
+        // Change to Zenith (Archery is not a Zenith ability)
+        MainViewModel.CasteChangeReport report = viewModel.validateCasteChange(Caste.ZENITH);
+
+        assertEquals("Archery", report.lostSupernal());
+        assertTrue(report.illegalCharmNames().contains("Blazing Solar Bolt"));
+    }
+
+    @Test
+    void testApplyCasteChangeCleansUpModel() {
+        data.casteProperty().set(Caste.DAWN);
+        data.getCasteAbility(Ability.ARCHERY).set(true);
+        data.supernalAbilityProperty().set("Archery");
+        data.getUnlockedCharms()
+                .add(new PurchasedCharm("charm-1", "Blazing Solar Bolt", "Archery"));
+
+        List<Ability> lostAbilities = List.of(Ability.ARCHERY);
+        List<String> illegalCharms = List.of("Blazing Solar Bolt");
+        MainViewModel.CasteChangeReport report =
+                new MainViewModel.CasteChangeReport(lostAbilities, "Archery", illegalCharms);
+
+        viewModel.applyCasteChange(Caste.ZENITH, report);
+
+        assertEquals(Caste.ZENITH, data.casteProperty().get());
+        assertFalse(data.getCasteAbility(Ability.ARCHERY).get());
+        assertTrue(data.getUnlockedCharms().isEmpty());
+    }
 }
