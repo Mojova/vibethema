@@ -58,6 +58,8 @@ public class CharmTreeViewModel implements ViewModel {
     private final BooleanProperty deleteCustomBtnVisible = new SimpleBooleanProperty(false);
     private final StringProperty deleteCustomBtnText = new SimpleStringProperty("Delete Custom Charm");
     
+    private final BooleanProperty showEligibleOnly = new SimpleBooleanProperty(false);
+    
     private final BooleanProperty editBtnVisible = new SimpleBooleanProperty(false);
 
     public CharmTreeViewModel(CharacterData data, CharmDataService dataService, Map<String, String> keywordDefs) {
@@ -66,10 +68,12 @@ public class CharmTreeViewModel implements ViewModel {
         this.keywordDefs = keywordDefs;
         
         setupListeners();
+        Messenger.subscribe("refresh_all_ui", (name, payload) -> refresh());
     }
 
     private void setupListeners() {
         selectedCharm.addListener((obs, oldV, newV) -> updateSidebar(newV));
+        showEligibleOnly.addListener((obs, oldV, newV) -> refresh());
     }
 
     public void initialize(String filterType, String selectionId, String selectionName, String artifactId, String artifactName) {
@@ -91,6 +95,12 @@ public class CharmTreeViewModel implements ViewModel {
             loaded = (collection != null) ? collection.evocations : new ArrayList<>();
         } else {
             loaded = dataService.loadCharmsForAbility(selection);
+        }
+
+        if (loaded != null && showEligibleOnly.get()) {
+            loaded = loaded.stream()
+                .filter(c -> data.hasCharm(c.getId()) || c.isEligible(data))
+                .collect(java.util.stream.Collectors.toList());
         }
 
         // Must calculate level state BEFORE updating the observable list
@@ -297,5 +307,6 @@ public class CharmTreeViewModel implements ViewModel {
     public BooleanProperty refundBtnVisibleProperty() { return refundBtnVisible; }
     public BooleanProperty deleteCustomBtnVisibleProperty() { return deleteCustomBtnVisible; }
     public StringProperty deleteCustomBtnTextProperty() { return deleteCustomBtnText; }
+    public BooleanProperty showEligibleOnlyProperty() { return showEligibleOnly; }
     public BooleanProperty editBtnVisibleProperty() { return editBtnVisible; }
 }

@@ -86,7 +86,11 @@ public class CharmTreeComponent extends SplitPane implements JavaView<CharmTreeV
                 (Runnable) this::refresh
             }));
 
-        controls.getChildren().addAll(titleLabel, createCharmBtn);
+        CheckBox eligibleFilter = new CheckBox("Show Eligible Only");
+        eligibleFilter.getStyleClass().add("label"); // reuse label style or add custom
+        eligibleFilter.selectedProperty().bindBidirectional(viewModel.showEligibleOnlyProperty());
+
+        controls.getChildren().addAll(titleLabel, createCharmBtn, eligibleFilter);
 
         ScrollPane charmScroll = new ScrollPane(charmCanvas);
         charmScroll.setPannable(true);
