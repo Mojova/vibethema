@@ -86,6 +86,7 @@ public class CharacterData {
                 .addListener(
                         (javafx.collections.ListChangeListener<String>)
                                 c -> {
+                                    if (isImporting) return;
                                     if (!traitModel
                                             .getValidSupernalAbilities()
                                             .contains(supernalAbility.get())) {
@@ -763,13 +764,6 @@ public class CharacterData {
             this.name.set(state.name != null ? state.name : "");
             if (state.mode != null) mode.set(CharacterMode.valueOf(state.mode.toUpperCase()));
             if (state.caste != null) caste.set(Caste.valueOf(state.caste.toUpperCase()));
-            if (state.supernalAbility != null && !state.supernalAbility.isEmpty()) {
-                try {
-                    supernalAbility.set(Ability.valueOf(state.supernalAbility).getDisplayName());
-                } catch (Exception e) {
-                    supernalAbility.set(state.supernalAbility);
-                }
-            }
             essence.set(state.essence);
             willpower.set(state.willpower);
             limitTrigger.set(state.limitTrigger != null ? state.limitTrigger : "");
@@ -809,6 +803,14 @@ public class CharacterData {
                         .set(
                                 state.favoredAbilities != null
                                         && state.favoredAbilities.contains(abil.name()));
+            }
+
+            if (state.supernalAbility != null && !state.supernalAbility.isEmpty()) {
+                try {
+                    supernalAbility.set(Ability.valueOf(state.supernalAbility).getDisplayName());
+                } catch (Exception e) {
+                    supernalAbility.set(state.supernalAbility);
+                }
             }
 
             if (state.unlockedCharms != null) getUnlockedCharms().setAll(state.unlockedCharms);

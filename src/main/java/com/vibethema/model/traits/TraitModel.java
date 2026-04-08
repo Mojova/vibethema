@@ -220,13 +220,14 @@ public class TraitModel {
     }
 
     public void updateValidSupernalAbilities() {
-        validSupernalAbilities.clear();
-        validSupernalAbilities.add("");
+        java.util.List<String> valid = new java.util.ArrayList<>();
+        valid.add("");
         for (Ability ability : SystemData.ABILITIES) {
             if (casteAbilities.get(ability).get()) {
-                validSupernalAbilities.add(ability.getDisplayName());
+                valid.add(ability.getDisplayName());
             }
         }
+        validSupernalAbilities.setAll(valid);
     }
 
     public IntegerProperty getAttribute(Attribute name) {

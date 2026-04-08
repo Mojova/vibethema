@@ -404,11 +404,23 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         ComboBox<Caste> casteBox = new ComboBox<>();
         casteBox.getItems().addAll(Caste.values());
         casteBox.setValue(viewModel.getData().casteProperty().get());
-        casteBox.focusedProperty()
+        casteBox
+                .focusedProperty()
                 .addListener(
                         (obs, oldV, newV) -> {
                             if (!newV) { // Focus lost (blur)
                                 handleCasteChange(casteBox);
+                            }
+                        });
+
+        // Keep UI in sync with Model (for loads/imports)
+        viewModel
+                .getData()
+                .casteProperty()
+                .addListener(
+                        (obs, oldV, newV) -> {
+                            if (newV != casteBox.getValue()) {
+                                casteBox.setValue(newV);
                             }
                         });
 

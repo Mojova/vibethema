@@ -6,7 +6,6 @@ import com.vibethema.model.combat.*;
 import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
 import com.vibethema.model.mystic.*;
-import com.vibethema.model.progression.*;
 import com.vibethema.model.social.*;
 import com.vibethema.model.traits.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -99,6 +98,20 @@ public class CharacterDataTest {
     }
 
     @Test
+    void testSupernalAbilityNotClearedOnAddition() {
+        data.getCasteAbility(Ability.MELEE).set(true);
+        data.supernalAbilityProperty().set(Ability.MELEE.getDisplayName());
+        assertEquals(Ability.MELEE.getDisplayName(), data.supernalAbilityProperty().get());
+
+        // Adding ANOTHER caste ability should NOT clear the supernal one
+        data.getCasteAbility(Ability.ARCHERY).set(true);
+        assertEquals(
+                Ability.MELEE.getDisplayName(),
+                data.supernalAbilityProperty().get(),
+                "Supernal ability should not be cleared when adding a new caste ability");
+    }
+
+    @Test
     void testSupernalAbilityOptions() {
         // Initially no caste abilities, so only "" should be in options
         assertEquals(1, data.getValidSupernalAbilities().size());
@@ -123,6 +136,29 @@ public class CharacterDataTest {
         // Unset caste ability should reset supernal
         data.getCasteAbility(Ability.MELEE).set(false);
         assertEquals("", data.supernalAbilityProperty().get());
+    }
+
+    @Test
+    void testImportStateRestoresSupernalAndCaste() {
+        // Setup initial state (e.g. Zenit-style)
+        data.getCasteAbility(Ability.ATHLETICS).set(true);
+        data.supernalAbilityProperty().set("Athletics");
+
+        CharacterSaveState state = new CharacterSaveState();
+        state.caste = "DAWN";
+        state.supernalAbility = "WAR";
+        state.casteAbilities = java.util.List.of("WAR");
+        state.abilities = new java.util.HashMap<>();
+        state.abilities.put("WAR", 5);
+
+        data.importState(state, null);
+
+        assertEquals(Caste.DAWN, data.casteProperty().get());
+        assertTrue(data.getCasteAbility(Ability.WAR).get());
+        assertEquals(
+                Ability.WAR.getDisplayName(),
+                data.supernalAbilityProperty().get(),
+                "Supernal ability should be correctly restored when importing over existing data");
     }
 
     @Test
