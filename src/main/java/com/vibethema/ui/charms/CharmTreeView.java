@@ -1,6 +1,5 @@
 package com.vibethema.ui.charms;
 
-import com.vibethema.model.*;
 import com.vibethema.model.mystic.*;
 import com.vibethema.viewmodel.charms.CharmTreeViewModel;
 import de.saxsys.mvvmfx.InjectViewModel;

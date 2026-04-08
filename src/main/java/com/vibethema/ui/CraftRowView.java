@@ -1,13 +1,5 @@
 package com.vibethema.ui;
 
-import com.vibethema.model.*;
-import com.vibethema.model.combat.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.logic.*;
-import com.vibethema.model.mystic.*;
-import com.vibethema.model.progression.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.traits.*;
 import com.vibethema.viewmodel.stats.CraftRowViewModel;
 import javafx.geometry.Pos;
 import javafx.scene.control.TextField;

@@ -1,11 +1,7 @@
 package com.vibethema.model.combat;
 
-import com.vibethema.model.*;
 import com.vibethema.model.equipment.*;
-import com.vibethema.model.logic.*;
 import com.vibethema.model.mystic.*;
-import com.vibethema.model.progression.*;
-import com.vibethema.model.social.*;
 import com.vibethema.model.traits.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -102,7 +98,8 @@ public class CombatStatsModel {
     }
 
     public void updateMotesAndHealth() {
-        // This normally would use Essence from CharacterData, we'll need to pass it or have it
+        // This normally would use Essence from CharacterData, we'll need to pass it or
+        // have it
         // handled.
         // For now, assume we'll update it from CharacterData delegation.
     }

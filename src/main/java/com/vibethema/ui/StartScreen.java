@@ -1,7 +1,5 @@
 package com.vibethema.ui;
 
-import com.vibethema.model.*;
-import com.vibethema.model.traits.*;
 import com.vibethema.viewmodel.MainViewModel;
 import com.vibethema.viewmodel.StartScreenViewModel;
 import com.vibethema.viewmodel.util.Messenger;

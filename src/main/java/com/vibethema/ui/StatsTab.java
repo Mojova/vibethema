@@ -1,12 +1,6 @@
 package com.vibethema.ui;
 
 import com.vibethema.model.*;
-import com.vibethema.model.combat.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.logic.*;
-import com.vibethema.model.mystic.*;
-import com.vibethema.model.progression.*;
-import com.vibethema.model.social.*;
 import com.vibethema.model.traits.*;
 import com.vibethema.viewmodel.StatsViewModel;
 import com.vibethema.viewmodel.stats.*;
@@ -48,7 +42,8 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         getStyleClass().add("scroll-pane-custom");
 
         if (viewModel != null && !contentLoaded) {
-            // Fill content staggered over multiple pulses to ensure UI thread remains responsive
+            // Fill content staggered over multiple pulses to ensure UI thread remains
+            // responsive
             javafx.application.Platform.runLater(
                     () -> {
                         if (contentLoaded) return;
@@ -75,7 +70,8 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
                                                                 createAbilitiesAndSideStuff(data),
                                                                 new Separator());
 
-                                                // Step 4: Stats and Combat (final pulse)
+                                                // Step 4: Stats and
+                                                // Combat (final pulse)
                                                 javafx.application.Platform.runLater(
                                                         () -> {
                                                             content.getChildren()
@@ -308,7 +304,8 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         trackBoxes.getChildren().clear();
 
         List<String> levels = viewModel.healthLevelsProperty();
-        // Group by penalty, preserving order as much as possible, or using a fixed order.
+        // Group by penalty, preserving order as much as possible, or using a fixed
+        // order.
         Map<String, Integer> counts = new LinkedHashMap<>();
         for (String lvl : levels) {
             counts.put(lvl, counts.getOrDefault(lvl, 0) + 1);

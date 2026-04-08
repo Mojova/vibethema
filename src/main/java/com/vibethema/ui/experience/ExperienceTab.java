@@ -1,13 +1,6 @@
 package com.vibethema.ui.experience;
 
-import com.vibethema.model.*;
-import com.vibethema.model.combat.*;
-import com.vibethema.model.equipment.*;
 import com.vibethema.model.logic.*;
-import com.vibethema.model.mystic.*;
-import com.vibethema.model.progression.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.traits.*;
 import com.vibethema.viewmodel.experience.ExperienceViewModel;
 import com.vibethema.viewmodel.experience.XpAwardRowViewModel;
 import de.saxsys.mvvmfx.InjectViewModel;
