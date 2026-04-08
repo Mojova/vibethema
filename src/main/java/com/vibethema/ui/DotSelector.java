@@ -26,6 +26,7 @@ public class DotSelector extends HBox {
     private final IntegerProperty minDotsProperty;
     private final StringProperty contextId = new SimpleStringProperty();
     private final StringProperty description = new SimpleStringProperty();
+    private final StringProperty targetId = new SimpleStringProperty();
 
     public DotSelector(IntegerProperty valueProperty, int minDots) {
         this(valueProperty, minDots, 5);
@@ -117,10 +118,11 @@ public class DotSelector extends HBox {
     private void triggerCheckpoint() {
         if (contextId.get() != null) {
             Messenger.publish("RECORD_UNDO_CHECKPOINT", 
-                new CheckpointRequest(contextId.get(), description.get()));
+                new CheckpointRequest(contextId.get(), description.get(), targetId.get()));
         }
     }
 
     public StringProperty contextIdProperty() { return contextId; }
     public StringProperty descriptionProperty() { return description; }
+    public StringProperty targetIdProperty() { return targetId; }
 }

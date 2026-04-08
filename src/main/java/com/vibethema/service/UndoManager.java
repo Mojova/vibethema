@@ -16,7 +16,8 @@ public class UndoManager {
     public record UndoEntry(
         CharacterSaveState state,
         String contextId,
-        String description
+        String description,
+        String targetId
     ) {}
 
     private final Deque<UndoEntry> undoStack = new ArrayDeque<>();
@@ -29,13 +30,13 @@ public class UndoManager {
      * Pushes a new checkpoint to the undo stack.
      * Clears the redo stack whenever a new action is recorded.
      */
-    public void pushCheckpoint(CharacterSaveState state, String contextId, String description) {
+    public void pushCheckpoint(CharacterSaveState state, String contextId, String description, String targetId) {
         // If the state hasn't changed from the last one, ignore it
         if (!undoStack.isEmpty() && undoStack.peek().state().equals(state)) {
             return;
         }
 
-        undoStack.push(new UndoEntry(state, contextId, description));
+        undoStack.push(new UndoEntry(state, contextId, description, targetId));
         if (undoStack.size() > MAX_HISTORY_SIZE) {
             undoStack.removeLast();
         }
@@ -54,7 +55,7 @@ public class UndoManager {
         UndoEntry entry = undoStack.pop();
         
         // Push current state to redo stack before moving back
-        redoStack.push(new UndoEntry(currentState, entry.contextId(), entry.description()));
+        redoStack.push(new UndoEntry(currentState, entry.contextId(), entry.description(), entry.targetId()));
         if (redoStack.size() > MAX_HISTORY_SIZE) {
             redoStack.removeLast();
         }
@@ -69,7 +70,7 @@ public class UndoManager {
         UndoEntry entry = redoStack.pop();
         
         // Push current state to undo stack before moving forward
-        undoStack.push(new UndoEntry(currentState, entry.contextId(), entry.description()));
+        undoStack.push(new UndoEntry(currentState, entry.contextId(), entry.description(), entry.targetId()));
         if (undoStack.size() > MAX_HISTORY_SIZE) {
             undoStack.removeLast();
         }

@@ -24,6 +24,10 @@ public class AttributeRowViewModel {
         this.displayName.set(attribute.getDisplayName());
     }
 
+    public Attribute getAttribute() {
+        return attribute;
+    }
+
     public StringProperty displayNameProperty() {
         return displayName;
     }

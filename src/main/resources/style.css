@@ -700,3 +700,19 @@
     -fx-text-fill: #ffaa00;
 }
 
+/* Undo/Redo Feedback Effects */
+.pulse-highlight {
+    -fx-background-color: rgba(212, 175, 55, 0.4);
+    -fx-background-radius: 5px;
+    -fx-effect: dropshadow(three-pass-box, rgba(212, 175, 55, 0.6), 15, 0, 0, 0);
+}
+
+.pulse-highlight-text {
+    -fx-background-color: rgba(212, 175, 55, 0.4);
+}
+
+.dot-selector.pulse-highlight {
+    -fx-border-color: #d4af37;
+    -fx-border-width: 2px;
+}
+

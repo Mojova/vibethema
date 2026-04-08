@@ -277,11 +277,11 @@ public class CharmTreeViewModel implements ViewModel {
 
         if (stackable || (!owned && c.isEligible(data))) {
             Messenger.publish("RECORD_UNDO_CHECKPOINT", 
-                new CheckpointRequest("Charms", "Purchase Charm: " + c.getName()));
+                new CheckpointRequest("Charms", "Purchase Charm: " + c.getName(), "charm." + c.getId()));
             data.addCharm(new PurchasedCharm(c.getId(), c.getName(), c.getAbility()));
         } else if (owned) {
             Messenger.publish("RECORD_UNDO_CHECKPOINT", 
-                new CheckpointRequest("Charms", "Refund Charm: " + c.getName()));
+                new CheckpointRequest("Charms", "Refund Charm: " + c.getName(), "charm." + c.getId()));
             data.removeCharm(c.getId());
         }
         Messenger.publish("refresh_all_ui");
@@ -310,7 +310,7 @@ public class CharmTreeViewModel implements ViewModel {
         Charm c = selectedCharm.get();
         if (c != null) {
             Messenger.publish("RECORD_UNDO_CHECKPOINT", 
-                new CheckpointRequest("Charms", "Refund Stack: " + c.getName()));
+                new CheckpointRequest("Charms", "Refund Stack: " + c.getName(), "charm." + c.getId()));
             data.removeOneCharm(c.getId());
             Messenger.publish("refresh_all_ui");
         }

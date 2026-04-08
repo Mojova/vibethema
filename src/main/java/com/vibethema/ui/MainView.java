@@ -139,6 +139,14 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                 });
 
         addObserver(
+                "highlight_element",
+                (name, payload) -> {
+                    if (payload != null && payload.length > 0 && payload[0] instanceof String) {
+                        triggerPulseHighlight((String) payload[0]);
+                    }
+                });
+
+        addObserver(
                 "char_load_warning",
                 (name, payload) -> {
                     if (payload != null
@@ -443,10 +451,12 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         basicInfo.getStyleClass().add("info-bar");
 
         TextField nameField = new TextField();
+        nameField.setId("info.name");
         nameField.setPromptText("Character Name");
         nameField.textProperty().bindBidirectional(viewModel.getData().nameProperty());
 
         ComboBox<Caste> casteBox = new ComboBox<>();
+        casteBox.setId("info.caste");
         casteBox.getItems().addAll(Caste.values());
         casteBox.setValue(viewModel.getData().casteProperty().get());
         casteBox
@@ -470,6 +480,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                         });
 
         ComboBox<String> supernalDropdown = new ComboBox<>();
+        supernalDropdown.setId("info.supernal");
         supernalDropdown.setPrefWidth(120);
         supernalDropdown.setItems(viewModel.getData().getValidSupernalAbilities());
         supernalDropdown
@@ -700,5 +711,24 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                 dialogPane.getStyleClass().add("warning-dialog");
             }
         }
+    }
+
+    private void triggerPulseHighlight(String targetId) {
+        if (targetId == null || targetId.isEmpty()) return;
+
+        javafx.application.Platform.runLater(
+                () -> {
+                    javafx.scene.Node node = lookup("#" + targetId);
+                    if (node != null) {
+                        node.requestFocus();
+                        node.getStyleClass().add("pulse-highlight");
+
+                        javafx.animation.PauseTransition pause =
+                                new javafx.animation.PauseTransition(
+                                        javafx.util.Duration.millis(800));
+                        pause.setOnFinished(e -> node.getStyleClass().remove("pulse-highlight"));
+                        pause.play();
+                    }
+                });
     }
 }

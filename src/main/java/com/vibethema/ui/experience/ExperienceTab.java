@@ -59,6 +59,7 @@ public class ExperienceTab extends ScrollPane implements JavaView<ExperienceView
 
         awardsListContainer = new VBox(8);
         awardsListContainer.getStyleClass().add("merit-row-container");
+        awardsListContainer.setId("experience.log");
 
         viewModel
                 .getAwards()

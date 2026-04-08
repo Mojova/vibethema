@@ -44,7 +44,7 @@ class CharacterDataUndoTest {
         
         data.nameProperty().set("Start");
         // Checkpoint the state BEFORE the change
-        undoManager.pushCheckpoint(data.exportState(), "MAIN", "Set to Changed");
+        undoManager.pushCheckpoint(data.exportState(), "MAIN", "Set to Changed", "name");
         
         data.nameProperty().set("Changed");
         

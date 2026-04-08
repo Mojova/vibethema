@@ -48,7 +48,7 @@ public class MainViewModel implements ViewModel {
         }
     }
 
-    public record CheckpointRequest(String contextId, String description) {}
+    public record CheckpointRequest(String contextId, String description, String targetId) {}
 
     private static final Logger logger = LoggerFactory.getLogger(MainViewModel.class);
     private CharacterData data;
@@ -163,18 +163,18 @@ public class MainViewModel implements ViewModel {
         Messenger.subscribe("request_charm_creation", this::handleCharmCreationRequest);
         Messenger.subscribe("RECORD_UNDO_CHECKPOINT", (name, payload) -> {
             if (payload != null && payload.length > 0 && payload[0] instanceof CheckpointRequest req) {
-                undoManager.pushCheckpoint(data.exportState(), req.contextId, req.description);
+                undoManager.pushCheckpoint(data.exportState(), req.contextId, req.description, req.targetId);
             }
         });
 
-        setupDebouncedCheckpoint(data.nameProperty(), "Info", "Change Name");
-        setupDebouncedCheckpoint(data.limitTriggerProperty(), "Stats", "Change Limit Trigger");
+        setupDebouncedCheckpoint(data.nameProperty(), "Info", "Change Name", "info.name");
+        setupDebouncedCheckpoint(data.limitTriggerProperty(), "Stats", "Change Limit Trigger", "stats.limit_trigger");
     }
 
-    private void setupDebouncedCheckpoint(StringProperty property, String contextId, String description) {
+    private void setupDebouncedCheckpoint(StringProperty property, String contextId, String description, String targetId) {
         PauseTransition pause = new PauseTransition(Duration.seconds(1));
         pause.setOnFinished(e -> {
-            undoManager.pushCheckpoint(data.exportState(), contextId, description);
+            undoManager.pushCheckpoint(data.exportState(), contextId, description, targetId);
         });
 
         property.addListener((obs, oldV, newV) -> {
@@ -304,11 +304,11 @@ public class MainViewModel implements ViewModel {
         if (undoManager.canUndoProperty().get()) {
             UndoManager.UndoEntry entry = undoManager.undo(currentTabId.get(), data.exportState());
             if (entry != null) {
-                // Phase 3: Jump to context if it's different
                 if (!entry.contextId().equals(currentTabId.get())) {
                     jumpToContext(entry.contextId(), entry.state());
                 }
                 data.restoreState(entry.state(), equipmentService);
+                handlePostHistoryAction(entry);
             }
         }
     }
@@ -317,12 +317,22 @@ public class MainViewModel implements ViewModel {
         if (undoManager.canRedoProperty().get()) {
             UndoManager.UndoEntry entry = undoManager.redo(currentTabId.get(), data.exportState());
             if (entry != null) {
-                // Phase 3: Jump to context if it's different
                 if (!entry.contextId().equals(currentTabId.get())) {
                     jumpToContext(entry.contextId(), entry.state());
                 }
                 data.restoreState(entry.state(), equipmentService);
+                handlePostHistoryAction(entry);
             }
+        }
+    }
+
+    private void handlePostHistoryAction(UndoManager.UndoEntry entry) {
+        // Always attempt to highlight the target element
+        if (entry.targetId() != null) {
+            // Delay slightly to allow tab switch/rendering to complete
+            PauseTransition delay = new PauseTransition(Duration.millis(150));
+            delay.setOnFinished(e -> Messenger.publish("highlight_element", entry.targetId()));
+            delay.play();
         }
     }
 

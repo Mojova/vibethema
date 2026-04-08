@@ -106,6 +106,8 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         DotSelector essSelector = new DotSelector(data.essenceProperty(), 1, 5);
         essSelector.contextIdProperty().set("Stats");
         essSelector.descriptionProperty().set("Change Essence");
+        essSelector.targetIdProperty().set("stats.essence");
+        essSelector.setId("stats.essence");
         essSelector
                 .disableProperty()
                 .bind(viewModel.modeProperty().isEqualTo(CharacterMode.CREATION));
@@ -132,6 +134,8 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         DotSelector wpSelector = new DotSelector(data.willpowerProperty(), 5, 10);
         wpSelector.contextIdProperty().set("Stats");
         wpSelector.descriptionProperty().set("Change Willpower");
+        wpSelector.targetIdProperty().set("stats.willpower");
+        wpSelector.setId("stats.willpower");
         wpBox.getChildren().addAll(wpLabel, wpSelector);
 
         topRow.getChildren().addAll(essBox, motesBox, wpBox);
@@ -435,6 +439,7 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         content.setPadding(new Insets(10));
 
         TextArea triggerArea = new TextArea();
+        triggerArea.setId("stats.limit_trigger");
         triggerArea.setPromptText("Enter your Limit Trigger...");
         triggerArea.setPrefRowCount(2);
         triggerArea.setWrapText(true);
@@ -445,6 +450,8 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         DotSelector limitSelector = new DotSelector(data.limitProperty(), 0, 10);
         limitSelector.contextIdProperty().set("Stats");
         limitSelector.descriptionProperty().set("Change Limit");
+        limitSelector.targetIdProperty().set("stats.limit");
+        limitSelector.setId("stats.limit");
         limitBox.getChildren()
                 .addAll(new Label("Limit:"), limitSelector);
 
