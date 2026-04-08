@@ -10,6 +10,7 @@ import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
 import com.vibethema.service.PdfExportService;
 import com.vibethema.service.SystemDataService;
+import com.vibethema.service.UndoManager;
 import com.vibethema.viewmodel.charms.CharmsViewModel;
 import com.vibethema.viewmodel.equipment.EquipmentViewModel;
 import com.vibethema.viewmodel.experience.ExperienceViewModel;
@@ -51,6 +52,8 @@ public class MainViewModel implements ViewModel {
     private final EquipmentDataService equipmentService;
     private final CharmDataService charmDataService;
     private final PdfExportService pdfExportService;
+    private final UndoManager undoManager = new UndoManager();
+    private final StringProperty currentTabId = new SimpleStringProperty("Stats");
 
     private final Map<String, String> tagDescriptions =
             new java.util.concurrent.ConcurrentHashMap<>();
@@ -229,6 +232,18 @@ public class MainViewModel implements ViewModel {
         return coreDataImported;
     }
 
+    public StringProperty currentTabIdProperty() {
+        return currentTabId;
+    }
+
+    public javafx.beans.property.ReadOnlyBooleanProperty canUndoProperty() {
+        return undoManager.canUndoProperty();
+    }
+
+    public javafx.beans.property.ReadOnlyBooleanProperty canRedoProperty() {
+        return undoManager.canRedoProperty();
+    }
+
     // Actions
     public void saveCharacter(File file) {
         if (file == null) return;
@@ -250,9 +265,28 @@ public class MainViewModel implements ViewModel {
                 data.importState(state, equipmentService);
                 currentFile.set(file);
                 data.setDirty(false);
+                undoManager.clear();
             }
         } catch (Exception ex) {
             logger.error("Failed to load character from {}", file.getAbsolutePath(), ex);
+        }
+    }
+
+    public void undo() {
+        if (undoManager.canUndoProperty().get()) {
+            UndoManager.UndoEntry entry = undoManager.undo(currentTabId.get(), data.exportState());
+            if (entry != null) {
+                data.restoreState(entry.state(), equipmentService);
+            }
+        }
+    }
+
+    public void redo() {
+        if (undoManager.canRedoProperty().get()) {
+            UndoManager.UndoEntry entry = undoManager.redo(currentTabId.get(), data.exportState());
+            if (entry != null) {
+                data.restoreState(entry.state(), equipmentService);
+            }
         }
     }
 

@@ -92,6 +92,12 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                 .addListener((obs, oldV, newV) -> updateExperienceTabVisibility(newV));
         updateExperienceTabVisibility(viewModel.getData().getMode());
 
+        mainTabPane.getSelectionModel().selectedItemProperty().addListener((obs, oldTab, newTab) -> {
+            if (newTab != null) {
+                viewModel.currentTabIdProperty().set(newTab.getText());
+            }
+        });
+
         setCenter(mainTabPane);
 
         // Footer
@@ -383,6 +389,20 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                         new SeparatorMenuItem(),
                         quitItem);
         menuBar.getMenus().add(fileMenu);
+
+        Menu editMenu = new Menu("Edit");
+        MenuItem undoItem = new MenuItem("Undo");
+        undoItem.setAccelerator(KeyCombination.keyCombination("Shortcut+Z"));
+        undoItem.setOnAction(e -> viewModel.undo());
+        undoItem.disableProperty().bind(viewModel.canUndoProperty().not());
+
+        MenuItem redoItem = new MenuItem("Redo");
+        redoItem.setAccelerator(KeyCombination.keyCombination("Shortcut+Y"));
+        redoItem.setOnAction(e -> viewModel.redo());
+        redoItem.disableProperty().bind(viewModel.canRedoProperty().not());
+
+        editMenu.getItems().addAll(undoItem, redoItem);
+        menuBar.getMenus().add(editMenu);
 
         return menuBar;
     }
