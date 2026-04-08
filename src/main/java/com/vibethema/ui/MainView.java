@@ -498,9 +498,19 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         Label supernalLabel = new Label("Supernal:");
         Button helpBtn = new Button("?");
         helpBtn.getStyleClass().add("help-btn");
-        helpBtn.setTooltip(
-                new Tooltip(
-                        "Only abilities selected as 'Caste' in the Stats tab can be chosen as your Supernal ability."));
+        Tooltip helpTooltip = new Tooltip(
+                        "Only abilities selected as 'Caste' in the Stats tab can be chosen as your Supernal ability.");
+        helpBtn.setTooltip(helpTooltip);
+
+        // Show help on focus (for keyboard navigation)
+        helpBtn.focusedProperty().addListener((obs, oldV, newV) -> {
+            if (newV) {
+                Bounds bounds = helpBtn.localToScreen(helpBtn.getBoundsInLocal());
+                helpTooltip.show(helpBtn, bounds.getMinX(), bounds.getMaxY() + 5);
+            } else {
+                helpTooltip.hide();
+            }
+        });
 
         HBox supernalContainer = new HBox(5);
         supernalContainer.setAlignment(Pos.CENTER_LEFT);
