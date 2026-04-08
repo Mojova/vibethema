@@ -26,15 +26,20 @@ import java.net.URL;
 import java.util.*;
 import javafx.application.Platform;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MainView extends BorderPane implements JavaView<MainViewModel>, Initializable {
+    private static final Logger logger = LoggerFactory.getLogger(MainView.class);
 
     @InjectViewModel private MainViewModel viewModel;
 
@@ -718,8 +723,9 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
 
         javafx.application.Platform.runLater(
                 () -> {
-                    javafx.scene.Node node = lookup("#" + targetId);
+                    Node node = lookup("#" + targetId);
                     if (node != null) {
+                        ensureVisible(node);
                         node.requestFocus();
                         node.getStyleClass().add("pulse-highlight");
 
@@ -728,7 +734,34 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                                         javafx.util.Duration.millis(800));
                         pause.setOnFinished(e -> node.getStyleClass().remove("pulse-highlight"));
                         pause.play();
+                    } else {
+                        logger.warn("Could not find element to highlight: #{}", targetId);
                     }
                 });
+    }
+
+    private void ensureVisible(Node node) {
+        Node current = node;
+        while (current != null) {
+            if (current instanceof ScrollPane scrollPane) {
+                Node content = scrollPane.getContent();
+                if (content == null) return;
+
+                Bounds nodeInScene = node.localToScene(node.getBoundsInLocal());
+                Bounds contentInScene = content.localToScene(content.getBoundsInLocal());
+
+                double height = content.getBoundsInLocal().getHeight();
+                double viewportHeight = scrollPane.getViewportBounds().getHeight();
+
+                if (height > viewportHeight) {
+                    double yInContent = nodeInScene.getMinY() - contentInScene.getMinY();
+                    // Scroll so the node is near the top (with a 20px padding)
+                    double targetV = (yInContent - 20) / (height - viewportHeight);
+                    scrollPane.setVvalue(Math.max(0, Math.min(1, targetV)));
+                }
+                break;
+            }
+            current = current.getParent();
+        }
     }
 }
