@@ -42,6 +42,28 @@ The project strictly follows the **Model-View-ViewModel (MVVM)** pattern using t
 | **Equipment** | `EquipmentTab` | `EquipmentViewModel` |
 | **Experience** | `ExperienceTab` | `ExperienceViewModel` |
 | **Footer (BP/XP)** | `FooterView` | `FooterViewModel` |
+ 
+ ## History & Undo/Redo System
+ 
+ The application implements a centralized history system for non-destructive character editing.
+ 
+ ### Architecture
+ - **`UndoManager`**: The core service managing the undo and redo stacks. It stores `UndoEntry` objects containing a `CharacterSaveState`, a `contextId` (the active tab), and a `targetId` (the specific UI element changed).
+ - **Checkpointing**: ViewModels are responsible for pushing state snapshots to the `UndoManager`. 
+   - Use `undoManager.pushCheckpoint(data.exportState(), contextId, "Description", "target_id")`.
+   - Prefer debounced checkpoints for text inputs to avoid flooding the history stack.
+ 
+ ### ID Naming Convention (CRITICAL)
+ - **Underscores Only**: All JavaFX `id` and `targetId` strings **MUST** use underscore separators (`_`), not dots (`.`).
+ - **Rationale**: JavaFX's `lookup()` method interprets dots as CSS class selectors. Using dots (e.g., `stats.essence`) prevents the visual feedback system from locating the node.
+ - **Example**: Use `attribute_strength`, `ability_melee`, `stats_essence`.
+ 
+ ### Visual Feedback
+ - **Pulse Highlight**: The system automatically applies the `.pulse-highlight` CSS class to the `targetId` node for 800ms during history traversal.
+ - **Auto-Scroll**: `MainView` automatically identifies the nearest `ScrollPane` ancestor and scrolls the highlighted element into the viewport.
+ - **Context Awareness**: 
+   - History actions on the **current tab** trigger visual feedback instantly.
+   - History actions requiring a **tab switch** include a 100ms safety delay to allow for UI rendering before highlighting.
 
 ### Service Layer (`com.vibethema.service`)
 - **`CharmDataService`**: Manages charm/spell loading and custom definitions.
