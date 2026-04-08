@@ -24,6 +24,7 @@ public class SpecialtyRowView extends HBox {
         TextField nameField = new TextField();
         nameField.setPromptText("Specialty Name");
         nameField.textProperty().bindBidirectional(viewModel.nameProperty());
+        nameField.setAccessibleText("Specialty Name");
 
         ComboBox<String> abilityCombo = new ComboBox<>();
         abilityCombo
@@ -33,6 +34,7 @@ public class SpecialtyRowView extends HBox {
                                 .map(Ability::getDisplayName)
                                 .collect(Collectors.toList()));
         abilityCombo.valueProperty().bindBidirectional(viewModel.abilityProperty());
+        abilityCombo.setAccessibleText("Associated Ability");
 
         getChildren().addAll(nameField, abilityCombo);
     }

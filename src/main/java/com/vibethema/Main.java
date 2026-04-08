@@ -6,6 +6,7 @@ import com.vibethema.viewmodel.MainViewModel;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.ViewTuple;
 import java.io.File;
+import java.util.Locale;
 import javafx.application.Application;
 import javafx.concurrent.Task;
 import javafx.scene.Scene;
@@ -138,6 +139,7 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
+        Locale.setDefault(Locale.UK);
         System.setProperty("apple.awt.application.name", "Vibethema");
         launch(args);
     }

@@ -3,8 +3,8 @@ package com.vibethema.viewmodel.charms;
 import com.vibethema.model.*;
 import com.vibethema.model.mystic.*;
 import com.vibethema.service.CharmDataService;
-import com.vibethema.viewmodel.util.Messenger;
 import com.vibethema.viewmodel.MainViewModel.CheckpointRequest;
+import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;
 import java.util.*;
 import javafx.beans.property.*;
@@ -276,12 +276,16 @@ public class CharmTreeViewModel implements ViewModel {
         boolean owned = data.hasCharm(c.getId());
 
         if (stackable || (!owned && c.isEligible(data))) {
-            Messenger.publish("RECORD_UNDO_CHECKPOINT", 
-                new CheckpointRequest("Charms", "Purchase Charm: " + c.getName(), "charm." + c.getId()));
+            Messenger.publish(
+                    "RECORD_UNDO_CHECKPOINT",
+                    new CheckpointRequest(
+                            "Charms", "Purchase Charm: " + c.getName(), "charm." + c.getId()));
             data.addCharm(new PurchasedCharm(c.getId(), c.getName(), c.getAbility()));
         } else if (owned) {
-            Messenger.publish("RECORD_UNDO_CHECKPOINT", 
-                new CheckpointRequest("Charms", "Refund Charm: " + c.getName(), "charm." + c.getId()));
+            Messenger.publish(
+                    "RECORD_UNDO_CHECKPOINT",
+                    new CheckpointRequest(
+                            "Charms", "Refund Charm: " + c.getName(), "charm." + c.getId()));
             data.removeCharm(c.getId());
         }
         Messenger.publish("refresh_all_ui");
@@ -301,16 +305,16 @@ public class CharmTreeViewModel implements ViewModel {
     public void onCreateCharmRequest(Runnable onSave) {
         Messenger.publish(
                 "request_charm_creation",
-                new Object[] {
-                    selectionId.get(), artifactName.get(), filterType.get(), onSave
-                });
+                new Object[] {selectionId.get(), artifactName.get(), filterType.get(), onSave});
     }
 
     public void refundOne() {
         Charm c = selectedCharm.get();
         if (c != null) {
-            Messenger.publish("RECORD_UNDO_CHECKPOINT", 
-                new CheckpointRequest("Charms", "Refund Stack: " + c.getName(), "charm." + c.getId()));
+            Messenger.publish(
+                    "RECORD_UNDO_CHECKPOINT",
+                    new CheckpointRequest(
+                            "Charms", "Refund Stack: " + c.getName(), "charm." + c.getId()));
             data.removeOneCharm(c.getId());
             Messenger.publish("refresh_all_ui");
         }

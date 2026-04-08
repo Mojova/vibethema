@@ -76,18 +76,42 @@ public class WeaponDialogView extends GridPane
         tagsList.setPrefHeight(150);
         GridPane.setVgrow(tagsList, Priority.ALWAYS);
 
-        add(new Label("Name:"), 0, 0);
+        Label nameLabel = new Label("Name:");
+        nameLabel.setLabelFor(nameField);
+        nameField.setAccessibleText("Weapon Name");
+        add(nameLabel, 0, 0);
         add(nameField, 1, 0);
-        add(new Label("Range:"), 0, 1);
+
+        Label rangeLabel = new Label("Range:");
+        rangeLabel.setLabelFor(rangeCombo);
+        rangeCombo.setAccessibleText("Weapon Range");
+        add(rangeLabel, 0, 1);
         add(rangeCombo, 1, 1);
-        add(new Label("Type:"), 0, 2);
+
+        Label typeLabel = new Label("Type:");
+        typeLabel.setLabelFor(typeCombo);
+        typeCombo.setAccessibleText("Weapon Type");
+        add(typeLabel, 0, 2);
         add(typeCombo, 1, 2);
-        add(new Label("Category:"), 0, 3);
+
+        Label categoryLabel = new Label("Category:");
+        categoryLabel.setLabelFor(categoryCombo);
+        categoryCombo.setAccessibleText("Weapon Category");
+        add(categoryLabel, 0, 3);
         add(categoryCombo, 1, 3);
-        add(new Label("Specialty:"), 0, 4);
+
+        Label specialtyLabel = new Label("Specialty:");
+        specialtyLabel.setLabelFor(specialtyCombo);
+        specialtyCombo.setAccessibleText("Weapon Specialty");
+        add(specialtyLabel, 0, 4);
         add(specialtyCombo, 1, 4);
-        add(new Label("Tags:"), 0, 5);
+
+        Label tagsLabel = new Label("Tags:");
+        tagsLabel.setLabelFor(tagsList);
+        tagsList.setAccessibleText("Weapon Tags List");
+        add(tagsLabel, 0, 5);
         add(tagsList, 1, 5);
+
         add(personalCb, 1, 6);
 
         tagsList.setTooltip(

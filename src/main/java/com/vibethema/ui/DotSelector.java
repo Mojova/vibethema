@@ -8,12 +8,13 @@ import com.vibethema.model.mystic.*;
 import com.vibethema.model.progression.*;
 import com.vibethema.model.social.*;
 import com.vibethema.model.traits.*;
-import com.vibethema.viewmodel.util.Messenger;
 import com.vibethema.viewmodel.MainViewModel.CheckpointRequest;
+import com.vibethema.viewmodel.util.Messenger;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.StringProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Pos;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
@@ -95,6 +96,17 @@ public class DotSelector extends HBox {
                     }
                     updateDots();
                 });
+
+        accessibleTextProperty()
+                .bind(
+                        Bindings.createStringBinding(
+                                () ->
+                                        (description.get() != null ? description.get() : "Dots")
+                                                + ": "
+                                                + valueProperty.get(),
+                                description,
+                                valueProperty));
+
         updateDots();
     }
 
@@ -117,12 +129,21 @@ public class DotSelector extends HBox {
 
     private void triggerCheckpoint() {
         if (contextId.get() != null) {
-            Messenger.publish("RECORD_UNDO_CHECKPOINT", 
-                new CheckpointRequest(contextId.get(), description.get(), targetId.get()));
+            Messenger.publish(
+                    "RECORD_UNDO_CHECKPOINT",
+                    new CheckpointRequest(contextId.get(), description.get(), targetId.get()));
         }
     }
 
-    public StringProperty contextIdProperty() { return contextId; }
-    public StringProperty descriptionProperty() { return description; }
-    public StringProperty targetIdProperty() { return targetId; }
+    public StringProperty contextIdProperty() {
+        return contextId;
+    }
+
+    public StringProperty descriptionProperty() {
+        return description;
+    }
+
+    public StringProperty targetIdProperty() {
+        return targetId;
+    }
 }

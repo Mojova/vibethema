@@ -12,11 +12,11 @@ import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
 import com.vibethema.service.PdfExportService;
 import com.vibethema.service.SystemDataService;
-import com.vibethema.viewmodel.util.Messenger;
-import de.saxsys.mvvmfx.utils.notifications.NotificationObserver;
 import com.vibethema.viewmodel.charms.CharmsViewModel;
 import com.vibethema.viewmodel.equipment.EquipmentViewModel;
 import com.vibethema.viewmodel.experience.ExperienceViewModel;
+import com.vibethema.viewmodel.util.Messenger;
+import de.saxsys.mvvmfx.utils.notifications.NotificationObserver;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,8 +46,7 @@ public class MainViewModelTest {
         latch.await(5, TimeUnit.SECONDS);
     }
 
-    @TempDir
-    Path tempDir;
+    @TempDir Path tempDir;
 
     private MainViewModel viewModel;
     private CharacterData data;
@@ -84,6 +83,10 @@ public class MainViewModelTest {
 
     @Test
     void testAsyncDataLoading() throws InterruptedException {
+        // Create local mocks to avoid race conditions with the background thread started in setUp()
+        EquipmentDataService localEquipmentService = Mockito.mock(EquipmentDataService.class);
+        CharmDataService localCharmDataService = Mockito.mock(CharmDataService.class);
+
         // Prepare mock data
         Map<String, List<EquipmentDataService.Tag>> mockTags = new HashMap<>();
         mockTags.put(
@@ -93,17 +96,18 @@ public class MainViewModelTest {
         mockKeyword.setName("Aggravated");
         mockKeyword.setDescription("Causes aggravated damage");
 
-        // Use doReturn for cleaner thread safety if the mock is being accessed concurrently
-        doReturn(mockTags).when(equipmentService).loadEquipmentTags();
-        doReturn(List.of(mockKeyword)).when(charmDataService).loadKeywords();
+        // Stub local mocks BEFORE creating the ViewModel
+        when(localEquipmentService.loadWeapon(anyString())).thenReturn(null);
+        doReturn(mockTags).when(localEquipmentService).loadEquipmentTags();
+        doReturn(List.of(mockKeyword)).when(localCharmDataService).loadKeywords();
 
-        // Trigger background loading by creating ViewModel
+        // Trigger background loading by creating ViewModel with local mocks
         viewModel =
                 new MainViewModel(
                         data,
                         systemDataService,
-                        equipmentService,
-                        charmDataService,
+                        localEquipmentService,
+                        localCharmDataService,
                         Mockito.mock(PdfExportService.class));
 
         // Wait briefly for the background thread to complete
@@ -283,6 +287,7 @@ public class MainViewModelTest {
         assertFalse(data.getCasteAbility(Ability.ARCHERY).get());
         assertTrue(data.getUnlockedCharms().isEmpty());
     }
+
     @Test
     void testGenerateCasteChangeWarning() {
         List<Ability> lostAbilities = List.of(Ability.ARCHERY, Ability.MELEE);

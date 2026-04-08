@@ -51,13 +51,28 @@ public class ArmorDialogView extends GridPane
         tagsList.setPrefHeight(150);
         GridPane.setVgrow(tagsList, Priority.ALWAYS);
 
-        add(new Label("Name:"), 0, 0);
+        Label nameLabel = new Label("Name:");
+        nameLabel.setLabelFor(nameField);
+        nameField.setAccessibleText("Armor Name");
+        add(nameLabel, 0, 0);
         add(nameField, 1, 0);
-        add(new Label("Type:"), 0, 1);
+
+        Label typeLabel = new Label("Type:");
+        typeLabel.setLabelFor(typeCombo);
+        typeCombo.setAccessibleText("Armor Type");
+        add(typeLabel, 0, 1);
         add(typeCombo, 1, 1);
-        add(new Label("Weight:"), 0, 2);
+
+        Label weightLabel = new Label("Weight:");
+        weightLabel.setLabelFor(weightCombo);
+        weightCombo.setAccessibleText("Armor Weight Class");
+        add(weightLabel, 0, 2);
         add(weightCombo, 1, 2);
-        add(new Label("Tags:"), 0, 3);
+
+        Label tagsLabel = new Label("Tags:");
+        tagsLabel.setLabelFor(tagsList);
+        tagsList.setAccessibleText("Armor Tags List");
+        add(tagsLabel, 0, 3);
         add(tagsList, 1, 3);
 
         // Tooltip for tags (optional, but premium)

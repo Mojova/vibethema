@@ -35,7 +35,7 @@ class UndoManagerTest {
 
         // Push state 2
         undoManager.pushCheckpoint(state2, "TAB1", "Action 2", "target2");
-        
+
         // Push state 3
         undoManager.pushCheckpoint(state3, "TAB1", "Action 3", "target3");
 
@@ -70,14 +70,14 @@ class UndoManagerTest {
     void testIdenticalStateIgnored() {
         CharacterSaveState state1 = new CharacterSaveState();
         state1.name = "Name";
-        
+
         undoManager.pushCheckpoint(state1, "CONTEXT", "Action 1", "t1");
-        
+
         CharacterSaveState state2 = new CharacterSaveState();
         state2.name = "Name"; // Identical
-        
+
         undoManager.pushCheckpoint(state2, "CONTEXT", "Action 2", "t1");
-        
+
         // Should only have 1 entry
         undoManager.undo("CONTEXT", state2);
         assertFalse(undoManager.canUndoProperty().get());

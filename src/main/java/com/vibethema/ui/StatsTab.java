@@ -212,31 +212,43 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
                                                     ds -> {
                                                         ds.minDotsProperty()
                                                                 .bind(
-                                                                        Bindings.createIntegerBinding(
-                                                                                () -> {
-                                                                                    if (!data.getFavoredAbility(
-                                                                                                    Ability.CRAFT)
-                                                                                            .get()) return 0;
-                                                                                    int totalDots =
-                                                                                            data.getCrafts()
-                                                                                                    .stream()
-                                                                                                    .mapToInt(
-                                                                                                            CraftAbility
-                                                                                                                    ::getRating)
-                                                                                                    .sum();
-                                                                                    return (totalDots
-                                                                                                            - rvm.ratingProperty()
-                                                                                                                    .get()
-                                                                                                    > 0)
-                                                                                            ? 0
-                                                                                            : 1;
-                                                                                },
-                                                                                data.getFavoredAbility(
-                                                                                        Ability.CRAFT),
-                                                                                rvm.ratingProperty()));
+                                                                        Bindings
+                                                                                .createIntegerBinding(
+                                                                                        () -> {
+                                                                                            if (!data.getFavoredAbility(
+                                                                                                            Ability
+                                                                                                                    .CRAFT)
+                                                                                                    .get())
+                                                                                                return 0;
+                                                                                            int
+                                                                                                    totalDots =
+                                                                                                            data
+                                                                                                                    .getCrafts()
+                                                                                                                    .stream()
+                                                                                                                    .mapToInt(
+                                                                                                                            CraftAbility
+                                                                                                                                    ::getRating)
+                                                                                                                    .sum();
+                                                                                            return (totalDots
+                                                                                                                    - rvm.ratingProperty()
+                                                                                                                            .get()
+                                                                                                            > 0)
+                                                                                                    ? 0
+                                                                                                    : 1;
+                                                                                        },
+                                                                                        data
+                                                                                                .getFavoredAbility(
+                                                                                                        Ability
+                                                                                                                .CRAFT),
+                                                                                        rvm
+                                                                                                .ratingProperty()));
                                                         ds.contextIdProperty().set("Stats");
-                                                        ds.descriptionProperty().set(
-                                                                "Change Craft (" + rvm.expertiseProperty().get() + ")");
+                                                        ds.descriptionProperty()
+                                                                .set(
+                                                                        "Change Craft ("
+                                                                                + rvm.expertiseProperty()
+                                                                                        .get()
+                                                                                + ")");
                                                     });
                                     return view;
                                 })
@@ -452,8 +464,7 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         limitSelector.descriptionProperty().set("Change Limit");
         limitSelector.targetIdProperty().set("stats_limit");
         limitSelector.setId("stats_limit");
-        limitBox.getChildren()
-                .addAll(new Label("Limit:"), limitSelector);
+        limitBox.getChildren().addAll(new Label("Limit:"), limitSelector);
 
         content.getChildren().addAll(new Label("Limit Trigger:"), triggerArea, limitBox);
         section.getChildren().addAll(title, content);

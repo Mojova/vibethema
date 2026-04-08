@@ -97,11 +97,15 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                 .addListener((obs, oldV, newV) -> updateExperienceTabVisibility(newV));
         updateExperienceTabVisibility(viewModel.getData().getMode());
 
-        mainTabPane.getSelectionModel().selectedItemProperty().addListener((obs, oldTab, newTab) -> {
-            if (newTab != null) {
-                viewModel.currentTabIdProperty().set(newTab.getText());
-            }
-        });
+        mainTabPane
+                .getSelectionModel()
+                .selectedItemProperty()
+                .addListener(
+                        (obs, oldTab, newTab) -> {
+                            if (newTab != null) {
+                                viewModel.currentTabIdProperty().set(newTab.getText());
+                            }
+                        });
 
         setCenter(mainTabPane);
 
@@ -264,7 +268,9 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         addObserver(
                 "switch_to_tab",
                 (name, payload) -> {
-                    if (payload != null && payload.length > 0 && payload[0] instanceof String tabTitle) {
+                    if (payload != null
+                            && payload.length > 0
+                            && payload[0] instanceof String tabTitle) {
                         for (Tab tab : mainTabPane.getTabs()) {
                             if (tabTitle.equals(tab.getText())) {
                                 mainTabPane.getSelectionModel().select(tab);
@@ -324,7 +330,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
     private Tab createEquipmentTab() {
         ViewTuple<EquipmentTab, EquipmentViewModel> vt =
                 de.saxsys.mvvmfx.FluentViewLoader.javaView(EquipmentTab.class)
-                                    .viewModel(viewModel.getEquipmentViewModel())
+                        .viewModel(viewModel.getEquipmentViewModel())
                         .codeBehind(
                                 new EquipmentTab(
                                         new DefaultEquipmentDialogService(
@@ -342,7 +348,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
     private Tab createExperienceTab() {
         ViewTuple<ExperienceTab, ExperienceViewModel> vt =
                 de.saxsys.mvvmfx.FluentViewLoader.javaView(ExperienceTab.class)
-                                    .viewModel(viewModel.getExperienceViewModel(() -> {}))
+                        .viewModel(viewModel.getExperienceViewModel(() -> {}))
                         .load();
 
         ExperienceTab view = (ExperienceTab) vt.getView();
@@ -429,15 +435,20 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
 
         // Also permit Shortcut+Y for redo (traditional Windows/Linux)
         // We add it to the scene once it's available
-        sceneProperty().addListener((obs, oldS, newS) -> {
-            if (newS != null) {
-                newS.getAccelerators().put(KeyCombination.keyCombination("Shortcut+Y"), () -> {
-                    if (viewModel.canRedoProperty().get()) {
-                        viewModel.redo();
-                    }
-                });
-            }
-        });
+        sceneProperty()
+                .addListener(
+                        (obs, oldS, newS) -> {
+                            if (newS != null) {
+                                newS.getAccelerators()
+                                        .put(
+                                                KeyCombination.keyCombination("Shortcut+Y"),
+                                                () -> {
+                                                    if (viewModel.canRedoProperty().get()) {
+                                                        viewModel.redo();
+                                                    }
+                                                });
+                            }
+                        });
 
         editMenu.getItems().addAll(undoItem, redoItem);
         menuBar.getMenus().add(editMenu);
@@ -455,17 +466,22 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         HBox basicInfo = new HBox(15);
         basicInfo.getStyleClass().add("info-bar");
 
+        Label nameLabel = new Label("Name:");
         TextField nameField = new TextField();
         nameField.setId("info_name");
         nameField.setPromptText("Character Name");
         nameField.textProperty().bindBidirectional(viewModel.getData().nameProperty());
+        nameField.setAccessibleText("Character Name");
+        nameLabel.setLabelFor(nameField);
 
+        Label casteLabel = new Label("Caste:");
         ComboBox<Caste> casteBox = new ComboBox<>();
         casteBox.setId("info_caste");
         casteBox.getItems().addAll(Caste.values());
         casteBox.setValue(viewModel.getData().casteProperty().get());
-        casteBox
-                .focusedProperty()
+        casteBox.setAccessibleText("Character Caste");
+        casteLabel.setLabelFor(casteBox);
+        casteBox.focusedProperty()
                 .addListener(
                         (obs, oldV, newV) -> {
                             if (!newV) { // Focus lost (blur)
@@ -494,23 +510,29 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         supernalDropdown
                 .valueProperty()
                 .addListener((obs, oldV, newV) -> Messenger.publish("refresh_all_ui"));
+        supernalDropdown.setAccessibleText("Supernal Ability");
 
         Label supernalLabel = new Label("Supernal:");
+        supernalLabel.setLabelFor(supernalDropdown);
         Button helpBtn = new Button("?");
         helpBtn.getStyleClass().add("help-btn");
-        Tooltip helpTooltip = new Tooltip(
-                        "Only abilities selected as 'Caste' in the Stats tab can be chosen as your Supernal ability.");
+        Tooltip helpTooltip =
+                new Tooltip(
+                        "Only abilities selected as 'Caste' in the Stats tab can be chosen as your"
+                                + " Supernal ability.");
         helpBtn.setTooltip(helpTooltip);
 
         // Show help on focus (for keyboard navigation)
-        helpBtn.focusedProperty().addListener((obs, oldV, newV) -> {
-            if (newV) {
-                Bounds bounds = helpBtn.localToScreen(helpBtn.getBoundsInLocal());
-                helpTooltip.show(helpBtn, bounds.getMinX(), bounds.getMaxY() + 5);
-            } else {
-                helpTooltip.hide();
-            }
-        });
+        helpBtn.focusedProperty()
+                .addListener(
+                        (obs, oldV, newV) -> {
+                            if (newV) {
+                                Bounds bounds = helpBtn.localToScreen(helpBtn.getBoundsInLocal());
+                                helpTooltip.show(helpBtn, bounds.getMinX(), bounds.getMaxY() + 5);
+                            } else {
+                                helpTooltip.hide();
+                            }
+                        });
 
         HBox supernalContainer = new HBox(5);
         supernalContainer.setAlignment(Pos.CENTER_LEFT);
@@ -519,9 +541,9 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         basicInfo
                 .getChildren()
                 .addAll(
-                        new Label("Name:"),
+                        nameLabel,
                         nameField,
-                        new Label("Caste:"),
+                        casteLabel,
                         casteBox,
                         supernalLabel,
                         supernalContainer);
@@ -645,7 +667,6 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                             }
                         });
     }
-
 
     private void showEditCharmDialog(
             Charm charm, String contextName, String filterType, Runnable onSave) {

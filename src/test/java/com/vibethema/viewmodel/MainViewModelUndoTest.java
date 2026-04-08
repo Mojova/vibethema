@@ -35,33 +35,34 @@ class MainViewModelUndoTest {
     @BeforeEach
     void setUp() {
         data = new CharacterData();
-        viewModel = new MainViewModel(
-                data,
-                mock(SystemDataService.class),
-                mock(EquipmentDataService.class),
-                mock(CharmDataService.class),
-                mock(PdfExportService.class)
-        );
+        viewModel =
+                new MainViewModel(
+                        data,
+                        mock(SystemDataService.class),
+                        mock(EquipmentDataService.class),
+                        mock(CharmDataService.class),
+                        mock(PdfExportService.class));
     }
 
     @Test
     void testRecordUndoCheckpointViaMessenger() {
         data.nameProperty().set("Initial");
-        
+
         // Publish checkpoint message
-        Messenger.publish("RECORD_UNDO_CHECKPOINT", 
-            new MainViewModel.CheckpointRequest("Stats", "Name change", "info_name"));
-        
+        Messenger.publish(
+                "RECORD_UNDO_CHECKPOINT",
+                new MainViewModel.CheckpointRequest("Stats", "Name change", "info_name"));
+
         assertTrue(viewModel.canUndoProperty().get(), "Should be able to undo after checkpoint");
-        
+
         data.nameProperty().set("New Name");
-        
+
         viewModel.undo();
-        
+
         assertEquals("Initial", data.nameProperty().get(), "Undo should revert name");
         assertFalse(viewModel.canUndoProperty().get());
         assertTrue(viewModel.canRedoProperty().get());
-        
+
         viewModel.redo();
         assertEquals("New Name", data.nameProperty().get(), "Redo should restore name");
     }
@@ -71,22 +72,29 @@ class MainViewModelUndoTest {
         // 1. Initial state on Stats tab
         viewModel.currentTabIdProperty().set("Stats");
         data.nameProperty().set("Bob");
-        Messenger.publish("RECORD_UNDO_CHECKPOINT", new MainViewModel.CheckpointRequest("Stats", "Change Name", "info_name"));
-        
+        Messenger.publish(
+                "RECORD_UNDO_CHECKPOINT",
+                new MainViewModel.CheckpointRequest("Stats", "Change Name", "info_name"));
+
         // 2. Change tab to Charms
         viewModel.currentTabIdProperty().set("Charms");
         data.nameProperty().set("Alice");
-        
+
         // Trigger undo from Charms tab for a Stats operation
         // Use an observer to catch the switch message
         final String[] switchedTo = {null};
-        Messenger.subscribe("switch_to_tab", (name, payload) -> {
-            switchedTo[0] = (String) payload[0];
-        });
-        
+        Messenger.subscribe(
+                "switch_to_tab",
+                (name, payload) -> {
+                    switchedTo[0] = (String) payload[0];
+                });
+
         viewModel.undo();
-        
+
         assertEquals("Bob", data.nameProperty().get());
-        assertEquals("Stats", switchedTo[0], "System should publish request to switch back to Stats tab");
+        assertEquals(
+                "Stats",
+                switchedTo[0],
+                "System should publish request to switch back to Stats tab");
     }
 }

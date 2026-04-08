@@ -3,7 +3,6 @@ package com.vibethema.viewmodel;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.vibethema.model.*;
-import com.vibethema.model.*;
 import com.vibethema.model.equipment.*;
 import com.vibethema.model.traits.*;
 import com.vibethema.service.CharmDataService;
@@ -161,30 +160,44 @@ public class MainViewModel implements ViewModel {
         dirty.addListener((obs, oldV, newV) -> updateWindowTitle());
 
         Messenger.subscribe("request_charm_creation", this::handleCharmCreationRequest);
-        Messenger.subscribe("RECORD_UNDO_CHECKPOINT", (name, payload) -> {
-            if (payload != null && payload.length > 0 && payload[0] instanceof CheckpointRequest req) {
-                undoManager.pushCheckpoint(data.exportState(), req.contextId, req.description, req.targetId);
-            }
-        });
+        Messenger.subscribe(
+                "RECORD_UNDO_CHECKPOINT",
+                (name, payload) -> {
+                    if (payload != null
+                            && payload.length > 0
+                            && payload[0] instanceof CheckpointRequest req) {
+                        undoManager.pushCheckpoint(
+                                data.exportState(), req.contextId, req.description, req.targetId);
+                    }
+                });
 
         setupDebouncedCheckpoint(data.nameProperty(), "Info", "Change Name", "info_name");
-        setupDebouncedCheckpoint(data.limitTriggerProperty(), "Stats", "Change Limit Trigger", "stats_limit_trigger");
+        setupDebouncedCheckpoint(
+                data.limitTriggerProperty(),
+                "Stats",
+                "Change Limit Trigger",
+                "stats_limit_trigger");
     }
 
-    private void setupDebouncedCheckpoint(StringProperty property, String contextId, String description, String targetId) {
+    private void setupDebouncedCheckpoint(
+            StringProperty property, String contextId, String description, String targetId) {
         PauseTransition pause = new PauseTransition(Duration.seconds(1));
-        pause.setOnFinished(e -> {
-            undoManager.pushCheckpoint(data.exportState(), contextId, description, targetId);
-        });
+        pause.setOnFinished(
+                e -> {
+                    undoManager.pushCheckpoint(
+                            data.exportState(), contextId, description, targetId);
+                });
 
-        property.addListener((obs, oldV, newV) -> {
-            // We only want to trigger if it wasn't a restored state (undo/redo)
-            // But UndoManager handles that by checking if the state is already current.
-            // Actually, we should probably check if the value actually changed to avoid redundant restarts.
-            if (oldV != null && !oldV.equals(newV)) {
-                pause.playFromStart();
-            }
-        });
+        property.addListener(
+                (obs, oldV, newV) -> {
+                    // We only want to trigger if it wasn't a restored state (undo/redo)
+                    // But UndoManager handles that by checking if the state is already current.
+                    // Actually, we should probably check if the value actually changed to avoid
+                    // redundant restarts.
+                    if (oldV != null && !oldV.equals(newV)) {
+                        pause.playFromStart();
+                    }
+                });
     }
 
     private void loadTagDescriptions() {
@@ -217,7 +230,6 @@ public class MainViewModel implements ViewModel {
         }
         windowTitle.set(title);
     }
-
 
     // Accessors
     public CharacterData getData() {
@@ -489,8 +501,7 @@ public class MainViewModel implements ViewModel {
 
     public CharmsViewModel getCharmsViewModel(String filterType) {
         return charmViewModels.computeIfAbsent(
-                filterType,
-                ft -> new CharmsViewModel(data, charmDataService, keywordDefs, ft));
+                filterType, ft -> new CharmsViewModel(data, charmDataService, keywordDefs, ft));
     }
 
     public EquipmentViewModel getEquipmentViewModel() {

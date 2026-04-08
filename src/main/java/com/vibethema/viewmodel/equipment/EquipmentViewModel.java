@@ -10,8 +10,8 @@ import com.vibethema.model.social.*;
 import com.vibethema.model.traits.*;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
-import com.vibethema.viewmodel.util.Messenger;
 import com.vibethema.viewmodel.MainViewModel.CheckpointRequest;
+import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;
 import java.io.IOException;
 import java.util.Map;
@@ -196,29 +196,35 @@ public class EquipmentViewModel implements ViewModel {
     }
 
     public void addWeaponFromDatabase(Weapon w) {
-        Messenger.publish("RECORD_UNDO_CHECKPOINT", 
-            new CheckpointRequest("Equipment", "Add Weapon: " + w.getName(), "equipment.weapons"));
+        Messenger.publish(
+                "RECORD_UNDO_CHECKPOINT",
+                new CheckpointRequest(
+                        "Equipment", "Add Weapon: " + w.getName(), "equipment.weapons"));
         data.getWeapons().add(w.copy());
         data.setDirty(true);
     }
 
     public void addArmorFromDatabase(Armor a) {
-        Messenger.publish("RECORD_UNDO_CHECKPOINT", 
-            new CheckpointRequest("Equipment", "Add Armor: " + a.getName(), "equipment.armor"));
+        Messenger.publish(
+                "RECORD_UNDO_CHECKPOINT",
+                new CheckpointRequest("Equipment", "Add Armor: " + a.getName(), "equipment.armor"));
         data.getArmors().add(a.copy());
         data.setDirty(true);
     }
 
     public void addHearthstoneFromDatabase(Hearthstone h) {
-        Messenger.publish("RECORD_UNDO_CHECKPOINT", 
-            new CheckpointRequest("Equipment", "Add Hearthstone: " + h.getName(), "equipment.hearthstones"));
+        Messenger.publish(
+                "RECORD_UNDO_CHECKPOINT",
+                new CheckpointRequest(
+                        "Equipment", "Add Hearthstone: " + h.getName(), "equipment.hearthstones"));
         data.getHearthstones().add(h.copy());
         data.setDirty(true);
     }
 
     public void addOtherEquipmentFromDatabase(OtherEquipment oe) {
-        Messenger.publish("RECORD_UNDO_CHECKPOINT", 
-            new CheckpointRequest("Equipment", "Add Item: " + oe.getName(), "equipment.other"));
+        Messenger.publish(
+                "RECORD_UNDO_CHECKPOINT",
+                new CheckpointRequest("Equipment", "Add Item: " + oe.getName(), "equipment.other"));
         data.getOtherEquipment().add(oe.copy());
         data.setDirty(true);
     }
@@ -226,8 +232,12 @@ public class EquipmentViewModel implements ViewModel {
     // Actions
     public void saveWeapon(Weapon weapon, boolean isNew) {
         try {
-            Messenger.publish("RECORD_UNDO_CHECKPOINT", 
-                new CheckpointRequest("Equipment", (isNew ? "Add" : "Edit") + " Weapon: " + weapon.getName(), "equipment.weapons"));
+            Messenger.publish(
+                    "RECORD_UNDO_CHECKPOINT",
+                    new CheckpointRequest(
+                            "Equipment",
+                            (isNew ? "Add" : "Edit") + " Weapon: " + weapon.getName(),
+                            "equipment.weapons"));
             equipmentService.saveWeapon(weapon);
             if (isNew) {
                 data.getWeapons().add(weapon);
@@ -243,8 +253,10 @@ public class EquipmentViewModel implements ViewModel {
     }
 
     public void removeWeapon(Weapon weapon) {
-        Messenger.publish("RECORD_UNDO_CHECKPOINT", 
-            new CheckpointRequest("Equipment", "Remove Weapon: " + weapon.getName(), "equipment.weapons"));
+        Messenger.publish(
+                "RECORD_UNDO_CHECKPOINT",
+                new CheckpointRequest(
+                        "Equipment", "Remove Weapon: " + weapon.getName(), "equipment.weapons"));
         data.getWeapons().remove(weapon);
         data.setDirty(true);
     }
@@ -262,8 +274,10 @@ public class EquipmentViewModel implements ViewModel {
     }
 
     public void removeArmor(Armor armor) {
-        Messenger.publish("RECORD_UNDO_CHECKPOINT", 
-            new CheckpointRequest("Equipment", "Remove Armor: " + armor.getName(), "equipment.armor"));
+        Messenger.publish(
+                "RECORD_UNDO_CHECKPOINT",
+                new CheckpointRequest(
+                        "Equipment", "Remove Armor: " + armor.getName(), "equipment.armor"));
         data.getArmors().remove(armor);
         data.setDirty(true);
     }
@@ -281,8 +295,12 @@ public class EquipmentViewModel implements ViewModel {
     }
 
     public void removeHearthstone(Hearthstone hearthstone) {
-        Messenger.publish("RECORD_UNDO_CHECKPOINT", 
-            new CheckpointRequest("Equipment", "Remove Hearthstone: " + hearthstone.getName(), "equipment.hearthstones"));
+        Messenger.publish(
+                "RECORD_UNDO_CHECKPOINT",
+                new CheckpointRequest(
+                        "Equipment",
+                        "Remove Hearthstone: " + hearthstone.getName(),
+                        "equipment.hearthstones"));
         data.getHearthstones().remove(hearthstone);
         data.setDirty(true);
     }
@@ -300,8 +318,10 @@ public class EquipmentViewModel implements ViewModel {
     }
 
     public void removeOtherEquipment(OtherEquipment equipment) {
-        Messenger.publish("RECORD_UNDO_CHECKPOINT", 
-            new CheckpointRequest("Equipment", "Remove Item: " + equipment.getName(), "equipment.other"));
+        Messenger.publish(
+                "RECORD_UNDO_CHECKPOINT",
+                new CheckpointRequest(
+                        "Equipment", "Remove Item: " + equipment.getName(), "equipment.other"));
         data.getOtherEquipment().remove(equipment);
         data.setDirty(true);
     }

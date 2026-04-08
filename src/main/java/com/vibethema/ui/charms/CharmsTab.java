@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -74,10 +75,12 @@ public class CharmsTab extends BorderPane implements JavaView<CharmsViewModel>, 
         HBox topBar = new HBox(15);
         topBar.setPadding(new javafx.geometry.Insets(10));
         topBar.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-        topBar.getChildren()
-                .addAll(
-                        new javafx.scene.control.Label(viewModel.filterTypeProperty().get() + ":"),
-                        filterCombo);
+
+        Label filterLabel = new Label(viewModel.filterTypeProperty().get() + ":");
+        filterLabel.setLabelFor(filterCombo);
+        filterCombo.setAccessibleText(viewModel.filterTypeProperty().get() + " filter");
+
+        topBar.getChildren().addAll(filterLabel, filterCombo);
 
         // SplitPane to host both components
         SplitPane splitPane = new SplitPane(charmTree, charmDetails);
