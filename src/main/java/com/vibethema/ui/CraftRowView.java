@@ -1,6 +1,7 @@
 package com.vibethema.ui;
 
 import com.vibethema.viewmodel.stats.CraftRowViewModel;
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -16,6 +17,7 @@ public class CraftRowView extends HBox {
         expertiseField.textProperty().bindBidirectional(viewModel.expertiseProperty());
 
         DotSelector selector = new DotSelector(viewModel.ratingProperty(), 0);
+        selector.descriptionProperty().bind(viewModel.expertiseProperty());
 
         getChildren().addAll(expertiseField, selector);
     }

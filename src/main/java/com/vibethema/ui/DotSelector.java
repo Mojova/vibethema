@@ -8,6 +8,9 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Pos;
+import javafx.scene.AccessibleAction;
+import javafx.scene.AccessibleAttribute;
+import javafx.scene.AccessibleRole;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Circle;
@@ -34,6 +37,8 @@ public class DotSelector extends HBox {
         setSpacing(4);
         setAlignment(Pos.CENTER_LEFT);
         setFocusTraversable(true);
+        setAccessibleRole(AccessibleRole.SPINNER);
+        setAccessibleRoleDescription("dots");
         getStyleClass().add("dot-selector");
 
         for (int i = 0; i < maxDots; i++) {
@@ -80,7 +85,6 @@ public class DotSelector extends HBox {
                     }
                 });
 
-        valueProperty.addListener((obs, oldVal, newVal) -> updateDots());
         minDotsProperty.addListener(
                 (obs, oldVal, newVal) -> {
                     if (valueProperty.get() < newVal.intValue()) {
@@ -92,12 +96,14 @@ public class DotSelector extends HBox {
         accessibleTextProperty()
                 .bind(
                         Bindings.createStringBinding(
-                                () ->
-                                        (description.get() != null ? description.get() : "Dots")
-                                                + ": "
-                                                + valueProperty.get(),
-                                description,
-                                valueProperty));
+                                () -> (description.get() != null ? description.get() : "Dots"),
+                                description));
+
+        valueProperty.addListener(
+                (obs, oldVal, newVal) -> {
+                    updateDots();
+                    notifyAccessibleAttributeChanged(AccessibleAttribute.VALUE);
+                });
 
         updateDots();
     }
@@ -137,5 +143,45 @@ public class DotSelector extends HBox {
 
     public StringProperty targetIdProperty() {
         return targetId;
+    }
+
+    @Override
+    public Object queryAccessibleAttribute(AccessibleAttribute attribute, Object... parameters) {
+        switch (attribute) {
+            case VALUE:
+                return (double) valueProperty.get();
+            case VALUE_STRING:
+                return String.valueOf(valueProperty.get());
+            case MIN_VALUE:
+                return (double) minDotsProperty.get();
+            case MAX_VALUE:
+                return (double) maxDots;
+            case TEXT:
+                return String.valueOf(valueProperty.get());
+            case HELP:
+                return description.get();
+            default:
+                return super.queryAccessibleAttribute(attribute, parameters);
+        }
+    }
+
+    @Override
+    public void executeAccessibleAction(AccessibleAction action, Object... parameters) {
+        switch (action) {
+            case INCREMENT:
+                if (valueProperty.get() < maxDots) {
+                    triggerCheckpoint();
+                    valueProperty.set(valueProperty.get() + 1);
+                }
+                break;
+            case DECREMENT:
+                if (valueProperty.get() > minDotsProperty.get()) {
+                    triggerCheckpoint();
+                    valueProperty.set(valueProperty.get() - 1);
+                }
+                break;
+            default:
+                super.executeAccessibleAction(action, parameters);
+        }
     }
 }

@@ -6,6 +6,7 @@ import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -70,6 +71,7 @@ public class MeritsTab extends ScrollPane implements JavaView<MeritsViewModel>, 
             HBox.setHgrow(spacer, Priority.ALWAYS);
 
             DotSelector selector = new DotSelector(merit.ratingProperty(), 1, 5);
+            selector.descriptionProperty().bind(merit.nameProperty());
 
             Button removeBtn = new Button("✕");
             removeBtn.getStyleClass().add("remove-btn");

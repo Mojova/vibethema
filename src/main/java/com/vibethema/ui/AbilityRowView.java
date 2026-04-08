@@ -109,9 +109,10 @@ public class AbilityRowView extends HBox {
 
         // 4. Dot Selector
         selector = new DotSelector(viewModel.ratingProperty(), 0);
+        nameLabel.setLabelFor(selector);
         selector.minDotsProperty().bind(viewModel.minDotsProperty());
         selector.contextIdProperty().set("Stats");
-        selector.descriptionProperty().set("Change " + viewModel.getAbility().getDisplayName());
+        selector.descriptionProperty().set(viewModel.getAbility().getDisplayName());
         String id = "ability_" + viewModel.getAbility().name().toLowerCase();
         selector.targetIdProperty().set(id);
         selector.setId(id);

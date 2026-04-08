@@ -100,8 +100,9 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         Label essLabel = new Label("Essence");
         essLabel.getStyleClass().add("subsection-title");
         DotSelector essSelector = new DotSelector(data.essenceProperty(), 1, 5);
+        essLabel.setLabelFor(essSelector);
         essSelector.contextIdProperty().set("Stats");
-        essSelector.descriptionProperty().set("Change Essence");
+        essSelector.descriptionProperty().set("Essence");
         essSelector.targetIdProperty().set("stats_essence");
         essSelector.setId("stats_essence");
         essSelector
@@ -128,8 +129,9 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         Label wpLabel = new Label("Willpower");
         wpLabel.getStyleClass().add("subsection-title");
         DotSelector wpSelector = new DotSelector(data.willpowerProperty(), 5, 10);
+        wpLabel.setLabelFor(wpSelector);
         wpSelector.contextIdProperty().set("Stats");
-        wpSelector.descriptionProperty().set("Change Willpower");
+        wpSelector.descriptionProperty().set("Willpower");
         wpSelector.targetIdProperty().set("stats_willpower");
         wpSelector.setId("stats_willpower");
         wpBox.getChildren().addAll(wpLabel, wpSelector);
@@ -241,10 +243,8 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
                                                         ds.contextIdProperty().set("Stats");
                                                         ds.descriptionProperty()
                                                                 .set(
-                                                                        "Change Craft ("
-                                                                                + rvm.expertiseProperty()
-                                                                                        .get()
-                                                                                + ")");
+                                                                        rvm.expertiseProperty()
+                                                                                        .get());
                                                     });
                                     return view;
                                 })
@@ -457,11 +457,13 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         HBox limitBox = new HBox(10);
         limitBox.setAlignment(Pos.CENTER_LEFT);
         DotSelector limitSelector = new DotSelector(data.limitProperty(), 0, 10);
+        Label limitLabel = new Label("Limit:");
+        limitLabel.setLabelFor(limitSelector);
         limitSelector.contextIdProperty().set("Stats");
-        limitSelector.descriptionProperty().set("Change Limit");
+        limitSelector.descriptionProperty().set("Limit");
         limitSelector.targetIdProperty().set("stats_limit");
         limitSelector.setId("stats_limit");
-        limitBox.getChildren().addAll(new Label("Limit:"), limitSelector);
+        limitBox.getChildren().addAll(limitLabel, limitSelector);
 
         content.getChildren().addAll(new Label("Limit Trigger:"), triggerArea, limitBox);
         section.getChildren().addAll(title, content);
