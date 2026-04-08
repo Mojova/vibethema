@@ -327,12 +327,17 @@ public class MainViewModel implements ViewModel {
     }
 
     private void handlePostHistoryAction(UndoManager.UndoEntry entry) {
-        // Always attempt to highlight the target element
         if (entry.targetId() != null) {
-            // Delay slightly to allow tab switch/rendering to complete
-            PauseTransition delay = new PauseTransition(Duration.millis(150));
-            delay.setOnFinished(e -> Messenger.publish("highlight_element", entry.targetId()));
-            delay.play();
+            String currentTab = currentTabId.get();
+            // If we are already in the correct context, trigger immediately.
+            // Otherwise, keep a small delay to allow tab switching/rendering to complete.
+            if (entry.contextId() != null && entry.contextId().equals(currentTab)) {
+                Messenger.publish("highlight_element", entry.targetId());
+            } else {
+                PauseTransition delay = new PauseTransition(Duration.millis(100));
+                delay.setOnFinished(e -> Messenger.publish("highlight_element", entry.targetId()));
+                delay.play();
+            }
         }
     }
 
