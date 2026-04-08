@@ -1,3 +1,20 @@
 (version 1)
 (allow default)
+
+; Allow xcode-select to function if it falls back to the shim
 (allow file-read* (literal "/var/db/xcode_select_link"))
+(allow file-read* (subpath "/Library/Developer/CommandLineTools"))
+
+; Allow the agent to access its own workspace
+(allow file-read* file-write* (subpath "/Users/jhkaisan/repot/antigravity/exalted"))
+
+; Allow access to the standard development path (Homebrew, etc.)
+(allow file-read* (subpath "/usr/local/bin"))
+(allow file-read* (subpath "/opt/homebrew"))
+
+; Allow the shell to run processes
+(allow process-fork)
+(allow process-exec (subpath "/usr/bin"))
+(allow process-exec (subpath "/bin"))
+(allow process-exec (subpath "/usr/sbin"))
+(allow process-exec (subpath "/sbin"))
