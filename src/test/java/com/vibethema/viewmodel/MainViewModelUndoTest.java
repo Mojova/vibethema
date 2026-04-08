@@ -50,7 +50,7 @@ class MainViewModelUndoTest {
         
         // Publish checkpoint message
         Messenger.publish("RECORD_UNDO_CHECKPOINT", 
-            new MainViewModel.CheckpointRequest("Stats", "Name change", "info.name"));
+            new MainViewModel.CheckpointRequest("Stats", "Name change", "info_name"));
         
         assertTrue(viewModel.canUndoProperty().get(), "Should be able to undo after checkpoint");
         
@@ -71,7 +71,7 @@ class MainViewModelUndoTest {
         // 1. Initial state on Stats tab
         viewModel.currentTabIdProperty().set("Stats");
         data.nameProperty().set("Bob");
-        Messenger.publish("RECORD_UNDO_CHECKPOINT", new MainViewModel.CheckpointRequest("Stats", "Change Name", "info.name"));
+        Messenger.publish("RECORD_UNDO_CHECKPOINT", new MainViewModel.CheckpointRequest("Stats", "Change Name", "info_name"));
         
         // 2. Change tab to Charms
         viewModel.currentTabIdProperty().set("Charms");

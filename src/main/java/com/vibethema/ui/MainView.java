@@ -451,12 +451,12 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         basicInfo.getStyleClass().add("info-bar");
 
         TextField nameField = new TextField();
-        nameField.setId("info.name");
+        nameField.setId("info_name");
         nameField.setPromptText("Character Name");
         nameField.textProperty().bindBidirectional(viewModel.getData().nameProperty());
 
         ComboBox<Caste> casteBox = new ComboBox<>();
-        casteBox.setId("info.caste");
+        casteBox.setId("info_caste");
         casteBox.getItems().addAll(Caste.values());
         casteBox.setValue(viewModel.getData().casteProperty().get());
         casteBox
@@ -480,7 +480,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                         });
 
         ComboBox<String> supernalDropdown = new ComboBox<>();
-        supernalDropdown.setId("info.supernal");
+        supernalDropdown.setId("info_supernal");
         supernalDropdown.setPrefWidth(120);
         supernalDropdown.setItems(viewModel.getData().getValidSupernalAbilities());
         supernalDropdown

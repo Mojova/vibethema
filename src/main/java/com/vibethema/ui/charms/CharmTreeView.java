@@ -319,7 +319,7 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
 
         charmNodeMap.put(c.getId(), root);
         charmCheckMap.put(c.getId(), checkLabel);
-        root.setId("charm." + c.getId());
+        root.setId("charm_" + c.getId());
 
         return root;
     }

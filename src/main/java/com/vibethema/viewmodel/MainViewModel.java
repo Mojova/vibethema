@@ -167,8 +167,8 @@ public class MainViewModel implements ViewModel {
             }
         });
 
-        setupDebouncedCheckpoint(data.nameProperty(), "Info", "Change Name", "info.name");
-        setupDebouncedCheckpoint(data.limitTriggerProperty(), "Stats", "Change Limit Trigger", "stats.limit_trigger");
+        setupDebouncedCheckpoint(data.nameProperty(), "Info", "Change Name", "info_name");
+        setupDebouncedCheckpoint(data.limitTriggerProperty(), "Stats", "Change Limit Trigger", "stats_limit_trigger");
     }
 
     private void setupDebouncedCheckpoint(StringProperty property, String contextId, String description, String targetId) {

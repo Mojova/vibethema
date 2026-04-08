@@ -60,7 +60,7 @@ class UndoManagerTest {
     @Test
     void testContextFiltering() {
         CharacterSaveState state1 = new CharacterSaveState();
-        undoManager.pushCheckpoint(state1, "TAB_STATS", "Change Strength", "stats.strength");
+        undoManager.pushCheckpoint(state1, "TAB_STATS", "Change Strength", "stats_strength");
 
         assertTrue(undoManager.isLastActionInContext("TAB_STATS"));
         assertFalse(undoManager.isLastActionInContext("TAB_CHARMS"));
