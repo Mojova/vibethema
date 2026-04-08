@@ -36,7 +36,7 @@ public class CharmsViewModel implements ViewModel {
         filterOptions.clear();
         if ("Ability".equals(filterType.get())) {
             for (Ability abil : SystemData.ABILITIES) {
-                if (abil != Ability.MARTIAL_ARTS && abil != Ability.CRAFT) {
+                if (abil != Ability.MARTIAL_ARTS) {
                     filterOptions.add(abil.getDisplayName());
                 }
             }
