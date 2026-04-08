@@ -60,6 +60,7 @@ public class CharacterData {
     private final BooleanProperty overBonusPointLimit = new SimpleBooleanProperty(false);
     private final BooleanProperty dirty = new SimpleBooleanProperty(false);
     private boolean isImporting = false;
+    private boolean isUndoRedoInProgress = false;
 
     public CharacterData() {
         this.traitModel = new TraitModel(v -> markDirty(), () -> updateAllStats());
@@ -478,6 +479,14 @@ public class CharacterData {
 
     public boolean isImporting() {
         return isImporting;
+    }
+
+    public boolean isUndoRedoInProgress() {
+        return isUndoRedoInProgress;
+    }
+
+    public void setUndoRedoInProgress(boolean v) {
+        this.isUndoRedoInProgress = v;
     }
 
     public void clear() {
@@ -964,6 +973,16 @@ public class CharacterData {
             updateCombatStats();
             updateDerivedStats();
             updateAttackPools();
+        }
+    }
+
+    public void restoreState(
+            CharacterSaveState state, com.vibethema.service.EquipmentDataService equipmentService) {
+        isUndoRedoInProgress = true;
+        try {
+            importState(state, equipmentService);
+        } finally {
+            isUndoRedoInProgress = false;
         }
     }
 }

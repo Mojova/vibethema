@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class CharacterSaveState {
     public String name;
@@ -44,35 +45,177 @@ public class CharacterSaveState {
     public CharacterSaveState creationSnapshot;
     public List<XpAwardData> xpAwards = new ArrayList<>();
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CharacterSaveState that = (CharacterSaveState) o;
+        return essence == that.essence
+                && willpower == that.willpower
+                && limit == that.limit
+                && Objects.equals(name, that.name)
+                && Objects.equals(caste, that.caste)
+                && Objects.equals(mode, that.mode)
+                && Objects.equals(supernalAbility, that.supernalAbility)
+                && Objects.equals(limitTrigger, that.limitTrigger)
+                && Objects.equals(attributes, that.attributes)
+                && Objects.equals(attributePriorities, that.attributePriorities)
+                && Objects.equals(abilities, that.abilities)
+                && Objects.equals(casteAbilities, that.casteAbilities)
+                && Objects.equals(favoredAbilities, that.favoredAbilities)
+                && Objects.equals(unlockedCharms, that.unlockedCharms)
+                && Objects.equals(merits, that.merits)
+                && Objects.equals(specialties, that.specialties)
+                && Objects.equals(crafts, that.crafts)
+                && Objects.equals(martialArts, that.martialArts)
+                && Objects.equals(weapons, that.weapons)
+                && Objects.equals(armors, that.armors)
+                && Objects.equals(hearthstones, that.hearthstones)
+                && Objects.equals(otherEquipment, that.otherEquipment)
+                && Objects.equals(intimacies, that.intimacies)
+                && Objects.equals(shapingRituals, that.shapingRituals)
+                && Objects.equals(spells, that.spells)
+                && Objects.equals(creationSnapshot, that.creationSnapshot)
+                && Objects.equals(xpAwards, that.xpAwards);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                name,
+                caste,
+                mode,
+                supernalAbility,
+                essence,
+                willpower,
+                limitTrigger,
+                limit,
+                attributes,
+                attributePriorities,
+                abilities,
+                casteAbilities,
+                favoredAbilities,
+                unlockedCharms,
+                merits,
+                specialties,
+                crafts,
+                martialArts,
+                weapons,
+                armors,
+                hearthstones,
+                otherEquipment,
+                intimacies,
+                shapingRituals,
+                spells,
+                creationSnapshot,
+                xpAwards);
+    }
+
     public static class WeaponLink {
         public String id;
         public String instanceId;
         public String specialtyId;
         public boolean equipped;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            WeaponLink that = (WeaponLink) o;
+            return equipped == that.equipped
+                    && Objects.equals(id, that.id)
+                    && Objects.equals(instanceId, that.instanceId)
+                    && Objects.equals(specialtyId, that.specialtyId);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, instanceId, specialtyId, equipped);
+        }
     }
 
     public static class ArmorLink {
         public String id;
         public String instanceId;
         public boolean equipped;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ArmorLink armorLink = (ArmorLink) o;
+            return equipped == armorLink.equipped
+                    && Objects.equals(id, armorLink.id)
+                    && Objects.equals(instanceId, armorLink.instanceId);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, instanceId, equipped);
+        }
     }
 
     public static class HearthstoneLink {
         public String id;
         public String instanceId;
         public boolean equipped;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            HearthstoneLink that = (HearthstoneLink) o;
+            return equipped == that.equipped
+                    && Objects.equals(id, that.id)
+                    && Objects.equals(instanceId, that.instanceId);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, instanceId, equipped);
+        }
     }
 
     public static class OtherEquipmentLink {
         public String id;
         public String instanceId;
         public boolean equipped;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            OtherEquipmentLink that = (OtherEquipmentLink) o;
+            return equipped == that.equipped
+                    && Objects.equals(id, that.id)
+                    && Objects.equals(instanceId, that.instanceId);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, instanceId, equipped);
+        }
     }
 
     public static class SpecialtyData {
         public String id;
         public String name;
         public String ability;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            SpecialtyData that = (SpecialtyData) o;
+            return Objects.equals(id, that.id)
+                    && Objects.equals(name, that.name)
+                    && Objects.equals(ability, that.ability);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, name, ability);
+        }
     }
 
     public static class CraftData {
@@ -80,6 +223,22 @@ public class CharacterSaveState {
         public int rating;
         public boolean isCaste;
         public boolean isFavored;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            CraftData craftData = (CraftData) o;
+            return rating == craftData.rating
+                    && isCaste == craftData.isCaste
+                    && isFavored == craftData.isFavored
+                    && Objects.equals(expertise, craftData.expertise);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(expertise, rating, isCaste, isFavored);
+        }
     }
 
     public static class MartialArtsData {
@@ -88,6 +247,23 @@ public class CharacterSaveState {
         public int rating;
         public boolean isCaste;
         public boolean isFavored;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            MartialArtsData that = (MartialArtsData) o;
+            return rating == that.rating
+                    && isCaste == that.isCaste
+                    && isFavored == that.isFavored
+                    && Objects.equals(id, that.id)
+                    && Objects.equals(styleName, that.styleName);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, styleName, rating, isCaste, isFavored);
+        }
     }
 
     public static class IntimacyData {
@@ -96,6 +272,23 @@ public class CharacterSaveState {
         public Intimacy.Type type;
         public Intimacy.Intensity intensity;
         public String description;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            IntimacyData that = (IntimacyData) o;
+            return Objects.equals(id, that.id)
+                    && Objects.equals(name, that.name)
+                    && type == that.type
+                    && intensity == that.intensity
+                    && Objects.equals(description, that.description);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, name, type, intensity, description);
+        }
     }
 
     public static class ShapingRitualData {
@@ -109,6 +302,21 @@ public class CharacterSaveState {
             this.id = id;
             this.name = name;
             this.description = description;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ShapingRitualData that = (ShapingRitualData) o;
+            return Objects.equals(id, that.id)
+                    && Objects.equals(name, that.name)
+                    && Objects.equals(description, that.description);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, name, description);
         }
     }
 
@@ -139,6 +347,25 @@ public class CharacterSaveState {
             this.duration = duration;
             this.description = description;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            SpellData spellData = (SpellData) o;
+            return Objects.equals(id, spellData.id)
+                    && Objects.equals(name, spellData.name)
+                    && Objects.equals(circle, spellData.circle)
+                    && Objects.equals(cost, spellData.cost)
+                    && Objects.equals(keywords, spellData.keywords)
+                    && Objects.equals(duration, spellData.duration)
+                    && Objects.equals(description, spellData.description);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, name, circle, cost, keywords, duration, description);
+        }
     }
 
     public static class XpAwardData {
@@ -154,6 +381,22 @@ public class CharacterSaveState {
             this.description = description;
             this.amount = amount;
             this.isSolar = isSolar;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            XpAwardData that = (XpAwardData) o;
+            return amount == that.amount
+                    && isSolar == that.isSolar
+                    && Objects.equals(id, that.id)
+                    && Objects.equals(description, that.description);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, description, amount, isSolar);
         }
     }
 }
