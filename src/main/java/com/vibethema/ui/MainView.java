@@ -2,7 +2,6 @@ package com.vibethema.ui;
 
 import com.vibethema.model.*;
 import com.vibethema.model.mystic.*;
-import com.vibethema.model.traits.*;
 import com.vibethema.ui.charms.CharmsTab;
 import com.vibethema.ui.charms.EditCharmView;
 import com.vibethema.ui.equipment.DefaultEquipmentDialogService;
@@ -42,7 +41,6 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
     private TabPane mainTabPane;
     private Tab experienceTab;
     private Map<String, CharmsTab> charmTabs = new HashMap<>();
-    private Map<String, CharmsViewModel> charmViewModels = new HashMap<>();
     private final List<NotificationObserver> observers = new ArrayList<>();
 
     @Override
@@ -61,22 +59,21 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                         createTab(
                                 "Stats",
                                 StatsTab.class,
-                                new StatsViewModel(
-                                        viewModel.getData())), // Eagerly load the first tab
+                                viewModel.getStatsViewModel()), // Eagerly load the first tab
                         createLazyTab(
                                 "Merits",
                                 () ->
                                         createTab(
                                                 "Merits",
                                                 MeritsTab.class,
-                                                new MeritsViewModel(viewModel.getData()))),
+                                                viewModel.getMeritsViewModel())),
                         createLazyTab(
                                 "Intimacies",
                                 () ->
                                         createTab(
                                                 "Intimacies",
                                                 IntimaciesTab.class,
-                                                new IntimaciesViewModel(viewModel.getData()))),
+                                                viewModel.getIntimaciesViewModel())),
                         createCharmsLazyTab("Solar Charms", "Ability"),
                         createCharmsLazyTab("Martial Arts", "Martial Arts Style"),
                         createLazyTab(
@@ -85,9 +82,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                                         createTab(
                                                 "Sorcery",
                                                 SorceryTab.class,
-                                                new SorceryViewModel(
-                                                        viewModel.getData(),
-                                                        viewModel.getCharmDataService()))),
+                                                viewModel.getSorceryViewModel())),
                         createLazyEquipmentTab());
 
         experienceTab = createLazyExperienceTab();
@@ -214,7 +209,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                     }
                 });
         addObserver(
-                "request_pdf_export",
+                "request_pdf_save_location",
                 (name, payload) -> {
                     String suggestName =
                             (payload != null && payload.length > 0)
@@ -222,17 +217,17 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                                     : "Character.pdf";
                     handleExportPdf(suggestName);
                 });
-
         addObserver(
-                "open_create_charm_dialog",
+                "pdf_export_success",
                 (name, payload) -> {
-                    if (payload != null && payload.length >= 4) {
-                        showCreateCharmDialog(
-                                (String) payload[0],
-                                (String) payload[1],
-                                (String) payload[2],
-                                (Runnable) payload[3]);
-                    }
+                    String msg = (payload != null && payload.length > 0) ? (String) payload[0] : "";
+                    handleExportSuccess(msg);
+                });
+        addObserver(
+                "pdf_export_error",
+                (name, payload) -> {
+                    String msg = (payload != null && payload.length > 0) ? (String) payload[0] : "";
+                    handleExportError(msg);
                 });
 
         addObserver(
@@ -259,21 +254,12 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
     }
 
     private Tab createCharmsLazyTab(String title, String filterType) {
-        // We create the ViewModel eagerly so handleJumpToCharms still works
-        CharmsViewModel cvm =
-                new CharmsViewModel(
-                        viewModel.getData(),
-                        viewModel.getCharmDataService(),
-                        viewModel.getKeywordDefs(),
-                        filterType);
-        charmViewModels.put(title, cvm);
-
         return createLazyTab(
                 title,
                 () -> {
                     ViewTuple<CharmsTab, CharmsViewModel> vt =
                             de.saxsys.mvvmfx.FluentViewLoader.javaView(CharmsTab.class)
-                                    .viewModel(cvm)
+                                    .viewModel(viewModel.getCharmsViewModel(filterType))
                                     .load();
                     CharmsTab view = (CharmsTab) vt.getView();
                     charmTabs.put(title, view);
@@ -304,17 +290,9 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
     }
 
     private Tab createEquipmentTab() {
-        EquipmentViewModel eqVm =
-                new EquipmentViewModel(
-                        viewModel.getData(),
-                        viewModel.getEquipmentService(),
-                        viewModel.getCharmDataService(),
-                        viewModel.getTagDescriptions(),
-                        null);
-
         ViewTuple<EquipmentTab, EquipmentViewModel> vt =
                 de.saxsys.mvvmfx.FluentViewLoader.javaView(EquipmentTab.class)
-                        .viewModel(eqVm)
+                                    .viewModel(viewModel.getEquipmentViewModel())
                         .codeBehind(
                                 new EquipmentTab(
                                         new DefaultEquipmentDialogService(
@@ -330,11 +308,9 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
     }
 
     private Tab createExperienceTab() {
-        ExperienceViewModel expVm = new ExperienceViewModel(viewModel.getData(), () -> {});
-
         ViewTuple<ExperienceTab, ExperienceViewModel> vt =
                 de.saxsys.mvvmfx.FluentViewLoader.javaView(ExperienceTab.class)
-                        .viewModel(expVm)
+                                    .viewModel(viewModel.getExperienceViewModel(() -> {}))
                         .load();
 
         ExperienceTab view = (ExperienceTab) vt.getView();
@@ -488,36 +464,12 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         // Show Warning
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Caste Change Warning");
-        alert.setHeaderText(
-                "Changing Caste to " + newCaste.toString() + " will invalidate some data.");
+        alert.setHeaderText("Caste Change");
+        alert.setContentText(viewModel.generateCasteChangeWarning(newCaste, report));
+        alert.getDialogPane().setPrefWidth(500);
 
         // Style the dialog
         applyDialogStyle(alert);
-
-        StringBuilder content =
-                new StringBuilder("The following selections will be removed/deselected:\n\n");
-        if (!report.lostCasteAbilities().isEmpty()) {
-            content.append("Caste Abilities: ")
-                    .append(
-                            report.lostCasteAbilities().stream()
-                                    .map(Ability::getDisplayName)
-                                    .collect(java.util.stream.Collectors.joining(", ")))
-                    .append("\n");
-        }
-        if (report.lostSupernal() != null) {
-            content.append("Supernal Ability: ")
-                    .append(report.lostSupernal())
-                    .append(" (no longer a Caste ability)\n");
-        }
-        if (!report.illegalCharmNames().isEmpty()) {
-            content.append("Invalid Charms (Essence requirement): ")
-                    .append(String.join(", ", report.illegalCharmNames()))
-                    .append("\n");
-        }
-        content.append("\nContinue with Caste change?");
-
-        alert.setContentText(content.toString());
-        alert.getDialogPane().setPrefWidth(500);
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
@@ -551,20 +503,22 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
 
         File file = fileChooser.showSaveDialog(getScene().getWindow());
         if (file != null) {
-            try {
-                new com.vibethema.service.PdfExportService().exportToPdf(viewModel.getData(), file);
-                Alert alert =
-                        new Alert(
-                                Alert.AlertType.INFORMATION,
-                                "Character sheet exported successfully!");
-                applyDialogStyle(alert);
-                alert.showAndWait();
-            } catch (Exception e) {
-                Alert errorAlert = new Alert(Alert.AlertType.ERROR, "Export failed: " + e.getMessage());
-                applyDialogStyle(errorAlert);
-                errorAlert.showAndWait();
-            }
+            viewModel.exportToPdf(file);
         }
+    }
+
+    private void handleExportSuccess(String msg) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, msg);
+        alert.setTitle(MainViewModel.EXPORT_SUCCESS_TITLE);
+        applyDialogStyle(alert);
+        alert.showAndWait();
+    }
+
+    private void handleExportError(String msg) {
+        Alert alert = new Alert(Alert.AlertType.ERROR, msg);
+        alert.setTitle(MainViewModel.EXPORT_FAILURE_TITLE);
+        applyDialogStyle(alert);
+        alert.showAndWait();
     }
 
     public boolean confirmDiscardChanges() {
@@ -595,12 +549,9 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
 
     public void showFinalizationDialog() {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Finalize Character");
-        confirm.setHeaderText("Finalizing Character Creation");
-        confirm.setContentText(
-                "Once finalized, your Caste, Supernal, and Caste/Favored abilities cannot be"
-                        + " changed. This is a one-way process.\n\n"
-                        + "Proceed to Experienced mode?");
+        confirm.setTitle(MainViewModel.FINALIZATION_DIALOG_TITLE);
+        confirm.setHeaderText(MainViewModel.FINALIZATION_DIALOG_HEADER);
+        confirm.setContentText(MainViewModel.FINALIZATION_DIALOG_CONTENT);
 
         applyDialogStyle(confirm);
         confirm.showAndWait()
@@ -612,17 +563,6 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                         });
     }
 
-    private void showCreateCharmDialog(
-            String contextId, String contextName, String filterType, Runnable onSave) {
-        Charm charm =
-                "Martial Arts Style".equals(filterType) ? new MartialArtsCharm() : new SolarCharm();
-        charm.setId(UUID.randomUUID().toString());
-        charm.setName("New " + ("Evocation".equals(filterType) ? "Evocation" : "Charm"));
-        charm.setAbility(contextId);
-        charm.setCategory("Evocation".equals(filterType) ? "evocation" : "charm");
-        charm.setCustom(true);
-        showEditCharmDialog(charm, contextName, filterType, onSave);
-    }
 
     private void showEditCharmDialog(
             Charm charm, String contextName, String filterType, Runnable onSave) {
@@ -664,25 +604,26 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
     }
 
     private void handleJumpToCharms(String abilityName) {
-        String tabTitle = "Solar Charms";
-        if (viewModel.getData().isMartialArtsStyle(abilityName)) {
-            tabTitle = "Martial Arts";
-        }
+        MainViewModel.NavigationTarget target = viewModel.resolveNavigationTarget(abilityName);
+        performNavigation(target);
+    }
 
-        CharmsViewModel cvm = charmViewModels.get(tabTitle);
+    private void handleJumpToEvocations(String artifactId, String artifactName) {
+        MainViewModel.NavigationTarget target = viewModel.resolveEvocationTarget(artifactName);
+        performNavigation(target);
+    }
+
+    private void performNavigation(MainViewModel.NavigationTarget target) {
+        CharmsViewModel cvm = viewModel.getCharmsViewModel(target.filterValue());
         if (cvm != null) {
-            cvm.selectedFilterValueProperty().set(abilityName);
+            cvm.selectedFilterValueProperty().set(target.filterValue());
             for (Tab tab : mainTabPane.getTabs()) {
-                if (tabTitle.equals(tab.getText())) {
+                if (target.tabName().equals(tab.getText())) {
                     mainTabPane.getSelectionModel().select(tab);
                     break;
                 }
             }
         }
-    }
-
-    private void handleJumpToEvocations(String artifactId, String artifactName) {
-        // Logic to switch to Charms tab in Evocation mode
     }
 
     private void updateWindowTitle(String title) {

@@ -1,13 +1,7 @@
 package com.vibethema.ui.charms;
 
 import com.vibethema.model.*;
-import com.vibethema.model.combat.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.logic.*;
 import com.vibethema.model.mystic.*;
-import com.vibethema.model.progression.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.traits.*;
 import com.vibethema.viewmodel.charms.CharmDetailsViewModel;
 import com.vibethema.viewmodel.charms.CharmTreeViewModel;
 import com.vibethema.viewmodel.charms.CharmsViewModel;

@@ -1,13 +1,7 @@
 package com.vibethema.viewmodel.charms;
 
 import com.vibethema.model.*;
-import com.vibethema.model.combat.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.logic.*;
 import com.vibethema.model.mystic.*;
-import com.vibethema.model.progression.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.traits.*;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;
@@ -297,6 +291,14 @@ public class CharmTreeViewModel implements ViewModel {
                         c, artifactName.get(), filterType.get(), (Runnable) this::refresh
                     });
         }
+    }
+
+    public void onCreateCharmRequest(Runnable onSave) {
+        Messenger.publish(
+                "request_charm_creation",
+                new Object[] {
+                    selectionId.get(), artifactName.get(), filterType.get(), onSave
+                });
     }
 
     public void refundOne() {

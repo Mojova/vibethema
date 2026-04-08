@@ -4,15 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 import com.vibethema.model.*;
-import com.vibethema.model.combat.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.logic.*;
-import com.vibethema.model.mystic.*;
-import com.vibethema.model.progression.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.traits.*;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
+import com.vibethema.service.PdfExportService;
 import com.vibethema.service.SystemDataService;
 import com.vibethema.viewmodel.MainViewModel;
 import java.util.concurrent.CountDownLatch;
@@ -60,7 +54,8 @@ public class MainViewTest {
                                         data,
                                         systemDataService,
                                         equipmentService,
-                                        charmDataService);
+                                        charmDataService,
+                                        Mockito.mock(PdfExportService.class));
 
                         // We load MainView. Note: in real app we use ViewCache, but here we load
                         // fresh for testing.
