@@ -115,6 +115,16 @@ The project uses **Spotless** to automate code style enforcement and import opti
 - **Check**: Run `mvn spotless:check` to verify compliance without applying changes.
 - **Imports**: Unused imports are automatically removed, and imports are sorted by the plugin.
 
+## Accessibility Standards
+
+The application must be fully accessible to screen readers (VoiceOver, NVDA).
+
+### JavaFX Implementation
+- **`setLabelFor(node)`**: Every `Label` must be explicitly associated with its target input control.
+- **`setAccessibleText(string)`**: All interactive elements (ComboBoxes, TextFields, custom controls) must have descriptive accessible text.
+- **Dynamic Metadata**: Custom controls like `DotSelector` must bind their `accessibleText` to their current description and value for real-time announcements.
+- **Language Declaration**: The application explicitly sets its locale to **`Locale.UK`** in `Main.java` to ensure correct pronunciation by screen reader engines.
+
 ## Key Rules & Logic
 
 | Feature | Creation Rule | Scaling / BP Cost |
@@ -134,7 +144,8 @@ The project uses **Spotless** to automate code style enforcement and import opti
 5. **GSON Compatibility**: Redundant fields (like `ability` in charms) are no longer serialized. They are transient or inferred from parents.
 6. **Dialog Handling**: Equipment dialogs are refactored to MVVM. Use `FluentViewLoader` to create them via `DefaultEquipmentDialogService`.
 7. **Logging**: Standardized on **SLF4J + Logback**. Avoid `System.out`.
-8. **Copyrighted Material**: **NEVER** commit PDF files or imported JSON data (Charms, Spells, etc.) to the repository. Use the `data_source/` directory for local testing.
+8. **Accessibility**: Always link labels to controls using `setLabelFor` and provide `setAccessibleText`. Never assume the layout alone provides enough context for screen readers.
+9. **Copyrighted Material**: **NEVER** commit PDF files or imported JSON data (Charms, Spells, etc.) to the repository. Use the `data_source/` directory for local testing.
 
 ## File Map
 - `src/main/java/com/vibethema/Main.java`: App Launcher.
