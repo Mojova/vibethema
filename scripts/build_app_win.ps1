@@ -1,4 +1,5 @@
 # Windows Build Script for Vibethema
+$ErrorActionPreference = "Stop"
 
 $ICON_SOURCE = "src/main/resources/icon.png"
 $ICO_TARGET = "src/main/resources/icon.ico"
@@ -8,17 +9,18 @@ if (Test-Path $ICON_SOURCE) {
     Write-Host "Converting icon to ICO..."
     # GitHub Runners have ImageMagick installed.
     # Convert PNG to ICO with multiple sizes for Windows support.
-    magick convert $ICON_SOURCE -define icon:auto-resize=16,32,48,64,128,256 $ICO_TARGET
+    magick $ICON_SOURCE -define icon:auto-resize=16,32,48,64,128,256 $ICO_TARGET
 } else {
     Write-Warning "Icon source not found at $ICON_SOURCE"
 }
 
 # 2. Build the JAR
 Write-Host "Building fat JAR..."
-mvn clean package -DskipTests
+mvn clean package -DskipTests -B
 
 # 2.1 Extract version from pom.xml (e.g., 0.9-SNAPSHOT -> 0.9.0, 0.9.0-SNAPSHOT -> 0.9.0)
-$RAW_VERSION = (mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+# Quoting the -D argument is necessary in PowerShell to prevent splitting at the dot.
+$RAW_VERSION = (mvn help:evaluate "-Dexpression=project.version" -q -DforceStdout -B)
 $VERSION = $RAW_VERSION.Replace("-SNAPSHOT", "")
 $DOTS = ($VERSION.ToCharArray() | Where-Object { $_ -eq '.' }).Count
 if ($DOTS -lt 2 -and $RAW_VERSION.Contains("-SNAPSHOT")) {

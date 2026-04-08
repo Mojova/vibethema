@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+set -o pipefail
 
 # Linux Build Script for Vibethema
 
@@ -13,10 +15,10 @@ fi
 
 # 2. Build the JAR
 echo "Building fat JAR..."
-mvn clean package -DskipTests
+mvn clean package -DskipTests -B
 
 # 2.1 Extract version from pom.xml (e.g., 0.9-SNAPSHOT -> 0.9.0, 0.9.0-SNAPSHOT -> 0.9.0)
-RAW_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+RAW_VERSION=$(mvn help:evaluate "-Dexpression=project.version" -q -DforceStdout -B)
 VERSION=$(echo "$RAW_VERSION" | sed 's/-SNAPSHOT//')
 DOTS=$(echo "$VERSION" | tr -cd '.' | wc -c | xargs)
 if [ "$DOTS" -lt 2 ] && [[ "$RAW_VERSION" == *"-SNAPSHOT"* ]]; then
@@ -52,7 +54,6 @@ jpackage \
   --vendor "Mojova" \
   --copyright "Copyright © 2026 Mojova" \
   --description "Character management for Exalted 3rd Edition" \
-  --license-file LICENSE.txt \
   --dest target/dist/AppDir-Base \
   --java-options "--enable-native-access=ALL-UNNAMED" \
   --verbose
