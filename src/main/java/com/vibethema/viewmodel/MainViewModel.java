@@ -8,7 +8,11 @@ import com.vibethema.model.equipment.*;
 import com.vibethema.model.traits.*;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
+import com.vibethema.service.PdfExportService;
 import com.vibethema.service.SystemDataService;
+import com.vibethema.viewmodel.charms.CharmsViewModel;
+import com.vibethema.viewmodel.equipment.EquipmentViewModel;
+import com.vibethema.viewmodel.experience.ExperienceViewModel;
 import com.vibethema.viewmodel.footer.FooterViewModel;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;
@@ -17,6 +21,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.beans.property.BooleanProperty;
@@ -29,50 +34,95 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MainViewModel implements ViewModel {
+    public record NavigationTarget(String tabName, String filterValue) {}
+
+    public record CasteChangeReport(
+            List<Ability> lostCasteAbilities, String lostSupernal, List<String> illegalCharmNames) {
+        public boolean isEmpty() {
+            return lostCasteAbilities.isEmpty()
+                    && lostSupernal == null
+                    && illegalCharmNames.isEmpty();
+        }
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(MainViewModel.class);
     private CharacterData data;
     private FooterViewModel footerViewModel;
     private final EquipmentDataService equipmentService;
     private final CharmDataService charmDataService;
-    private final SystemDataService systemDataService;
+    private final PdfExportService pdfExportService;
 
     private final Map<String, String> tagDescriptions =
             new java.util.concurrent.ConcurrentHashMap<>();
     private final Map<String, String> keywordDefs = new java.util.concurrent.ConcurrentHashMap<>();
 
+    private StatsViewModel statsViewModel;
+    private MeritsViewModel meritsViewModel;
+    private IntimaciesViewModel intimaciesViewModel;
+    private SorceryViewModel sorceryViewModel;
+    private EquipmentViewModel equipmentViewModel;
+    private ExperienceViewModel experienceViewModel;
+    private final Map<String, CharmsViewModel> charmViewModels = new HashMap<>();
+
+    // Export Messages
+    public static final String EXPORT_SUCCESS_TITLE = "Export Successful";
+    public static final String EXPORT_SUCCESS_MSG = "Character sheet exported successfully!";
+    public static final String EXPORT_FAILURE_TITLE = "Export Failed";
+
     private final ObjectProperty<File> currentFile = new SimpleObjectProperty<>();
     private final StringProperty windowTitle = new SimpleStringProperty("Vibethema");
     private final BooleanProperty dirty = new SimpleBooleanProperty();
     private final BooleanProperty coreDataImported = new SimpleBooleanProperty();
+    public static final String FINALIZATION_DIALOG_TITLE = "Finalize Character";
+    public static final String FINALIZATION_DIALOG_HEADER = "Finalizing Character Creation";
+    public static final String FINALIZATION_DIALOG_CONTENT =
+            "Once finalized, your Caste, Supernal, and Caste/Favored abilities cannot be"
+                    + " changed. This is a one-way process.\n\n"
+                    + "Proceed to Experienced mode?";
 
     public MainViewModel() {
-        this(new EquipmentDataService(), new CharmDataService());
+        this(new EquipmentDataService(), new CharmDataService(), new PdfExportService());
     }
 
-    public MainViewModel(EquipmentDataService equipmentService, CharmDataService charmDataService) {
+    public MainViewModel(
+            EquipmentDataService equipmentService,
+            CharmDataService charmDataService,
+            PdfExportService pdfExportService) {
         this(
                 CharacterFactory.createNewCharacter(),
                 new SystemDataService(),
                 equipmentService,
-                charmDataService);
+                charmDataService,
+                pdfExportService);
     }
 
     public MainViewModel(CharacterData data) {
-        this(data, new SystemDataService(), new EquipmentDataService(), new CharmDataService());
+        this(
+                data,
+                new SystemDataService(),
+                new EquipmentDataService(),
+                new CharmDataService(),
+                new PdfExportService());
     }
 
     public MainViewModel(CharacterData data, SystemDataService systemDataService) {
-        this(data, systemDataService, new EquipmentDataService(), new CharmDataService());
+        this(
+                data,
+                systemDataService,
+                new EquipmentDataService(),
+                new CharmDataService(),
+                new PdfExportService());
     }
 
     public MainViewModel(
             CharacterData data,
             SystemDataService systemDataService,
             EquipmentDataService equipmentService,
-            CharmDataService charmDataService) {
-        this.systemDataService = systemDataService;
+            CharmDataService charmDataService,
+            PdfExportService pdfExportService) {
         this.equipmentService = equipmentService;
         this.charmDataService = charmDataService;
+        this.pdfExportService = pdfExportService;
         init(data);
         coreDataImported.set(systemDataService.isCoreDataImported());
     }
@@ -102,6 +152,8 @@ public class MainViewModel implements ViewModel {
         updateWindowTitle();
         currentFile.addListener((obs, oldV, newV) -> updateWindowTitle());
         dirty.addListener((obs, oldV, newV) -> updateWindowTitle());
+
+        Messenger.subscribe("request_charm_creation", this::handleCharmCreationRequest);
     }
 
     private void loadTagDescriptions() {
@@ -135,14 +187,6 @@ public class MainViewModel implements ViewModel {
         windowTitle.set(title);
     }
 
-    public record CasteChangeReport(
-            List<Ability> lostCasteAbilities, String lostSupernal, List<String> illegalCharmNames) {
-        public boolean isEmpty() {
-            return lostCasteAbilities.isEmpty()
-                    && lostSupernal == null
-                    && illegalCharmNames.isEmpty();
-        }
-    }
 
     // Accessors
     public CharacterData getData() {
@@ -259,7 +303,114 @@ public class MainViewModel implements ViewModel {
         if (currentFile.get() != null) {
             suggestName = currentFile.get().getName().replace(".vbtm", ".pdf");
         }
-        Messenger.publish("request_pdf_export", suggestName);
+        Messenger.publish("request_pdf_save_location", suggestName);
+    }
+
+    public void exportToPdf(File file) {
+        if (file == null) return;
+        try {
+            pdfExportService.exportToPdf(data, file);
+            Messenger.publish("pdf_export_success", EXPORT_SUCCESS_MSG);
+        } catch (Exception ex) {
+            logger.error("Failed to export PDF to {}: {}", file.getAbsolutePath(), ex.getMessage());
+            Messenger.publish("pdf_export_error", "Export failed: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * Point 3: Model Manipulation & Entity Creation Factory logic for creating a new custom charm
+     * based on the current context.
+     */
+    public com.vibethema.model.mystic.Charm prepareNewCustomCharm(
+            String abilityId, String filterType) {
+        com.vibethema.model.mystic.Charm charm =
+                "Martial Arts Style".equals(filterType)
+                        ? new com.vibethema.model.mystic.MartialArtsCharm()
+                        : new com.vibethema.model.mystic.SolarCharm();
+
+        charm.setId(java.util.UUID.randomUUID().toString());
+        charm.setName("New " + ("Evocation".equals(filterType) ? "Evocation" : "Charm"));
+        charm.setAbility(abilityId);
+        charm.setCategory("Evocation".equals(filterType) ? "evocation" : "charm");
+        charm.setCustom(true);
+
+        return charm;
+    }
+
+    private void handleCharmCreationRequest(String name, Object[] payload) {
+        if (payload == null || payload.length < 4) return;
+        String abilityId = (String) payload[0];
+        String contextName = (String) payload[1];
+        String filterType = (String) payload[2];
+        Runnable onSave = (Runnable) payload[3];
+
+        com.vibethema.model.mystic.Charm charm = prepareNewCustomCharm(abilityId, filterType);
+        Messenger.publish(
+                "open_edit_charm_dialog", new Object[] {charm, contextName, filterType, onSave});
+    }
+
+    public NavigationTarget resolveNavigationTarget(String abilityName) {
+        String tabName = "Solar Charms";
+        if (data.isMartialArtsStyle(abilityName)) {
+            tabName = "Martial Arts";
+        }
+        return new NavigationTarget(tabName, abilityName);
+    }
+
+    public NavigationTarget resolveEvocationTarget(String artifactName) {
+        return new NavigationTarget("Solar Charms", artifactName);
+    }
+
+    // ── Sub-ViewModel Factories ──────────────────────────────────────────────
+
+    public StatsViewModel getStatsViewModel() {
+        if (statsViewModel == null) {
+            statsViewModel = new StatsViewModel(data);
+        }
+        return statsViewModel;
+    }
+
+    public MeritsViewModel getMeritsViewModel() {
+        if (meritsViewModel == null) {
+            meritsViewModel = new MeritsViewModel(data);
+        }
+        return meritsViewModel;
+    }
+
+    public IntimaciesViewModel getIntimaciesViewModel() {
+        if (intimaciesViewModel == null) {
+            intimaciesViewModel = new IntimaciesViewModel(data);
+        }
+        return intimaciesViewModel;
+    }
+
+    public SorceryViewModel getSorceryViewModel() {
+        if (sorceryViewModel == null) {
+            sorceryViewModel = new SorceryViewModel(data, charmDataService);
+        }
+        return sorceryViewModel;
+    }
+
+    public CharmsViewModel getCharmsViewModel(String filterType) {
+        return charmViewModels.computeIfAbsent(
+                filterType,
+                ft -> new CharmsViewModel(data, charmDataService, keywordDefs, ft));
+    }
+
+    public EquipmentViewModel getEquipmentViewModel() {
+        if (equipmentViewModel == null) {
+            equipmentViewModel =
+                    new EquipmentViewModel(
+                            data, equipmentService, charmDataService, tagDescriptions, null);
+        }
+        return equipmentViewModel;
+    }
+
+    public ExperienceViewModel getExperienceViewModel(Runnable refreshFooter) {
+        if (experienceViewModel == null) {
+            experienceViewModel = new ExperienceViewModel(data, refreshFooter);
+        }
+        return experienceViewModel;
     }
 
     public CasteChangeReport validateCasteChange(Caste newCaste) {
@@ -325,6 +476,35 @@ public class MainViewModel implements ViewModel {
         }
 
         return new CasteChangeReport(lostCasteAbilities, supernalLossDetail, illegalCharms);
+    }
+
+    public String generateCasteChangeWarning(Caste newCaste, CasteChangeReport report) {
+        StringBuilder content =
+                new StringBuilder("Changing Caste to ")
+                        .append(newCaste.toString())
+                        .append(" will invalidate some data.\n\n")
+                        .append("The following selections will be removed/deselected:\n\n");
+
+        if (!report.lostCasteAbilities().isEmpty()) {
+            content.append("Caste Abilities: ")
+                    .append(
+                            report.lostCasteAbilities().stream()
+                                    .map(Ability::getDisplayName)
+                                    .collect(java.util.stream.Collectors.joining(", ")))
+                    .append("\n");
+        }
+        if (report.lostSupernal() != null) {
+            content.append("Supernal Ability: ")
+                    .append(report.lostSupernal())
+                    .append(" (no longer a Caste ability)\n");
+        }
+        if (!report.illegalCharmNames().isEmpty()) {
+            content.append("Invalid Charms (Essence requirement): ")
+                    .append(String.join(", ", report.illegalCharmNames()))
+                    .append("\n");
+        }
+        content.append("\nContinue with Caste change?");
+        return content.toString();
     }
 
     public void applyCasteChange(Caste newCaste, CasteChangeReport report) {
