@@ -9,12 +9,28 @@ import com.vibethema.service.EquipmentDataService;
 import com.vibethema.service.PdfExportService;
 import com.vibethema.service.SystemDataService;
 import com.vibethema.viewmodel.util.Messenger;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import javafx.application.Platform;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class MainViewModelUndoTest {
     private MainViewModel viewModel;
     private CharacterData data;
+
+    @BeforeAll
+    static void initToolkit() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        try {
+            Platform.startup(latch::countDown);
+        } catch (IllegalStateException e) {
+            // Toolkit already started
+            latch.countDown();
+        }
+        latch.await(5, TimeUnit.SECONDS);
+    }
 
     @BeforeEach
     void setUp() {

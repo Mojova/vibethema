@@ -14,21 +14,37 @@ import com.vibethema.service.PdfExportService;
 import com.vibethema.service.SystemDataService;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.utils.notifications.NotificationObserver;
-import java.util.Collections;
-import java.util.HashMap;
 import com.vibethema.viewmodel.charms.CharmsViewModel;
 import com.vibethema.viewmodel.equipment.EquipmentViewModel;
 import com.vibethema.viewmodel.experience.ExperienceViewModel;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import javafx.application.Platform;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
-import java.nio.file.Path;
 
 public class MainViewModelTest {
+
+    @BeforeAll
+    static void initToolkit() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        try {
+            Platform.startup(latch::countDown);
+        } catch (IllegalStateException e) {
+            // Toolkit already started
+            latch.countDown();
+        }
+        latch.await(5, TimeUnit.SECONDS);
+    }
 
     @TempDir
     Path tempDir;
