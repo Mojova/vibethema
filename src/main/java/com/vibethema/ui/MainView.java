@@ -410,9 +410,21 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         undoItem.disableProperty().bind(viewModel.canUndoProperty().not());
 
         MenuItem redoItem = new MenuItem("Redo");
-        redoItem.setAccelerator(KeyCombination.keyCombination("Shortcut+Y"));
+        redoItem.setAccelerator(KeyCombination.keyCombination("Shortcut+Shift+Z"));
         redoItem.setOnAction(e -> viewModel.redo());
         redoItem.disableProperty().bind(viewModel.canRedoProperty().not());
+
+        // Also permit Shortcut+Y for redo (traditional Windows/Linux)
+        // We add it to the scene once it's available
+        sceneProperty().addListener((obs, oldS, newS) -> {
+            if (newS != null) {
+                newS.getAccelerators().put(KeyCombination.keyCombination("Shortcut+Y"), () -> {
+                    if (viewModel.canRedoProperty().get()) {
+                        viewModel.redo();
+                    }
+                });
+            }
+        });
 
         editMenu.getItems().addAll(undoItem, redoItem);
         menuBar.getMenus().add(editMenu);
