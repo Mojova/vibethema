@@ -712,7 +712,8 @@
 }
 
 .dot-selector.pulse-highlight {
-    -fx-border-color: #d4af37;
-    -fx-border-width: 2px;
+    -fx-background-color: rgba(212, 175, 55, 0.3);
+    -fx-background-radius: 12px;
+    -fx-effect: dropshadow(three-pass-box, rgba(212, 175, 55, 0.8), 20, 0, 0, 0);
 }
 
