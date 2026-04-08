@@ -24,6 +24,8 @@ public class AttributeRowView extends HBox {
         nameLabel.setPrefWidth(80);
 
         DotSelector selector = new DotSelector(viewModel.ratingProperty(), 1);
+        selector.contextIdProperty().set("Stats");
+        selector.descriptionProperty().set("Change " + viewModel.displayNameProperty().get());
 
         getChildren().addAll(nameLabel, selector);
     }

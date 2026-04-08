@@ -25,12 +25,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javafx.animation.PauseTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +47,8 @@ public class MainViewModel implements ViewModel {
                     && illegalCharmNames.isEmpty();
         }
     }
+
+    public record CheckpointRequest(String contextId, String description) {}
 
     private static final Logger logger = LoggerFactory.getLogger(MainViewModel.class);
     private CharacterData data;
@@ -157,6 +161,30 @@ public class MainViewModel implements ViewModel {
         dirty.addListener((obs, oldV, newV) -> updateWindowTitle());
 
         Messenger.subscribe("request_charm_creation", this::handleCharmCreationRequest);
+        Messenger.subscribe("RECORD_UNDO_CHECKPOINT", (name, payload) -> {
+            if (payload != null && payload.length > 0 && payload[0] instanceof CheckpointRequest req) {
+                undoManager.pushCheckpoint(data.exportState(), req.contextId, req.description);
+            }
+        });
+
+        setupDebouncedCheckpoint(data.nameProperty(), "Info", "Change Name");
+        setupDebouncedCheckpoint(data.limitTriggerProperty(), "Stats", "Change Limit Trigger");
+    }
+
+    private void setupDebouncedCheckpoint(StringProperty property, String contextId, String description) {
+        PauseTransition pause = new PauseTransition(Duration.seconds(1));
+        pause.setOnFinished(e -> {
+            undoManager.pushCheckpoint(data.exportState(), contextId, description);
+        });
+
+        property.addListener((obs, oldV, newV) -> {
+            // We only want to trigger if it wasn't a restored state (undo/redo)
+            // But UndoManager handles that by checking if the state is already current.
+            // Actually, we should probably check if the value actually changed to avoid redundant restarts.
+            if (oldV != null && !oldV.equals(newV)) {
+                pause.playFromStart();
+            }
+        });
     }
 
     private void loadTagDescriptions() {
@@ -276,6 +304,10 @@ public class MainViewModel implements ViewModel {
         if (undoManager.canUndoProperty().get()) {
             UndoManager.UndoEntry entry = undoManager.undo(currentTabId.get(), data.exportState());
             if (entry != null) {
+                // Phase 3: Jump to context if it's different
+                if (!entry.contextId().equals(currentTabId.get())) {
+                    jumpToContext(entry.contextId(), entry.state());
+                }
                 data.restoreState(entry.state(), equipmentService);
             }
         }
@@ -285,8 +317,23 @@ public class MainViewModel implements ViewModel {
         if (undoManager.canRedoProperty().get()) {
             UndoManager.UndoEntry entry = undoManager.redo(currentTabId.get(), data.exportState());
             if (entry != null) {
+                // Phase 3: Jump to context if it's different
+                if (!entry.contextId().equals(currentTabId.get())) {
+                    jumpToContext(entry.contextId(), entry.state());
+                }
                 data.restoreState(entry.state(), equipmentService);
             }
+        }
+    }
+
+    private void jumpToContext(String contextId, CharacterSaveState state) {
+        // Find if it's a specific ability in Charms
+        if (contextId.startsWith("Charms:")) {
+            String ability = contextId.substring(7);
+            Messenger.publish("jump_to_charms", ability);
+        } else {
+            // Otherwise try a direct tab jump
+            Messenger.publish("switch_to_tab", contextId);
         }
     }
 

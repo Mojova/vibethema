@@ -4,10 +4,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.vibethema.model.CharacterData;
-import com.vibethema.model.CharacterSaveState;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
 import com.vibethema.service.PdfExportService;
+import com.vibethema.service.SystemDataService;
+import com.vibethema.viewmodel.util.Messenger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +21,7 @@ class MainViewModelUndoTest {
         data = new CharacterData();
         viewModel = new MainViewModel(
                 data,
-                mock(com.vibethema.service.SystemDataService.class),
+                mock(SystemDataService.class),
                 mock(EquipmentDataService.class),
                 mock(CharmDataService.class),
                 mock(PdfExportService.class)
@@ -28,22 +29,48 @@ class MainViewModelUndoTest {
     }
 
     @Test
-    void testUndoRedoTriggersModelRestoration() {
+    void testRecordUndoCheckpointViaMessenger() {
         data.nameProperty().set("Initial");
         
-        // Manual checkpoint (Phase 3 will automate this)
-        // Since we can't easily access the private undoManager in VM, 
-        // we test the public methods we added.
+        // Publish checkpoint message
+        Messenger.publish("RECORD_UNDO_CHECKPOINT", 
+            new MainViewModel.CheckpointRequest("Stats", "Name change"));
         
-        // However, I just realized that without automatic checkpointing (Phase 3),
-        // manual undo/redo test in VM is hard unless I expose the undoManager or force a checkpoint.
+        assertTrue(viewModel.canUndoProperty().get(), "Should be able to undo after checkpoint");
         
-        // Let's just verify properties exist and are bound.
-        assertNotNull(viewModel.canUndoProperty());
-        assertNotNull(viewModel.canRedoProperty());
+        data.nameProperty().set("New Name");
+        
+        viewModel.undo();
+        
+        assertEquals("Initial", data.nameProperty().get(), "Undo should revert name");
         assertFalse(viewModel.canUndoProperty().get());
-        assertFalse(viewModel.canRedoProperty().get());
+        assertTrue(viewModel.canRedoProperty().get());
         
-        assertEquals("Stats", viewModel.currentTabIdProperty().get());
+        viewModel.redo();
+        assertEquals("New Name", data.nameProperty().get(), "Redo should restore name");
+    }
+
+    @Test
+    void testUndoTriggersTabSwitch() {
+        // 1. Initial state on Stats tab
+        viewModel.currentTabIdProperty().set("Stats");
+        data.nameProperty().set("Bob");
+        Messenger.publish("RECORD_UNDO_CHECKPOINT", new MainViewModel.CheckpointRequest("Stats", "Change Name"));
+        
+        // 2. Change tab to Charms
+        viewModel.currentTabIdProperty().set("Charms");
+        data.nameProperty().set("Alice");
+        
+        // Trigger undo from Charms tab for a Stats operation
+        // Use an observer to catch the switch message
+        final String[] switchedTo = {null};
+        Messenger.subscribe("switch_to_tab", (name, payload) -> {
+            switchedTo[0] = (String) payload[0];
+        });
+        
+        viewModel.undo();
+        
+        assertEquals("Bob", data.nameProperty().get());
+        assertEquals("Stats", switchedTo[0], "System should publish request to switch back to Stats tab");
     }
 }

@@ -247,6 +247,19 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                                 (Runnable) payload[3]);
                     }
                 });
+
+        addObserver(
+                "switch_to_tab",
+                (name, payload) -> {
+                    if (payload != null && payload.length > 0 && payload[0] instanceof String tabTitle) {
+                        for (Tab tab : mainTabPane.getTabs()) {
+                            if (tabTitle.equals(tab.getText())) {
+                                mainTabPane.getSelectionModel().select(tab);
+                                break;
+                            }
+                        }
+                    }
+                });
     }
 
     private void addObserver(String name, NotificationObserver observer) {
