@@ -1,13 +1,5 @@
 package com.vibethema.viewmodel.util;
 
-import com.vibethema.model.*;
-import com.vibethema.model.combat.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.logic.*;
-import com.vibethema.model.mystic.*;
-import com.vibethema.model.progression.*;
-import com.vibethema.model.social.*;
-import com.vibethema.model.traits.*;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenterFactory;
 import de.saxsys.mvvmfx.utils.notifications.NotificationObserver;

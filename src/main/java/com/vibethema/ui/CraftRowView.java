@@ -1,7 +1,6 @@
 package com.vibethema.ui;
 
 import com.vibethema.viewmodel.stats.CraftRowViewModel;
-import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;

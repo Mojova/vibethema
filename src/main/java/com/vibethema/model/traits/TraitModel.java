@@ -41,12 +41,10 @@ public class TraitModel {
     private final IntegerProperty favoredAbilityCount = new SimpleIntegerProperty(0);
 
     private final Consumer<Void> dirtyListener;
-    private final Runnable statUpdateTrigger;
     private boolean isImporting = false;
 
     public TraitModel(Consumer<Void> dirtyListener, Runnable statUpdateTrigger) {
         this.dirtyListener = dirtyListener;
-        this.statUpdateTrigger = statUpdateTrigger;
 
         for (Attribute attr : SystemData.ATTRIBUTES) {
             attributes.put(attr, new SimpleIntegerProperty(1));

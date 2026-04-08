@@ -6,7 +6,6 @@ import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;

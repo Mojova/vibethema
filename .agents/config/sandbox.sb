@@ -1,0 +1,3 @@
+(version 1)
+(allow default)
+(allow file-read* (literal "/var/db/xcode_select_link"))

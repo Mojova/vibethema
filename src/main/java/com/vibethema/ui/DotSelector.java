@@ -37,6 +37,7 @@ public class DotSelector extends HBox {
         setSpacing(4);
         setAlignment(Pos.CENTER_LEFT);
         setFocusTraversable(true);
+        setAccessibleText("Foobar");
         setAccessibleRole(AccessibleRole.SPINNER);
         setAccessibleRoleDescription("dots");
         getStyleClass().add("dot-selector");

@@ -25,12 +25,10 @@ public class MysticModel {
     private final BooleanProperty solarSorceryAvailable = new SimpleBooleanProperty(false);
 
     private final Consumer<Void> dirtyListener;
-    private final Runnable statUpdateTrigger;
     private boolean isImporting = false;
 
     public MysticModel(Consumer<Void> dirtyListener, Runnable statUpdateTrigger) {
         this.dirtyListener = dirtyListener;
-        this.statUpdateTrigger = statUpdateTrigger;
 
         unlockedCharms.addListener(
                 (javafx.collections.ListChangeListener<? super PurchasedCharm>)

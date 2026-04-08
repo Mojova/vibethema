@@ -2,8 +2,6 @@ package com.vibethema.viewmodel.footer;
 
 import com.vibethema.model.*;
 import com.vibethema.model.logic.*;
-import com.vibethema.model.progression.*;
-import com.vibethema.model.traits.*;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
