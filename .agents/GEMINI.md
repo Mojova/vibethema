@@ -101,6 +101,9 @@ To ensure parsing logic remains consistent without committing copyrighted materi
 - **Reference data**: `reference/` directory contains "known good" JSONs: do not modify these under any circumstances. The user is the only one allowed to modify these files.
 - **Manual Extraction**: Use `com.vibethema.util.PdfImportTool` to run the extraction process from the command line and inspect the resulting JSON data.
     - Usage: `mvn compile exec:java -Dexec.mainClass="com.vibethema.util.PdfImportTool" -Dexec.args="<pdf-path> [output-dir]"`
+- **Debugging & Scratch Tools**: For low-level extraction troubleshooting, see `com.vibethema.scratch`:
+    - `ExtractDebug`: A hardcoded shortcut to run the `PdfExtractor` and save results to `debug_output`.
+    - `DumpText`: Dumps raw, unparsed text from specific PDF pages to a text file. Useful for verifying bracketed text or sidebar markers in the raw stream.
 
 ### Test Coverage
 The project uses **JaCoCo** for measuring test code coverage.
