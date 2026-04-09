@@ -5,5 +5,5 @@ src/main/resources/charms_backup
 equipment_tags.json
 logs/
 
-.agent/
-.agents/
+.agent
+.agents
