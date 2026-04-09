@@ -213,8 +213,92 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
                                     });
                 });
 
-        section.getChildren().addAll(new Label("Crafts"), craftList, addBtn);
+        section.getChildren().addAll(createCraftsHeader(data), craftList, addBtn);
         return section;
+    }
+
+    private HBox createCraftsHeader(CharacterData data) {
+        AbilityRowViewModel craftVm = viewModel.getCraftAbilityRow();
+        HBox header = new HBox(6);
+        header.setAlignment(Pos.CENTER_LEFT);
+
+        // 1. Caste Indicator/Checkbox
+        CheckBox casteBox = new CheckBox("C");
+        casteBox.getStyleClass().add("caste-checkbox");
+        casteBox.selectedProperty().bindBidirectional(craftVm.isCaste());
+        casteBox.disableProperty().bind(craftVm.casteBoxDisabledProperty());
+
+        Label casteLabel = new Label("C");
+        casteLabel.getStyleClass().add("caste-marker");
+        casteLabel.setStyle(
+                "-fx-text-fill: #d4af37; -fx-font-weight: bold; -fx-font-size: 12px; -fx-padding: 0"
+                        + " 4 0 4;");
+
+        // Visibility bindings for Caste
+        casteBox.visibleProperty().bind(craftVm.modeProperty().isEqualTo(CharacterMode.CREATION));
+        casteLabel
+                .visibleProperty()
+                .bind(
+                        Bindings.and(
+                                craftVm.modeProperty().isEqualTo(CharacterMode.EXPERIENCED),
+                                craftVm.isCaste()));
+        casteLabel.managedProperty().bind(casteLabel.visibleProperty());
+
+        StackPane casteContainer = new StackPane(casteBox);
+        casteContainer.setMinWidth(25);
+        casteContainer
+                .managedProperty()
+                .bind(craftVm.modeProperty().isEqualTo(CharacterMode.CREATION));
+        casteContainer.visibleProperty().bind(casteContainer.managedProperty());
+
+        // 2. Favored Indicator/Checkbox
+        CheckBox favoredBox = new CheckBox("F");
+        favoredBox.getStyleClass().add("favored-checkbox");
+        favoredBox.selectedProperty().bindBidirectional(craftVm.isFavored());
+        favoredBox.disableProperty().bind(craftVm.favoredBoxDisabledProperty());
+
+        Label favoredLabel = new Label("F");
+        favoredLabel.getStyleClass().add("favored-marker");
+        favoredLabel.setStyle(
+                "-fx-text-fill: #3498db; -fx-font-weight: bold; -fx-font-size: 12px; -fx-padding: 0"
+                        + " 4 0 4;");
+
+        // Visibility bindings for Favored
+        favoredBox.visibleProperty().bind(craftVm.modeProperty().isEqualTo(CharacterMode.CREATION));
+        favoredLabel
+                .visibleProperty()
+                .bind(
+                        Bindings.and(
+                                craftVm.modeProperty().isEqualTo(CharacterMode.EXPERIENCED),
+                                craftVm.isFavored()));
+        favoredLabel.managedProperty().bind(favoredLabel.visibleProperty());
+
+        StackPane favoredContainer = new StackPane(favoredBox);
+        favoredContainer.setMinWidth(25);
+        favoredContainer
+                .managedProperty()
+                .bind(craftVm.modeProperty().isEqualTo(CharacterMode.CREATION));
+        favoredContainer.visibleProperty().bind(favoredContainer.managedProperty());
+
+        // Experienced Mode Container (C/F labels)
+        StackPane expModeContainer = new StackPane(casteLabel, favoredLabel);
+        expModeContainer.setMinWidth(25);
+        expModeContainer.setAlignment(Pos.CENTER);
+        expModeContainer
+                .managedProperty()
+                .bind(craftVm.modeProperty().isEqualTo(CharacterMode.EXPERIENCED));
+        expModeContainer.visibleProperty().bind(expModeContainer.managedProperty());
+
+        Label title = new Label("Crafts");
+        title.getStyleClass().add("section-title");
+
+        header.getChildren()
+                .addAll(
+                        casteContainer,
+                        favoredContainer,
+                        expModeContainer,
+                        title);
+        return header;
     }
 
     private void syncCraftRows(CharacterData data) {

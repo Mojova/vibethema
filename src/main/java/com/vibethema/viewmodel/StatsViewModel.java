@@ -130,6 +130,13 @@ public class StatsViewModel implements ViewModel {
         return attackPoolRows;
     }
 
+    public AbilityRowViewModel getCraftAbilityRow() {
+        return abilityRows.stream()
+                .filter(rvm -> rvm.getAbility() == Ability.CRAFT)
+                .findFirst()
+                .orElse(null);
+    }
+
     public IntegerProperty personalMotesProperty() {
         return data.personalMotesProperty();
     }

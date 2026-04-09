@@ -95,6 +95,22 @@ public class CharacterData {
                                     }
                                 });
 
+        getCrafts()
+                .addListener(
+                        (javafx.collections.ListChangeListener<? super CraftAbility>)
+                                c -> {
+                                    while (c.next()) {
+                                        if (c.wasAdded()) {
+                                            for (CraftAbility ca : c.getAddedSubList()) {
+                                                ca.casteProperty()
+                                                        .bind(getCasteAbility(Ability.CRAFT));
+                                                ca.favoredProperty()
+                                                        .bind(getFavoredAbility(Ability.CRAFT));
+                                            }
+                                        }
+                                    }
+                                });
+
         isImporting = true;
         try {
             updateCombatStats();
@@ -846,8 +862,6 @@ public class CharacterData {
                                             ? java.util.UUID.fromString(cd.id)
                                             : java.util.UUID.randomUUID();
                             CraftAbility ca = new CraftAbility(craftId, cd.expertise, cd.rating);
-                            ca.setCaste(cd.isCaste);
-                            ca.setFavored(cd.isFavored);
                             getCrafts().add(ca);
                         });
 
