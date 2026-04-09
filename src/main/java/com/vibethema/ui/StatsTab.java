@@ -157,7 +157,9 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
 
     private HBox createAbilitiesAndSideStuff(CharacterData data) {
         VBox abilitiesSection = new VBox(10);
-        abilitiesSection.getChildren().add(new Label("Abilities (C=Caste, F=Favored)"));
+        Label abilTitle = new Label("Abilities");
+        abilTitle.getStyleClass().add("section-title");
+        abilitiesSection.getChildren().add(abilTitle);
 
         GridPane abilGrid = new GridPane();
         abilGrid.setHgap(20);
