@@ -88,4 +88,25 @@ public class StatsViewModelTest {
         viewModel.deleteCraft(model);
         assertEquals(0, viewModel.getCraftRows().size());
     }
+
+    @Test
+    void testSpecialtyManagement() {
+        assertEquals(0, viewModel.getSpecialtyRows().size());
+
+        // Test Add
+        viewModel.addSpecialty("Fast Talk", "Presence");
+        assertEquals(1, viewModel.getSpecialtyRows().size());
+        assertEquals("Fast Talk", viewModel.getSpecialtyRows().get(0).nameProperty().get());
+        assertEquals("Presence", viewModel.getSpecialtyRows().get(0).abilityProperty().get());
+
+        // Test Edit
+        com.vibethema.model.traits.Specialty model = viewModel.getSpecialtyRows().get(0).getModel();
+        viewModel.editSpecialty(model, "Silver Tongue", "Performance");
+        assertEquals("Silver Tongue", viewModel.getSpecialtyRows().get(0).nameProperty().get());
+        assertEquals("Performance", viewModel.getSpecialtyRows().get(0).abilityProperty().get());
+
+        // Test Delete
+        viewModel.deleteSpecialty(model);
+        assertEquals(0, viewModel.getSpecialtyRows().size());
+    }
 }

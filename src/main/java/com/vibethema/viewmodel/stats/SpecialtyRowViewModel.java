@@ -10,11 +10,19 @@ public class SpecialtyRowViewModel {
         this.model = model;
     }
 
+    public String getId() {
+        return model.getId();
+    }
+
     public StringProperty nameProperty() {
         return model.nameProperty();
     }
 
     public StringProperty abilityProperty() {
         return model.abilityProperty();
+    }
+
+    public Specialty getModel() {
+        return model;
     }
 }

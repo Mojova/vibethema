@@ -10,8 +10,7 @@ public class Specialty {
     private final StringProperty ability = new SimpleStringProperty("");
 
     public Specialty(String name, String ability) {
-        this.name.set(name);
-        this.ability.set(ability);
+        this(UUID.randomUUID().toString(), name, ability);
     }
 
     public Specialty(String id, String name, String ability) {

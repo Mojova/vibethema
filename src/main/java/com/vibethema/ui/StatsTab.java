@@ -18,6 +18,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Window;
+import javafx.util.Pair;
 
 public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, Initializable {
 
@@ -294,10 +295,10 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
 
         header.getChildren()
                 .addAll(
+                        title,
                         casteContainer,
                         favoredContainer,
-                        expModeContainer,
-                        title);
+                        expModeContainer);
         return header;
     }
 
@@ -364,21 +365,111 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
 
     private VBox createSpecialtiesSection(CharacterData data) {
         VBox section = new VBox(10);
+        Label title = new Label("Specialties");
+        title.getStyleClass().add("section-title");
         specList = new VBox(8);
 
-        // Use declarative binding for the specialties list
-        Bindings.bindContent(
-                specList.getChildren(),
-                viewModel.getSpecialtyRows().stream()
-                        .map(SpecialtyRowView::new)
-                        .collect(
-                                Collectors.collectingAndThen(
-                                        Collectors.toList(), FXCollections::observableArrayList)));
+        syncSpecialtyRows(data);
+        viewModel
+                .getSpecialtyRows()
+                .addListener(
+                        (ListChangeListener<? super SpecialtyRowViewModel>)
+                                c -> syncSpecialtyRows(data));
 
         Button addBtn = new Button("+ Add Specialty");
-        addBtn.setOnAction(e -> data.getSpecialties().add(new Specialty("", "")));
-        section.getChildren().addAll(new Label("Specialties"), specList, addBtn);
+        addBtn.getStyleClass().add("action-btn");
+        addBtn.setOnAction(
+                e -> {
+                    showSpecialtyDialog("", "")
+                            .ifPresent(
+                                    result -> {
+                                        viewModel.addSpecialty(result.getKey(), result.getValue());
+                                    });
+                });
+
+        section.getChildren().addAll(title, specList, addBtn);
         return section;
+    }
+
+    private void syncSpecialtyRows(CharacterData data) {
+        specList.getChildren().clear();
+        for (SpecialtyRowViewModel rvm : viewModel.getSpecialtyRows()) {
+            SpecialtyRowView view = new SpecialtyRowView(rvm);
+
+            view.setOnEdit(
+                    e -> {
+                        showSpecialtyDialog(rvm.nameProperty().get(), rvm.abilityProperty().get())
+                                .ifPresent(
+                                        result -> {
+                                            viewModel.editSpecialty(
+                                                    rvm.getModel(),
+                                                    result.getKey(),
+                                                    result.getValue());
+                                        });
+                    });
+
+            view.setOnDelete(
+                    e -> {
+                        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+                        confirm.setTitle("Delete Specialty");
+                        confirm.setHeaderText("Delete " + rvm.nameProperty().get() + "?");
+                        confirm.setContentText("Are you sure you want to delete this specialty?");
+                        confirm.initOwner(getScene().getWindow());
+                        confirm.showAndWait()
+                                .filter(response -> response == ButtonType.OK)
+                                .ifPresent(response -> viewModel.deleteSpecialty(rvm.getModel()));
+                    });
+
+            specList.getChildren().add(view);
+        }
+    }
+
+    private Optional<Pair<String, String>> showSpecialtyDialog(
+            String initialName, String initialAbility) {
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        dialog.setTitle(initialName.isEmpty() ? "Add New Specialty" : "Edit Specialty");
+        dialog.setHeaderText(initialName.isEmpty() ? "Add New Specialty" : "Edit Specialty");
+
+        ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField nameField = new TextField(initialName);
+        nameField.setPromptText("Specialty Name");
+
+        ComboBox<String> abilityCombo = new ComboBox<>();
+        abilityCombo
+                .getItems()
+                .addAll(
+                        SystemData.ABILITIES.stream()
+                                .map(Ability::getDisplayName)
+                                .collect(Collectors.toList()));
+        abilityCombo.setValue(
+                initialAbility.isEmpty()
+                        ? SystemData.ABILITIES.get(0).getDisplayName()
+                        : initialAbility);
+
+        grid.add(new Label("Name:"), 0, 0);
+        grid.add(nameField, 1, 0);
+        grid.add(new Label("Ability:"), 0, 1);
+        grid.add(abilityCombo, 1, 1);
+
+        dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getStyleClass().add("dialog-pane-custom");
+
+        dialog.setResultConverter(
+                dialogButton -> {
+                    if (dialogButton == saveButtonType) {
+                        return new Pair<>(nameField.getText(), abilityCombo.getValue());
+                    }
+                    return null;
+                });
+
+        return dialog.showAndWait();
     }
 
     private HBox createStatsRow(CharacterData data) {

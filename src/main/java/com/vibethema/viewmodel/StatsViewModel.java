@@ -175,6 +175,25 @@ public class StatsViewModel implements ViewModel {
         markDirty();
     }
 
+    public void addSpecialty(String name, String ability) {
+        if (name == null || name.trim().isEmpty()) return;
+        data.getSpecialties().add(new Specialty(name.trim(), ability));
+        markDirty();
+    }
+
+    public void editSpecialty(Specialty model, String newName, String newAbility) {
+        if (model == null || newName == null || newName.trim().isEmpty()) return;
+        model.setName(newName.trim());
+        model.setAbility(newAbility);
+        markDirty();
+    }
+
+    public void deleteSpecialty(Specialty model) {
+        if (model == null) return;
+        data.getSpecialties().remove(model);
+        markDirty();
+    }
+
     public void jumpToCharms(String abilityName) {
         Messenger.publish("jump_to_charms", abilityName);
     }
