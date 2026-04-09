@@ -48,7 +48,6 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
                         (obs, oldV, newV) -> {
                             updateLineHighlights(newV != null ? newV.getId() : null);
                             updateWebNodeStyles();
-                            if (newV != null) scrollToNode(newV.getId());
                         });
 
         setupKeyHandlers();
@@ -75,6 +74,9 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
                             return;
                         }
                         viewModel.navigate(code);
+                        if (viewModel.selectedCharmProperty().get() != null) {
+                            scrollToNode(viewModel.selectedCharmProperty().get().getId());
+                        }
                         e.consume();
                     } else if (code == javafx.scene.input.KeyCode.ENTER
                             || code == javafx.scene.input.KeyCode.SPACE) {
