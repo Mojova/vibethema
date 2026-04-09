@@ -281,6 +281,36 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                 });
 
         addObserver(
+                "show_about_dialog",
+                (name, payload) -> {
+                    if (payload != null && payload.length >= 2) {
+                        String title = (String) payload[0];
+                        String msg = (String) payload[1];
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle(title);
+                        alert.setHeaderText(null);
+
+                        // Try to load and set the Dark Pack logo
+                        try {
+                            javafx.scene.image.Image logo =
+                                    new javafx.scene.image.Image(
+                                            getClass().getResourceAsStream("/darkpack_logo2.png"));
+                            javafx.scene.image.ImageView imageView =
+                                    new javafx.scene.image.ImageView(logo);
+                            imageView.setFitWidth(150);
+                            imageView.setPreserveRatio(true);
+                            alert.setGraphic(imageView);
+                        } catch (Exception e) {
+                            // Suppress logo loading errors
+                        }
+
+                        alert.setContentText(msg);
+                        applyDialogStyle(alert);
+                        alert.showAndWait();
+                    }
+                });
+
+        addObserver(
                 "show_info_alert",
                 (name, payload) -> {
                     if (payload != null && payload.length >= 2) {

@@ -291,16 +291,19 @@ public class MainViewModelTest {
     void testShowAboutDialogPublishesNotification() {
         AtomicReference<Object[]> receivedPayload = new AtomicReference<>();
         NotificationObserver observer = (name, payload) -> receivedPayload.set(payload);
-        Messenger.subscribe("show_info_alert", observer);
+        Messenger.subscribe("show_about_dialog", observer);
 
         try {
             viewModel.showAboutDialog();
 
             assertNotNull(receivedPayload.get());
             assertEquals("About Vibethema", receivedPayload.get()[0]);
-            assertTrue(((String) receivedPayload.get()[1]).contains("Version"));
+            String msg = (String) receivedPayload.get()[1];
+            assertTrue(msg.contains("Version"));
+            assertTrue(msg.contains("GPL v3.0"));
+            assertTrue(msg.contains("not official Exalted material"));
         } finally {
-            Messenger.unsubscribe("show_info_alert", observer);
+            Messenger.unsubscribe("show_about_dialog", observer);
         }
     }
 

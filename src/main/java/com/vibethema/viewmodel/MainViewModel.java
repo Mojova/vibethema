@@ -717,7 +717,12 @@ public class MainViewModel implements ViewModel {
                         + "Version: 1.0.0-SNAPSHOT\n\n"
                         + "A character creation and management tool for Solar Exalted.\n"
                         + "Designed for ease of use and rapid character drafting.\n\n"
-                        + "Built with JavaFX and MVVM-FX.";
-        Messenger.publish("show_info_alert", new Object[] {"About Vibethema", msg});
+                        + "Built with JavaFX and MVVM-FX.\n"
+                        + "Licensed under GNU GPL v3.0.\n\n"
+                        + "--- LEGAL ---\n"
+                        + "Vibethema is not official Exalted material.\n\n"
+                        + "Portions of the materials are the copyrights and trademarks of Paradox Interactive AB, "
+                        + "and are used with permission. All rights reserved. For more information please visit worldofdarkness.com.";
+        Messenger.publish("show_about_dialog", new Object[] {"About Vibethema", msg});
     }
 }
