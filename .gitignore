@@ -4,3 +4,6 @@ data_source
 src/main/resources/charms_backup
 equipment_tags.json
 logs/
+
+.agent/
+.agents/
