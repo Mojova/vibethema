@@ -120,8 +120,23 @@ public class FooterView extends VBox implements JavaView<FooterViewModel>, Initi
         }
     }
 
+    private static final Map<String, Double> LABEL_WIDTHS = Map.of(
+        "BP", 130.0,
+        "Caste", 85.0,
+        "Favored", 105.0,
+        "Attributes", 145.0,
+        "Abilities", 115.0,
+        "Specialties", 115.0,
+        "Charms", 105.0,
+        "RegularXP", 160.0,
+        "SolarXP", 160.0
+    );
+
     private Label createLabel(String id) {
         Label l = new Label();
+        l.setMinWidth(LABEL_WIDTHS.getOrDefault(id, 100.0));
+        l.setPrefWidth(LABEL_WIDTHS.getOrDefault(id, 100.0));
+        l.setAlignment(Pos.CENTER_LEFT);
         labels.put(id, l);
         return l;
     }
