@@ -51,4 +51,10 @@ public class SpecialtyRowView extends HBox {
     public void setOnDelete(javafx.event.EventHandler<javafx.event.ActionEvent> handler) {
         deleteBtn.setOnAction(handler);
     }
+
+    public void setOnNameClick(
+            javafx.event.EventHandler<? super javafx.scene.input.MouseEvent> value) {
+        getChildren().get(0).setCursor(javafx.scene.Cursor.HAND);
+        getChildren().get(0).setOnMouseClicked(value);
+    }
 }

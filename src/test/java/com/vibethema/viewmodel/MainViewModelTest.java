@@ -465,6 +465,7 @@ public class MainViewModelTest {
     void testResolveNavigationTargetSolar() {
         MainViewModel.NavigationTarget target = viewModel.resolveNavigationTarget("Athletics");
         assertEquals("Solar Charms", target.tabName());
+        assertEquals("Ability", target.filterType());
         assertEquals("Athletics", target.filterValue());
     }
 
@@ -476,6 +477,7 @@ public class MainViewModelTest {
 
         MainViewModel.NavigationTarget target = viewModel.resolveNavigationTarget("Single Point");
         assertEquals("Martial Arts", target.tabName());
+        assertEquals("Martial Arts Style", target.filterType());
         assertEquals("Single Point", target.filterValue());
     }
 
@@ -483,6 +485,7 @@ public class MainViewModelTest {
     void testResolveEvocationTarget() {
         MainViewModel.NavigationTarget target = viewModel.resolveEvocationTarget("Volcano Cutter");
         assertEquals("Solar Charms", target.tabName());
+        assertEquals("Ability", target.filterType());
         assertEquals("Volcano Cutter", target.filterValue());
     }
 

@@ -49,6 +49,12 @@ public class CraftRowView extends HBox {
         deleteBtn.setOnAction(handler);
     }
 
+    public void setOnNameClick(
+            javafx.event.EventHandler<? super javafx.scene.input.MouseEvent> value) {
+        getChildren().get(0).setCursor(javafx.scene.Cursor.HAND);
+        getChildren().get(0).setOnMouseClicked(value);
+    }
+
     public DotSelector getSelector() {
         return selector;
     }

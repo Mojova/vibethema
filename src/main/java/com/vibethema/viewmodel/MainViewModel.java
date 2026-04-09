@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MainViewModel implements ViewModel {
-    public record NavigationTarget(String tabName, String filterValue) {}
+    public record NavigationTarget(String tabName, String filterType, String filterValue) {}
 
     public record CasteChangeReport(
             List<Ability> lostCasteAbilities, String lostSupernal, List<String> illegalCharmNames) {
@@ -180,6 +180,29 @@ public class MainViewModel implements ViewModel {
                 "Stats",
                 "Change Limit Trigger",
                 "stats_limit_trigger");
+
+        setupSyncListeners(data);
+    }
+
+    private void setupSyncListeners(CharacterData data) {
+        // Listen to all abilities and attributes for UI-wide refresh (e.g., Charms eligibility)
+        data.getAbilities().values().forEach(p -> p.addListener((obs, ov, nv) -> notifyRefresh()));
+        data.getAttributes().values().forEach(p -> p.addListener((obs, ov, nv) -> notifyRefresh()));
+
+        data.essenceProperty().addListener((obs, ov, nv) -> notifyRefresh());
+        data.willpowerProperty().addListener((obs, ov, nv) -> notifyRefresh());
+        data.casteProperty().addListener((obs, ov, nv) -> notifyRefresh());
+        data.supernalAbilityProperty().addListener((obs, ov, nv) -> notifyRefresh());
+
+        // Also listen to Caste/Favored status changes
+        data.getCasteAbilities().values().forEach(p -> p.addListener((obs, ov, nv) -> notifyRefresh()));
+        data.getFavoredAbilities().values().forEach(p -> p.addListener((obs, ov, nv) -> notifyRefresh()));
+    }
+
+    private void notifyRefresh() {
+        if (!data.isImporting()) {
+            Messenger.publish("refresh_all_ui");
+        }
     }
 
     private void setupDebouncedCheckpoint(
@@ -461,15 +484,17 @@ public class MainViewModel implements ViewModel {
     }
 
     public NavigationTarget resolveNavigationTarget(String abilityName) {
+        String filterType = "Ability";
         String tabName = "Solar Charms";
         if (data.isMartialArtsStyle(abilityName)) {
+            filterType = "Martial Arts Style";
             tabName = "Martial Arts";
         }
-        return new NavigationTarget(tabName, abilityName);
+        return new NavigationTarget(tabName, filterType, abilityName);
     }
 
     public NavigationTarget resolveEvocationTarget(String artifactName) {
-        return new NavigationTarget("Solar Charms", artifactName);
+        return new NavigationTarget("Solar Charms", "Ability", artifactName);
     }
 
     // ── Sub-ViewModel Factories ──────────────────────────────────────────────

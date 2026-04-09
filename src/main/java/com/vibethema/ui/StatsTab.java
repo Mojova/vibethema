@@ -348,6 +348,12 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
                                 .ifPresent(response -> viewModel.deleteCraft(rvm.getModel()));
                     });
 
+            view.setOnNameClick(
+                    e -> {
+                        if (e.getClickCount() == 2)
+                            viewModel.jumpToCharms(rvm.expertiseProperty().get());
+                    });
+
             craftList.getChildren().add(view);
         }
     }
@@ -420,6 +426,12 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
                         confirm.showAndWait()
                                 .filter(response -> response == ButtonType.OK)
                                 .ifPresent(response -> viewModel.deleteSpecialty(rvm.getModel()));
+                    });
+
+            view.setOnNameClick(
+                    e -> {
+                        if (e.getClickCount() == 2)
+                            viewModel.jumpToCharms(rvm.abilityProperty().get());
                     });
 
             specList.getChildren().add(view);

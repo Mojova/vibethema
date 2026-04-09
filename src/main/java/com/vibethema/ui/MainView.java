@@ -805,9 +805,12 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
     }
 
     private void performNavigation(MainViewModel.NavigationTarget target) {
-        CharmsViewModel cvm = viewModel.getCharmsViewModel(target.filterValue());
+        CharmsViewModel cvm = viewModel.getCharmsViewModel(target.filterType());
         if (cvm != null) {
-            cvm.selectedFilterValueProperty().set(target.filterValue());
+            String selection = target.filterValue();
+            if (cvm.getFilterOptions().contains(selection)) {
+                cvm.selectedFilterValueProperty().set(selection);
+            }
             for (Tab tab : mainTabPane.getTabs()) {
                 if (target.tabName().equals(tab.getText())) {
                     mainTabPane.getSelectionModel().select(tab);
