@@ -315,4 +315,24 @@ public class CharacterDataTest {
                 .add(new PurchasedCharm("1", "Any Charm", Ability.ARCHERY.getDisplayName()));
         assertTrue(data.excellencyProperty(Ability.ARCHERY).get());
     }
+
+    @Test
+    void testCraftPersistence() {
+        CraftAbility ca = new CraftAbility("Weaving", 3);
+        java.util.UUID originalId = ca.getId();
+        data.getCrafts().add(ca);
+
+        CharacterSaveState state = data.exportState();
+        assertEquals(1, state.crafts.size());
+        assertEquals(originalId.toString(), state.crafts.get(0).id);
+        assertEquals("Weaving", state.crafts.get(0).expertise);
+
+        CharacterData newData = new CharacterData();
+        newData.importState(state, null);
+
+        assertEquals(1, newData.getCrafts().size());
+        assertEquals(originalId, newData.getCrafts().get(0).getId());
+        assertEquals("Weaving", newData.getCrafts().get(0).getExpertise());
+        assertEquals(3, newData.getCrafts().get(0).getRating());
+    }
 }

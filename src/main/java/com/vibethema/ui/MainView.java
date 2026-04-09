@@ -480,7 +480,9 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         Menu importMenu = new Menu("Import");
         MenuItem importCoreItem = new MenuItem("Import Core Book PDF...");
         importCoreItem.setOnAction(
-                e -> PdfImportHelper.importCorePdf(getScene().getWindow(), viewModel::refreshImportStatus));
+                e ->
+                        PdfImportHelper.importCorePdf(
+                                getScene().getWindow(), viewModel::refreshImportStatus));
 
         MenuItem importMoseItem = new MenuItem("Import Miracles of the Solar Exalted...");
         importMoseItem.setOnAction(

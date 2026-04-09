@@ -11,10 +11,10 @@ import javafx.geometry.Pos;
 import javafx.scene.AccessibleAction;
 import javafx.scene.AccessibleAttribute;
 import javafx.scene.AccessibleRole;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Circle;
-import javafx.scene.control.Label;
 
 public class DotSelector extends HBox {
     private final int maxDots;
@@ -29,11 +29,7 @@ public class DotSelector extends HBox {
         this(label, valueProperty, minDots, 5);
     }
 
-    public DotSelector(
-            Label label,
-            IntegerProperty valueProperty,
-            int minDots,
-            int maxDots) {
+    public DotSelector(Label label, IntegerProperty valueProperty, int minDots, int maxDots) {
         this.valueProperty = valueProperty;
         this.minDotsProperty = new SimpleIntegerProperty(minDots);
         this.maxDots = maxDots;

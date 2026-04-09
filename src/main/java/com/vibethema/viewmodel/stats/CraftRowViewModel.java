@@ -12,6 +12,10 @@ public class CraftRowViewModel {
         this.model = model;
     }
 
+    public CraftAbility getModel() {
+        return model;
+    }
+
     public StringProperty expertiseProperty() {
         return model.expertiseProperty();
     }

@@ -17,6 +17,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.stage.Window;
 
 public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, Initializable {
 
@@ -194,66 +195,87 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         VBox section = new VBox(10);
         craftList = new VBox(8);
 
-        Bindings.bindContent(
-                craftList.getChildren(),
-                viewModel.getCraftRows().stream()
-                        .map(
-                                rvm -> {
-                                    CraftRowView view = new CraftRowView(rvm);
-                                    view.getChildren().stream()
-                                            .filter(n -> n instanceof DotSelector)
-                                            .map(n -> (DotSelector) n)
-                                            .findFirst()
-                                            .ifPresent(
-                                                    ds -> {
-                                                        ds.minDotsProperty()
-                                                                .bind(
-                                                                        Bindings
-                                                                                .createIntegerBinding(
-                                                                                        () -> {
-                                                                                            if (!data.getFavoredAbility(
-                                                                                                            Ability
-                                                                                                                    .CRAFT)
-                                                                                                    .get())
-                                                                                                return 0;
-                                                                                            int
-                                                                                                    totalDots =
-                                                                                                            data
-                                                                                                                    .getCrafts()
-                                                                                                                    .stream()
-                                                                                                                    .mapToInt(
-                                                                                                                            CraftAbility
-                                                                                                                                    ::getRating)
-                                                                                                                    .sum();
-                                                                                            return (totalDots
-                                                                                                                    - rvm.ratingProperty()
-                                                                                                                            .get()
-                                                                                                            > 0)
-                                                                                                    ? 0
-                                                                                                    : 1;
-                                                                                        },
-                                                                                        data
-                                                                                                .getFavoredAbility(
-                                                                                                        Ability
-                                                                                                                .CRAFT),
-                                                                                        rvm
-                                                                                                .ratingProperty()));
-                                                        ds.contextIdProperty().set("Stats");
-                                                        ds.descriptionProperty()
-                                                                .set(
-                                                                        rvm.expertiseProperty()
-                                                                                        .get());
-                                                    });
-                                    return view;
-                                })
-                        .collect(
-                                Collectors.collectingAndThen(
-                                        Collectors.toList(), FXCollections::observableArrayList)));
+        // Reactively sync craft rows
+        syncCraftRows(data);
+        viewModel
+                .getCraftRows()
+                .addListener(
+                        (ListChangeListener<? super CraftRowViewModel>) c -> syncCraftRows(data));
 
         Button addBtn = new Button("+ Add Craft");
-        addBtn.setOnAction(e -> data.getCrafts().add(new CraftAbility("", 0)));
+        addBtn.getStyleClass().add("action-btn");
+        addBtn.setOnAction(
+                e -> {
+                    showCraftExpertiseDialog("")
+                            .ifPresent(
+                                    expertise -> {
+                                        viewModel.addCraft(expertise);
+                                    });
+                });
+
         section.getChildren().addAll(new Label("Crafts"), craftList, addBtn);
         return section;
+    }
+
+    private void syncCraftRows(CharacterData data) {
+        craftList.getChildren().clear();
+        for (CraftRowViewModel rvm : viewModel.getCraftRows()) {
+            CraftRowView view = new CraftRowView(rvm);
+
+            // Configure DotSelector
+            DotSelector ds = view.getSelector();
+            ds.minDotsProperty()
+                    .bind(
+                            Bindings.createIntegerBinding(
+                                    () -> {
+                                        if (!data.getFavoredAbility(Ability.CRAFT).get()) return 0;
+                                        int totalDots =
+                                                data.getCrafts().stream()
+                                                        .mapToInt(CraftAbility::getRating)
+                                                        .sum();
+                                        return (totalDots - rvm.ratingProperty().get() > 0) ? 0 : 1;
+                                    },
+                                    data.getFavoredAbility(Ability.CRAFT),
+                                    rvm.ratingProperty()));
+            ds.contextIdProperty().set("Stats");
+
+            // Configure Buttons
+            view.setOnEdit(
+                    e -> {
+                        showCraftExpertiseDialog(rvm.expertiseProperty().get())
+                                .ifPresent(
+                                        newExpertise -> {
+                                            viewModel.editCraft(rvm.getModel(), newExpertise);
+                                        });
+                    });
+
+            view.setOnDelete(
+                    e -> {
+                        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+                        confirm.setTitle("Delete Craft");
+                        confirm.setHeaderText("Delete " + rvm.expertiseProperty().get() + "?");
+                        confirm.setContentText("Are you sure you want to delete this craft?");
+                        confirm.initOwner(getScene().getWindow());
+                        confirm.showAndWait()
+                                .filter(response -> response == ButtonType.OK)
+                                .ifPresent(response -> viewModel.deleteCraft(rvm.getModel()));
+                    });
+
+            craftList.getChildren().add(view);
+        }
+    }
+
+    private Optional<String> showCraftExpertiseDialog(String initialValue) {
+        TextInputDialog dialog = new TextInputDialog(initialValue);
+        dialog.setTitle(initialValue.isEmpty() ? "Add New Craft" : "Edit Craft Expertise");
+        dialog.setHeaderText(initialValue.isEmpty() ? "Add New Craft Expertise" : "Edit Expertise");
+        dialog.setContentText("Expertise:");
+        dialog.initOwner(getScene().getWindow());
+
+        // Style it to match our premium look
+        dialog.getDialogPane().getStyleClass().add("dialog-pane-custom");
+
+        return dialog.showAndWait();
     }
 
     private VBox createSpecialtiesSection(CharacterData data) {

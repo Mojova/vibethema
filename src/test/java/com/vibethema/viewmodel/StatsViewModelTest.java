@@ -69,4 +69,23 @@ public class StatsViewModelTest {
         data.modeProperty().set(CharacterMode.EXPERIENCED);
         assertEquals(CharacterMode.EXPERIENCED, viewModel.modeProperty().get());
     }
+
+    @Test
+    void testCraftManagement() {
+        assertEquals(0, viewModel.getCraftRows().size());
+
+        // Test Add
+        viewModel.addCraft("Carpentry");
+        assertEquals(1, viewModel.getCraftRows().size());
+        assertEquals("Carpentry", viewModel.getCraftRows().get(0).expertiseProperty().get());
+
+        // Test Edit
+        com.vibethema.model.traits.CraftAbility model = viewModel.getCraftRows().get(0).getModel();
+        viewModel.editCraft(model, "Shipwright");
+        assertEquals("Shipwright", viewModel.getCraftRows().get(0).expertiseProperty().get());
+
+        // Test Delete
+        viewModel.deleteCraft(model);
+        assertEquals(0, viewModel.getCraftRows().size());
+    }
 }

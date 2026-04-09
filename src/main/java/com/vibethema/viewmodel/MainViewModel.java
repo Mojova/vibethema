@@ -672,7 +672,8 @@ public class MainViewModel implements ViewModel {
                 java.awt.Desktop.getDesktop().open(dataDir);
             } catch (Exception e) {
                 logger.error("Failed to open data directory", e);
-                Messenger.publish("show_error_alert", "Could not open directory: " + e.getMessage());
+                Messenger.publish(
+                        "show_error_alert", "Could not open directory: " + e.getMessage());
             }
         } else {
             Messenger.publish(
@@ -702,27 +703,31 @@ public class MainViewModel implements ViewModel {
             Messenger.publish(
                     "show_info_alert",
                     new Object[] {
-                        "Data Check", "All essential core data seems to be present and accounted for!"
+                        "Data Check",
+                        "All essential core data seems to be present and accounted for!"
                     });
         } else {
-            String report = "The following data files are missing:\n\n• " + String.join("\n• ", missing);
+            String report =
+                    "The following data files are missing:\n\n• " + String.join("\n• ", missing);
             report += "\n\nYou may need to re-import your Core PDF via the Import menu.";
-            Messenger.publish("show_info_alert", new Object[] {"Data Check - Issues Found", report});
+            Messenger.publish(
+                    "show_info_alert", new Object[] {"Data Check - Issues Found", report});
         }
     }
 
     public void showAboutDialog() {
         String msg =
                 "Vibethema - Exalted 3rd Edition Solar Builder\n"
-                        + "Version: 1.0.0-SNAPSHOT\n\n"
-                        + "A character creation and management tool for Solar Exalted.\n"
-                        + "Designed for ease of use and rapid character drafting.\n\n"
-                        + "Built with JavaFX and MVVM-FX.\n"
-                        + "Licensed under GNU GPL v3.0.\n\n"
-                        + "--- LEGAL ---\n"
-                        + "Vibethema is not official Exalted material.\n\n"
-                        + "Portions of the materials are the copyrights and trademarks of Paradox Interactive AB, "
-                        + "and are used with permission. All rights reserved. For more information please visit worldofdarkness.com.";
+                    + "Version: 1.0.0-SNAPSHOT\n\n"
+                    + "A character creation and management tool for Solar Exalted.\n"
+                    + "Designed for ease of use and rapid character drafting.\n\n"
+                    + "Built with JavaFX and MVVM-FX.\n"
+                    + "Licensed under GNU GPL v3.0.\n\n"
+                    + "--- LEGAL ---\n"
+                    + "Vibethema is not official Exalted material.\n\n"
+                    + "Portions of the materials are the copyrights and trademarks of Paradox"
+                    + " Interactive AB, and are used with permission. All rights reserved. For more"
+                    + " information please visit worldofdarkness.com.";
         Messenger.publish("show_about_dialog", new Object[] {"About Vibethema", msg});
     }
 }

@@ -643,6 +643,7 @@ public class CharacterData {
                 .forEach(
                         ca -> {
                             CharacterSaveState.CraftData cd = new CharacterSaveState.CraftData();
+                            cd.id = ca.getId().toString();
                             cd.expertise = ca.getExpertise();
                             cd.rating = ca.getRating();
                             cd.isCaste = ca.isCaste();
@@ -840,7 +841,11 @@ public class CharacterData {
             if (state.crafts != null)
                 state.crafts.forEach(
                         cd -> {
-                            CraftAbility ca = new CraftAbility(cd.expertise, cd.rating);
+                            java.util.UUID craftId =
+                                    (cd.id != null)
+                                            ? java.util.UUID.fromString(cd.id)
+                                            : java.util.UUID.randomUUID();
+                            CraftAbility ca = new CraftAbility(craftId, cd.expertise, cd.rating);
                             ca.setCaste(cd.isCaste);
                             ca.setFavored(cd.isFavored);
                             getCrafts().add(ca);

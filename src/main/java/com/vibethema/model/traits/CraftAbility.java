@@ -1,5 +1,6 @@
 package com.vibethema.model.traits;
 
+import java.util.UUID;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -8,14 +9,24 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class CraftAbility {
+    private final UUID id;
     private final StringProperty expertise = new SimpleStringProperty("");
     private final IntegerProperty rating = new SimpleIntegerProperty(0);
     private final BooleanProperty isCaste = new SimpleBooleanProperty(false);
     private final BooleanProperty isFavored = new SimpleBooleanProperty(false);
 
     public CraftAbility(String expertise, int rating) {
+        this(UUID.randomUUID(), expertise, rating);
+    }
+
+    public CraftAbility(UUID id, String expertise, int rating) {
+        this.id = id;
         this.expertise.set(expertise);
         this.rating.set(rating);
+    }
+
+    public UUID getId() {
+        return id;
     }
 
     public StringProperty expertiseProperty() {

@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.vibethema.model.*;
 import com.vibethema.model.traits.Ability;
-import com.vibethema.model.traits.Attribute;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

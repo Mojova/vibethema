@@ -150,6 +150,24 @@ public class StatsViewModel implements ViewModel {
         return specialtyRows;
     }
 
+    public void addCraft(String expertise) {
+        if (expertise == null || expertise.trim().isEmpty()) return;
+        data.getCrafts().add(new CraftAbility(expertise.trim(), 0));
+        markDirty();
+    }
+
+    public void editCraft(CraftAbility model, String newExpertise) {
+        if (model == null || newExpertise == null || newExpertise.trim().isEmpty()) return;
+        model.setExpertise(newExpertise.trim());
+        markDirty();
+    }
+
+    public void deleteCraft(CraftAbility model) {
+        if (model == null) return;
+        data.getCrafts().remove(model);
+        markDirty();
+    }
+
     public void jumpToCharms(String abilityName) {
         Messenger.publish("jump_to_charms", abilityName);
     }

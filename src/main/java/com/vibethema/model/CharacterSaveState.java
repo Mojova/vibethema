@@ -214,6 +214,7 @@ public class CharacterSaveState {
     }
 
     public static class CraftData {
+        public String id;
         public String expertise;
         public int rating;
         public boolean isCaste;
@@ -227,12 +228,13 @@ public class CharacterSaveState {
             return rating == craftData.rating
                     && isCaste == craftData.isCaste
                     && isFavored == craftData.isFavored
+                    && Objects.equals(id, craftData.id)
                     && Objects.equals(expertise, craftData.expertise);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(expertise, rating, isCaste, isFavored);
+            return Objects.hash(id, expertise, rating, isCaste, isFavored);
         }
     }
 

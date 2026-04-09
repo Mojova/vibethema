@@ -18,7 +18,8 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                                         + "E\\s*X\\s*3\\s*\\n"
                                         + "\\d{3}\\s*\\n",
                                 "\n")
-                        .replaceAll("(?m)^\\n\\d{3}\\s*\\nE\\s*X\\s*3\\s*\\n(?:[A-Z\\s]{5,})", "\n");
+                        .replaceAll(
+                                "(?m)^\\n\\d{3}\\s*\\nE\\s*X\\s*3\\s*\\n(?:[A-Z\\s]{5,})", "\n");
 
         Map<String, List<Map<String, Object>>> charmsByAbility = new HashMap<>();
         Map<String, List<Map<String, Object>>> charmsByMartialArtsStyle = new HashMap<>();
@@ -55,14 +56,16 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                 }
             }
 
-            // Mins: [Ability] [Dots], Essence [Dots] - handle possible newlines by joining with next line if needed
+            // Mins: [Ability] [Dots], Essence [Dots] - handle possible newlines by joining with
+            // next line if needed
             String fullMinsLine = costLine;
             if (!costLine.contains("Essence") && descStartIdx < lines.length) {
                 fullMinsLine += " " + lines[descStartIdx].trim();
                 descStartIdx++;
             }
 
-            Pattern minsPattern = Pattern.compile("Mins: (.*?) (\\d+), Essence (\\d+)", Pattern.CASE_INSENSITIVE);
+            Pattern minsPattern =
+                    Pattern.compile("Mins: (.*?) (\\d+), Essence (\\d+)", Pattern.CASE_INSENSITIVE);
             Matcher minsMatcher = minsPattern.matcher(fullMinsLine);
             if (!minsMatcher.find()) continue;
 
@@ -428,7 +431,9 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
         // Surgical sidebar removal for Core book
         // Handles sidebars which often interrupt mid-sentence or mid-word.
         text = text.replaceAll("(?s)WHEN DO I NEED TO AIM\\?.*?waive the aim action\\.", "");
-        text = text.replaceAll("(?s)WHEN DO I NEED TO AIM\\?.*?(?=laden shot|CHAPTER|EX3|\\d{3}\\n)", "");
+        text =
+                text.replaceAll(
+                        "(?s)WHEN DO I NEED TO AIM\\?.*?(?=laden shot|CHAPTER|EX3|\\d{3}\\n)", "");
         text =
                 text.replaceAll(
                         "(?s)MASTER’S HAND: SOLAR MASTERY AND TERRESTRIAL"
@@ -442,23 +447,46 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                         "");
         text =
                 text.replaceAll(
-                        "(?s)ON HUNDRED SHADOW WAYS.*?(?=applicable|On her next|On the next|CHAPTER|EX3|\\d{3}\\n"
+                        "(?s)ON HUNDRED SHADOW WAYS.*?(?=applicable|On her next|On the"
+                                + " next|CHAPTER|EX3|\\d{3}\\n"
                                 + ")",
                         "");
         // Awareness sidebars
-        text = text.replaceAll("(?s)ON\\s+SURPRISE\\s+ANTICIPATION\\s+METHOD.*?(?=The Iron Wolf|CHAPTER|EX3|\\d{3}\\n)", "");
-        text = text.replaceAll("(?s)That’s\\s+not\\s+a\\s+typo.*?investment\\s+of\\s+experience\\s+points\\.?", "");
-        text = text.replaceAll("(?s)SPACE-SAVING\\s+CONCESSION.*?extends\\s+all\\s+of\\s+them\\.", "");
-        
+        text =
+                text.replaceAll(
+                        "(?s)ON\\s+SURPRISE\\s+ANTICIPATION\\s+METHOD.*?(?=The Iron"
+                                + " Wolf|CHAPTER|EX3|\\d{3}\\n"
+                                + ")",
+                        "");
+        text =
+                text.replaceAll(
+                        "(?s)That’s\\s+not\\s+a\\s+typo.*?investment\\s+of\\s+experience\\s+points\\.?",
+                        "");
+        text =
+                text.replaceAll(
+                        "(?s)SPACE-SAVING\\s+CONCESSION.*?extends\\s+all\\s+of\\s+them\\.", "");
+
         // Brawl sidebars
-        text = text.replaceAll("(?s)AN\\s+EXAMPLE\\s+OF\\s+FALLING\\s+HAMMER\\s+STRIKE.*?her\\s+next\\s+attack\\.", "");
-        text = text.replaceAll("(?s)ON\\s+THUNDERCLAP\\s+RUSH\\s+ATTACK.*?before\\s+she\\s+makes\\s+her\\s+attack\\s+roll\\.", "");
-        text = text.replaceAll("(?s)FELLING\\s+GIGANTIC\\s+FOES.*?grapple\\s+gigantic\\s+foes\\s+in\\s+the\\s+first\\s+place\\.?", "");
-        
+        text =
+                text.replaceAll(
+                        "(?s)AN\\s+EXAMPLE\\s+OF\\s+FALLING\\s+HAMMER\\s+STRIKE.*?her\\s+next\\s+attack\\.",
+                        "");
+        text =
+                text.replaceAll(
+                        "(?s)ON\\s+THUNDERCLAP\\s+RUSH\\s+ATTACK.*?before\\s+she\\s+makes\\s+her\\s+attack\\s+roll\\.",
+                        "");
+        text =
+                text.replaceAll(
+                        "(?s)FELLING\\s+GIGANTIC\\s+FOES.*?grapple\\s+gigantic\\s+foes\\s+in\\s+the\\s+first\\s+place\\.?",
+                        "");
+
         // Craft sidebars
-        text = text.replaceAll("(?s)ON\\s+POINT-GENERATING\\s+CHARMS.*?use\\s+Craft\\s+intermittently\\.", "");
+        text =
+                text.replaceAll(
+                        "(?s)ON\\s+POINT-GENERATING\\s+CHARMS.*?use\\s+Craft\\s+intermittently\\.",
+                        "");
         text = text.replaceAll("(?s)SHOCKWAVE\\s+TECHNIQUE.*?target\\s+is\\s+thrown\\.", "");
-        
+
         return super.cleanDescription(text);
     }
 
