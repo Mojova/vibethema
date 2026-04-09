@@ -47,7 +47,7 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
                 .addListener(
                         (obs, oldV, newV) -> {
                             updateLineHighlights(newV != null ? newV.getId() : null);
-                            updateWebNodeStyles();
+                            updateSelectionStyles(oldV != null ? oldV.getId() : null, newV != null ? newV.getId() : null);
                         });
 
         setupKeyHandlers();
@@ -187,16 +187,14 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
 
     private void render() {
         if (charmCanvas == null) return;
-        charmCanvas.getChildren().clear();
-        charmNodeMap.clear();
-        charmCheckMap.clear();
-        charmIncomingLines.clear();
-        charmOutgoingLines.clear();
-        currentlyHighlightedLines.clear();
 
         Map<Integer, List<Charm>> levels = viewModel.getLevels();
         int maxDepth = viewModel.getMaxDepth();
-        if (levels.isEmpty()) return;
+        if (levels.isEmpty()) {
+            charmCanvas.getChildren().clear();
+            charmNodeMap.clear();
+            return;
+        }
 
         double boxWidth = 220, boxHeight = 70, gapX = 40, gapY = 80;
         double maxRowWidth = 0;
@@ -206,6 +204,29 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
             if (w > maxRowWidth) maxRowWidth = w;
         }
         double virtualWidth = Math.max(800, maxRowWidth + 100);
+
+        Set<String> newIds = new HashSet<>();
+        for (Charm c : viewModel.getCurrentCharms()) newIds.add(c.getId());
+
+        // Cleanup line maps and state
+        charmIncomingLines.clear();
+        charmOutgoingLines.clear();
+        currentlyHighlightedLines.clear();
+
+        // Remove old nodes and lines
+        charmCanvas.getChildren().removeIf(node -> {
+            if (node instanceof CubicCurve) return true; // Always redraw lines for now
+            String id = node.getId();
+            if (id != null && id.startsWith("charm_")) {
+                String charmId = id.substring(6);
+                if (!newIds.contains(charmId)) {
+                    charmNodeMap.remove(charmId);
+                    charmCheckMap.remove(charmId);
+                    return true;
+                }
+            }
+            return false;
+        });
 
         for (int d = 0; d <= maxDepth; d++) {
             List<Charm> row = levels.getOrDefault(d, new ArrayList<>());
@@ -217,16 +238,18 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
                 Charm c = row.get(i);
                 double x = startX + i * (boxWidth + gapX);
 
-                Pane box = createNodeBox(c, boxWidth, boxHeight);
+                Pane box = charmNodeMap.get(c.getId());
+                if (box == null) {
+                    box = createNodeBox(c, boxWidth, boxHeight);
+                    box.setOnMouseClicked(
+                            e -> {
+                                viewModel.selectedCharmProperty().set(c);
+                                if (e.getClickCount() == 2) viewModel.togglePurchase();
+                            });
+                    charmCanvas.getChildren().add(box);
+                }
                 box.setLayoutX(x);
                 box.setLayoutY(y);
-                box.setOnMouseClicked(
-                        e -> {
-                            viewModel.selectedCharmProperty().set(c);
-                            if (e.getClickCount() == 2) viewModel.togglePurchase();
-                        });
-
-                charmCanvas.getChildren().add(box);
             }
         }
 
@@ -325,50 +348,74 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
         return root;
     }
 
+    private void updateSelectionStyles(String oldId, String newId) {
+        if (oldId != null) {
+            Pane oldNode = charmNodeMap.get(oldId);
+            if (oldNode != null) updateNodeStyles(oldId);
+        }
+        if (newId != null) {
+            Pane newNode = charmNodeMap.get(newId);
+            if (newNode != null) updateNodeStyles(newId);
+        }
+    }
+
     private void updateWebNodeStyles() {
-        Charm selected = viewModel.selectedCharmProperty().get();
         for (Charm c : viewModel.getCurrentCharms()) {
-            Pane container = charmNodeMap.get(c.getId());
-            if (container == null) continue;
+            updateNodeStyles(c.getId());
+        }
+    }
 
-            container
-                    .getStyleClass()
-                    .removeAll(
-                            "charm-node-unselected",
-                            "charm-node-selected",
-                            "charm-node-ineligible",
-                            "charm-node-bought",
-                            "charm-node-eligible");
+    private void updateNodeStyles(String charmId) {
+        Pane container = charmNodeMap.get(charmId);
+        if (container == null) return;
 
-            boolean isSelected = selected != null && selected.getId().equals(c.getId());
-            boolean hasCharm = viewModel.getData().hasCharm(c.getId());
-            boolean eligible = c.isEligible(viewModel.getData());
-
-            if (isSelected) {
-                container.getStyleClass().add("charm-node-selected");
+        Charm c = null;
+        for (Charm curr : viewModel.getCurrentCharms()) {
+            if (curr.getId().equals(charmId)) {
+                c = curr;
+                break;
             }
+        }
+        if (c == null) return;
 
-            if (hasCharm) {
-                container.getStyleClass().add("charm-node-bought");
-            }
+        container
+                .getStyleClass()
+                .removeAll(
+                        "charm-node-unselected",
+                        "charm-node-selected",
+                        "charm-node-ineligible",
+                        "charm-node-bought",
+                        "charm-node-eligible");
 
-            if (!eligible && !hasCharm) {
-                container.getStyleClass().add("charm-node-ineligible");
-            } else if (!hasCharm) {
-                container.getStyleClass().add("charm-node-eligible");
-            }
+        Charm selected = viewModel.selectedCharmProperty().get();
+        boolean isSelected = selected != null && selected.getId().equals(c.getId());
+        boolean hasCharm = viewModel.getData().hasCharm(c.getId());
+        boolean eligible = c.isEligible(viewModel.getData());
 
-            Label check = charmCheckMap.get(c.getId());
-            if (check != null) {
-                check.setVisible(hasCharm);
-            }
+        if (isSelected) {
+            container.getStyleClass().add("charm-node-selected");
+        }
 
-            if (c.isCustom()) {
-                if (!container.getStyleClass().contains("charm-node-custom"))
-                    container.getStyleClass().add("charm-node-custom");
-            } else {
-                container.getStyleClass().remove("charm-node-custom");
-            }
+        if (hasCharm) {
+            container.getStyleClass().add("charm-node-bought");
+        }
+
+        if (!eligible && !hasCharm) {
+            container.getStyleClass().add("charm-node-ineligible");
+        } else if (!hasCharm) {
+            container.getStyleClass().add("charm-node-eligible");
+        }
+
+        Label check = charmCheckMap.get(c.getId());
+        if (check != null) {
+            check.setVisible(hasCharm);
+        }
+
+        if (c.isCustom()) {
+            if (!container.getStyleClass().contains("charm-node-custom"))
+                container.getStyleClass().add("charm-node-custom");
+        } else {
+            container.getStyleClass().remove("charm-node-custom");
         }
     }
 

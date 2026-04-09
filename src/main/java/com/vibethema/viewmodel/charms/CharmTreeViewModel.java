@@ -34,6 +34,9 @@ public class CharmTreeViewModel implements ViewModel {
     private final StringProperty searchText = new SimpleStringProperty("");
     private final BooleanProperty showEligibleOnly = new SimpleBooleanProperty(false);
 
+    private final javafx.animation.PauseTransition searchDebounce =
+            new javafx.animation.PauseTransition(javafx.util.Duration.millis(250));
+
     public CharmTreeViewModel(
             CharacterData data, CharmDataService dataService, Map<String, String> keywordDefs) {
         this.data = data;
@@ -42,6 +45,8 @@ public class CharmTreeViewModel implements ViewModel {
 
         setupListeners();
         Messenger.subscribe("refresh_all_ui", (name, payload) -> refresh());
+        
+        searchDebounce.setOnFinished(e -> refresh());
     }
 
     private void setupListeners() {
@@ -50,7 +55,7 @@ public class CharmTreeViewModel implements ViewModel {
                     Messenger.publish("charm_selected", new Object[] {newV});
                 });
         showEligibleOnly.addListener((obs, oldV, newV) -> refresh());
-        searchText.addListener((obs, oldV, newV) -> refresh());
+        searchText.addListener((obs, oldV, newV) -> searchDebounce.playFromStart());
     }
 
     public void initialize(
