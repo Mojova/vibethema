@@ -15,10 +15,10 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
         text =
                 text.replaceAll(
                                 "(?m)^(?:[A-Z\\s]{5,}|SOLAR CHARMS|MARTIAL ARTS CHARMS)\\s*\\n"
-                                        + "EX3\\s*\\n"
+                                        + "E\\s*X\\s*3\\s*\\n"
                                         + "\\d{3}\\s*\\n",
                                 "\n")
-                        .replaceAll("(?m)^\\n\\d{3}\\s*\\nEX3\\s*\\n(?:[A-Z\\s]{5,})", "\n");
+                        .replaceAll("(?m)^\\n\\d{3}\\s*\\nE\\s*X\\s*3\\s*\\n(?:[A-Z\\s]{5,})", "\n");
 
         Map<String, List<Map<String, Object>>> charmsByAbility = new HashMap<>();
         Map<String, List<Map<String, Object>>> charmsByMartialArtsStyle = new HashMap<>();
@@ -55,9 +55,15 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                 }
             }
 
-            // Mins: [Ability] [Dots], Essence [Dots]
-            Pattern minsPattern = Pattern.compile("Mins: ([\\w\\s]+) (\\d+), Essence (\\d+)");
-            Matcher minsMatcher = minsPattern.matcher(costLine);
+            // Mins: [Ability] [Dots], Essence [Dots] - handle possible newlines by joining with next line if needed
+            String fullMinsLine = costLine;
+            if (!costLine.contains("Essence") && descStartIdx < lines.length) {
+                fullMinsLine += " " + lines[descStartIdx].trim();
+                descStartIdx++;
+            }
+
+            Pattern minsPattern = Pattern.compile("Mins: (.*?) (\\d+), Essence (\\d+)", Pattern.CASE_INSENSITIVE);
+            Matcher minsMatcher = minsPattern.matcher(fullMinsLine);
             if (!minsMatcher.find()) continue;
 
             String ability = minsMatcher.group(1).trim();
@@ -87,15 +93,36 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
 
                 if (line.startsWith("Type:")) {
                     type = line.replace("Type:", "").trim();
-                    currentField = "Type";
+                    if (type.contains("Keywords:")) {
+                        String[] bits = type.split("Keywords:");
+                        type = bits[0].trim();
+                        keywords = bits[1].trim();
+                        currentField = "Keywords";
+                    } else {
+                        currentField = "Type";
+                    }
                     descStartIdx = i + 1;
                 } else if (line.startsWith("Keywords:")) {
                     keywords = line.replace("Keywords:", "").trim();
-                    currentField = "Keywords";
+                    if (keywords.contains("Duration:")) {
+                        String[] bits = keywords.split("Duration:");
+                        keywords = bits[0].trim();
+                        duration = bits[1].trim();
+                        currentField = "Duration";
+                    } else {
+                        currentField = "Keywords";
+                    }
                     descStartIdx = i + 1;
                 } else if (line.startsWith("Duration:")) {
                     duration = line.replace("Duration:", "").trim();
-                    currentField = "Duration";
+                    if (duration.contains("Prerequisite Charms:")) {
+                        String[] bits = duration.split("Prerequisite Charms:");
+                        duration = bits[0].trim();
+                        rawPrereqs = bits[1].trim();
+                        currentField = "Prereqs";
+                    } else {
+                        currentField = "Duration";
+                    }
                     descStartIdx = i + 1;
                 } else if (line.startsWith("Prerequisite Charms:")) {
                     rawPrereqs = line.replace("Prerequisite Charms:", "").trim();
@@ -221,8 +248,9 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
             StringBuilder descRaw = new StringBuilder();
             for (int i = descStartIdx; i < lines.length; i++) {
                 String line = lines[i].trim();
-                // If it's a section header or sidebar, we've gone past the description
-                if (ABILITIES.contains(line) || isSidebarLine(line)) break;
+                // If it's a section header, we've gone past the description
+                // But do NOT break on sidebars here, as they can occur mid-description
+                if (ABILITIES.contains(line)) break;
                 descRaw.append(lines[i]).append("\n");
             }
 
@@ -398,7 +426,10 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
     @Override
     protected String cleanDescription(String text) {
         // Surgical sidebar removal for Core book
+        System.out.println("DEBUG CLEAN: [\n" + text + "\n]");
+        // Handles sidebars which often interrupt mid-sentence or mid-word.
         text = text.replaceAll("(?s)WHEN DO I NEED TO AIM\\?.*?waive the aim action\\.", "");
+        text = text.replaceAll("(?s)WHEN DO I NEED TO AIM\\?.*?(?=laden shot|CHAPTER|EX3|\\d{3}\\n)", "");
         text =
                 text.replaceAll(
                         "(?s)MASTER’S HAND: SOLAR MASTERY AND TERRESTRIAL"
@@ -406,10 +437,29 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                         "");
         text =
                 text.replaceAll(
-                        "(?s)ON TEN OX MEDITATION.*?(?=ment action for the"
+                        "(?s)ON TEN OX MEDITATION.*?(?=on her next turn|ment action for the"
                                 + " round|CHAPTER|EX3|\\d{3}\\n"
                                 + ")",
                         "");
+        text =
+                text.replaceAll(
+                        "(?s)ON HUNDRED SHADOW WAYS.*?(?=applicable|On her next|On the next|CHAPTER|EX3|\\d{3}\\n"
+                                + ")",
+                        "");
+        // Awareness sidebars
+        text = text.replaceAll("(?s)ON\\s+SURPRISE\\s+ANTICIPATION\\s+METHOD.*?(?=The Iron Wolf|CHAPTER|EX3|\\d{3}\\n)", "");
+        text = text.replaceAll("(?s)That’s\\s+not\\s+a\\s+typo.*?investment\\s+of\\s+experience\\s+points\\.?", "");
+        text = text.replaceAll("(?s)SPACE-SAVING\\s+CONCESSION.*?extends\\s+all\\s+of\\s+them\\.", "");
+        
+        // Brawl sidebars
+        text = text.replaceAll("(?s)AN\\s+EXAMPLE\\s+OF\\s+FALLING\\s+HAMMER\\s+STRIKE.*?her\\s+next\\s+attack\\.", "");
+        text = text.replaceAll("(?s)ON\\s+THUNDERCLAP\\s+RUSH\\s+ATTACK.*?before\\s+she\\s+makes\\s+her\\s+attack\\s+roll\\.", "");
+        text = text.replaceAll("(?s)FELLING\\s+GIGANTIC\\s+FOES.*?grapple\\s+gigantic\\s+foes\\s+in\\s+the\\s+first\\s+place\\.?", "");
+        
+        // Craft sidebars
+        text = text.replaceAll("(?s)ON\\s+POINT-GENERATING\\s+CHARMS.*?use\\s+Craft\\s+intermittently\\.", "");
+        text = text.replaceAll("(?s)SHOCKWAVE\\s+TECHNIQUE.*?target\\s+is\\s+thrown\\.", "");
+        
         return super.cleanDescription(text);
     }
 

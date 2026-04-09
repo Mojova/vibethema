@@ -51,21 +51,20 @@ public abstract class BaseCharmExtractor {
 
     protected String cleanDescription(String text) {
         // Remove page junk (headers, footers, page numbers)
-        text = text.replaceAll("(?i)\\bC H A P T E R\\s+\\d+\\b", "");
-        text = text.replaceAll("(?i)\\bE X 3\\b", "");
-        text = text.replaceAll("(?i)\\bC H A R M S\\b", "");
-        text = text.replaceAll("(?i)\\bE X A L T E D\\s+T H I R D\\s+E D I T I O N\\b", "");
+        text = text.replaceAll("(?i)C\\s*H\\s*A\\s*P\\s*T\\s*E\\s*R\\s*S?\\s+\\d+", "");
+        text = text.replaceAll("(?i)E\\s*X\\s*3", "");
+        text = text.replaceAll("(?i)S\\s*O\\s*L\\s*A\\s*R\\s*C\\s*H\\s*A\\s*R\\s*M\\s*S", "");
+        text = text.replaceAll("(?i)E\\s*X\\s*A\\s*L\\s*T\\s*E\\s*D\\s+T\\s*H\\s*I\\s*R\\s*D\\s+E\\s*D\\s*I\\s*T\\s*I\\s*O\\s*N", "");
 
-        // Remove standalone page numbers
+        // Remove standalone page numbers (including ones with spaces/dashes)
         text = text.replaceAll("\\n\\s*\\d{1,3}\\s*\\n", "\n");
-
-        text = text.replaceAll("Syntax Warning:.*", "");
-        text = text.replaceAll("[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f\\x7f]", "");
+        text = text.replaceAll("\\u00AD\\s*\\n", ""); // Soft hyphen at line end
 
         String[] lines = text.split("\n");
         List<String> cleanedLines = new ArrayList<>();
         StringBuilder currentPara = new StringBuilder();
 
+        boolean skippingSidebar = false;
         for (String line : lines) {
             line = line.trim();
             if (line.isEmpty()) {
@@ -81,7 +80,26 @@ public abstract class BaseCharmExtractor {
                 continue;
             }
 
-            if (isSidebarLine(line)) continue;
+            if (isSidebarLine(line)) {
+                skippingSidebar = true;
+                continue;
+            }
+
+            if (skippingSidebar) {
+                // STOP skipping ONLY if we are SURE it's a continuation.
+                // Case 1: line starts with lowercase letter.
+                if (Character.isLowerCase(line.charAt(0))) {
+                    skippingSidebar = false;
+                }
+                // Case 2: previous line ended in a hyphen and current line completes it?
+                // This is risky, so we only do it if the line is not ALL CAPS.
+                else if (currentPara.length() > 0 && currentPara.charAt(currentPara.length() - 1) == '-' 
+                        && !line.equals(line.toUpperCase())) {
+                    skippingSidebar = false;
+                } else {
+                    continue;
+                }
+            }
 
             if (currentPara.length() > 0) {
                 String prevContent = currentPara.toString().trim();
@@ -117,7 +135,76 @@ public abstract class BaseCharmExtractor {
             cleanedLines.add(currentPara.toString().trim());
         }
 
-        return String.join("\n\n", cleanedLines);
+        // Final pass on block-level issues
+        List<String> finalBlocks = new ArrayList<>();
+        for (int i = 0; i < cleanedLines.size(); i++) {
+            String block = cleanedLines.get(i);
+            
+            // Join fragmented page references/mid-sentence breaks that spanned multiple newlines
+            // Example: "This\n\nattack" or "(p.\n\n240)"
+            if (i < cleanedLines.size() - 1) {
+                String nextBlock = cleanedLines.get(i + 1);
+                boolean isPageRefFrag = block.matches(".*[ (]p\\.?$") || block.matches(".*[ (]see p\\.?$");
+                boolean startsWithNumber = nextBlock.matches("\\d+.*");
+                
+                if (isPageRefFrag && startsWithNumber) {
+                    cleanedLines.set(i + 1, block + " " + nextBlock);
+                    continue;
+                }
+                
+                // If this block doesn't end in punctuation and the next block continues the sentence
+                if (!block.matches(".*[.!?:\";\\-»]$") && Character.isLowerCase(nextBlock.charAt(0))) {
+                    cleanedLines.set(i + 1, block + " " + nextBlock);
+                    continue;
+                }
+            }
+            finalBlocks.add(block);
+        }
+
+        // Trailing header detection: remove short, title-case/all-caps blocks at very end
+        if (!finalBlocks.isEmpty()) {
+            String last = finalBlocks.get(finalBlocks.size() - 1);
+            if (last.length() < 45 && !last.endsWith(".") && !last.endsWith("\"") && !last.endsWith("»")) {
+                 // Check if it's likely a header (no lowercase OR Title-Case)
+                 long lowerCount = last.chars().filter(Character::isLowerCase).count();
+                 
+                 boolean isTitleCase = false;
+                 String[] words = last.split("\\s+");
+                 if (words.length > 0) {
+                     int capWords = 0;
+                     int significantWords = 0;
+                     for (String w : words) {
+                         if (w.length() > 2) {
+                             significantWords++;
+                             if (Character.isUpperCase(w.charAt(0))) capWords++;
+                         }
+                     }
+                     if (significantWords > 0 && (double)capWords / significantWords >= 0.5) {
+                         isTitleCase = true;
+                     }
+                 }
+
+                 if (last.startsWith("•")) {
+                     // Bullet points are never headers
+                     isTitleCase = false;
+                     lowerCount = -1; // Force keep
+                 }
+
+                 // An all-caps header must have at least one uppercase letter
+                 boolean isAllCaps = (lowerCount == 0 && last.matches(".*[A-Z].*"));
+
+                 if (isAllCaps || isTitleCase) {
+                     finalBlocks.remove(finalBlocks.size() - 1);
+                 } else if (last.matches(".*[a-zA-Z0-9]$")) {
+                     finalBlocks.set(finalBlocks.size() - 1, last + ".");
+                 }
+            } else if (last.matches(".*[a-zA-Z0-9]$")) {
+                 // Add period to long blocks too if missing
+                 finalBlocks.set(finalBlocks.size() - 1, last + ".");
+            }
+        }
+
+        return String.join("\n\n", finalBlocks);
     }
 
     protected boolean isSidebarLine(String line) {
@@ -126,23 +213,26 @@ public abstract class BaseCharmExtractor {
 
         // Handle standalone page numbers and short page junk (e.g. "274", "EX3")
         if (trimmed.matches("\\d{1,3}")
-                || (trimmed.toUpperCase().equals(trimmed) && trimmed.length() <= 3)) {
+                || (trimmed.toUpperCase().equals(trimmed) && (trimmed.length() <= 3 || trimmed.matches("E\\s*X\\s*3")))) {
             return true;
         }
 
         String upper = trimmed.toUpperCase();
-        if (upper.startsWith("ON ") && trimmed.length() < 100) return true;
-        if (upper.startsWith("C H A P T E R") || upper.contains("SOLAR CHARMS")) return true;
-
-        // Common 3e formatting artifacts
-        if (upper.equals("EX3") || upper.equals("CHARMS") || upper.startsWith("CHAPTER"))
-            return true;
-
-        // Short all-caps lines are often headers/sidebars
-        if (upper.equals(trimmed) && trimmed.length() > 3 && trimmed.length() < 70) {
-            if (upper.contains("CHAPTER") || upper.contains("SOLAR") || upper.contains("EX3"))
+        // Catch sidebar headers like "ON HUNDRED SHADOW WAYS" or "ON SURPRISE ANTICIPATION METHOD"
+        if (upper.startsWith("ON ") && upper.equals(trimmed) && trimmed.length() < 100) return true;
+        
+        // Catch all-caps headers
+        if (upper.equals(trimmed) && trimmed.length() > 5 && trimmed.length() < 100) {
+            if (upper.contains("CHAPTER") || upper.contains("SOLAR") || upper.contains("CHARMS") || upper.contains("MASTERY"))
                 return true;
         }
+
+        // Common 3e formatting artifacts with spaced letters
+        if (upper.matches(".*C\\s*H\\s*A\\s*P\\s*T\\s*E\\s*R.*") || 
+            upper.matches(".*E\\s*X\\s*3.*") || 
+            upper.matches(".*S\\s*O\\s*L\\s*A\\s*R\\s*C\\s*H\\s*A\\s*R\\s*M\\s*S.*"))
+            return true;
+
         return false;
     }
 
