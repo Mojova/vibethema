@@ -171,6 +171,46 @@ public class CharmDataService {
         return charmIdToAbilityMap.get(id);
     }
 
+    public int getGlobalCharmCount() {
+        ensureIndexBuilt();
+        return charmIdToNameMap.size();
+    }
+
+    public int getGlobalSpellCount() {
+        int count = 0;
+        try {
+            if (Files.exists(getUserSpellsPath())) {
+                try (java.util.stream.Stream<Path> stream = Files.list(getUserSpellsPath())) {
+                    count =
+                            (int)
+                                    stream.filter(p -> p.toString().endsWith(".json"))
+                                            .map(
+                                                    p -> {
+                                                        try (Reader r =
+                                                                Files.newBufferedReader(
+                                                                        p,
+                                                                        StandardCharsets.UTF_8)) {
+                                                            SpellListWrapper w =
+                                                                    gson.fromJson(
+                                                                            r,
+                                                                            SpellListWrapper.class);
+                                                            return w != null && w.spells != null
+                                                                    ? w.spells.size()
+                                                                    : 0;
+                                                        } catch (Exception e) {
+                                                            return 0;
+                                                        }
+                                                    })
+                                            .mapToInt(Integer::intValue)
+                                            .sum();
+                }
+            }
+        } catch (IOException e) {
+            logger.error("Error counting spells", e);
+        }
+        return count;
+    }
+
     private void ensureIndexBuilt() {
         if (indexBuilt.compareAndSet(false, true)) {
             buildGlobalIndex();

@@ -217,6 +217,94 @@ public class MainViewModelTest {
     }
 
     @Test
+    void testRefreshImportStatusUpdatesPropertyAndPublishes() {
+        AtomicReference<String> receivedMessage = new AtomicReference<>();
+        NotificationObserver observer = (name, payload) -> receivedMessage.set(name);
+        Messenger.subscribe("refresh_all_ui", observer);
+
+        try {
+            // Initially true from setUp()
+            assertTrue(viewModel.coreDataImportedProperty().get());
+
+            // Mock returns false
+            when(systemDataService.isCoreDataImported()).thenReturn(false);
+            viewModel.refreshImportStatus();
+
+            assertFalse(viewModel.coreDataImportedProperty().get());
+            assertEquals("refresh_all_ui", receivedMessage.get());
+
+            // Mock returns true
+            receivedMessage.set(null);
+            when(systemDataService.isCoreDataImported()).thenReturn(true);
+            viewModel.refreshImportStatus();
+
+            assertTrue(viewModel.coreDataImportedProperty().get());
+            assertEquals("refresh_all_ui", receivedMessage.get());
+        } finally {
+            Messenger.unsubscribe("refresh_all_ui", observer);
+        }
+    }
+
+    @Test
+    void testShowDatabaseStatsPublishesNotification() {
+        AtomicReference<Object[]> receivedPayload = new AtomicReference<>();
+        NotificationObserver observer = (name, payload) -> receivedPayload.set(payload);
+        Messenger.subscribe("show_info_alert", observer);
+
+        try {
+            when(charmDataService.getGlobalCharmCount()).thenReturn(50);
+            when(charmDataService.getGlobalSpellCount()).thenReturn(10);
+            when(equipmentService.getTotalEquipmentCount()).thenReturn(20);
+
+            viewModel.showDatabaseStats();
+
+            assertNotNull(receivedPayload.get());
+            assertEquals("Database Statistics", receivedPayload.get()[0]);
+            String msg = (String) receivedPayload.get()[1];
+            assertTrue(msg.contains("50"));
+            assertTrue(msg.contains("10"));
+            assertTrue(msg.contains("20"));
+        } finally {
+            Messenger.unsubscribe("show_info_alert", observer);
+        }
+    }
+
+    @Test
+    void testCheckMissingDataPublishesNotification() {
+        AtomicReference<Object[]> receivedPayload = new AtomicReference<>();
+        NotificationObserver observer = (name, payload) -> receivedPayload.set(payload);
+        Messenger.subscribe("show_info_alert", observer);
+
+        try {
+            when(systemDataService.isCoreDataImported()).thenReturn(false);
+            viewModel.checkMissingData();
+
+            assertNotNull(receivedPayload.get());
+            assertTrue(((String) receivedPayload.get()[0]).contains("Data Check"));
+            assertTrue(((String) receivedPayload.get()[1]).contains("missing"));
+        } finally {
+            Messenger.unsubscribe("show_info_alert", observer);
+        }
+    }
+
+    @Test
+    void testShowAboutDialogPublishesNotification() {
+        AtomicReference<Object[]> receivedPayload = new AtomicReference<>();
+        NotificationObserver observer = (name, payload) -> receivedPayload.set(payload);
+        Messenger.subscribe("show_info_alert", observer);
+
+        try {
+            viewModel.showAboutDialog();
+
+            assertNotNull(receivedPayload.get());
+            assertEquals("About Vibethema", receivedPayload.get()[0]);
+            assertTrue(((String) receivedPayload.get()[1]).contains("Version"));
+        } finally {
+            Messenger.unsubscribe("show_info_alert", observer);
+        }
+    }
+
+    @Test
     void testValidateCasteChangeNoConflicts() {
         data.casteProperty().set(Caste.DAWN);
         MainViewModel.CasteChangeReport report = viewModel.validateCasteChange(Caste.ZENITH);

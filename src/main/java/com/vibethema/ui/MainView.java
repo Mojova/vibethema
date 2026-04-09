@@ -279,6 +279,32 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                         }
                     }
                 });
+
+        addObserver(
+                "show_info_alert",
+                (name, payload) -> {
+                    if (payload != null && payload.length >= 2) {
+                        String title = (String) payload[0];
+                        String msg = (String) payload[1];
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION, msg);
+                        alert.setTitle(title);
+                        alert.setHeaderText(title);
+                        applyDialogStyle(alert);
+                        alert.showAndWait();
+                    }
+                });
+
+        addObserver(
+                "show_error_alert",
+                (name, payload) -> {
+                    if (payload != null && payload.length > 0) {
+                        String msg = (String) payload[0];
+                        Alert alert = new Alert(Alert.AlertType.ERROR, msg);
+                        alert.setTitle("Error");
+                        applyDialogStyle(alert);
+                        alert.showAndWait();
+                    }
+                });
     }
 
     private void addObserver(String name, NotificationObserver observer) {
@@ -422,6 +448,28 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                         quitItem);
         menuBar.getMenus().add(fileMenu);
 
+        Menu importMenu = new Menu("Import");
+        MenuItem importCoreItem = new MenuItem("Import Core Book PDF...");
+        importCoreItem.setOnAction(
+                e -> PdfImportHelper.importCorePdf(getScene().getWindow(), viewModel::refreshImportStatus));
+
+        MenuItem importMoseItem = new MenuItem("Import Miracles of the Solar Exalted...");
+        importMoseItem.setOnAction(
+                e ->
+                        PdfImportHelper.importMosePdf(
+                                getScene().getWindow(), viewModel::refreshImportStatus));
+
+        importMenu.getItems().addAll(importCoreItem, importMoseItem);
+        menuBar.getMenus().add(importMenu);
+
+        Menu toolsMenu = new Menu("Tools");
+        MenuItem statsItem = new MenuItem("Database Statistics");
+        statsItem.setOnAction(e -> viewModel.showDatabaseStats());
+        MenuItem openDirItem = new MenuItem("Open Application Data Directory");
+        openDirItem.setOnAction(e -> viewModel.openDataDirectory());
+        toolsMenu.getItems().addAll(statsItem, openDirItem);
+        menuBar.getMenus().add(toolsMenu);
+
         Menu editMenu = new Menu("Edit");
         MenuItem undoItem = new MenuItem("Undo");
         undoItem.setAccelerator(KeyCombination.keyCombination("Shortcut+Z"));
@@ -452,6 +500,14 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
 
         editMenu.getItems().addAll(undoItem, redoItem);
         menuBar.getMenus().add(editMenu);
+
+        Menu helpMenu = new Menu("Help");
+        MenuItem checkDataItem = new MenuItem("Check for Missing Data");
+        checkDataItem.setOnAction(e -> viewModel.checkMissingData());
+        MenuItem aboutItem = new MenuItem("About Vibethema");
+        aboutItem.setOnAction(e -> viewModel.showAboutDialog());
+        helpMenu.getItems().addAll(checkDataItem, new SeparatorMenuItem(), aboutItem);
+        menuBar.getMenus().add(helpMenu);
 
         return menuBar;
     }

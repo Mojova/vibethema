@@ -7,6 +7,7 @@ import com.vibethema.model.equipment.*;
 import com.vibethema.model.traits.*;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
+import com.vibethema.service.PathService;
 import com.vibethema.service.PdfExportService;
 import com.vibethema.service.SystemDataService;
 import com.vibethema.service.UndoManager;
@@ -55,6 +56,7 @@ public class MainViewModel implements ViewModel {
     private final EquipmentDataService equipmentService;
     private final CharmDataService charmDataService;
     private final PdfExportService pdfExportService;
+    private final SystemDataService systemDataService;
     private final UndoManager undoManager = new UndoManager();
     private final StringProperty currentTabId = new SimpleStringProperty("Stats");
 
@@ -129,6 +131,7 @@ public class MainViewModel implements ViewModel {
         this.equipmentService = equipmentService;
         this.charmDataService = charmDataService;
         this.pdfExportService = pdfExportService;
+        this.systemDataService = systemDataService;
         init(data);
         coreDataImported.set(systemDataService.isCoreDataImported());
     }
@@ -638,5 +641,83 @@ public class MainViewModel implements ViewModel {
         this.currentFile.set(null);
         this.data.setDirty(false);
         Messenger.publish("refresh_all_ui");
+    }
+
+    public void refreshImportStatus() {
+        coreDataImported.set(systemDataService.isCoreDataImported());
+        Messenger.publish("refresh_all_ui");
+    }
+
+    public void showDatabaseStats() {
+        int charms = charmDataService.getGlobalCharmCount();
+        int spells = charmDataService.getGlobalSpellCount();
+        int equipment = equipmentService.getTotalEquipmentCount();
+
+        String msg =
+                String.format(
+                        "Database Statistics:\n\n"
+                                + "• Charms Registered: %d\n"
+                                + "• Spells Known: %d\n"
+                                + "• Equipment Items: %d\n\n"
+                                + "All data is loaded from your local application data directory.",
+                        charms, spells, equipment);
+
+        Messenger.publish("show_info_alert", new Object[] {"Database Statistics", msg});
+    }
+
+    public void openDataDirectory() {
+        java.io.File dataDir = PathService.getDataPath().toFile();
+        if (java.awt.Desktop.isDesktopSupported()) {
+            try {
+                java.awt.Desktop.getDesktop().open(dataDir);
+            } catch (Exception e) {
+                logger.error("Failed to open data directory", e);
+                Messenger.publish("show_error_alert", "Could not open directory: " + e.getMessage());
+            }
+        } else {
+            Messenger.publish(
+                    "show_info_alert",
+                    new Object[] {
+                        "Data Directory", "Your data is located at:\n" + dataDir.getAbsolutePath()
+                    });
+        }
+    }
+
+    public void checkMissingData() {
+        List<String> missing = new ArrayList<>();
+        if (!systemDataService.isCoreDataImported()) {
+            missing.add("Core Book Data (keywords.json missing)");
+        }
+
+        // Basic check for some common solar files
+        java.nio.file.Path charmsDir = PathService.getDataPath().resolve("charms");
+        String[] required = {"archery.json", "melee.json", "brawl.json", "integrity.json"};
+        for (String file : required) {
+            if (!java.nio.file.Files.exists(charmsDir.resolve(file))) {
+                missing.add("Solar " + file.replace(".json", "") + " charms");
+            }
+        }
+
+        if (missing.isEmpty()) {
+            Messenger.publish(
+                    "show_info_alert",
+                    new Object[] {
+                        "Data Check", "All essential core data seems to be present and accounted for!"
+                    });
+        } else {
+            String report = "The following data files are missing:\n\n• " + String.join("\n• ", missing);
+            report += "\n\nYou may need to re-import your Core PDF via the Import menu.";
+            Messenger.publish("show_info_alert", new Object[] {"Data Check - Issues Found", report});
+        }
+    }
+
+    public void showAboutDialog() {
+        String msg =
+                "Vibethema - Exalted 3rd Edition Solar Builder\n"
+                        + "Version: 1.0.0-SNAPSHOT\n\n"
+                        + "A character creation and management tool for Solar Exalted.\n"
+                        + "Designed for ease of use and rapid character drafting.\n\n"
+                        + "Built with JavaFX and MVVM-FX.";
+        Messenger.publish("show_info_alert", new Object[] {"About Vibethema", msg});
     }
 }

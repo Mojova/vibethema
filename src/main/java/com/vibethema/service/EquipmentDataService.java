@@ -250,4 +250,21 @@ public class EquipmentDataService {
         allTags.values().forEach(flat::addAll);
         return flat;
     }
+
+    public int getTotalEquipmentCount() {
+        return countItemsInDir(getWeaponsPath())
+                + countItemsInDir(getArmorsPath())
+                + countItemsInDir(getHearthstonesPath())
+                + countItemsInDir(getOtherEquipmentPath());
+    }
+
+    private int countItemsInDir(Path dir) {
+        if (!Files.exists(dir)) return 0;
+        try (java.util.stream.Stream<Path> stream = Files.list(dir)) {
+            return (int) stream.filter(p -> p.toString().endsWith(".json")).count();
+        } catch (IOException e) {
+            logger.error("Error counting items in directory: {}", dir, e);
+            return 0;
+        }
+    }
 }
