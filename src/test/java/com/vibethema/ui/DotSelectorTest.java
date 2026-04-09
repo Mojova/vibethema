@@ -7,6 +7,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.AccessibleAttribute;
 import javafx.scene.AccessibleRole;
+import javafx.scene.control.Label;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.BeforeAll;
@@ -28,7 +29,8 @@ public class DotSelectorTest {
     @Test
     void testAccessibilityAttributes() {
         IntegerProperty val = new SimpleIntegerProperty(3);
-        DotSelector selector = new DotSelector(val, 1, 5);
+        Label label = new Label("Strength");
+        DotSelector selector = new DotSelector(label, val, 1, 5);
         selector.descriptionProperty().set("Strength");
 
         // Verify Role
@@ -48,7 +50,8 @@ public class DotSelectorTest {
     @Test
     void testAttributeUpdatesOnValueChange() {
         IntegerProperty val = new SimpleIntegerProperty(2);
-        DotSelector selector = new DotSelector(val, 1, 5);
+        Label label = new Label("Expertise");
+        DotSelector selector = new DotSelector(label, val, 1, 5);
         selector.descriptionProperty().set("Expertise");
 
         val.set(4);
@@ -62,7 +65,8 @@ public class DotSelectorTest {
     @Test
     void testAccessibleTextBinding() {
         IntegerProperty val = new SimpleIntegerProperty(3);
-        DotSelector selector = new DotSelector(val, 1, 5);
+        Label label = new Label("Essence");
+        DotSelector selector = new DotSelector(label, val, 1, 5);
         selector.descriptionProperty().set("Essence");
 
         assertEquals("Essence", selector.accessibleTextProperty().get());

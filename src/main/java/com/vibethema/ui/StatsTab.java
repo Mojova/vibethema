@@ -99,8 +99,7 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         VBox essBox = new VBox(5);
         Label essLabel = new Label("Essence");
         essLabel.getStyleClass().add("subsection-title");
-        DotSelector essSelector = new DotSelector(data.essenceProperty(), 1, 5);
-        essLabel.setLabelFor(essSelector);
+        DotSelector essSelector = new DotSelector(essLabel, data.essenceProperty(), 1, 5);
         essSelector.contextIdProperty().set("Stats");
         essSelector.descriptionProperty().set("Essence");
         essSelector.targetIdProperty().set("stats_essence");
@@ -128,8 +127,7 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         VBox wpBox = new VBox(5);
         Label wpLabel = new Label("Willpower");
         wpLabel.getStyleClass().add("subsection-title");
-        DotSelector wpSelector = new DotSelector(data.willpowerProperty(), 5, 10);
-        wpLabel.setLabelFor(wpSelector);
+        DotSelector wpSelector = new DotSelector(wpLabel, data.willpowerProperty(), 5, 10);
         wpSelector.contextIdProperty().set("Stats");
         wpSelector.descriptionProperty().set("Willpower");
         wpSelector.targetIdProperty().set("stats_willpower");
@@ -456,9 +454,8 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
 
         HBox limitBox = new HBox(10);
         limitBox.setAlignment(Pos.CENTER_LEFT);
-        DotSelector limitSelector = new DotSelector(data.limitProperty(), 0, 10);
         Label limitLabel = new Label("Limit:");
-        limitLabel.setLabelFor(limitSelector);
+        DotSelector limitSelector = new DotSelector(limitLabel, data.limitProperty(), 0, 10);
         limitSelector.contextIdProperty().set("Stats");
         limitSelector.descriptionProperty().set("Limit");
         limitSelector.targetIdProperty().set("stats_limit");

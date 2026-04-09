@@ -14,6 +14,7 @@ import javafx.scene.AccessibleRole;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Circle;
+import javafx.scene.control.Label;
 
 public class DotSelector extends HBox {
     private final int maxDots;
@@ -24,15 +25,23 @@ public class DotSelector extends HBox {
     private final StringProperty description = new SimpleStringProperty();
     private final StringProperty targetId = new SimpleStringProperty();
 
-    public DotSelector(IntegerProperty valueProperty, int minDots) {
-        this(valueProperty, minDots, 5);
+    public DotSelector(Label label, IntegerProperty valueProperty, int minDots) {
+        this(label, valueProperty, minDots, 5);
     }
 
-    public DotSelector(IntegerProperty valueProperty, int minDots, int maxDots) {
+    public DotSelector(
+            Label label,
+            IntegerProperty valueProperty,
+            int minDots,
+            int maxDots) {
         this.valueProperty = valueProperty;
         this.minDotsProperty = new SimpleIntegerProperty(minDots);
         this.maxDots = maxDots;
         this.dots = new Circle[maxDots];
+
+        if (label != null) {
+            label.setLabelFor(this);
+        }
 
         setSpacing(4);
         setAlignment(Pos.CENTER_LEFT);

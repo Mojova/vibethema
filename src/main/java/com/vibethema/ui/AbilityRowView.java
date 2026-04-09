@@ -108,8 +108,7 @@ public class AbilityRowView extends HBox {
         updateExcellencyStyle(viewModel.isExcellencyAvailableProperty().get());
 
         // 4. Dot Selector
-        selector = new DotSelector(viewModel.ratingProperty(), 0);
-        nameLabel.setLabelFor(selector);
+        selector = new DotSelector(nameLabel, viewModel.ratingProperty(), 0);
         selector.minDotsProperty().bind(viewModel.minDotsProperty());
         selector.contextIdProperty().set("Stats");
         selector.descriptionProperty().set(viewModel.getAbility().getDisplayName());

@@ -69,14 +69,19 @@ public class MeritsTab extends ScrollPane implements JavaView<MeritsViewModel>, 
             Region spacer = new Region();
             HBox.setHgrow(spacer, Priority.ALWAYS);
 
-            DotSelector selector = new DotSelector(merit.ratingProperty(), 1, 5);
+            Label hiddenLabel = new Label();
+            hiddenLabel.textProperty().bind(nameField.textProperty());
+            hiddenLabel.setVisible(false);
+            hiddenLabel.setManaged(false);
+
+            DotSelector selector = new DotSelector(hiddenLabel, merit.ratingProperty(), 1, 5);
             selector.descriptionProperty().bind(merit.nameProperty());
 
             Button removeBtn = new Button("✕");
             removeBtn.getStyleClass().add("remove-btn");
             removeBtn.setOnAction(e -> viewModel.removeMerit(merit));
 
-            row.getChildren().addAll(nameField, spacer, selector, removeBtn);
+            row.getChildren().addAll(nameField, spacer, hiddenLabel, selector, removeBtn);
             meritsList.getChildren().add(row);
         }
     }

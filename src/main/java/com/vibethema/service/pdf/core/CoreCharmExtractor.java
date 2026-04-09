@@ -426,7 +426,6 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
     @Override
     protected String cleanDescription(String text) {
         // Surgical sidebar removal for Core book
-        System.out.println("DEBUG CLEAN: [\n" + text + "\n]");
         // Handles sidebars which often interrupt mid-sentence or mid-word.
         text = text.replaceAll("(?s)WHEN DO I NEED TO AIM\\?.*?waive the aim action\\.", "");
         text = text.replaceAll("(?s)WHEN DO I NEED TO AIM\\?.*?(?=laden shot|CHAPTER|EX3|\\d{3}\\n)", "");
