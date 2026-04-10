@@ -83,11 +83,21 @@ public class PdfExtractor {
                     meritExtractor.setOverrideOutputPath(outputBasePath.resolve("merits"));
                 meritExtractor.extractAndSave(meritText, suffix);
 
-                // 5. Keywords (Page range overlap with charms)
+                // 5. Keywords (Page range overlap with charms + martial arts section)
                 if (extractKeywords) {
+                    StringBuilder combinedKeywords = new StringBuilder();
+
+                    // General Charm Keywords (Pages 250 - 260)
                     stripper.setStartPage(250);
                     stripper.setEndPage(260);
-                    extractAndSaveKeywords(stripper.getText(document), outputBasePath);
+                    combinedKeywords.append(stripper.getText(document));
+
+                    // Martial Arts Keywords (Pages 426 - 428)
+                    stripper.setStartPage(426);
+                    stripper.setEndPage(428);
+                    combinedKeywords.append("\n").append(stripper.getText(document));
+
+                    extractAndSaveKeywords(combinedKeywords.toString(), outputBasePath);
                 }
 
                 saveDefaultUnarmedWeapon(outputBasePath);
@@ -139,6 +149,17 @@ public class PdfExtractor {
     }
 
     private void extractAndSaveKeywords(String text, Path outputBasePath) throws IOException {
+        // Pre-process: Strip Core Book page headers/footers first so they don't interrupt
+        // descriptions
+        text =
+                text.replaceAll(
+                                "(?m)^(?:[A-Z\\s]{5,}|SOLAR CHARMS|MARTIAL ARTS CHARMS|Martial Arts"
+                                        + " and Sorcery|M A R T I A L  A R T S  A N D  S O R C E"
+                                        + " R Y|Chapter Seven|C H A P T E R  [67])\\s*\\n",
+                                "")
+                        .replaceAll("(?m)^E\\s*X\\s*3\\s*\\n", "")
+                        .replaceAll("(?m)^\\d{3}\\s*\\n", "");
+
         // Keyword list is relatively stable across books
         List<String> keywordsToFind =
                 Arrays.asList(
@@ -200,10 +221,12 @@ public class PdfExtractor {
     }
 
     private void addKeyword(List<Map<String, String>> list, String name, String rawDesc) {
-        String cleaned = rawDesc.split("Duration:|Prerequisite Charms:|EX3|CHAPTER 6")[0].trim();
+        // Split on major section starts to avoid bleeding into next sections
+        String cleaned = rawDesc.split("Duration:|Prerequisite Charms:|Snake Style|Tiger Style")[0];
+
         Map<String, String> kw = new HashMap<>();
         kw.put("name", name);
-        kw.put("description", cleaned);
+        kw.put("description", cleaned.replaceAll("\\s+", " ").trim());
         list.add(kw);
     }
 }

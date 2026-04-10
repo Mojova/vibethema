@@ -627,7 +627,8 @@ public class CharmDataService {
                                         Files.newBufferedReader(p, StandardCharsets.UTF_8)) {
                                     CharmListWrapper wrapper =
                                             gson.fromJson(reader, CharmListWrapper.class);
-                                    return wrapper != null && ability.equalsIgnoreCase(wrapper.ability);
+                                    return wrapper != null
+                                            && ability.equalsIgnoreCase(wrapper.ability);
                                 } catch (Exception e) {
                                     return false;
                                 }

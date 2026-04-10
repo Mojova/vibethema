@@ -20,7 +20,9 @@ public class MartialArtsRowViewModel {
     private final BooleanProperty editing = new SimpleBooleanProperty(false);
 
     public MartialArtsRowViewModel(
-            CharacterData data, MartialArtsStyle model, BiConsumer<String, String> onCommitCallback) {
+            CharacterData data,
+            MartialArtsStyle model,
+            BiConsumer<String, String> onCommitCallback) {
         this.data = data;
         this.model = model;
         this.onCommitCallback = onCommitCallback;
