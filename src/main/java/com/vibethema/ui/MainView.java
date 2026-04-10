@@ -748,6 +748,8 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
     }
 
     private void handleExportCharmsPdf(String suggestName) {
+        if (!showPreferencesDialog()) return;
+
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Export Charms & Spells to PDF");
         fileChooser
@@ -817,7 +819,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                         });
     }
 
-    private void showPreferencesDialog() {
+    private boolean showPreferencesDialog() {
         PreferencesViewModel prefViewModel = new PreferencesViewModel();
         ViewTuple<PreferencesView, PreferencesViewModel> viewTuple =
                 de.saxsys.mvvmfx.FluentViewLoader.javaView(PreferencesView.class)
@@ -841,7 +843,8 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                     return bt;
                 });
 
-        dialog.showAndWait();
+        Optional<ButtonType> result = dialog.showAndWait();
+        return result.isPresent() && result.get() == saveType;
     }
 
     private void showEditCharmDialog(
