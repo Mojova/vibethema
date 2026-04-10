@@ -45,7 +45,7 @@ public class CharmTreeViewModel implements ViewModel {
 
         setupListeners();
         Messenger.subscribe("refresh_all_ui", (name, payload) -> refresh());
-        
+
         searchDebounce.setOnFinished(e -> refresh());
     }
 

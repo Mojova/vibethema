@@ -195,8 +195,12 @@ public class MainViewModel implements ViewModel {
         data.supernalAbilityProperty().addListener((obs, ov, nv) -> notifyRefresh());
 
         // Also listen to Caste/Favored status changes
-        data.getCasteAbilities().values().forEach(p -> p.addListener((obs, ov, nv) -> notifyRefresh()));
-        data.getFavoredAbilities().values().forEach(p -> p.addListener((obs, ov, nv) -> notifyRefresh()));
+        data.getCasteAbilities()
+                .values()
+                .forEach(p -> p.addListener((obs, ov, nv) -> notifyRefresh()));
+        data.getFavoredAbilities()
+                .values()
+                .forEach(p -> p.addListener((obs, ov, nv) -> notifyRefresh()));
     }
 
     private void notifyRefresh() {
@@ -440,6 +444,14 @@ public class MainViewModel implements ViewModel {
         Messenger.publish("request_pdf_save_location", suggestName);
     }
 
+    public void onExportCharmsPdfRequest() {
+        String suggestName = "Charms_Spells.pdf";
+        if (currentFile.get() != null) {
+            suggestName = currentFile.get().getName().replace(".vbtm", "_Charms.pdf");
+        }
+        Messenger.publish("request_charms_pdf_save_location", suggestName);
+    }
+
     public void exportToPdf(File file) {
         if (file == null) return;
         try {
@@ -447,6 +459,20 @@ public class MainViewModel implements ViewModel {
             Messenger.publish("pdf_export_success", EXPORT_SUCCESS_MSG);
         } catch (Exception ex) {
             logger.error("Failed to export PDF to {}: {}", file.getAbsolutePath(), ex.getMessage());
+            Messenger.publish("pdf_export_error", "Export failed: " + ex.getMessage());
+        }
+    }
+
+    public void exportCharmsToPdf(File file) {
+        if (file == null) return;
+        try {
+            pdfExportService.exportCharmsToPdf(data, file, charmDataService);
+            Messenger.publish("pdf_export_success", "Charms and Spells exported successfully!");
+        } catch (Exception ex) {
+            logger.error(
+                    "Failed to export Charms PDF to {}: {}",
+                    file.getAbsolutePath(),
+                    ex.getMessage());
             Messenger.publish("pdf_export_error", "Export failed: " + ex.getMessage());
         }
     }

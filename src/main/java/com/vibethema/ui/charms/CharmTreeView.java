@@ -47,7 +47,9 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
                 .addListener(
                         (obs, oldV, newV) -> {
                             updateLineHighlights(newV != null ? newV.getId() : null);
-                            updateSelectionStyles(oldV != null ? oldV.getId() : null, newV != null ? newV.getId() : null);
+                            updateSelectionStyles(
+                                    oldV != null ? oldV.getId() : null,
+                                    newV != null ? newV.getId() : null);
                         });
 
         setupKeyHandlers();
@@ -214,19 +216,23 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
         currentlyHighlightedLines.clear();
 
         // Remove old nodes and lines
-        charmCanvas.getChildren().removeIf(node -> {
-            if (node instanceof CubicCurve) return true; // Always redraw lines for now
-            String id = node.getId();
-            if (id != null && id.startsWith("charm_")) {
-                String charmId = id.substring(6);
-                if (!newIds.contains(charmId)) {
-                    charmNodeMap.remove(charmId);
-                    charmCheckMap.remove(charmId);
-                    return true;
-                }
-            }
-            return false;
-        });
+        charmCanvas
+                .getChildren()
+                .removeIf(
+                        node -> {
+                            if (node instanceof CubicCurve)
+                                return true; // Always redraw lines for now
+                            String id = node.getId();
+                            if (id != null && id.startsWith("charm_")) {
+                                String charmId = id.substring(6);
+                                if (!newIds.contains(charmId)) {
+                                    charmNodeMap.remove(charmId);
+                                    charmCheckMap.remove(charmId);
+                                    return true;
+                                }
+                            }
+                            return false;
+                        });
 
         for (int d = 0; d <= maxDepth; d++) {
             List<Charm> row = levels.getOrDefault(d, new ArrayList<>());

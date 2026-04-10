@@ -58,17 +58,21 @@ public class CharmTreeViewModelTest {
                     verify(dataService, never()).loadCharmsForAbility(anyString());
 
                     // 4. Wait for debounce (250ms + margin)
-                    new Thread(() -> {
-                        try {
-                            Thread.sleep(400); // 250ms debounce
-                            Platform.runLater(() -> {
-                                verify(dataService, atLeastOnce()).loadCharmsForAbility("Melee");
-                                latch.countDown();
-                            });
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }).start();
+                    new Thread(
+                                    () -> {
+                                        try {
+                                            Thread.sleep(400); // 250ms debounce
+                                            Platform.runLater(
+                                                    () -> {
+                                                        verify(dataService, atLeastOnce())
+                                                                .loadCharmsForAbility("Melee");
+                                                        latch.countDown();
+                                                    });
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                    })
+                            .start();
                 });
 
         assertTrue(latch.await(5, TimeUnit.SECONDS), "Debounce refresh did not happen in time");

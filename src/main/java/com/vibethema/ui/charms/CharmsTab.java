@@ -83,11 +83,11 @@ public class CharmsTab extends BorderPane implements JavaView<CharmsViewModel>, 
         // SplitPane to host both components
         SplitPane splitPane = new SplitPane(charmTree, charmDetails);
         splitPane.getStyleClass().add("charms-split-pane");
-        
+
         // Let the CSS prefWidth influence the initial layout if possible
         // but set a fallback divider position for safety
-        splitPane.setDividerPositions(0.75); 
-        
+        splitPane.setDividerPositions(0.75);
+
         // Ensure the sidebar doesn't collapse entirely by default
         SplitPane.setResizableWithParent(charmDetails, false);
 

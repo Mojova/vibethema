@@ -17,7 +17,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.stage.Window;
 import javafx.util.Pair;
 
 public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, Initializable {
@@ -295,12 +294,7 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         Label title = new Label("Crafts");
         title.getStyleClass().add("section-title");
 
-        header.getChildren()
-                .addAll(
-                        title,
-                        casteContainer,
-                        favoredContainer,
-                        expModeContainer);
+        header.getChildren().addAll(title, casteContainer, favoredContainer, expModeContainer);
         return header;
     }
 

@@ -3,13 +3,20 @@ package com.vibethema.service;
 import com.vibethema.model.*;
 import com.vibethema.model.combat.*;
 import com.vibethema.model.equipment.*;
+import com.vibethema.model.mystic.*;
 import com.vibethema.model.traits.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
+import java.util.*;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
@@ -28,6 +35,299 @@ public class PdfExportService {
                     fillForm(data, acroForm);
                 }
                 doc.save(outputFile);
+            }
+        }
+    }
+
+    public void exportCharmsToPdf(
+            CharacterData data, File outputFile, CharmDataService charmService) throws IOException {
+        try (PDDocument doc = new PDDocument()) {
+            ExportContext ctx = new ExportContext(doc);
+
+            // 1. Resolve and Sort Charms
+            List<Charm> allPurchased = new ArrayList<>();
+            Map<String, List<Charm>> abilityCache = new HashMap<>();
+
+            for (PurchasedCharm pc : data.getUnlockedCharms()) {
+                String ability = pc.ability();
+                List<Charm> charms =
+                        abilityCache.computeIfAbsent(
+                                ability, k -> charmService.loadCharmsForAbility(ability));
+                charms.stream()
+                        .filter(c -> c.getId().equals(pc.id()))
+                        .findFirst()
+                        .ifPresent(allPurchased::add);
+            }
+
+            // Grouping: Charms vs Martial Arts
+            List<Charm> normalCharms = new ArrayList<>();
+            List<Charm> martialArtsCharms = new ArrayList<>();
+            for (Charm c : allPurchased) {
+                if ("martialArts".equalsIgnoreCase(c.getCategory())) {
+                    martialArtsCharms.add(c);
+                } else {
+                    normalCharms.add(c);
+                }
+            }
+
+            Comparator<Charm> charmComparator =
+                    (c1, c2) -> {
+                        int abilityComp = c1.getAbility().compareTo(c2.getAbility());
+                        if (abilityComp != 0) return abilityComp;
+                        int essenceComp = Integer.compare(c1.getMinEssence(), c2.getMinEssence());
+                        if (essenceComp != 0) return essenceComp;
+                        int minAbComp = Integer.compare(c1.getMinAbility(), c2.getMinAbility());
+                        if (minAbComp != 0) return minAbComp;
+                        return c1.getName().compareTo(c2.getName());
+                    };
+
+            normalCharms.sort(charmComparator);
+            martialArtsCharms.sort(charmComparator);
+
+            // 2. Resolve and Sort Spells
+            List<Spell> spells = new ArrayList<>(data.getSpells());
+            spells.sort(
+                    (s1, s2) -> {
+                        int circleComp =
+                                Spell.Circle.valueOf(s1.getCircle()).ordinal()
+                                        - Spell.Circle.valueOf(s2.getCircle()).ordinal();
+                        if (circleComp != 0) return circleComp;
+                        return s1.getName().compareTo(s2.getName());
+                    });
+
+            // 3. Rendering
+            ctx.drawMainTitle(data.nameProperty().get() + " - Charms & Spells");
+
+            if (!normalCharms.isEmpty()) {
+                ctx.drawSectionHeader("Charms");
+                String currentAbility = "";
+                for (Charm c : normalCharms) {
+                    if (!c.getAbility().equals(currentAbility)) {
+                        currentAbility = c.getAbility();
+                        ctx.drawSubsectionHeader(currentAbility);
+                    }
+                    ctx.drawCharm(c);
+                }
+            }
+
+            if (!martialArtsCharms.isEmpty()) {
+                ctx.drawSectionHeader("Martial Arts");
+                String currentStyle = "";
+                for (Charm c : martialArtsCharms) {
+                    if (!c.getAbility().equals(currentStyle)) {
+                        currentStyle = c.getAbility();
+                        ctx.drawSubsectionHeader(currentStyle);
+                    }
+                    ctx.drawCharm(c);
+                }
+            }
+
+            if (!spells.isEmpty()) {
+                ctx.drawSectionHeader("Spells");
+                String currentCircle = "";
+                for (Spell s : spells) {
+                    if (!s.getCircle().equals(currentCircle)) {
+                        currentCircle = s.getCircle();
+                        ctx.drawSubsectionHeader(currentCircle + " Circle");
+                    }
+                    ctx.drawSpell(s);
+                }
+            }
+
+            ctx.close();
+            doc.save(outputFile);
+        }
+    }
+
+    private static class ExportContext {
+        private final PDDocument doc;
+        private PDPage currentPage;
+        private PDPageContentStream contentStream;
+        private float currentY;
+        private int currentColumn = 0; // 0 or 1
+
+        private final float margin = 50;
+        private final float columnSpacing = 30;
+        private final float pageWidth = PDRectangle.A4.getWidth();
+        private final float pageHeight = PDRectangle.A4.getHeight();
+        private final float columnWidth = (pageWidth - (2 * margin) - columnSpacing) / 2;
+
+        private final PDFont fontBold = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
+        private final PDFont fontItalic =
+                new PDType1Font(Standard14Fonts.FontName.HELVETICA_OBLIQUE);
+        private final PDFont fontRegular = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
+
+        public ExportContext(PDDocument doc) throws IOException {
+            this.doc = doc;
+            addNewPage();
+        }
+
+        private void addNewPage() throws IOException {
+            if (contentStream != null) {
+                contentStream.close();
+            }
+            currentPage = new PDPage(PDRectangle.A4);
+            doc.addPage(currentPage);
+            contentStream = new PDPageContentStream(doc, currentPage);
+            currentY = pageHeight - margin;
+            currentColumn = 0;
+        }
+
+        private void ensureSpace(float spaceNeeded) throws IOException {
+            if (currentY - spaceNeeded < margin) {
+                if (currentColumn == 0) {
+                    currentColumn = 1;
+                    currentY = pageHeight - margin;
+                } else {
+                    addNewPage();
+                }
+            }
+        }
+
+        public void drawMainTitle(String title) throws IOException {
+            ensureSpace(30);
+            contentStream.beginText();
+            contentStream.setFont(fontBold, 18);
+            contentStream.newLineAtOffset(margin, currentY);
+            contentStream.showText(title);
+            contentStream.endText();
+            currentY -= 40;
+        }
+
+        public void drawSectionHeader(String title) throws IOException {
+            ensureSpace(40);
+            float x = margin + (currentColumn * (columnWidth + columnSpacing));
+            contentStream.setLineWidth(1.5f);
+            contentStream.moveTo(x, currentY);
+            contentStream.lineTo(x + columnWidth, currentY);
+            contentStream.stroke();
+            currentY -= 20;
+
+            contentStream.beginText();
+            contentStream.setFont(fontBold, 14);
+            contentStream.newLineAtOffset(x, currentY);
+            contentStream.showText(title.toUpperCase());
+            contentStream.endText();
+            currentY -= 20;
+        }
+
+        public void drawSubsectionHeader(String title) throws IOException {
+            ensureSpace(30);
+            float x = margin + (currentColumn * (columnWidth + columnSpacing));
+            contentStream.beginText();
+            contentStream.setFont(fontBold, 12);
+            contentStream.newLineAtOffset(x, currentY);
+            contentStream.showText(title);
+            contentStream.endText();
+            currentY -= 15;
+        }
+
+        public void drawCharm(Charm c) throws IOException {
+            ensureSpace(60); // Estimate minimum height
+            float x = margin + (currentColumn * (columnWidth + columnSpacing));
+
+            // Name and Requirements
+            contentStream.beginText();
+            contentStream.setFont(fontBold, 10);
+            contentStream.newLineAtOffset(x, currentY);
+            String header =
+                    String.format(
+                            "%s (E%d, A%d)", c.getName(), c.getMinEssence(), c.getMinAbility());
+            contentStream.showText(header);
+            contentStream.endText();
+            currentY -= 12;
+
+            // Details (Cost, Duration, Keywords)
+            contentStream.beginText();
+            contentStream.setFont(fontItalic, 9);
+            contentStream.newLineAtOffset(x, currentY);
+            String details =
+                    String.format(
+                            "Cost: %s; Duration: %s",
+                            c.getCost() != null ? c.getCost() : "None",
+                            c.getDuration() != null ? c.getDuration() : "Instant");
+            contentStream.showText(details);
+            contentStream.endText();
+            currentY -= 11;
+
+            if (c.getKeywords() != null && !c.getKeywords().isEmpty()) {
+                contentStream.beginText();
+                contentStream.setFont(fontItalic, 9);
+                contentStream.newLineAtOffset(x, currentY);
+                contentStream.showText("Keywords: " + String.join(", ", c.getKeywords()));
+                contentStream.endText();
+                currentY -= 11;
+            }
+
+            // Full Text (Wrapped)
+            if (c.getFullText() != null && !c.getFullText().isEmpty()) {
+                drawWrappedText(c.getFullText(), 8, x);
+            }
+            currentY -= 10; // Spacer
+        }
+
+        public void drawSpell(Spell s) throws IOException {
+            ensureSpace(50);
+            float x = margin + (currentColumn * (columnWidth + columnSpacing));
+
+            contentStream.beginText();
+            contentStream.setFont(fontBold, 10);
+            contentStream.newLineAtOffset(x, currentY);
+            contentStream.showText(s.getName());
+            contentStream.endText();
+            currentY -= 12;
+
+            contentStream.beginText();
+            contentStream.setFont(fontItalic, 9);
+            contentStream.newLineAtOffset(x, currentY);
+            String details = String.format("Cost: %s; Duration: %s", s.getCost(), s.getDuration());
+            contentStream.showText(details);
+            contentStream.endText();
+            currentY -= 11;
+
+            if (s.getDescription() != null && !s.getDescription().isEmpty()) {
+                drawWrappedText(s.getDescription(), 8, x);
+            }
+            currentY -= 10;
+        }
+
+        private void drawWrappedText(String text, float fontSize, float x) throws IOException {
+            contentStream.setFont(fontRegular, fontSize);
+            List<String> lines = new ArrayList<>();
+            String[] words = text.split("\\s+");
+            StringBuilder line = new StringBuilder();
+
+            for (String word : words) {
+                float width = fontRegular.getStringWidth(line + " " + word) / 1000 * fontSize;
+                if (width > columnWidth) {
+                    lines.add(line.toString().trim());
+                    line = new StringBuilder(word).append(" ");
+                } else {
+                    line.append(word).append(" ");
+                }
+            }
+            lines.add(line.toString().trim());
+
+            for (String l : lines) {
+                ensureSpace(fontSize + 2);
+                // After ensureSpace, x and currentY might have changed if we jumped columns/pages
+                float currentX = margin + (currentColumn * (columnWidth + columnSpacing));
+                contentStream.beginText();
+                contentStream.newLineAtOffset(currentX, currentY);
+                contentStream.showText(sanitizeText(l));
+                contentStream.endText();
+                currentY -= (fontSize + 2);
+            }
+        }
+
+        private String sanitizeText(String text) {
+            // PDFBox PDType1Font doesn't support some special characters or newlines
+            return text.replace("\n", " ").replace("\r", "").replaceAll("[^\\x00-\\x7F]", "?");
+        }
+
+        public void close() throws IOException {
+            if (contentStream != null) {
+                contentStream.close();
             }
         }
     }

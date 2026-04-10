@@ -240,6 +240,15 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                     handleExportPdf(suggestName);
                 });
         addObserver(
+                "request_charms_pdf_save_location",
+                (name, payload) -> {
+                    String suggestName =
+                            (payload != null && payload.length > 0)
+                                    ? (String) payload[0]
+                                    : "Charms_Spells.pdf";
+                    handleExportCharmsPdf(suggestName);
+                });
+        addObserver(
                 "pdf_export_success",
                 (name, payload) -> {
                     String msg = (payload != null && payload.length > 0) ? (String) payload[0] : "";
@@ -462,6 +471,10 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         exportPdf.setAccelerator(KeyCombination.keyCombination("Shortcut+E"));
         exportPdf.setOnAction(e -> viewModel.onExportPdfRequest());
 
+        MenuItem exportCharmsPdf = new MenuItem("Export Charms & Spells...");
+        exportCharmsPdf.setAccelerator(KeyCombination.keyCombination("Shortcut+Shift+E"));
+        exportCharmsPdf.setOnAction(e -> viewModel.onExportCharmsPdfRequest());
+
         MenuItem quitItem = new MenuItem("Quit");
         quitItem.setOnAction(e -> Platform.exit());
 
@@ -473,6 +486,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                         loadItem,
                         new SeparatorMenuItem(),
                         exportPdf,
+                        exportCharmsPdf,
                         new SeparatorMenuItem(),
                         quitItem);
         menuBar.getMenus().add(fileMenu);
@@ -696,6 +710,20 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         File file = fileChooser.showSaveDialog(getScene().getWindow());
         if (file != null) {
             viewModel.exportToPdf(file);
+        }
+    }
+
+    private void handleExportCharmsPdf(String suggestName) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Export Charms & Spells to PDF");
+        fileChooser
+                .getExtensionFilters()
+                .add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+        fileChooser.setInitialFileName(suggestName);
+
+        File file = fileChooser.showSaveDialog(getScene().getWindow());
+        if (file != null) {
+            viewModel.exportCharmsToPdf(file);
         }
     }
 

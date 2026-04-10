@@ -43,12 +43,14 @@ public class CharmsViewModelTest {
     void testMartialArtsFilterIncludesStyles() {
         data.getMartialArtsStyles()
                 .add(new com.vibethema.model.traits.MartialArtsStyle("ma1", "Single Point", 1));
-        
+
         java.util.List<String> styles = java.util.List.of("Single Point", "Steel Devil");
-        org.mockito.Mockito.when(charmDataService.getAvailableMartialArtsStyles()).thenReturn(styles);
-        
-        CharmsViewModel maVm = new CharmsViewModel(data, charmDataService, new HashMap<>(), "Martial Arts Style");
-        
+        org.mockito.Mockito.when(charmDataService.getAvailableMartialArtsStyles())
+                .thenReturn(styles);
+
+        CharmsViewModel maVm =
+                new CharmsViewModel(data, charmDataService, new HashMap<>(), "Martial Arts Style");
+
         assertTrue(maVm.getFilterOptions().contains("Single Point"));
         assertTrue(maVm.getFilterOptions().contains("Steel Devil"));
         assertFalse(maVm.getFilterOptions().contains("Archery"));

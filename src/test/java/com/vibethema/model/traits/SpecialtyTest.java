@@ -1,6 +1,7 @@
 package com.vibethema.model.traits;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.Test;
 
 public class SpecialtyTest {
@@ -28,7 +29,7 @@ public class SpecialtyTest {
         Specialty specialty = new Specialty("Sword", "Melee");
         specialty.nameProperty().set("Blade");
         assertEquals("Blade", specialty.getName());
-        
+
         specialty.abilityProperty().set("Brawl");
         assertEquals("Brawl", specialty.getAbility());
     }
