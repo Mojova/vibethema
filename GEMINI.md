@@ -83,7 +83,7 @@ The project strictly follows the **Model-View-ViewModel (MVVM)** pattern using t
 - **`EquipmentDialogService`**: Provides MVVM-based dialogs for adding/editing equipment.
 
 ### UI Utilities (`com.vibethema.ui.util`)
-- **`ThemeManager`**: Applies layered themes to UI components. It combines a **Base Theme** (Light/Dark) with a **Character Theme** (Solar/Lunar, influenced by Caste) using CSS class layering (`theme-dark`, `theme-solar`).
+- **`ThemeManager`**: Applies layered themes to UI components. It combines a **Base Theme** (Light/Dark) with a **Character Theme** (Solar/Lunar, based on **Exalt Type**) using CSS class layering (`theme-dark`, `theme-solar`).
 - **`ViewCache`**: Optimizes performance by caching eagerly loaded view instances.
 
 ## PDF Import Architecture

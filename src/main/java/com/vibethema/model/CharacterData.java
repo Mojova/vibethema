@@ -42,6 +42,8 @@ import javafx.collections.ObservableMap;
 public class CharacterData {
     private final StringProperty name = new SimpleStringProperty("");
     private final ObjectProperty<Caste> caste = new SimpleObjectProperty<>(Caste.NONE);
+    private final ObjectProperty<ExaltType> exaltType =
+            new SimpleObjectProperty<>(ExaltType.SOLAR);
     private final ObjectProperty<CharacterMode> mode =
             new SimpleObjectProperty<>(CharacterMode.CREATION);
     private final StringProperty supernalAbility = new SimpleStringProperty("");
@@ -446,6 +448,10 @@ public class CharacterData {
         return caste;
     }
 
+    public ObjectProperty<ExaltType> exaltTypeProperty() {
+        return exaltType;
+    }
+
     public ObjectProperty<CharacterMode> modeProperty() {
         return mode;
     }
@@ -515,6 +521,7 @@ public class CharacterData {
         try {
             name.set("");
             caste.set(Caste.NONE);
+            exaltType.set(ExaltType.SOLAR);
             mode.set(CharacterMode.CREATION);
             supernalAbility.set("");
             essence.set(1);
@@ -604,6 +611,7 @@ public class CharacterData {
         state.name = this.name.get();
         state.mode = this.mode.get().name();
         state.caste = caste.get().name();
+        state.exaltType = exaltType.get().name();
         Ability supernalEnum = Ability.fromString(supernalAbility.get());
         state.supernalAbility = supernalEnum != null ? supernalEnum.name() : "";
         state.essence = essence.get();
@@ -803,7 +811,9 @@ public class CharacterData {
         try {
             this.name.set(state.name != null ? state.name : "");
             if (state.mode != null) mode.set(CharacterMode.valueOf(state.mode.toUpperCase()));
-            if (state.caste != null) caste.set(Caste.valueOf(state.caste.toUpperCase()));
+            caste.set(state.caste != null ? Caste.valueOf(state.caste) : Caste.NONE);
+            exaltType.set(
+                    state.exaltType != null ? ExaltType.valueOf(state.exaltType) : ExaltType.SOLAR);
             essence.set(state.essence);
             willpower.set(state.willpower);
             limitTrigger.set(state.limitTrigger != null ? state.limitTrigger : "");

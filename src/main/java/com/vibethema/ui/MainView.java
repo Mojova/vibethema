@@ -166,7 +166,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
 
         viewModel
                 .getData()
-                .casteProperty()
+                .exaltTypeProperty()
                 .addListener(
                         (obs, oldV, newV) -> {
                             refreshTheme();
@@ -485,7 +485,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
     private void refreshTheme() {
         UserPreferencesService prefs = UserPreferencesService.getInstance();
         ThemeManager.applyThemes(
-                this, prefs.getBaseTheme(), viewModel.getData().casteProperty().get());
+                this, prefs.getBaseTheme(), viewModel.getData().exaltTypeProperty().get());
     }
 
     private void updateExperienceTabVisibility(CharacterMode mode) {
@@ -1028,7 +1028,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         // Apply current theme to dialog
         UserPreferencesService prefs = UserPreferencesService.getInstance();
         ThemeManager.applyThemes(
-                dialogPane, prefs.getBaseTheme(), viewModel.getData().casteProperty().get());
+                dialogPane, prefs.getBaseTheme(), viewModel.getData().exaltTypeProperty().get());
 
         if (dialog instanceof Alert alert) {
             if (alert.getAlertType() == Alert.AlertType.WARNING

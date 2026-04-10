@@ -10,6 +10,7 @@ import java.util.Objects;
 public class CharacterSaveState {
     public String name;
     public String caste;
+    public String exaltType;
     public String mode;
     public String supernalAbility;
     public int essence, willpower;
@@ -49,6 +50,7 @@ public class CharacterSaveState {
                 && limit == that.limit
                 && Objects.equals(name, that.name)
                 && Objects.equals(caste, that.caste)
+                && Objects.equals(exaltType, that.exaltType)
                 && Objects.equals(mode, that.mode)
                 && Objects.equals(supernalAbility, that.supernalAbility)
                 && Objects.equals(limitTrigger, that.limitTrigger)
@@ -78,6 +80,7 @@ public class CharacterSaveState {
         return Objects.hash(
                 name,
                 caste,
+                exaltType,
                 mode,
                 supernalAbility,
                 essence,

@@ -10,7 +10,10 @@ import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
 import de.saxsys.mvvmfx.ViewTuple;
 import java.net.URL;
+import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.Initializable;
@@ -47,10 +50,28 @@ public class MartialArtsTab extends VBox implements JavaView<MartialArtsViewMode
         stylesList = new VBox(12);
         stylesList.getStyleClass().add("merits-list"); // Reuse styling
 
-        refreshStyles();
+        syncStyles();
         viewModel
                 .getStyleRows()
-                .addListener((ListChangeListener<MartialArtsRowViewModel>) c -> refreshStyles());
+                .addListener(
+                        (ListChangeListener<MartialArtsRowViewModel>)
+                                c -> {
+                                    while (c.next()) {
+                                        if (c.wasRemoved()) {
+                                            stylesList.getChildren()
+                                                    .remove(
+                                                            c.getFrom(),
+                                                            c.getFrom() + c.getRemovedSize());
+                                        }
+                                        if (c.wasAdded()) {
+                                            List<MartialArtsRowView> newViews =
+                                                    c.getAddedSubList().stream()
+                                                            .map(this::createRowView)
+                                                            .collect(Collectors.toList());
+                                            stylesList.getChildren().addAll(c.getFrom(), newViews);
+                                        }
+                                    }
+                                });
 
         MenuButton addMenuBtn = new MenuButton("+ Add Style");
         addMenuBtn.getStyleClass().addAll("add-btn", "action-btn");
@@ -135,41 +156,55 @@ public class MartialArtsTab extends VBox implements JavaView<MartialArtsViewMode
         charmTreeViewModel.refresh();
     }
 
-    private void refreshStyles() {
+    private void syncStyles() {
         if (stylesList == null) return;
         stylesList.getChildren().clear();
+        stylesList
+                .getChildren()
+                .addAll(
+                        viewModel.getStyleRows().stream()
+                                .map(this::createRowView)
+                                .collect(Collectors.toList()));
+    }
 
-        for (MartialArtsRowViewModel rowVm : viewModel.getStyleRows()) {
-            MartialArtsRowView rowView = new MartialArtsRowView(rowVm);
-            rowView.setOnRemove(e -> viewModel.removeStyle(rowVm.getModel()));
+    private MartialArtsRowView createRowView(MartialArtsRowViewModel rowVm) {
+        MartialArtsRowView rowView = new MartialArtsRowView(rowVm);
+        rowView.setOnRemove(e -> viewModel.removeStyle(rowVm.getModel()));
 
-            // Clicking the row selects it in the charm tree
-            rowView.setOnMouseClicked(
-                    e -> {
-                        viewModel
-                                .selectedFilterValueProperty()
-                                .set(rowVm.getModel().getStyleName());
-                    });
+        // Clicking the row selects it in the charm tree
+        rowView.setOnMouseClicked(
+                e -> {
+                    viewModel
+                            .selectedFilterValueProperty()
+                            .set(rowVm.getModel().getStyleName());
+                });
 
-            // Highlight if selected
-            rowView.styleProperty()
-                    .bind(
-                            Bindings.createStringBinding(
-                                    () -> {
-                                        if (viewModel
-                                                .selectedFilterValueProperty()
-                                                .get()
-                                                .equals(rowVm.getModel().getStyleName())) {
-                                            return "-fx-background-color:"
-                                                    + " rgba(var(--caste-color-rgb), 0.1);"
-                                                    + " -fx-border-color: var(--caste-color);";
-                                        }
-                                        return "";
-                                    },
-                                    viewModel.selectedFilterValueProperty(),
-                                    rowVm.nameProperty()));
+        // Highlight if selected using style class (fixes CSS parsing error)
+        rowView.getStyleClass().remove("selected");
+        // Update highlight whenever selection or name changes
+        rowVm.nameProperty()
+                .addListener((obs, oldV, newV) -> updateSelectionHighlight(rowView, rowVm));
+        viewModel
+                .selectedFilterValueProperty()
+                .addListener((obs, oldV, newV) -> updateSelectionHighlight(rowView, rowVm));
 
-            stylesList.getChildren().add(rowView);
+        // Initial update
+        updateSelectionHighlight(rowView, rowVm);
+
+        return rowView;
+    }
+
+    private void updateSelectionHighlight(
+            MartialArtsRowView rowView, MartialArtsRowViewModel rowVm) {
+        String selected = viewModel.selectedFilterValueProperty().get();
+        String current = rowVm.getModel().getStyleName();
+
+        if (Objects.equals(selected, current) && !Objects.equals(current, "")) {
+            if (!rowView.getStyleClass().contains("selected")) {
+                rowView.getStyleClass().add("selected");
+            }
+        } else {
+            rowView.getStyleClass().remove("selected");
         }
     }
 
