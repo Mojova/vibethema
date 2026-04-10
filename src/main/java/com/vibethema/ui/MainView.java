@@ -249,6 +249,12 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                                     : "Charms_Spells.pdf";
                     handleExportCharmsPdf(suggestName);
                 });
+        addObserver("request_print_pdf", (name, payload) -> viewModel.printCharacterSheet());
+        addObserver(
+                "request_print_charms_pdf",
+                (name, payload) -> {
+                    viewModel.printCharms();
+                });
         addObserver("show_preferences_dialog", (name, payload) -> showPreferencesDialog());
         addObserver(
                 "pdf_export_success",
@@ -477,6 +483,14 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         exportCharmsPdf.setAccelerator(KeyCombination.keyCombination("Shortcut+Shift+E"));
         exportCharmsPdf.setOnAction(e -> viewModel.onExportCharmsPdfRequest());
 
+        MenuItem printPdf = new MenuItem("Print Character...");
+        printPdf.setAccelerator(KeyCombination.keyCombination("Shortcut+P"));
+        printPdf.setOnAction(e -> viewModel.onPrintPdfRequest());
+
+        MenuItem printCharmsPdf = new MenuItem("Print Charms & Spells...");
+        printCharmsPdf.setAccelerator(KeyCombination.keyCombination("Shortcut+Shift+P"));
+        printCharmsPdf.setOnAction(e -> viewModel.onPrintCharmsPdfRequest());
+
         MenuItem preferencesItem = new MenuItem("Preferences...");
         preferencesItem.setAccelerator(KeyCombination.keyCombination("Shortcut+Comma"));
         preferencesItem.setOnAction(e -> viewModel.onPreferencesRequest());
@@ -493,6 +507,9 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                         new SeparatorMenuItem(),
                         exportPdf,
                         exportCharmsPdf,
+                        new SeparatorMenuItem(),
+                        printPdf,
+                        printCharmsPdf,
                         new SeparatorMenuItem(),
                         preferencesItem,
                         new SeparatorMenuItem(),
@@ -817,7 +834,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                         });
     }
 
-    private void showPreferencesDialog() {
+    private boolean showPreferencesDialog() {
         PreferencesViewModel prefViewModel = new PreferencesViewModel();
         ViewTuple<PreferencesView, PreferencesViewModel> viewTuple =
                 de.saxsys.mvvmfx.FluentViewLoader.javaView(PreferencesView.class)
@@ -841,7 +858,8 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                     return bt;
                 });
 
-        dialog.showAndWait();
+        Optional<ButtonType> result = dialog.showAndWait();
+        return result.isPresent() && result.get() == saveType;
     }
 
     private void showEditCharmDialog(
