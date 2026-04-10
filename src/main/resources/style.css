@@ -561,6 +561,27 @@
     -fx-effect: dropshadow(three-pass-box, rgba(212, 175, 55, 0.6), 12, 0, 0, 0);
 }
 
+/* MenuButton consistency for action-btn */
+.menu-button.action-btn > .label {
+    -fx-text-fill: -vbtm-bg-main;
+}
+
+.menu-button.action-btn > .arrow-button > .arrow {
+    -fx-background-color: -vbtm-bg-main;
+}
+
+.menu-button.action-btn:hover > .label,
+.menu-button.action-btn:focused > .label,
+.menu-button.action-btn:showing > .label {
+    -fx-text-fill: -vbtm-bg-main;
+}
+
+.menu-button.action-btn:hover > .arrow-button > .arrow,
+.menu-button.action-btn:focused > .arrow-button > .arrow,
+.menu-button.action-btn:showing > .arrow-button > .arrow {
+    -fx-background-color: -vbtm-bg-main;
+}
+
 /* Start Screen Styles */
 .start-screen {
     -fx-background-color: radial-gradient(center 50% 50%, radius 100%, -vbtm-bg-surface, -vbtm-bg-main);

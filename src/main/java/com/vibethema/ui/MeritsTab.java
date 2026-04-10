@@ -43,7 +43,7 @@ public class MeritsTab extends ScrollPane implements JavaView<MeritsViewModel>, 
                 .addListener((ListChangeListener<MeritRowViewModel>) c -> refreshMerits());
 
         MenuButton addMenuBtn = new MenuButton("+ Add Merit");
-        addMenuBtn.getStyleClass().add("action-btn");
+        addMenuBtn.getStyleClass().addAll("add-btn", "action-btn");
 
         // Group available merits by category
         Map<String, Menu> categoryMenus = new HashMap<>();
