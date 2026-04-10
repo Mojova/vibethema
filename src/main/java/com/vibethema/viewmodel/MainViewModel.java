@@ -419,12 +419,20 @@ public class MainViewModel implements ViewModel {
         if (currentFile.get() != null) {
             saveCharacter(currentFile.get());
         } else {
-            String suggestName =
-                    data.nameProperty().get().trim().isEmpty()
-                            ? "Character.vbtm"
-                            : data.nameProperty().get().trim() + ".vbtm";
-            Messenger.publish("request_save_as", suggestName);
+            onSaveAsRequest();
         }
+    }
+
+    public void onSaveAsRequest() {
+        String suggestName =
+                data.nameProperty().get().trim().isEmpty()
+                        ? "Character.vbtm"
+                        : data.nameProperty().get().trim() + ".vbtm";
+
+        if (currentFile.get() != null) {
+            suggestName = currentFile.get().getName();
+        }
+        Messenger.publish("request_save_as", suggestName);
     }
 
     public void onLoadRequest() {

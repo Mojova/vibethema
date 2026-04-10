@@ -223,9 +223,18 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                 (name, payload) -> {
                     FileChooser fileChooser = new FileChooser();
                     fileChooser.setTitle("Load Character");
-                    fileChooser
-                            .getExtensionFilters()
-                            .add(new FileChooser.ExtensionFilter("Vibethema Save File", "*.vbtm"));
+                    
+                    FileChooser.ExtensionFilter vbtmFilter = new FileChooser.ExtensionFilter("VBTM Files", "*.vbtm", "*.VBTM");
+                    FileChooser.ExtensionFilter allFilter = new FileChooser.ExtensionFilter("All Files", "*");
+                    
+                    fileChooser.getExtensionFilters().addAll(vbtmFilter, allFilter);
+                    fileChooser.setSelectedExtensionFilter(vbtmFilter);
+
+                    File current = viewModel.currentFileProperty().get();
+                    if (current != null && current.getParentFile() != null) {
+                        fileChooser.setInitialDirectory(current.getParentFile());
+                    }
+
                     File file = fileChooser.showOpenDialog(getScene().getWindow());
                     if (file != null) {
                         viewModel.loadCharacter(file);
@@ -470,6 +479,10 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         saveItem.setAccelerator(KeyCombination.keyCombination("Shortcut+S"));
         saveItem.setOnAction(e -> viewModel.onSaveRequest());
 
+        MenuItem saveAsItem = new MenuItem("Save As...");
+        saveAsItem.setAccelerator(KeyCombination.keyCombination("Shortcut+Shift+S"));
+        saveAsItem.setOnAction(e -> viewModel.onSaveAsRequest());
+
         MenuItem loadItem = new MenuItem("Load Character");
         loadItem.setAccelerator(KeyCombination.keyCombination("Shortcut+O"));
         loadItem.setOnAction(e -> viewModel.onLoadRequest());
@@ -503,6 +516,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                         newItem,
                         new SeparatorMenuItem(),
                         saveItem,
+                        saveAsItem,
                         loadItem,
                         new SeparatorMenuItem(),
                         exportPdf,
@@ -740,9 +754,18 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
     private void handleSaveAs(String suggestName) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Character");
-        fileChooser
-                .getExtensionFilters()
-                .add(new FileChooser.ExtensionFilter("Vibethema Save File", "*.vbtm"));
+        
+        FileChooser.ExtensionFilter vbtmFilter = new FileChooser.ExtensionFilter("VBTM Files", "*.vbtm");
+        FileChooser.ExtensionFilter allFilter = new FileChooser.ExtensionFilter("All Files", "*");
+        
+        fileChooser.getExtensionFilters().addAll(vbtmFilter, allFilter);
+        fileChooser.setSelectedExtensionFilter(vbtmFilter);
+
+        File current = viewModel.currentFileProperty().get();
+        if (current != null && current.getParentFile() != null) {
+            fileChooser.setInitialDirectory(current.getParentFile());
+        }
+
         fileChooser.setInitialFileName(suggestName);
         File file = fileChooser.showSaveDialog(getScene().getWindow());
         if (file != null) {

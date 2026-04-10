@@ -152,7 +152,7 @@ public class MainViewModelTest {
     }
 
     @Test
-    void testSaveRequestWhenNoFilePublishesRequestSaveAs() {
+    void testSaveRequestWhenNoFileCallsSaveAs() {
         AtomicReference<Object[]> receivedPayload = new AtomicReference<>();
         viewModel.currentFileProperty().set(null);
         viewModel.getData().nameProperty().set("Tulentanssija");
@@ -164,6 +164,65 @@ public class MainViewModelTest {
             viewModel.onSaveRequest();
             assertNotNull(receivedPayload.get());
             assertEquals("Tulentanssija.vbtm", receivedPayload.get()[0]);
+        } finally {
+            Messenger.unsubscribe("request_save_as", observer);
+        }
+    }
+
+    @Test
+    void testSaveRequestWhenFileExistsSavesDirectly() throws java.io.IOException {
+        java.io.File mockFile = tempDir.resolve("direct.vbtm").toFile();
+        viewModel.currentFileProperty().set(mockFile);
+        viewModel.getData().setDirty(true);
+
+        AtomicReference<String> receivedMessage = new AtomicReference<>();
+        NotificationObserver observer = (name, payload) -> receivedMessage.set(name);
+        Messenger.subscribe("request_save_as", observer);
+
+        try {
+            viewModel.onSaveRequest();
+
+            // Verify it saved (not dirty anymore)
+            assertFalse(viewModel.dirtyProperty().get());
+            // Verify NO notification was sent (because it saved directly)
+            assertNull(receivedMessage.get());
+            // Verify file actually exists
+            assertTrue(mockFile.exists());
+        } finally {
+            Messenger.unsubscribe("request_save_as", observer);
+        }
+    }
+
+    @Test
+    void testSaveAsRequestAlwaysPublishesNotification() {
+        java.io.File mockFile = tempDir.resolve("existing.vbtm").toFile();
+        viewModel.currentFileProperty().set(mockFile);
+
+        AtomicReference<Object[]> receivedPayload = new AtomicReference<>();
+        NotificationObserver observer = (name, payload) -> receivedPayload.set(payload);
+        Messenger.subscribe("request_save_as", observer);
+
+        try {
+            viewModel.onSaveAsRequest();
+            assertNotNull(receivedPayload.get());
+            assertEquals("existing.vbtm", receivedPayload.get()[0]);
+        } finally {
+            Messenger.unsubscribe("request_save_as", observer);
+        }
+    }
+
+    @Test
+    void testSaveAsRequestSuggestedNameWithCharacterName() {
+        viewModel.currentFileProperty().set(null);
+        viewModel.getData().nameProperty().set("Sol Invictus");
+
+        AtomicReference<Object[]> receivedPayload = new AtomicReference<>();
+        NotificationObserver observer = (name, payload) -> receivedPayload.set(payload);
+        Messenger.subscribe("request_save_as", observer);
+
+        try {
+            viewModel.onSaveAsRequest();
+            assertEquals("Sol Invictus.vbtm", receivedPayload.get()[0]);
         } finally {
             Messenger.unsubscribe("request_save_as", observer);
         }
