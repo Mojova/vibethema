@@ -9,6 +9,8 @@ import com.vibethema.ui.equipment.EquipmentTab;
 import com.vibethema.ui.experience.ExperienceTab;
 import com.vibethema.ui.footer.FooterView;
 import com.vibethema.ui.sorcery.SorceryTab;
+import com.vibethema.ui.util.ThemeManager;
+import com.vibethema.service.UserPreferencesService;
 import com.vibethema.viewmodel.*;
 import com.vibethema.viewmodel.charms.CharmsViewModel;
 import com.vibethema.viewmodel.charms.EditCharmViewModel;
@@ -155,6 +157,14 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                         triggerPulseHighlight((String) payload[0]);
                     }
                 });
+
+        addObserver("preferences_updated", (name, payload) -> refreshTheme());
+        
+        viewModel.getData().casteProperty().addListener((obs, oldV, newV) -> {
+            refreshTheme();
+        });
+
+        refreshTheme();
 
         addObserver(
                 "char_load_warning",
@@ -447,6 +457,15 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         Tab tab = new Tab(title, vt.getView());
         tab.setClosable(false);
         return tab;
+    }
+
+    private void refreshTheme() {
+        UserPreferencesService prefs = UserPreferencesService.getInstance();
+        ThemeManager.applyThemes(
+                this,
+                prefs.getBaseTheme(),
+                viewModel.getData().casteProperty().get()
+        );
     }
 
     private void updateExperienceTabVisibility(CharacterMode mode) {
@@ -960,6 +979,14 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         DialogPane dialogPane = dialog.getDialogPane();
         dialogPane.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
         dialogPane.getStyleClass().add("dialog-pane-custom");
+
+        // Apply current theme to dialog
+        UserPreferencesService prefs = UserPreferencesService.getInstance();
+        ThemeManager.applyThemes(
+                dialogPane,
+                prefs.getBaseTheme(),
+                viewModel.getData().casteProperty().get()
+        );
 
         if (dialog instanceof Alert alert) {
             if (alert.getAlertType() == Alert.AlertType.WARNING

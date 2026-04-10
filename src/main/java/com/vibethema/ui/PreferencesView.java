@@ -37,6 +37,14 @@ public class PreferencesView extends VBox implements JavaView<PreferencesViewMod
         grid.add(paperSizeLabel, 0, 0);
         grid.add(paperSizeCombo, 1, 0);
 
+        Label themeLabel = new Label("Visual Theme:");
+        ComboBox<String> themeCombo = new ComboBox<>();
+        themeCombo.getItems().addAll(UserPreferencesService.THEME_DARK, UserPreferencesService.THEME_LIGHT);
+        themeCombo.valueProperty().bindBidirectional(viewModel.baseThemeProperty());
+        
+        grid.add(themeLabel, 0, 1);
+        grid.add(themeCombo, 1, 1);
+
         getChildren().add(grid);
     }
 }

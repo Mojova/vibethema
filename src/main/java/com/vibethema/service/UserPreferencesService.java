@@ -9,9 +9,13 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 public class UserPreferencesService {
     private static final String PREF_NODE = "com.vibethema";
     private static final String KEY_PAPER_SIZE = "paper_size";
+    private static final String KEY_BASE_THEME = "base_theme";
     
     public static final String PAPER_SIZE_A4 = "A4";
     public static final String PAPER_SIZE_LETTER = "Letter";
+    
+    public static final String THEME_DARK = "Dark";
+    public static final String THEME_LIGHT = "Light";
 
     private final Preferences prefs;
     private static UserPreferencesService instance;
@@ -41,5 +45,13 @@ public class UserPreferencesService {
             return PDRectangle.LETTER;
         }
         return PDRectangle.A4;
+    }
+
+    public String getBaseTheme() {
+        return prefs.get(KEY_BASE_THEME, THEME_DARK);
+    }
+
+    public void setBaseTheme(String theme) {
+        prefs.put(KEY_BASE_THEME, theme);
     }
 }

@@ -86,8 +86,8 @@ public class FooterViewModel implements ViewModel {
         bpSpentText.set("BP Spent: " + status.bonusPointsSpent + "/15");
         bpStyle.set(
                 status.overBonusPoints
-                        ? "-fx-text-fill: red; -fx-font-weight: bold;"
-                        : "-fx-text-fill: white;");
+                        ? "vbtm-status-warning"
+                        : "vbtm-status-normal");
         casteText.set("Caste: " + data.casteAbilityCountProperty().get() + "/5");
         favoredText.set("Favored: " + data.favoredAbilityCountProperty().get() + "/5");
         attrText.set(
@@ -115,13 +115,13 @@ public class FooterViewModel implements ViewModel {
                 "Regular XP: " + status.regularXpSpent + "/" + status.totalRegularXpAwarded);
         regularXpStyle.set(
                 status.getRegularXpRemaining() < 0
-                        ? "-fx-text-fill: red; -fx-font-weight: bold;"
-                        : "-fx-text-fill: white;");
+                        ? "vbtm-status-warning"
+                        : "vbtm-status-normal");
         solarXpText.set("Solar XP: " + status.solarXpSpent + "/" + status.totalSolarXpAwarded);
         solarXpStyle.set(
                 status.getSolarXpRemaining() < 0
-                        ? "-fx-text-fill: red; -fx-font-weight: bold;"
-                        : "-fx-text-fill: #d4af37;");
+                        ? "vbtm-status-warning"
+                        : "vbtm-status-accent");
     }
 
     // Properties accessors

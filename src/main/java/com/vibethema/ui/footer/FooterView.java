@@ -50,8 +50,6 @@ public class FooterView extends VBox implements JavaView<FooterViewModel>, Initi
 
         finalizeBtn = new Button("Finalize Character");
         finalizeBtn.getStyleClass().add("action-btn");
-        finalizeBtn.setStyle(
-                "-fx-background-color: #d4af37; -fx-text-fill: black; -fx-font-weight: bold;");
 
         row1.getChildren()
                 .addAll(
@@ -74,7 +72,14 @@ public class FooterView extends VBox implements JavaView<FooterViewModel>, Initi
 
         // Creation Mode bindings
         bpLabel.textProperty().bind(vm.bpSpentTextProperty());
-        bpLabel.styleProperty().bind(vm.bpStyleProperty());
+        
+        vm.bpStyleProperty().addListener((obs, oldV, newV) -> {
+            if (oldV != null) bpLabel.getStyleClass().remove(oldV);
+            if (newV != null) bpLabel.getStyleClass().add(newV);
+        });
+        if (vm.bpStyleProperty().get() != null) {
+            bpLabel.getStyleClass().add(vm.bpStyleProperty().get());
+        }
         casteLabel.textProperty().bind(vm.casteTextProperty());
         favoredLabel.textProperty().bind(vm.favoredTextProperty());
         attrLabel.textProperty().bind(vm.attrTextProperty());
@@ -110,9 +115,22 @@ public class FooterView extends VBox implements JavaView<FooterViewModel>, Initi
 
         // Experience Mode bindings
         regularXpLabel.textProperty().bind(vm.regularXpTextProperty());
-        regularXpLabel.styleProperty().bind(vm.regularXpStyleProperty());
+        vm.regularXpStyleProperty().addListener((obs, oldV, newV) -> {
+            if (oldV != null) regularXpLabel.getStyleClass().remove(oldV);
+            if (newV != null) regularXpLabel.getStyleClass().add(newV);
+        });
+        if (vm.regularXpStyleProperty().get() != null) {
+            regularXpLabel.getStyleClass().add(vm.regularXpStyleProperty().get());
+        }
+
         solarXpLabel.textProperty().bind(vm.solarXpTextProperty());
-        solarXpLabel.styleProperty().bind(vm.solarXpStyleProperty());
+        vm.solarXpStyleProperty().addListener((obs, oldV, newV) -> {
+            if (oldV != null) solarXpLabel.getStyleClass().remove(oldV);
+            if (newV != null) solarXpLabel.getStyleClass().add(newV);
+        });
+        if (vm.solarXpStyleProperty().get() != null) {
+            solarXpLabel.getStyleClass().add(vm.solarXpStyleProperty().get());
+        }
 
         for (Label l : new Label[] {regularXpLabel, solarXpLabel}) {
             l.visibleProperty().bind(vm.experiencedModeVisibleProperty());
