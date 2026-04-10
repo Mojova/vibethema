@@ -46,19 +46,24 @@ public class PdfExportService {
             ExportContext ctx = new ExportContext(doc);
 
             // 1. Resolve and Sort Charms
-            List<Charm> allPurchased = new ArrayList<>();
             Map<String, List<Charm>> abilityCache = new HashMap<>();
 
+            Map<String, Integer> charmCounts = new HashMap<>();
+            Map<String, Charm> distinctCharms = new HashMap<>();
             for (PurchasedCharm pc : data.getUnlockedCharms()) {
-                String ability = pc.ability();
-                List<Charm> charms =
-                        abilityCache.computeIfAbsent(
-                                ability, k -> charmService.loadCharmsForAbility(ability));
-                charms.stream()
-                        .filter(c -> c.getId().equals(pc.id()))
-                        .findFirst()
-                        .ifPresent(allPurchased::add);
+                charmCounts.merge(pc.id(), 1, Integer::sum);
+                if (!distinctCharms.containsKey(pc.id())) {
+                    String ability = pc.ability();
+                    List<Charm> charms =
+                            abilityCache.computeIfAbsent(
+                                    ability, k -> charmService.loadCharmsForAbility(ability));
+                    charms.stream()
+                            .filter(c -> c.getId().equals(pc.id()))
+                            .findFirst()
+                            .ifPresent(c -> distinctCharms.put(c.getId(), c));
+                }
             }
+            List<Charm> allPurchased = new ArrayList<>(distinctCharms.values());
 
             // Grouping: Charms vs Martial Arts
             List<Charm> normalCharms = new ArrayList<>();
@@ -86,7 +91,13 @@ public class PdfExportService {
             martialArtsCharms.sort(charmComparator);
 
             // 2. Resolve and Sort Spells
-            List<Spell> spells = new ArrayList<>(data.getSpells());
+            Map<String, Integer> spellCounts = new HashMap<>();
+            Map<String, Spell> distinctSpells = new HashMap<>();
+            for (Spell s : data.getSpells()) {
+                spellCounts.merge(s.getId(), 1, Integer::sum);
+                distinctSpells.putIfAbsent(s.getId(), s);
+            }
+            List<Spell> spells = new ArrayList<>(distinctSpells.values());
             spells.sort(
                     (s1, s2) -> {
                         int circleComp =
@@ -107,7 +118,7 @@ public class PdfExportService {
                         currentAbility = c.getAbility();
                         ctx.drawSubsectionHeader(currentAbility, ctx.getCharmHeaderHeight(c));
                     }
-                    ctx.drawCharm(c);
+                    ctx.drawCharm(c, charmCounts.getOrDefault(c.getId(), 1));
                 }
             }
 
@@ -120,7 +131,7 @@ public class PdfExportService {
                         currentStyle = c.getAbility();
                         ctx.drawSubsectionHeader(currentStyle, ctx.getCharmHeaderHeight(c));
                     }
-                    ctx.drawCharm(c);
+                    ctx.drawCharm(c, charmCounts.getOrDefault(c.getId(), 1));
                 }
             }
 
@@ -133,7 +144,7 @@ public class PdfExportService {
                         ctx.drawSubsectionHeader(
                                 currentCircle + " Circle", ctx.getSpellHeaderHeight(s));
                     }
-                    ctx.drawSpell(s);
+                    ctx.drawSpell(s, spellCounts.getOrDefault(s.getId(), 1));
                 }
             }
 
@@ -256,7 +267,7 @@ public class PdfExportService {
             currentY -= 15;
         }
 
-        public void drawCharm(Charm c) throws IOException {
+        public void drawCharm(Charm c, int count) throws IOException {
             float headerHeight = getCharmHeaderHeight(c);
             ensureSpace(headerHeight);
             float x = margin + (currentColumn * (columnWidth + columnSpacing));
@@ -264,7 +275,12 @@ public class PdfExportService {
             contentStream.beginText();
             contentStream.setFont(fontBold, 10);
             contentStream.newLineAtOffset(x, currentY);
-            contentStream.showText(sanitizeText(c.getName()));
+
+            String displayName = sanitizeText(c.getName());
+            if (count > 1) {
+                displayName += " (x" + count + ")";
+            }
+            contentStream.showText(displayName);
             contentStream.endText();
             currentY -= 12;
 
@@ -281,7 +297,7 @@ public class PdfExportService {
             currentY -= 15;
         }
 
-        public void drawSpell(Spell s) throws IOException {
+        public void drawSpell(Spell s, int count) throws IOException {
             float headerHeight = getSpellHeaderHeight(s);
             ensureSpace(headerHeight);
             float x = margin + (currentColumn * (columnWidth + columnSpacing));
@@ -289,7 +305,12 @@ public class PdfExportService {
             contentStream.beginText();
             contentStream.setFont(fontBold, 10);
             contentStream.newLineAtOffset(x, currentY);
-            contentStream.showText(sanitizeText(s.getName()));
+
+            String displayName = sanitizeText(s.getName());
+            if (count > 1) {
+                displayName += " (x" + count + ")";
+            }
+            contentStream.showText(displayName);
             contentStream.endText();
             currentY -= 12;
 
