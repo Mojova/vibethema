@@ -2,8 +2,6 @@ package com.vibethema.model.traits;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.vibethema.model.Ability;
-import com.vibethema.model.Attribute;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.BeforeEach;
