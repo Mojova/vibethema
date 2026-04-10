@@ -255,7 +255,23 @@ public class PdfExportService {
         }
 
         public void drawCharm(Charm c) throws IOException {
-            ensureSpace(12);
+            // Calculate total height needed for the header block (Name + metadata fields)
+            float headerHeight = 12 + 5; // Name + Line break before description
+            if (isFieldVisible(c.getCost())) headerHeight += 11;
+            String mins =
+                    String.format(
+                            "%s %d, Essence %d",
+                            c.getAbility(), c.getMinAbility(), c.getMinEssence());
+            if (isFieldVisible(mins)) headerHeight += 11;
+            if (isFieldVisible(c.getType())) headerHeight += 11;
+            String keywords =
+                    (c.getKeywords() != null && !c.getKeywords().isEmpty()
+                            ? String.join(", ", c.getKeywords())
+                            : null);
+            if (isFieldVisible(keywords)) headerHeight += 11;
+            if (isFieldVisible(c.getDuration())) headerHeight += 11;
+
+            ensureSpace(headerHeight);
             float x = margin + (currentColumn * (columnWidth + columnSpacing));
 
             contentStream.beginText();
@@ -266,22 +282,12 @@ public class PdfExportService {
             currentY -= 12;
 
             drawField("Cost:", c.getCost(), x);
-            drawField(
-                    "Mins:",
-                    String.format(
-                            "%s %d, Essence %d",
-                            c.getAbility(), c.getMinAbility(), c.getMinEssence()),
-                    x);
+            drawField("Mins:", mins, x);
             drawField("Type:", c.getType(), x);
-            drawField(
-                    "Keywords:",
-                    (c.getKeywords() != null && !c.getKeywords().isEmpty()
-                            ? String.join(", ", c.getKeywords())
-                            : null),
-                    x);
+            drawField("Keywords:", keywords, x);
             drawField("Duration:", c.getDuration(), x);
 
-            currentY -= 5; // Line break before description
+            currentY -= 5; // Spacer
             if (c.getFullText() != null && !c.getFullText().isEmpty()) {
                 drawWrappedText(c.getFullText(), 8, x);
             }
@@ -289,7 +295,18 @@ public class PdfExportService {
         }
 
         public void drawSpell(Spell s) throws IOException {
-            ensureSpace(12);
+            // Calculate total height needed for the header block (Name + metadata fields)
+            float headerHeight = 12 + 5; // Name + Line break before description
+            if (isFieldVisible(s.getCircle())) headerHeight += 11;
+            if (isFieldVisible(s.getCost())) headerHeight += 11;
+            String keywords =
+                    (s.getKeywords() != null && !s.getKeywords().isEmpty()
+                            ? String.join(", ", s.getKeywords())
+                            : null);
+            if (isFieldVisible(keywords)) headerHeight += 11;
+            if (isFieldVisible(s.getDuration())) headerHeight += 11;
+
+            ensureSpace(headerHeight);
             float x = margin + (currentColumn * (columnWidth + columnSpacing));
 
             contentStream.beginText();
@@ -301,15 +318,10 @@ public class PdfExportService {
 
             drawField("Circle:", s.getCircle(), x);
             drawField("Cost:", s.getCost(), x);
-            drawField(
-                    "Keywords:",
-                    (s.getKeywords() != null && !s.getKeywords().isEmpty()
-                            ? String.join(", ", s.getKeywords())
-                            : null),
-                    x);
+            drawField("Keywords:", keywords, x);
             drawField("Duration:", s.getDuration(), x);
 
-            currentY -= 5; // Line break before description
+            currentY -= 5; // Spacer
             if (s.getDescription() != null && !s.getDescription().isEmpty()) {
                 drawWrappedText(s.getDescription(), 8, x);
             }
@@ -317,10 +329,7 @@ public class PdfExportService {
         }
 
         private void drawField(String label, String value, float x) throws IOException {
-            if (value == null
-                    || value.isEmpty()
-                    || value.equalsIgnoreCase("None")
-                    || value.equals("0")) return;
+            if (!isFieldVisible(value)) return;
 
             ensureSpace(11);
             float currentX = margin + (currentColumn * (columnWidth + columnSpacing));
@@ -337,6 +346,13 @@ public class PdfExportService {
             contentStream.endText();
 
             currentY -= 11;
+        }
+
+        private boolean isFieldVisible(String value) {
+            return value != null
+                    && !value.isEmpty()
+                    && !value.equalsIgnoreCase("None")
+                    && !value.equals("0");
         }
 
         private void drawWrappedText(String text, float fontSize, float x) throws IOException {
