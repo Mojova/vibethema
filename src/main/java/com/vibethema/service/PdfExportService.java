@@ -214,10 +214,12 @@ public class PdfExportService {
 
         public void drawSectionHeader(String title) throws IOException {
             ensureSpace(50);
-            contentStream.setLineWidth(1.5f);
-            contentStream.moveTo(margin, currentY);
-            contentStream.lineTo(pageWidth - margin, currentY);
-            contentStream.stroke();
+            if (currentY < columnTopY) {
+                contentStream.setLineWidth(1.5f);
+                contentStream.moveTo(margin, currentY);
+                contentStream.lineTo(pageWidth - margin, currentY);
+                contentStream.stroke();
+            }
             currentY -= 20;
 
             contentStream.beginText();
@@ -236,10 +238,12 @@ public class PdfExportService {
             ensureSpace(40);
             float x = margin + (currentColumn * (columnWidth + columnSpacing));
 
-            contentStream.setLineWidth(1.0f);
-            contentStream.moveTo(x, currentY);
-            contentStream.lineTo(x + columnWidth, currentY);
-            contentStream.stroke();
+            if (currentY < columnTopY) {
+                contentStream.setLineWidth(1.0f);
+                contentStream.moveTo(x, currentY);
+                contentStream.lineTo(x + columnWidth, currentY);
+                contentStream.stroke();
+            }
             currentY -= 15;
 
             contentStream.beginText();
@@ -336,37 +340,51 @@ public class PdfExportService {
         }
 
         private void drawWrappedText(String text, float fontSize, float x) throws IOException {
-            List<String> lines = new ArrayList<>();
-            String[] words = text.split("\\s+");
-            StringBuilder line = new StringBuilder();
+            if (text == null || text.isEmpty()) return;
 
-            for (String word : words) {
-                float width = fontRegular.getStringWidth(line + " " + word) / 1000 * fontSize;
-                if (width > columnWidth) {
-                    lines.add(line.toString().trim());
-                    line = new StringBuilder(word).append(" ");
-                } else {
-                    line.append(word).append(" ");
+            // Split by newline to preserve paragraph markers
+            String[] paragraphs = text.split("\\r?\\n", -1);
+
+            for (String paragraph : paragraphs) {
+                if (paragraph.trim().isEmpty()) {
+                    // Handle blank lines for double newlines
+                    currentY -= (fontSize + 2);
+                    continue;
                 }
-            }
-            lines.add(line.toString().trim());
 
-            for (String l : lines) {
-                ensureSpace(fontSize + 2);
-                // After ensureSpace, x and currentY might have changed if we jumped columns/pages
-                float currentX = margin + (currentColumn * (columnWidth + columnSpacing));
-                contentStream.beginText();
-                contentStream.setFont(fontRegular, fontSize);
-                contentStream.newLineAtOffset(currentX, currentY);
-                contentStream.showText(sanitizeText(l));
-                contentStream.endText();
-                currentY -= (fontSize + 2);
+                List<String> lines = new ArrayList<>();
+                String[] words = paragraph.split("\\s+");
+                StringBuilder line = new StringBuilder();
+
+                for (String word : words) {
+                    if (word.isEmpty()) continue;
+                    float width = fontRegular.getStringWidth(line + " " + word) / 1000 * fontSize;
+                    if (width > columnWidth) {
+                        lines.add(line.toString().trim());
+                        line = new StringBuilder(word).append(" ");
+                    } else {
+                        line.append(word).append(" ");
+                    }
+                }
+                lines.add(line.toString().trim());
+
+                for (String l : lines) {
+                    ensureSpace(fontSize + 2);
+                    float currentX = margin + (currentColumn * (columnWidth + columnSpacing));
+                    contentStream.beginText();
+                    contentStream.setFont(fontRegular, fontSize);
+                    contentStream.newLineAtOffset(currentX, currentY);
+                    contentStream.showText(sanitizeText(l));
+                    contentStream.endText();
+                    currentY -= (fontSize + 2);
+                }
             }
         }
 
         private String sanitizeText(String text) {
-            // PDFBox PDType1Font doesn't support some special characters or newlines
-            return text.replace("\n", " ").replace("\r", "").replaceAll("[^\\x00-\\x7F]", "?");
+            if (text == null) return "";
+            // PDFBox showText doesn't support newlines; replace them with spaces for safety
+            return text.replace("\n", " ").replace("\r", "");
         }
 
         public void close() throws IOException {
