@@ -530,13 +530,27 @@
     -fx-background-color: -vbtm-bg-surface;
 }
 
-.remove-btn {
+.remove-btn, .edit-btn, .cancel-btn {
     -fx-cursor: hand;
     -fx-opacity: 0.7;
+    -fx-background-color: transparent;
+    -fx-text-fill: -vbtm-text-main;
 }
 
-.remove-btn:hover {
+.remove-btn:hover, .edit-btn:hover, .cancel-btn:hover {
     -fx-opacity: 1.0;
+    -fx-text-fill: -vbtm-accent-primary;
+}
+
+.confirm-btn {
+    -fx-cursor: hand;
+    -fx-background-color: transparent;
+    -fx-text-fill: #4CAF50; /* Green for confirm */
+    -fx-font-weight: bold;
+}
+
+.confirm-btn:hover {
+    -fx-text-fill: #81C784;
 }
 
 .action-btn {

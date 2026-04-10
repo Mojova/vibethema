@@ -22,17 +22,60 @@ public class MeritRowView extends HBox {
         getStyleClass().add("merit-row");
         setPadding(new Insets(10));
 
+        // Display components
+        Label nameLabel = new Label();
+        nameLabel.textProperty().bind(viewModel.nameProperty());
+        nameLabel.setMinWidth(150);
+
+        Button editBtn = new Button("✎");
+        editBtn.getStyleClass().add("edit-btn");
+        editBtn.setOnAction(e -> viewModel.beginEdit());
+
+        HBox displayBox = new HBox(8, nameLabel, editBtn);
+        displayBox.setAlignment(Pos.CENTER_LEFT);
+        displayBox.visibleProperty().bind(viewModel.editingProperty().not());
+        displayBox.managedProperty().bind(displayBox.visibleProperty());
+
+        // Edit components
         TextField nameField = new TextField();
         nameField.setPromptText("Merit Name (e.g. Artifact)");
-        nameField.textProperty().bindBidirectional(viewModel.nameProperty());
-        nameField.setPrefWidth(250);
+        nameField.textProperty().bindBidirectional(viewModel.draftNameProperty());
+        nameField.setPrefWidth(200);
+
+        Button confirmBtn = new Button("✓");
+        confirmBtn.getStyleClass().add("confirm-btn");
+        confirmBtn.setOnAction(e -> viewModel.commitEdit());
+
+        Button cancelBtn = new Button("✕");
+        cancelBtn.getStyleClass().add("cancel-btn");
+        cancelBtn.setOnAction(e -> viewModel.cancelEdit());
+
+        HBox editBox = new HBox(5, nameField, confirmBtn, cancelBtn);
+        editBox.setAlignment(Pos.CENTER_LEFT);
+        editBox.visibleProperty().bind(viewModel.editingProperty());
+        editBox.managedProperty().bind(editBox.visibleProperty());
+
+        // Keyboard handling
+        nameField.setOnKeyPressed(e -> {
+            switch (e.getCode()) {
+                case ENTER -> viewModel.commitEdit();
+                case ESCAPE -> viewModel.cancelEdit();
+            }
+        });
+
+        // Auto-focus on edit
+        viewModel.editingProperty().addListener((obs, oldV, newV) -> {
+            if (newV) {
+                javafx.application.Platform.runLater(nameField::requestFocus);
+            }
+        });
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         // Hidden label for DotSelector accessibility/title logic
         Label hiddenLabel = new Label();
-        hiddenLabel.textProperty().bind(nameField.textProperty());
+        hiddenLabel.textProperty().bind(viewModel.nameProperty());
         hiddenLabel.setVisible(false);
         hiddenLabel.setManaged(false);
 
@@ -42,7 +85,7 @@ public class MeritRowView extends HBox {
         removeBtn = new Button("✕");
         removeBtn.getStyleClass().add("remove-btn");
 
-        getChildren().addAll(nameField, spacer, hiddenLabel, selector, removeBtn);
+        getChildren().addAll(displayBox, editBox, spacer, hiddenLabel, selector, removeBtn);
     }
 
     public void setOnRemove(javafx.event.EventHandler<javafx.event.ActionEvent> handler) {
