@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.vibethema.service.pdf.core.CoreCharmExtractor;
 import com.vibethema.service.pdf.core.CoreEquipmentExtractor;
+import com.vibethema.service.pdf.core.CoreMeritExtractor;
 import com.vibethema.service.pdf.core.CoreSpellExtractor;
 import java.io.File;
 import java.io.IOException;
@@ -72,7 +73,17 @@ public class PdfExtractor {
                 if (outputBasePath != null) equipExtractor.setOverrideOutputPath(outputBasePath);
                 equipExtractor.extractAndSaveTags(equipText);
 
-                // 4. Keywords (Page range overlap with charms)
+                // 4. Merits (Pages 157 - 168)
+                if (progressCallback != null) progressCallback.accept(0.9);
+                stripper.setStartPage(157);
+                stripper.setEndPage(168);
+                String meritText = stripper.getText(document);
+                CoreMeritExtractor meritExtractor = new CoreMeritExtractor();
+                if (outputBasePath != null)
+                    meritExtractor.setOverrideOutputPath(outputBasePath.resolve("merits"));
+                meritExtractor.extractAndSave(meritText, suffix);
+
+                // 5. Keywords (Page range overlap with charms)
                 if (extractKeywords) {
                     stripper.setStartPage(250);
                     stripper.setEndPage(260);

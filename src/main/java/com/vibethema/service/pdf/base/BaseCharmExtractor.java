@@ -237,13 +237,17 @@ public abstract class BaseCharmExtractor {
             if (upper.contains("CHAPTER")
                     || upper.contains("SOLAR")
                     || upper.contains("CHARMS")
-                    || upper.contains("MASTERY")) return true;
+                    || upper.contains("MERIT")
+                    || upper.contains("FLAW")
+                    || upper.contains("SUPERNATURAL")
+                    || upper.contains("MASTERY"))
+                return true;
         }
 
         // Common 3e formatting artifacts with spaced letters
-        if (upper.matches(".*C\\s*H\\s*A\\s*P\\s*T\\s*E\\s*R.*")
-                || upper.matches(".*E\\s*X\\s*3.*")
-                || upper.matches(".*S\\s*O\\s*L\\s*A\\s*R\\s*C\\s*H\\s*A\\s*R\\s*M\\s*S.*"))
+        if (upper.matches("^\\s*C\\s*H\\s*A\\s*P\\s*T\\s*E\\s*R.*\\d+\\s*$")
+                || upper.matches("^\\s*E\\s*X\\s*3\\s*$")
+                || upper.matches("^\\s*S\\s*O\\s*L\\s*A\\s*R\\s*C\\s*H\\s*A\\s*R\\s*M\\s*S\\s*$"))
             return true;
 
         return false;
