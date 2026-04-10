@@ -41,6 +41,8 @@ public class CharmDataService {
                                                         : "solar";
                                         if ("evocation".equals(category)) {
                                             return context.deserialize(json, Evocation.class);
+                                        } else if ("martialArts".equals(category)) {
+                                            return context.deserialize(json, MartialArtsCharm.class);
                                         } else {
                                             return context.deserialize(json, SolarCharm.class);
                                         }
@@ -272,7 +274,7 @@ public class CharmDataService {
             CharmListWrapper wrapper = gson.fromJson(reader, CharmListWrapper.class);
             if (wrapper != null && wrapper.charms != null) {
                 for (Charm c : wrapper.charms) {
-                    if (c instanceof SolarCharm sc) sc.setAbility(wrapper.ability);
+                    c.setAbility(wrapper.ability);
                     allCharms.add(c);
                 }
             }
@@ -499,7 +501,7 @@ public class CharmDataService {
             CharmListWrapper wrapper = gson.fromJson(reader, CharmListWrapper.class);
             if (wrapper != null && wrapper.charms != null) {
                 for (Charm c : wrapper.charms) {
-                    if (c instanceof SolarCharm sc) sc.setAbility(wrapper.ability);
+                    c.setAbility(wrapper.ability);
                 }
                 allCharms.addAll(wrapper.charms);
                 return true;
