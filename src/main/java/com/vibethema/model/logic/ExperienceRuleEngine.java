@@ -159,8 +159,13 @@ public class ExperienceRuleEngine {
 
             int currentRating = currentMerit.getRating();
             int snapRating = 0;
-            if (snapshot.merits != null && snapshot.merits.containsKey(currentMerit.getName())) {
-                snapRating = snapshot.merits.get(currentMerit.getName());
+            if (snapshot.merits != null) {
+                for (CharacterSaveState.MeritData md : snapshot.merits) {
+                    if (md.name.equals(currentMerit.getName())) {
+                        snapRating = md.rating;
+                        break;
+                    }
+                }
             }
 
             if (currentRating > snapRating) {

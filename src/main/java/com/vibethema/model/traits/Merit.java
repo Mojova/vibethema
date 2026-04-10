@@ -9,11 +9,17 @@ public class Merit {
     private final String id;
     private final StringProperty name = new SimpleStringProperty("");
     private final IntegerProperty rating = new SimpleIntegerProperty(1);
+    private final StringProperty description = new SimpleStringProperty("");
 
     public Merit(String id, String name, int rating) {
+        this(id, name, rating, "");
+    }
+
+    public Merit(String id, String name, int rating, String description) {
         this.id = id;
         this.name.set(name);
         this.rating.set(rating);
+        this.description.set(description);
     }
 
     public String getId() {
@@ -42,5 +48,17 @@ public class Merit {
 
     public void setRating(int rating) {
         this.rating.set(rating);
+    }
+
+    public StringProperty descriptionProperty() {
+        return description;
+    }
+
+    public String getDescription() {
+        return description.get();
+    }
+
+    public void setDescription(String description) {
+        this.description.set(description);
     }
 }

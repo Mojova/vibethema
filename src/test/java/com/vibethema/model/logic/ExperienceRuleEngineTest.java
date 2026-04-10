@@ -25,7 +25,7 @@ public class ExperienceRuleEngineTest {
         // Initialize basic snapshot structure to prevent NPEs
         snapshot.attributes = new java.util.HashMap<>();
         snapshot.abilities = new java.util.HashMap<>();
-        snapshot.merits = new java.util.HashMap<>();
+        snapshot.merits = new java.util.ArrayList<>();
         snapshot.crafts = new java.util.ArrayList<>();
         snapshot.martialArts = new java.util.ArrayList<>();
         snapshot.specialties = new java.util.ArrayList<>();
@@ -102,7 +102,10 @@ public class ExperienceRuleEngineTest {
 
     @Test
     void testMeritCost() {
-        snapshot.merits.put("Resources", 2);
+        CharacterSaveState.MeritData md = new CharacterSaveState.MeritData();
+        md.name = "Resources";
+        md.rating = 2;
+        snapshot.merits.add(md);
         data.getMerits().add(new Merit("res1", "Resources", 4));
 
         ExperienceRuleEngine.ExperienceStatus status =

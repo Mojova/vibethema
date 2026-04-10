@@ -23,7 +23,7 @@ public class CharacterSaveState {
     public List<String> casteAbilities;
     public List<String> favoredAbilities;
     public List<PurchasedCharm> unlockedCharms;
-    public Map<String, Integer> merits = new HashMap<>(); // name -> rating
+    public List<MeritData> merits = new ArrayList<>();
     public List<SpecialtyData> specialties = new ArrayList<>();
     public List<CraftData> crafts = new ArrayList<>();
     public List<MartialArtsData> martialArts = new ArrayList<>();
@@ -210,6 +210,29 @@ public class CharacterSaveState {
         @Override
         public int hashCode() {
             return Objects.hash(id, name, ability);
+        }
+    }
+
+    public static class MeritData {
+        public String id;
+        public String name;
+        public int rating;
+        public String description;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            MeritData that = (MeritData) o;
+            return rating == that.rating
+                    && Objects.equals(id, that.id)
+                    && Objects.equals(name, that.name)
+                    && Objects.equals(description, that.description);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, name, rating, description);
         }
     }
 

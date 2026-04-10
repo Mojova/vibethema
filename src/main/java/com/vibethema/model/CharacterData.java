@@ -639,8 +639,17 @@ public class CharacterData {
 
         state.unlockedCharms = new ArrayList<>(getUnlockedCharms());
 
-        state.merits = new HashMap<>();
-        getMerits().forEach(m -> state.merits.put(m.getName(), m.getRating()));
+        state.merits = new ArrayList<>();
+        getMerits()
+                .forEach(
+                        m -> {
+                            CharacterSaveState.MeritData md = new CharacterSaveState.MeritData();
+                            md.id = m.getId();
+                            md.name = m.getName();
+                            md.rating = m.getRating();
+                            md.description = m.getDescription();
+                            state.merits.add(md);
+                        });
 
         state.specialties = new ArrayList<>();
         getSpecialties()
@@ -843,15 +852,19 @@ public class CharacterData {
             else getUnlockedCharms().clear();
 
             getMerits().clear();
-            if (state.merits != null)
+            if (state.merits != null && !state.merits.isEmpty()) {
                 state.merits.forEach(
-                        (k, v) ->
+                        md ->
                                 getMerits()
                                         .add(
                                                 new Merit(
-                                                        java.util.UUID.randomUUID().toString(),
-                                                        k,
-                                                        v)));
+                                                        md.id,
+                                                        md.name,
+                                                        md.rating,
+                                                        md.description != null
+                                                                ? md.description
+                                                                : "")));
+            }
             if (getMerits().isEmpty())
                 getMerits().add(new Merit(java.util.UUID.randomUUID().toString(), "", 1));
 

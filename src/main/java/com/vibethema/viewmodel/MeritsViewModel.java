@@ -30,10 +30,29 @@ public class MeritsViewModel implements ViewModel {
     }
 
     private void updateRows() {
-        meritRows.setAll(
-                data.getMerits().stream()
-                        .map(MeritRowViewModel::new)
-                        .collect(java.util.stream.Collectors.toList()));
+        // Surgical sync: remove missing, add new
+        java.util.Set<Merit> currentModels = new java.util.HashSet<>(data.getMerits());
+        meritRows.removeIf(row -> !currentModels.contains(row.getModel()));
+
+        for (int i = 0; i < data.getMerits().size(); i++) {
+            Merit model = data.getMerits().get(i);
+            if (i >= meritRows.size() || meritRows.get(i).getModel() != model) {
+                // Check if it exists elsewhere and was moved, or should be inserted
+                int existingIdx = -1;
+                for (int j = i + 1; j < meritRows.size(); j++) {
+                    if (meritRows.get(j).getModel() == model) {
+                        existingIdx = j;
+                        break;
+                    }
+                }
+                if (existingIdx != -1) {
+                    MeritRowViewModel moved = meritRows.remove(existingIdx);
+                    meritRows.add(i, moved);
+                } else {
+                    meritRows.add(i, new MeritRowViewModel(model));
+                }
+            }
+        }
     }
 
     public ObservableList<MeritRowViewModel> getMeritRows() {

@@ -23,4 +23,8 @@ public class MeritRowViewModel {
     public IntegerProperty ratingProperty() {
         return model.ratingProperty();
     }
+
+    public StringProperty descriptionProperty() {
+        return model.descriptionProperty();
+    }
 }
