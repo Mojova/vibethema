@@ -159,6 +159,8 @@ The application must be fully accessible to screen readers (VoiceOver, NVDA).
 7. **Logging**: Standardized on **SLF4J + Logback**. Avoid `System.out`.
 8. **Accessibility**: Always link labels to controls using `setLabelFor` and provide `setAccessibleText`. Never assume the layout alone provides enough context for screen readers.
 9. **Copyrighted Material**: **NEVER** commit PDF files or imported JSON data (Charms, Spells, etc.) to the repository. Use the `data_source/` directory for local testing.
+10. **Martial Arts Style Persistence**: Since Martial Arts style names can change, custom styles are saved in files named after their UUID (`{uuid}.json`). The system identifies styles by scanning the internal `ability` field in these JSON files. Avoid creating files named after the style name itself to prevent breakage when the user renames the style.
+11. **Delayed File Creation**: Database entries for new custom styles should only be created when the user first commits a valid name, to avoid cluttering the data directory with empty or "Untitled" style files.
 
 ## File Map
 - `src/main/java/com/vibethema/Main.java`: App Launcher.

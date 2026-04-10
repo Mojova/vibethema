@@ -3,7 +3,7 @@ package com.vibethema.viewmodel.martialarts;
 import com.vibethema.model.CharacterData;
 import com.vibethema.model.traits.Ability;
 import com.vibethema.model.traits.MartialArtsStyle;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -14,13 +14,13 @@ import javafx.beans.property.StringProperty;
 public class MartialArtsRowViewModel {
     private final MartialArtsStyle model;
     private final CharacterData data;
-    private final Consumer<String> onCommitCallback;
+    private final BiConsumer<String, String> onCommitCallback;
 
     private final StringProperty draftName = new SimpleStringProperty("");
     private final BooleanProperty editing = new SimpleBooleanProperty(false);
 
     public MartialArtsRowViewModel(
-            CharacterData data, MartialArtsStyle model, Consumer<String> onCommitCallback) {
+            CharacterData data, MartialArtsStyle model, BiConsumer<String, String> onCommitCallback) {
         this.data = data;
         this.model = model;
         this.onCommitCallback = onCommitCallback;
@@ -61,7 +61,7 @@ public class MartialArtsRowViewModel {
         if (!newName.isEmpty()) {
             model.setStyleName(newName);
             if (onCommitCallback != null) {
-                onCommitCallback.accept(newName);
+                onCommitCallback.accept(model.getId(), newName);
             }
         }
         editing.set(false);

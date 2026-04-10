@@ -152,9 +152,9 @@ public class MartialArtsViewModel implements ViewModel {
         data.setDirty(true);
     }
 
-    public void createNewDatabaseStyle(String name) {
+    public void createNewDatabaseStyle(String id, String name) {
         try {
-            charmDataService.createNewMartialArtsStyle(name);
+            charmDataService.createNewMartialArtsStyle(id, name);
             // Refresh available styles
             availableStyles.clear();
             availableStyles.addAll(charmDataService.getAvailableMartialArtsStyles());

@@ -101,6 +101,7 @@ public class CharmDataService {
     private static class CharmListWrapper {
         private String $schema = "./charm-schema.json";
         private String version = "0.1.0";
+        private String id;
         private String ability;
         private String type;
         private String exalt = "solar";
@@ -108,7 +109,8 @@ public class CharmDataService {
 
         public CharmListWrapper() {}
 
-        public CharmListWrapper(String ability, String type, List<Charm> charms) {
+        public CharmListWrapper(String id, String ability, String type, List<Charm> charms) {
+            this.id = id;
             this.ability = ability;
             this.type = type;
             this.charms = charms;
@@ -274,8 +276,15 @@ public class CharmDataService {
         try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             CharmListWrapper wrapper = gson.fromJson(reader, CharmListWrapper.class);
             if (wrapper != null && wrapper.charms != null) {
+                // Determine ability name from wrapper if possible
+                String abilityName = wrapper.ability;
+                if (abilityName == null) {
+                    // Fallback to filename if missing in content (legacy)
+                    abilityName = path.getFileName().toString().replace(".json", "");
+                }
+
                 for (Charm c : wrapper.charms) {
-                    c.setAbility(wrapper.ability);
+                    c.setAbility(abilityName);
                     allCharms.add(c);
                 }
             }
@@ -289,9 +298,21 @@ public class CharmDataService {
         String filename = ability.toLowerCase().replace(" ", "-") + ".json";
         String customFilename = ability.toLowerCase().replace(" ", "-") + "-custom.json";
 
-        Path targetPath;
+        Path targetPath = null;
         if (charm.isCustom()) {
             targetPath = getUserCharmsPath().resolve(customFilename);
+        } else if ("martialArts".equals(charm.getCategory())) {
+            // For Martial Arts, we need to find the correct UUID-named file by checking content
+            targetPath = findMartialArtsFileByAbility(ability);
+            if (targetPath == null) {
+                // Fallback to legacy/name-based path if not found in UUID files
+                Path maPath = getUserMartialArtsPath().resolve(filename);
+                if (Files.exists(maPath)) {
+                    targetPath = maPath;
+                } else {
+                    targetPath = getUserCharmsPath().resolve(filename);
+                }
+            }
         } else {
             Path standardAbPath = getUserCharmsPath().resolve(filename);
             Path maPath = getUserMartialArtsPath().resolve(filename);
@@ -336,7 +357,11 @@ public class CharmDataService {
         // Save back pretty-printed with wrapper
         Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
         try (Writer writer = Files.newBufferedWriter(targetPath, StandardCharsets.UTF_8)) {
-            prettyGson.toJson(new CharmListWrapper(ability, typeAttr, charms), writer);
+            String styleId = null;
+            if (targetPath.getParent().equals(getUserMartialArtsPath())) {
+                styleId = targetPath.getFileName().toString().replace(".json", "");
+            }
+            prettyGson.toJson(new CharmListWrapper(styleId, ability, typeAttr, charms), writer);
         }
 
         // Update index cache
@@ -378,7 +403,7 @@ public class CharmDataService {
 
             Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
             try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
-                prettyGson.toJson(new CharmListWrapper(ability, typeAttr, existing), writer);
+                prettyGson.toJson(new CharmListWrapper(null, ability, typeAttr, existing), writer);
             }
         }
     }
@@ -501,8 +526,12 @@ public class CharmDataService {
         try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             CharmListWrapper wrapper = gson.fromJson(reader, CharmListWrapper.class);
             if (wrapper != null && wrapper.charms != null) {
+                String abilityName = wrapper.ability;
+                if (abilityName == null) {
+                    abilityName = path.getFileName().toString().replace(".json", "");
+                }
                 for (Charm c : wrapper.charms) {
-                    c.setAbility(wrapper.ability);
+                    c.setAbility(abilityName);
                 }
                 allCharms.addAll(wrapper.charms);
                 return true;
@@ -551,17 +580,63 @@ public class CharmDataService {
         }
     }
 
-    public void createNewMartialArtsStyle(String name) throws IOException {
-        String filename = name.toLowerCase().replace(" ", "-") + ".json";
+    public void createNewMartialArtsStyle(String id, String name) throws IOException {
+        String filename = id + ".json";
         Path outDir = getUserMartialArtsPath();
         if (!Files.exists(outDir)) {
             Files.createDirectories(outDir);
         }
         Path filePath = outDir.resolve(filename);
         if (!Files.exists(filePath)) {
+            Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
             try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
-                writer.write("[]");
+                prettyGson.toJson(
+                        new CharmListWrapper(id, name, "martialArts", new ArrayList<>()), writer);
             }
+        } else {
+            // Update existing if already exists (rename)
+            updateMartialArtsStyleName(id, name);
+        }
+    }
+
+    public void updateMartialArtsStyleName(String id, String newName) throws IOException {
+        Path filePath = getUserMartialArtsPath().resolve(id + ".json");
+        if (Files.exists(filePath)) {
+            CharmListWrapper wrapper;
+            try (Reader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
+                wrapper = gson.fromJson(reader, CharmListWrapper.class);
+            }
+            if (wrapper != null) {
+                wrapper.ability = newName;
+                Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
+                try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
+                    prettyGson.toJson(wrapper, writer);
+                }
+            }
+        }
+    }
+
+    private Path findMartialArtsFileByAbility(String ability) {
+        Path dir = getUserMartialArtsPath();
+        if (!Files.exists(dir)) return null;
+        try (java.util.stream.Stream<Path> stream = Files.list(dir)) {
+            return stream.filter(p -> p.toString().endsWith(".json"))
+                    .filter(
+                            p -> {
+                                try (Reader reader =
+                                        Files.newBufferedReader(p, StandardCharsets.UTF_8)) {
+                                    CharmListWrapper wrapper =
+                                            gson.fromJson(reader, CharmListWrapper.class);
+                                    return wrapper != null && ability.equalsIgnoreCase(wrapper.ability);
+                                } catch (Exception e) {
+                                    return false;
+                                }
+                            })
+                    .findFirst()
+                    .orElse(null);
+        } catch (IOException e) {
+            logger.error("Error searching martial arts style files", e);
+            return null;
         }
     }
 
