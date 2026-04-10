@@ -3,6 +3,7 @@ package com.vibethema.viewmodel.martialarts;
 import com.vibethema.model.*;
 import com.vibethema.model.traits.*;
 import com.vibethema.service.CharmDataService;
+import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;
 import java.io.IOException;
 import java.util.HashMap;
@@ -41,15 +42,29 @@ public class MartialArtsViewModel implements ViewModel {
         this.availableStyles.addAll(charmDataService.getAvailableMartialArtsStyles());
 
         updateRows();
+
+        // Listen for rating changes to trigger UI refreshes (e.g. charm eligibility)
+        for (MartialArtsStyle style : data.getMartialArtsStyles()) {
+            style.ratingProperty().addListener((obs, oldV, newV) -> Messenger.publish("refresh_all_ui"));
+        }
+
         data.getMartialArtsStyles()
                 .addListener(
                         (ListChangeListener<? super MartialArtsStyle>)
                                 c -> {
                                     while (c.next()) {
+                                        if (c.wasAdded()) {
+                                            for (MartialArtsStyle style : c.getAddedSubList()) {
+                                                style.ratingProperty()
+                                                        .addListener(
+                                                                (obs, oldV, newV) ->
+                                                                        Messenger.publish(
+                                                                                "refresh_all_ui"));
+                                            }
+                                        }
                                         if (c.wasAdded() || c.wasRemoved()) {
                                             updateRows();
                                             setupFilterOptions();
-                                            break;
                                         }
                                     }
                                 });
