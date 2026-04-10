@@ -3,7 +3,6 @@ package com.vibethema.viewmodel.equipment;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.vibethema.model.*;
 import com.vibethema.model.equipment.*;
 import com.vibethema.service.EquipmentDataService.Tag;
 import java.util.List;

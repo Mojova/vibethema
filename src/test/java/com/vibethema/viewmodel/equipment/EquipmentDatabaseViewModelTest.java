@@ -2,7 +2,6 @@ package com.vibethema.viewmodel.equipment;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.vibethema.model.equipment.*;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Test;

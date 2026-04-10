@@ -2,7 +2,6 @@ package com.vibethema.ui;
 
 import com.vibethema.service.UserPreferencesService;
 import com.vibethema.viewmodel.PreferencesViewModel;
-import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
 import javafx.fxml.Initializable;

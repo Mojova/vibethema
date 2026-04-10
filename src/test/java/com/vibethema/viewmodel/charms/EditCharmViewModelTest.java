@@ -3,7 +3,6 @@ package com.vibethema.viewmodel.charms;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.vibethema.model.*;
 import com.vibethema.model.mystic.*;
 import com.vibethema.service.CharmDataService;
 import java.io.IOException;

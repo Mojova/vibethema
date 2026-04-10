@@ -3,11 +3,6 @@ package com.vibethema.model.mystic;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.vibethema.model.*;
-import com.vibethema.model.combat.*;
-import com.vibethema.model.equipment.*;
-import com.vibethema.model.logic.*;
-import com.vibethema.model.progression.*;
-import com.vibethema.model.social.*;
 import com.vibethema.model.traits.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;

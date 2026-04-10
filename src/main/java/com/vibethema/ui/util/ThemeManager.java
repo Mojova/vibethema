@@ -2,8 +2,6 @@ package com.vibethema.ui.util;
 
 import com.vibethema.model.Caste;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import java.util.stream.Collectors;
 
 /**
  * Utility to manage and apply layered themes to the application UI.

@@ -12,8 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import javax.print.attribute.HashPrintRequestAttributeSet;
-import javax.print.attribute.PrintRequestAttributeSet;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -279,7 +277,6 @@ public class PdfExportService {
         private final PDRectangle paperSize;
 
         private final PDFont fontBold;
-        private final PDFont fontItalic;
         private final PDFont fontRegular;
 
         public ExportContext(PDDocument doc) throws IOException {
@@ -290,8 +287,6 @@ public class PdfExportService {
             this.columnWidth = (pageWidth - (2 * margin) - columnSpacing) / 2;
 
             this.fontBold = loadFont("/fonts/LibertinusSerif-Bold.ttf", Standard14Fonts.FontName.TIMES_BOLD);
-            this.fontItalic =
-                    loadFont("/fonts/LibertinusSerif-Italic.ttf", Standard14Fonts.FontName.TIMES_ITALIC);
             this.fontRegular =
                     loadFont("/fonts/LibertinusSerif-Regular.ttf", Standard14Fonts.FontName.TIMES_ROMAN);
             addNewPage();

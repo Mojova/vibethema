@@ -2,7 +2,6 @@ package com.vibethema.viewmodel.equipment;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.vibethema.model.*;
 import com.vibethema.model.equipment.*;
 import com.vibethema.model.traits.Specialty;
 import javafx.collections.FXCollections;
