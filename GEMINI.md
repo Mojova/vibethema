@@ -40,6 +40,7 @@ The project strictly follows the **Model-View-ViewModel (MVVM)** pattern using t
 | **Intimacies** | `IntimaciesTab` | `IntimaciesViewModel` |
 | **Solar Charms** | `CharmsTab` | `CharmsViewModel` |
 | **Martial Arts** | `MartialArtsTab` | `MartialArtsViewModel` |
+| **Martial Arts Row** | `MartialArtsRowView` | `MartialArtsRowViewModel` |
 | **Sorcery** | `SorceryTab` | `SorceryViewModel` |
 | **Equipment** | `EquipmentTab` | `EquipmentViewModel` |
 | **Experience** | `ExperienceTab` | `ExperienceViewModel` |

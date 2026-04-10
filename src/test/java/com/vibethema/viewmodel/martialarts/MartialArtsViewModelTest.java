@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 import com.vibethema.model.CharacterData;
+import com.vibethema.model.traits.MartialArtsStyle;
 import com.vibethema.service.CharmDataService;
 import java.util.HashMap;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,26 +29,50 @@ public class MartialArtsViewModelTest {
     }
 
     @Test
-    void testFilterOptionsIncludeStyles() {
-        assertTrue(viewModel.getFilterOptions().contains("Single Point"));
-        assertTrue(viewModel.getFilterOptions().contains("Steel Devil"));
-        assertFalse(viewModel.getFilterOptions().contains("Archery"));
+    void testFilterOptionsInitiallyEmpty() {
+        assertTrue(viewModel.getFilterOptions().isEmpty());
     }
 
     @Test
-    void testRefreshStyles() {
+    void testAddStyleUpdatesFilter() {
+        viewModel.addStyle("Single Point");
+        assertEquals(1, viewModel.getFilterOptions().size());
+        assertTrue(viewModel.getFilterOptions().contains("Single Point"));
+        assertEquals("Single Point", viewModel.selectedFilterValueProperty().get());
+    }
+
+    @Test
+    void testRemoveStyleUpdatesFilter() {
+        viewModel.addStyle("Single Point");
+        viewModel.addStyle("Steel Devil");
+        assertEquals(2, viewModel.getFilterOptions().size());
+
+        MartialArtsStyle styleToRemove = data.getMartialArtsStyles().get(0);
+        viewModel.removeStyle(styleToRemove);
+
+        assertEquals(1, viewModel.getFilterOptions().size());
+        assertFalse(viewModel.getFilterOptions().contains(styleToRemove.getStyleName()));
+    }
+
+    @Test
+    void testRefreshStylesUpdatesAvailableList() {
         java.util.List<String> newStyles = java.util.List.of("Single Point", "Steel Devil", "Dreaming Pearl");
         org.mockito.Mockito.when(charmDataService.getAvailableMartialArtsStyles())
                 .thenReturn(newStyles);
         
         viewModel.refreshStyles();
         
-        assertTrue(viewModel.getFilterOptions().contains("Dreaming Pearl"));
+        assertTrue(viewModel.getAvailableStyles().contains("Dreaming Pearl"));
+        assertEquals(3, viewModel.getAvailableStyles().size());
     }
 
     @Test
-    void testSelectedFilterValueProperty() {
-        viewModel.selectedFilterValueProperty().set("Steel Devil");
-        assertEquals("Steel Devil", viewModel.selectedFilterValueProperty().get());
+    void testAddCustomStyle() {
+        int initialRows = viewModel.getStyleRows().size();
+        viewModel.addStyle();
+        assertEquals(initialRows + 1, viewModel.getStyleRows().size());
+        MartialArtsRowViewModel newRow = viewModel.getStyleRows().get(initialRows);
+        assertTrue(newRow.editingProperty().get());
+        assertEquals("", newRow.nameProperty().get());
     }
 }

@@ -1,26 +1,38 @@
 package com.vibethema.ui.martialarts;
 
+import com.vibethema.model.CharacterData;
+import com.vibethema.model.CharacterMode;
 import com.vibethema.ui.charms.CharmDetailsView;
 import com.vibethema.ui.charms.CharmTreeView;
 import com.vibethema.viewmodel.charms.CharmDetailsViewModel;
 import com.vibethema.viewmodel.charms.CharmTreeViewModel;
+import com.vibethema.viewmodel.martialarts.MartialArtsRowViewModel;
 import com.vibethema.viewmodel.martialarts.MartialArtsViewModel;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
 import de.saxsys.mvvmfx.ViewTuple;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.beans.binding.Bindings;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ComboBox;
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.SplitPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 
-public class MartialArtsTab extends BorderPane implements JavaView<MartialArtsViewModel>, Initializable {
+/**
+ * Tab for managing and viewing Martial Arts styles and charms.
+ */
+public class MartialArtsTab extends VBox implements JavaView<MartialArtsViewModel>, Initializable {
 
     @InjectViewModel private MartialArtsViewModel viewModel;
 
+    private VBox stylesList;
     private CharmTreeView charmTree;
     private CharmTreeViewModel charmTreeViewModel;
     private CharmDetailsView charmDetails;
@@ -28,11 +40,38 @@ public class MartialArtsTab extends BorderPane implements JavaView<MartialArtsVi
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Create the ComboBox and bind it to ViewModel
-        ComboBox<String> filterCombo = new ComboBox<>();
-        filterCombo.setItems(viewModel.getFilterOptions());
-        filterCombo.valueProperty().bindBidirectional(viewModel.selectedFilterValueProperty());
-        filterCombo.setPrefWidth(200);
+        setPadding(new Insets(20));
+        setSpacing(20);
+        getStyleClass().add("content-area");
+
+        Label title = new Label("Martial Arts Styles");
+        title.getStyleClass().add("section-title");
+
+        stylesList = new VBox(12);
+        stylesList.getStyleClass().add("merits-list"); // Reuse styling
+
+        refreshStyles();
+        viewModel
+                .getStyleRows()
+                .addListener((ListChangeListener<MartialArtsRowViewModel>) c -> refreshStyles());
+
+        MenuButton addMenuBtn = new MenuButton("+ Add Style");
+        addMenuBtn.getStyleClass().addAll("add-btn", "action-btn");
+
+        // Prepopulated styles
+        for (String styleName : viewModel.getAvailableStyles()) {
+            MenuItem item = new MenuItem(styleName);
+            item.setOnAction(e -> viewModel.addStyle(styleName));
+            addMenuBtn.getItems().add(item);
+        }
+
+        // Custom option
+        MenuItem customItem = new MenuItem("Custom...");
+        customItem.setOnAction(e -> viewModel.addStyle());
+        addMenuBtn.getItems().add(new SeparatorMenuItem());
+        addMenuBtn.getItems().add(customItem);
+
+        VBox managementSection = new VBox(10, title, stylesList, addMenuBtn);
 
         // Load the CharmTree MVVM component
         charmTreeViewModel =
@@ -71,33 +110,51 @@ public class MartialArtsTab extends BorderPane implements JavaView<MartialArtsVi
                 .selectedFilterValueProperty()
                 .addListener((obs, oldV, newV) -> charmTreeViewModel.refresh());
 
-        // Header for the filter
-        HBox topBar = new HBox(15);
-        topBar.setPadding(new javafx.geometry.Insets(10));
-        topBar.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-
-        Label filterLabel = new Label(viewModel.filterTypeProperty().get() + ":");
-        filterLabel.setLabelFor(filterCombo);
-        filterCombo.setAccessibleText(viewModel.filterTypeProperty().get() + " filter");
-
-        topBar.getChildren().addAll(filterLabel, filterCombo);
-
         // SplitPane to host both components
         SplitPane splitPane = new SplitPane(charmTree, charmDetails);
         splitPane.getStyleClass().add("charms-split-pane");
-
-        // Let the CSS prefWidth influence the initial layout if possible
-        // but set a fallback divider position for safety
         splitPane.setDividerPositions(0.75);
-
-        // Ensure the sidebar doesn't collapse entirely by default
         SplitPane.setResizableWithParent(charmDetails, false);
+        VBox.setVgrow(splitPane, Priority.ALWAYS);
 
-        setTop(topBar);
-        setCenter(splitPane);
+        getChildren().addAll(managementSection, splitPane);
 
         // Trigger initial refresh
         charmTreeViewModel.refresh();
+    }
+
+    private void refreshStyles() {
+        if (stylesList == null) return;
+        stylesList.getChildren().clear();
+
+        for (MartialArtsRowViewModel rowVm : viewModel.getStyleRows()) {
+            MartialArtsRowView rowView = new MartialArtsRowView(rowVm);
+            rowView.setOnRemove(e -> viewModel.removeStyle(rowVm.getModel()));
+
+            // Clicking the row selects it in the charm tree
+            rowView.setOnMouseClicked(
+                    e -> {
+                        viewModel.selectedFilterValueProperty().set(rowVm.getModel().getStyleName());
+                    });
+
+            // Highlight if selected
+            rowView.styleProperty()
+                    .bind(
+                            Bindings.createStringBinding(
+                                    () -> {
+                                        if (viewModel
+                                                .selectedFilterValueProperty()
+                                                .get()
+                                                .equals(rowVm.getModel().getStyleName())) {
+                                            return "-fx-background-color: rgba(var(--caste-color-rgb), 0.1); -fx-border-color: var(--caste-color);";
+                                        }
+                                        return "";
+                                    },
+                                    viewModel.selectedFilterValueProperty(),
+                                    rowVm.nameProperty()));
+
+            stylesList.getChildren().add(rowView);
+        }
     }
 
     public void refresh() {

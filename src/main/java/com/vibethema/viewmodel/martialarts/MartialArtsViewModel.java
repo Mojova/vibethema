@@ -4,13 +4,20 @@ import com.vibethema.model.*;
 import com.vibethema.model.traits.*;
 import com.vibethema.service.CharmDataService;
 import de.saxsys.mvvmfx.ViewModel;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MartialArtsViewModel implements ViewModel {
+    private static final Logger logger = LoggerFactory.getLogger(MartialArtsViewModel.class);
+
     private final CharacterData data;
     private final CharmDataService charmDataService;
     private final Map<String, String> keywordDefs;
@@ -18,6 +25,10 @@ public class MartialArtsViewModel implements ViewModel {
     private final StringProperty filterType = new SimpleStringProperty("Martial Arts Style");
     private final StringProperty selectedFilterValue = new SimpleStringProperty("");
     private final ObservableList<String> filterOptions = FXCollections.observableArrayList();
+
+    private final ObservableList<MartialArtsRowViewModel> styleRows =
+            FXCollections.observableArrayList();
+    private final ObservableList<String> availableStyles = FXCollections.observableArrayList();
 
     public MartialArtsViewModel(
             CharacterData data,
@@ -27,14 +38,104 @@ public class MartialArtsViewModel implements ViewModel {
         this.charmDataService = charmDataService;
         this.keywordDefs = keywordDefs;
 
+        this.availableStyles.addAll(charmDataService.getAvailableMartialArtsStyles());
+
+        updateRows();
+        data.getMartialArtsStyles()
+                .addListener(
+                        (ListChangeListener<? super MartialArtsStyle>)
+                                c -> {
+                                    while (c.next()) {
+                                        if (c.wasAdded() || c.wasRemoved()) {
+                                            updateRows();
+                                            setupFilterOptions();
+                                            break;
+                                        }
+                                    }
+                                });
+
         setupFilterOptions();
     }
 
+    private void updateRows() {
+        java.util.Set<MartialArtsStyle> currentModels =
+                new java.util.HashSet<>(data.getMartialArtsStyles());
+        styleRows.removeIf(row -> !currentModels.contains(row.getModel()));
+
+        for (int i = 0; i < data.getMartialArtsStyles().size(); i++) {
+            MartialArtsStyle model = data.getMartialArtsStyles().get(i);
+            if (i >= styleRows.size() || styleRows.get(i).getModel() != model) {
+                int existingIdx = -1;
+                for (int j = i + 1; j < styleRows.size(); j++) {
+                    if (styleRows.get(j).getModel() == model) {
+                        existingIdx = j;
+                        break;
+                    }
+                }
+                if (existingIdx != -1) {
+                    MartialArtsRowViewModel moved = styleRows.remove(existingIdx);
+                    styleRows.add(i, moved);
+                } else {
+                    styleRows.add(
+                            i,
+                            new MartialArtsRowViewModel(data, model, this::createNewDatabaseStyle));
+                }
+            }
+        }
+    }
+
     private void setupFilterOptions() {
+        String current = selectedFilterValue.get();
         filterOptions.clear();
-        filterOptions.addAll(charmDataService.getAvailableMartialArtsStyles());
+        for (MartialArtsStyle style : data.getMartialArtsStyles()) {
+            filterOptions.add(style.getStyleName());
+        }
+
         if (!filterOptions.isEmpty()) {
-            selectedFilterValue.set(filterOptions.get(0));
+            if (current != null && filterOptions.contains(current)) {
+                selectedFilterValue.set(current);
+            } else {
+                selectedFilterValue.set(filterOptions.get(0));
+            }
+        } else {
+            selectedFilterValue.set("");
+        }
+    }
+
+    public void addStyle() {
+        MartialArtsStyle newStyle =
+                new MartialArtsStyle(java.util.UUID.randomUUID().toString(), "", 0);
+        data.getMartialArtsStyles().add(newStyle);
+        // Find the row and trigger editing
+        styleRows.stream()
+                .filter(r -> r.getModel() == newStyle)
+                .findFirst()
+                .ifPresent(MartialArtsRowViewModel::beginEdit);
+        data.setDirty(true);
+    }
+
+    public void addStyle(String name) {
+        if (data.getMartialArtsStyles().stream().anyMatch(s -> s.getStyleName().equals(name))) {
+            return; // Already added
+        }
+        data.getMartialArtsStyles()
+                .add(new MartialArtsStyle(java.util.UUID.randomUUID().toString(), name, 0));
+        data.setDirty(true);
+    }
+
+    public void removeStyle(MartialArtsStyle style) {
+        data.getMartialArtsStyles().remove(style);
+        data.setDirty(true);
+    }
+
+    public void createNewDatabaseStyle(String name) {
+        try {
+            charmDataService.createNewMartialArtsStyle(name);
+            // Refresh available styles
+            availableStyles.clear();
+            availableStyles.addAll(charmDataService.getAvailableMartialArtsStyles());
+        } catch (IOException e) {
+            logger.error("Failed to create new martial arts style in database", e);
         }
     }
 
@@ -63,11 +164,17 @@ public class MartialArtsViewModel implements ViewModel {
         return filterOptions;
     }
 
+    public ObservableList<MartialArtsRowViewModel> getStyleRows() {
+        return styleRows;
+    }
+
+    public ObservableList<String> getAvailableStyles() {
+        return availableStyles;
+    }
+
     public void refreshStyles() {
-        String current = selectedFilterValue.get();
+        availableStyles.clear();
+        availableStyles.addAll(charmDataService.getAvailableMartialArtsStyles());
         setupFilterOptions();
-        if (filterOptions.contains(current)) {
-            selectedFilterValue.set(current);
-        }
     }
 }
