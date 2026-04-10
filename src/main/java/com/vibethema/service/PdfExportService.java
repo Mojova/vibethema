@@ -65,12 +65,15 @@ public class PdfExportService {
             }
             List<Charm> allPurchased = new ArrayList<>(distinctCharms.values());
 
-            // Grouping: Charms vs Martial Arts
+            // Grouping: Charms vs Martial Arts vs Evocations
             List<Charm> normalCharms = new ArrayList<>();
             List<Charm> martialArtsCharms = new ArrayList<>();
+            List<Charm> evocations = new ArrayList<>();
             for (Charm c : allPurchased) {
                 if ("martialArts".equalsIgnoreCase(c.getCategory())) {
                     martialArtsCharms.add(c);
+                } else if ("evocation".equalsIgnoreCase(c.getCategory())) {
+                    evocations.add(c);
                 } else {
                     normalCharms.add(c);
                 }
@@ -89,6 +92,18 @@ public class PdfExportService {
 
             normalCharms.sort(charmComparator);
             martialArtsCharms.sort(charmComparator);
+
+            Comparator<Charm> evocationComparator =
+                    (c1, c2) -> {
+                        String a1 = data.getArtifactName(((Evocation) c1).getArtifactId());
+                        String a2 = data.getArtifactName(((Evocation) c2).getArtifactId());
+                        int artComp = a1.compareToIgnoreCase(a2);
+                        if (artComp != 0) return artComp;
+                        int essenceComp = Integer.compare(c1.getMinEssence(), c2.getMinEssence());
+                        if (essenceComp != 0) return essenceComp;
+                        return c1.getName().compareToIgnoreCase(c2.getName());
+                    };
+            evocations.sort(evocationComparator);
 
             // 2. Resolve and Sort Spells
             Map<String, Integer> spellCounts = new HashMap<>();
@@ -145,6 +160,19 @@ public class PdfExportService {
                                 currentCircle + " Circle", ctx.getSpellHeaderHeight(s));
                     }
                     ctx.drawSpell(s, spellCounts.getOrDefault(s.getId(), 1));
+                }
+            }
+
+            if (!evocations.isEmpty()) {
+                ctx.drawSectionHeader("Evocations", ctx.getCharmHeaderHeight(evocations.get(0)));
+                String currentArtifact = "";
+                for (Charm c : evocations) {
+                    String artifactName = data.getArtifactName(((Evocation) c).getArtifactId());
+                    if (!artifactName.equals(currentArtifact)) {
+                        currentArtifact = artifactName;
+                        ctx.drawSubsectionHeader(currentArtifact, ctx.getCharmHeaderHeight(c));
+                    }
+                    ctx.drawCharm(c, charmCounts.getOrDefault(c.getId(), 1));
                 }
             }
 
