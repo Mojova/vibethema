@@ -56,19 +56,23 @@ public class MeritRowView extends HBox {
         editBox.managedProperty().bind(editBox.visibleProperty());
 
         // Keyboard handling
-        nameField.setOnKeyPressed(e -> {
-            switch (e.getCode()) {
-                case ENTER -> viewModel.commitEdit();
-                case ESCAPE -> viewModel.cancelEdit();
-            }
-        });
+        nameField.setOnKeyPressed(
+                e -> {
+                    switch (e.getCode()) {
+                        case ENTER -> viewModel.commitEdit();
+                        case ESCAPE -> viewModel.cancelEdit();
+                    }
+                });
 
         // Auto-focus on edit
-        viewModel.editingProperty().addListener((obs, oldV, newV) -> {
-            if (newV) {
-                javafx.application.Platform.runLater(nameField::requestFocus);
-            }
-        });
+        viewModel
+                .editingProperty()
+                .addListener(
+                        (obs, oldV, newV) -> {
+                            if (newV) {
+                                javafx.application.Platform.runLater(nameField::requestFocus);
+                            }
+                        });
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);

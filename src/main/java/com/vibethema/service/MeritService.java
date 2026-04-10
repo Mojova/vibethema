@@ -13,9 +13,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Service for loading reference merit data from merits.json.
- */
+/** Service for loading reference merit data from merits.json. */
 public class MeritService {
     private static final Logger logger = LoggerFactory.getLogger(MeritService.class);
     private static final String MERITS_PATH = "data_source/reference/merits/merits.json";
@@ -24,8 +22,8 @@ public class MeritService {
     private List<MeritReference> cachedMerits = null;
 
     /**
-     * Loads and returns all available merits from the reference JSON file.
-     * Result is cached after the first successful load.
+     * Loads and returns all available merits from the reference JSON file. Result is cached after
+     * the first successful load.
      */
     public List<MeritReference> getAvailableMerits() {
         if (cachedMerits != null) {
@@ -54,6 +52,7 @@ public class MeritService {
     private static class MeritListWrapper {
         @SuppressWarnings("unused")
         String version;
+
         List<MeritReference> merits;
     }
 }

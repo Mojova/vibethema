@@ -11,8 +11,10 @@ import org.junit.jupiter.api.Test;
 
 public class TraitSyncTest {
     private CharacterData data;
+
     @SuppressWarnings("unused")
     private MainViewModel mainViewModel;
+
     private NotificationObserver mockObserver;
 
     @BeforeEach

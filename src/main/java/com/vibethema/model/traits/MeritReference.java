@@ -3,8 +3,8 @@ package com.vibethema.model.traits;
 import java.util.List;
 
 /**
- * Data model for reference merits loaded from merits.json.
- * This class corresponds to the structure of the merits in data_source/reference/merits/merits.json.
+ * Data model for reference merits loaded from merits.json. This class corresponds to the structure
+ * of the merits in data_source/reference/merits/merits.json.
  */
 public class MeritReference {
     private String id;

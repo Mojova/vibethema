@@ -286,9 +286,13 @@ public class PdfExportService {
             this.pageHeight = paperSize.getHeight();
             this.columnWidth = (pageWidth - (2 * margin) - columnSpacing) / 2;
 
-            this.fontBold = loadFont("/fonts/LibertinusSerif-Bold.ttf", Standard14Fonts.FontName.TIMES_BOLD);
+            this.fontBold =
+                    loadFont(
+                            "/fonts/LibertinusSerif-Bold.ttf", Standard14Fonts.FontName.TIMES_BOLD);
             this.fontRegular =
-                    loadFont("/fonts/LibertinusSerif-Regular.ttf", Standard14Fonts.FontName.TIMES_ROMAN);
+                    loadFont(
+                            "/fonts/LibertinusSerif-Regular.ttf",
+                            Standard14Fonts.FontName.TIMES_ROMAN);
             addNewPage();
         }
 

@@ -42,7 +42,8 @@ public class CharmDataService {
                                         if ("evocation".equals(category)) {
                                             return context.deserialize(json, Evocation.class);
                                         } else if ("martialArts".equals(category)) {
-                                            return context.deserialize(json, MartialArtsCharm.class);
+                                            return context.deserialize(
+                                                    json, MartialArtsCharm.class);
                                         } else {
                                             return context.deserialize(json, SolarCharm.class);
                                         }

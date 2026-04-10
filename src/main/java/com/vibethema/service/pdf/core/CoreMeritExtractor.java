@@ -14,11 +14,14 @@ public class CoreMeritExtractor extends BaseCharmExtractor {
     @Override
     public void extractAndSave(String text, String suffix) throws IOException {
         // Pre-process: Strip Core Book page-junk blocks
-        text = text.replaceAll("(?m)^(?:[A-Z\\s]{5,}|MERITS|TRAITS)\\s*\\n"
-                        + "E\\s*X\\s*3\\s*\\n"
-                        + "\\d{3}\\s*\\n",
-                "\n")
-                .replaceAll("(?m)^\\n\\d{3}\\s*\\nE\\s*X\\s*3\\s*\\n(?:[A-Z\\s]{5,})", "\n");
+        text =
+                text.replaceAll(
+                                "(?m)^(?:[A-Z\\s]{5,}|MERITS|TRAITS)\\s*\\n"
+                                        + "E\\s*X\\s*3\\s*\\n"
+                                        + "\\d{3}\\s*\\n",
+                                "\n")
+                        .replaceAll(
+                                "(?m)^\\n\\d{3}\\s*\\nE\\s*X\\s*3\\s*\\n(?:[A-Z\\s]{5,})", "\n");
 
         List<Map<String, Object>> merits = new ArrayList<>();
 
@@ -27,9 +30,12 @@ public class CoreMeritExtractor extends BaseCharmExtractor {
         // Handles: Hideous (0 dots)—Innate
         // Handles: Artifact (•• to •••••)—Story
         // Now handles slashes: Claws/Fangs/Hooves/Horns (• or ••••)—Innate
-        Pattern meritHeaderPattern = Pattern.compile("(?m)^\\s*([A-Z][\\w\\s&/'-]+) \\(([^)]+)\\)—(Story|Innate|Purchased)$");
-        
-        // We use a matcher to find all starts, then split manually to ensure we don't miss any due to whitespace issues
+        Pattern meritHeaderPattern =
+                Pattern.compile(
+                        "(?m)^\\s*([A-Z][\\w\\s&/'-]+) \\(([^)]+)\\)—(Story|Innate|Purchased)$");
+
+        // We use a matcher to find all starts, then split manually to ensure we don't miss any due
+        // to whitespace issues
         Matcher headerMatcher = meritHeaderPattern.matcher(text);
         List<Integer> startIndices = new ArrayList<>();
         while (headerMatcher.find()) {
@@ -40,7 +46,7 @@ public class CoreMeritExtractor extends BaseCharmExtractor {
             int start = startIndices.get(i);
             int end = (i < startIndices.size() - 1) ? startIndices.get(i + 1) : text.length();
             String part = text.substring(start, end).trim();
-            
+
             String[] lines = part.split("\n");
             Matcher m = meritHeaderPattern.matcher(lines[0].trim());
             if (!m.find()) continue;
@@ -57,18 +63,19 @@ public class CoreMeritExtractor extends BaseCharmExtractor {
             if (lines.length > 1 && lines[1].trim().startsWith("Prerequisite:")) {
                 prereqSb.append(lines[1].replace("Prerequisite:", "").trim());
                 descStartIdx = 2;
-                
+
                 // Multi-line prerequisite support
                 while (descStartIdx < lines.length) {
                     String nextLine = lines[descStartIdx].trim();
                     if (nextLine.isEmpty()) break;
-                    
+
                     String currentPrereq = prereqSb.toString().trim();
-                    boolean isContinuation = currentPrereq.endsWith(",") 
-                                          || currentPrereq.endsWith("or") 
-                                          || currentPrereq.endsWith("and")
-                                          || Character.isLowerCase(nextLine.charAt(0));
-                    
+                    boolean isContinuation =
+                            currentPrereq.endsWith(",")
+                                    || currentPrereq.endsWith("or")
+                                    || currentPrereq.endsWith("and")
+                                    || Character.isLowerCase(nextLine.charAt(0));
+
                     if (isContinuation) {
                         prereqSb.append(" ").append(nextLine);
                         descStartIdx++;
@@ -82,7 +89,9 @@ public class CoreMeritExtractor extends BaseCharmExtractor {
             for (int j = descStartIdx; j < lines.length; j++) {
                 String line = lines[j].trim();
                 // Check for section breaks that should stop description extraction
-                if (line.equals("Flaws") || line.equals("FLAWS") || line.equals("Supernatural Merits")) {
+                if (line.equals("Flaws")
+                        || line.equals("FLAWS")
+                        || line.equals("Supernatural Merits")) {
                     break;
                 }
                 descRaw.append(lines[j]).append("\n");
@@ -114,7 +123,7 @@ public class CoreMeritExtractor extends BaseCharmExtractor {
             ratings.add(0);
             return ratings;
         }
-        
+
         // Handle range: "•• to •••••"
         if (rawDots.contains(" to ")) {
             String[] parts = rawDots.split(" to ");
@@ -123,7 +132,7 @@ public class CoreMeritExtractor extends BaseCharmExtractor {
             for (int i = Math.max(1, start); i <= end; i++) {
                 ratings.add(i);
             }
-        } 
+        }
         // Handle options: "•, •••, or •••••"
         else if (rawDots.contains(",") || rawDots.contains(" or ")) {
             String[] parts = rawDots.split(",| or ");
@@ -155,12 +164,15 @@ public class CoreMeritExtractor extends BaseCharmExtractor {
     }
 
     private void saveMerits(List<Map<String, Object>> merits, String suffix) throws IOException {
-        Path outDir = overrideOutputPath != null 
-            ? overrideOutputPath 
-            : com.vibethema.service.CharmDataService.getUserCharmsPath().getParent().resolve("merits");
-        
+        Path outDir =
+                overrideOutputPath != null
+                        ? overrideOutputPath
+                        : com.vibethema.service.CharmDataService.getUserCharmsPath()
+                                .getParent()
+                                .resolve("merits");
+
         if (!Files.exists(outDir)) Files.createDirectories(outDir);
-        
+
         Path filePath = outDir.resolve("merits" + suffix + ".json");
         try (java.io.Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
             Map<String, Object> wrapper = new LinkedHashMap<>();

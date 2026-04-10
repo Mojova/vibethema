@@ -1,7 +1,5 @@
 package com.vibethema.ui.martialarts;
 
-import com.vibethema.model.CharacterData;
-import com.vibethema.model.CharacterMode;
 import com.vibethema.ui.charms.CharmDetailsView;
 import com.vibethema.ui.charms.CharmTreeView;
 import com.vibethema.viewmodel.charms.CharmDetailsViewModel;
@@ -17,6 +15,7 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
@@ -25,9 +24,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
-/**
- * Tab for managing and viewing Martial Arts styles and charms.
- */
+/** Tab for managing and viewing Martial Arts styles and charms. */
 public class MartialArtsTab extends VBox implements JavaView<MartialArtsViewModel>, Initializable {
 
     @InjectViewModel private MartialArtsViewModel viewModel;
@@ -117,7 +114,22 @@ public class MartialArtsTab extends VBox implements JavaView<MartialArtsViewMode
         SplitPane.setResizableWithParent(charmDetails, false);
         VBox.setVgrow(splitPane, Priority.ALWAYS);
 
-        getChildren().addAll(managementSection, splitPane);
+        // Main layout vs Warning
+        Label warningLabel =
+                new Label("Purchase Martial Artist merit to enable Martial Arts styles.");
+        warningLabel.getStyleClass().add("problematic-warning");
+        warningLabel.setMaxWidth(Double.MAX_VALUE);
+        warningLabel.setAlignment(Pos.CENTER);
+        warningLabel.visibleProperty().bind(viewModel.martialArtsEnabledProperty().not());
+        warningLabel.managedProperty().bind(warningLabel.visibleProperty());
+
+        VBox mainContent = new VBox(20);
+        mainContent.visibleProperty().bind(viewModel.martialArtsEnabledProperty());
+        mainContent.managedProperty().bind(mainContent.visibleProperty());
+        VBox.setVgrow(mainContent, Priority.ALWAYS);
+        mainContent.getChildren().addAll(managementSection, splitPane);
+
+        getChildren().addAll(warningLabel, mainContent);
 
         // Trigger initial refresh
         charmTreeViewModel.refresh();
@@ -134,7 +146,9 @@ public class MartialArtsTab extends VBox implements JavaView<MartialArtsViewMode
             // Clicking the row selects it in the charm tree
             rowView.setOnMouseClicked(
                     e -> {
-                        viewModel.selectedFilterValueProperty().set(rowVm.getModel().getStyleName());
+                        viewModel
+                                .selectedFilterValueProperty()
+                                .set(rowVm.getModel().getStyleName());
                     });
 
             // Highlight if selected
@@ -146,7 +160,9 @@ public class MartialArtsTab extends VBox implements JavaView<MartialArtsViewMode
                                                 .selectedFilterValueProperty()
                                                 .get()
                                                 .equals(rowVm.getModel().getStyleName())) {
-                                            return "-fx-background-color: rgba(var(--caste-color-rgb), 0.1); -fx-border-color: var(--caste-color);";
+                                            return "-fx-background-color:"
+                                                    + " rgba(var(--caste-color-rgb), 0.1);"
+                                                    + " -fx-border-color: var(--caste-color);";
                                         }
                                         return "";
                                     },

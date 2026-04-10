@@ -2,23 +2,23 @@ package com.vibethema.ui;
 
 import com.vibethema.model.*;
 import com.vibethema.model.mystic.*;
+import com.vibethema.service.UserPreferencesService;
 import com.vibethema.ui.charms.CharmsTab;
 import com.vibethema.ui.charms.EditCharmView;
-import com.vibethema.ui.martialarts.MartialArtsTab;
 import com.vibethema.ui.equipment.DefaultEquipmentDialogService;
 import com.vibethema.ui.equipment.EquipmentTab;
 import com.vibethema.ui.experience.ExperienceTab;
 import com.vibethema.ui.footer.FooterView;
+import com.vibethema.ui.martialarts.MartialArtsTab;
 import com.vibethema.ui.sorcery.SorceryTab;
 import com.vibethema.ui.util.ThemeManager;
-import com.vibethema.service.UserPreferencesService;
 import com.vibethema.viewmodel.*;
 import com.vibethema.viewmodel.charms.CharmsViewModel;
 import com.vibethema.viewmodel.charms.EditCharmViewModel;
-import com.vibethema.viewmodel.martialarts.MartialArtsViewModel;
 import com.vibethema.viewmodel.equipment.EquipmentViewModel;
 import com.vibethema.viewmodel.experience.ExperienceViewModel;
 import com.vibethema.viewmodel.footer.FooterViewModel;
+import com.vibethema.viewmodel.martialarts.MartialArtsViewModel;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
@@ -163,10 +163,14 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                 });
 
         addObserver("preferences_updated", (name, payload) -> refreshTheme());
-        
-        viewModel.getData().casteProperty().addListener((obs, oldV, newV) -> {
-            refreshTheme();
-        });
+
+        viewModel
+                .getData()
+                .casteProperty()
+                .addListener(
+                        (obs, oldV, newV) -> {
+                            refreshTheme();
+                        });
 
         refreshTheme();
 
@@ -237,10 +241,12 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                 (name, payload) -> {
                     FileChooser fileChooser = new FileChooser();
                     fileChooser.setTitle("Load Character");
-                    
-                    FileChooser.ExtensionFilter vbtmFilter = new FileChooser.ExtensionFilter("VBTM Files", "*.vbtm", "*.VBTM");
-                    FileChooser.ExtensionFilter allFilter = new FileChooser.ExtensionFilter("All Files", "*");
-                    
+
+                    FileChooser.ExtensionFilter vbtmFilter =
+                            new FileChooser.ExtensionFilter("VBTM Files", "*.vbtm", "*.VBTM");
+                    FileChooser.ExtensionFilter allFilter =
+                            new FileChooser.ExtensionFilter("All Files", "*");
+
                     fileChooser.getExtensionFilters().addAll(vbtmFilter, allFilter);
                     fileChooser.setSelectedExtensionFilter(vbtmFilter);
 
@@ -479,10 +485,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
     private void refreshTheme() {
         UserPreferencesService prefs = UserPreferencesService.getInstance();
         ThemeManager.applyThemes(
-                this,
-                prefs.getBaseTheme(),
-                viewModel.getData().casteProperty().get()
-        );
+                this, prefs.getBaseTheme(), viewModel.getData().casteProperty().get());
     }
 
     private void updateExperienceTabVisibility(CharacterMode mode) {
@@ -666,17 +669,25 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                         });
 
         Label casteValueLabel = new Label();
-        casteValueLabel.getStyleClass().add("caste-marker"); // Reuse style from elsewhere if appropriate or add new
-        casteValueLabel.setStyle("-fx-text-fill: #d4af37; -fx-font-weight: bold; -fx-font-size: 14px;");
-        casteValueLabel.textProperty().bind(Bindings.createStringBinding(
-                () -> viewModel.getData().casteProperty().get().toString(),
-                viewModel.getData().casteProperty()
-        ));
+        casteValueLabel
+                .getStyleClass()
+                .add("caste-marker"); // Reuse style from elsewhere if appropriate or add new
+        casteValueLabel.setStyle(
+                "-fx-text-fill: #d4af37; -fx-font-weight: bold; -fx-font-size: 14px;");
+        casteValueLabel
+                .textProperty()
+                .bind(
+                        Bindings.createStringBinding(
+                                () -> viewModel.getData().casteProperty().get().toString(),
+                                viewModel.getData().casteProperty()));
 
         // Visibility bindings for Caste
-        casteBox.visibleProperty().bind(viewModel.getData().modeProperty().isEqualTo(CharacterMode.CREATION));
+        casteBox.visibleProperty()
+                .bind(viewModel.getData().modeProperty().isEqualTo(CharacterMode.CREATION));
         casteBox.managedProperty().bind(casteBox.visibleProperty());
-        casteValueLabel.visibleProperty().bind(viewModel.getData().modeProperty().isEqualTo(CharacterMode.EXPERIENCED));
+        casteValueLabel
+                .visibleProperty()
+                .bind(viewModel.getData().modeProperty().isEqualTo(CharacterMode.EXPERIENCED));
         casteValueLabel.managedProperty().bind(casteValueLabel.visibleProperty());
 
         // Keep UI in sync with Model (for loads/imports)
@@ -729,13 +740,18 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         supernalContainer.getChildren().addAll(supernalDropdown, helpBtn);
 
         Label supernalValueLabel = new Label();
-        supernalValueLabel.setStyle("-fx-text-fill: #3498db; -fx-font-weight: bold; -fx-font-size: 14px;");
+        supernalValueLabel.setStyle(
+                "-fx-text-fill: #3498db; -fx-font-weight: bold; -fx-font-size: 14px;");
         supernalValueLabel.textProperty().bind(viewModel.getData().supernalAbilityProperty());
 
         // Visibility bindings for Supernal
-        supernalContainer.visibleProperty().bind(viewModel.getData().modeProperty().isEqualTo(CharacterMode.CREATION));
+        supernalContainer
+                .visibleProperty()
+                .bind(viewModel.getData().modeProperty().isEqualTo(CharacterMode.CREATION));
         supernalContainer.managedProperty().bind(supernalContainer.visibleProperty());
-        supernalValueLabel.visibleProperty().bind(viewModel.getData().modeProperty().isEqualTo(CharacterMode.EXPERIENCED));
+        supernalValueLabel
+                .visibleProperty()
+                .bind(viewModel.getData().modeProperty().isEqualTo(CharacterMode.EXPERIENCED));
         supernalValueLabel.managedProperty().bind(supernalValueLabel.visibleProperty());
 
         basicInfo
@@ -790,10 +806,11 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
     private void handleSaveAs(String suggestName) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Character");
-        
-        FileChooser.ExtensionFilter vbtmFilter = new FileChooser.ExtensionFilter("VBTM Files", "*.vbtm");
+
+        FileChooser.ExtensionFilter vbtmFilter =
+                new FileChooser.ExtensionFilter("VBTM Files", "*.vbtm");
         FileChooser.ExtensionFilter allFilter = new FileChooser.ExtensionFilter("All Files", "*");
-        
+
         fileChooser.getExtensionFilters().addAll(vbtmFilter, allFilter);
         fileChooser.setSelectedExtensionFilter(vbtmFilter);
 
@@ -1011,10 +1028,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         // Apply current theme to dialog
         UserPreferencesService prefs = UserPreferencesService.getInstance();
         ThemeManager.applyThemes(
-                dialogPane,
-                prefs.getBaseTheme(),
-                viewModel.getData().casteProperty().get()
-        );
+                dialogPane, prefs.getBaseTheme(), viewModel.getData().casteProperty().get());
 
         if (dialog instanceof Alert alert) {
             if (alert.getAlertType() == Alert.AlertType.WARNING

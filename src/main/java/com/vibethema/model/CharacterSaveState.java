@@ -3,7 +3,6 @@ package com.vibethema.model;
 import com.vibethema.model.mystic.*;
 import com.vibethema.model.social.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -215,6 +214,7 @@ public class CharacterSaveState {
 
     public static class MeritData {
         public String id;
+        public String definitionId;
         public String name;
         public int rating;
         public String description;
@@ -226,13 +226,14 @@ public class CharacterSaveState {
             MeritData that = (MeritData) o;
             return rating == that.rating
                     && Objects.equals(id, that.id)
+                    && Objects.equals(definitionId, that.definitionId)
                     && Objects.equals(name, that.name)
                     && Objects.equals(description, that.description);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(id, name, rating, description);
+            return Objects.hash(id, definitionId, name, rating, description);
         }
     }
 

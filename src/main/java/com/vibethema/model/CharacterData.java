@@ -225,6 +225,11 @@ public class CharacterData {
         markDirty();
     }
 
+    public boolean hasMeritByDefinitionId(String defId) {
+        if (defId == null) return false;
+        return getMerits().stream().anyMatch(m -> defId.equals(m.getDefinitionId()));
+    }
+
     // Delegated Methods - EquipmentModel
     public ObservableList<Weapon> getWeapons() {
         return equipmentModel.getWeapons();
@@ -639,12 +644,12 @@ public class CharacterData {
 
         state.unlockedCharms = new ArrayList<>(getUnlockedCharms());
 
-        state.merits = new ArrayList<>();
         getMerits()
                 .forEach(
                         m -> {
                             CharacterSaveState.MeritData md = new CharacterSaveState.MeritData();
                             md.id = m.getId();
+                            md.definitionId = m.getDefinitionId();
                             md.name = m.getName();
                             md.rating = m.getRating();
                             md.description = m.getDescription();
@@ -859,6 +864,7 @@ public class CharacterData {
                                         .add(
                                                 new Merit(
                                                         md.id,
+                                                        md.definitionId,
                                                         md.name,
                                                         md.rating,
                                                         md.description != null

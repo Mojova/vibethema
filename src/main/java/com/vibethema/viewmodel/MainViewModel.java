@@ -12,10 +12,10 @@ import com.vibethema.service.PdfExportService;
 import com.vibethema.service.SystemDataService;
 import com.vibethema.service.UndoManager;
 import com.vibethema.viewmodel.charms.CharmsViewModel;
-import com.vibethema.viewmodel.martialarts.MartialArtsViewModel;
 import com.vibethema.viewmodel.equipment.EquipmentViewModel;
 import com.vibethema.viewmodel.experience.ExperienceViewModel;
 import com.vibethema.viewmodel.footer.FooterViewModel;
+import com.vibethema.viewmodel.martialarts.MartialArtsViewModel;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;
 import java.io.File;
@@ -590,8 +590,7 @@ public class MainViewModel implements ViewModel {
 
     public MartialArtsViewModel getMartialArtsViewModel() {
         if (martialArtsViewModel == null) {
-            martialArtsViewModel =
-                    new MartialArtsViewModel(data, charmDataService, keywordDefs);
+            martialArtsViewModel = new MartialArtsViewModel(data, charmDataService, keywordDefs);
         }
         return martialArtsViewModel;
     }
@@ -816,8 +815,8 @@ public class MainViewModel implements ViewModel {
                     + "Vibethema is not official Exalted material.\n\n"
                     + " information please visit worldofdarkness.com.\n\n"
                     + "--- CREDITS ---\n"
-                    + "Includes Libertinus Serif font by Khaled Hosny, licensed under the SIL Open Font"
-                    + " License.";
+                    + "Includes Libertinus Serif font by Khaled Hosny, licensed under the SIL Open"
+                    + " Font License.";
         Messenger.publish("show_about_dialog", new Object[] {"About Vibethema", msg});
     }
 }

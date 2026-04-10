@@ -6,8 +6,10 @@ import com.vibethema.service.CharmDataService;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -30,6 +32,7 @@ public class MartialArtsViewModel implements ViewModel {
     private final ObservableList<MartialArtsRowViewModel> styleRows =
             FXCollections.observableArrayList();
     private final ObservableList<String> availableStyles = FXCollections.observableArrayList();
+    private final BooleanProperty martialArtsEnabled = new SimpleBooleanProperty();
 
     public MartialArtsViewModel(
             CharacterData data,
@@ -41,11 +44,17 @@ public class MartialArtsViewModel implements ViewModel {
 
         this.availableStyles.addAll(charmDataService.getAvailableMartialArtsStyles());
 
+        this.martialArtsEnabled.bind(
+                Bindings.createBooleanBinding(
+                        () -> data.hasMeritByDefinitionId("3dd46a27-92bf-3295-9a1b-dba09c281581"),
+                        data.getMerits()));
+
         updateRows();
 
         // Listen for rating changes to trigger UI refreshes (e.g. charm eligibility)
         for (MartialArtsStyle style : data.getMartialArtsStyles()) {
-            style.ratingProperty().addListener((obs, oldV, newV) -> Messenger.publish("refresh_all_ui"));
+            style.ratingProperty()
+                    .addListener((obs, oldV, newV) -> Messenger.publish("refresh_all_ui"));
         }
 
         data.getMartialArtsStyles()
@@ -185,6 +194,10 @@ public class MartialArtsViewModel implements ViewModel {
 
     public ObservableList<String> getAvailableStyles() {
         return availableStyles;
+    }
+
+    public BooleanProperty martialArtsEnabledProperty() {
+        return martialArtsEnabled;
     }
 
     public void refreshStyles() {

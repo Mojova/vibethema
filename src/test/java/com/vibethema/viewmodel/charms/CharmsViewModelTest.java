@@ -39,7 +39,6 @@ public class CharmsViewModelTest {
                         + " type");
     }
 
-
     @Test
     void testSelectedFilterValueProperty() {
         viewModel.selectedFilterValueProperty().set("Melee");

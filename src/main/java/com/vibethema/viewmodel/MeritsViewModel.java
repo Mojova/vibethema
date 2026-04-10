@@ -11,7 +11,8 @@ import javafx.collections.ObservableList;
 public class MeritsViewModel implements ViewModel {
     private final CharacterData data;
     private final ObservableList<MeritRowViewModel> meritRows = FXCollections.observableArrayList();
-    private final ObservableList<MeritReference> availableMerits = FXCollections.observableArrayList();
+    private final ObservableList<MeritReference> availableMerits =
+            FXCollections.observableArrayList();
     private final MeritService meritService = new MeritService();
 
     public MeritsViewModel(CharacterData data) {
@@ -81,6 +82,7 @@ public class MeritsViewModel implements ViewModel {
                 .add(
                         new Merit(
                                 java.util.UUID.randomUUID().toString(),
+                                ref.getId(),
                                 ref.getName(),
                                 initialRating,
                                 ref.getDescription()));

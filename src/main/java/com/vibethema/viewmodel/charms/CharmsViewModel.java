@@ -69,7 +69,6 @@ public class CharmsViewModel implements ViewModel {
         return filterOptions;
     }
 
-
     public void refreshStyles() {
         // No longer handles Martial Arts Style directly
     }

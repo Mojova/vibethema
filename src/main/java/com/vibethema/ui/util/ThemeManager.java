@@ -3,16 +3,14 @@ package com.vibethema.ui.util;
 import com.vibethema.model.Caste;
 import javafx.scene.Node;
 
-/**
- * Utility to manage and apply layered themes to the application UI.
- */
+/** Utility to manage and apply layered themes to the application UI. */
 public class ThemeManager {
 
     private static final String BASE_PREFIX = "theme-";
 
     public static void applyThemes(Node node, String baseTheme, Caste caste) {
         if (node == null) return;
-        
+
         // Remove existing theme classes
         node.getStyleClass().removeIf(s -> s.startsWith(BASE_PREFIX));
 

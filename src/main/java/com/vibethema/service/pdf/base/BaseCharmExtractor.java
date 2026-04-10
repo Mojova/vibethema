@@ -240,8 +240,7 @@ public abstract class BaseCharmExtractor {
                     || upper.contains("MERIT")
                     || upper.contains("FLAW")
                     || upper.contains("SUPERNATURAL")
-                    || upper.contains("MASTERY"))
-                return true;
+                    || upper.contains("MASTERY")) return true;
         }
 
         // Common 3e formatting artifacts with spaced letters

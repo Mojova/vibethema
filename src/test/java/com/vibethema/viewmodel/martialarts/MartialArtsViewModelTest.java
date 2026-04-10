@@ -20,11 +20,11 @@ public class MartialArtsViewModelTest {
     void setUp() {
         data = new CharacterData();
         charmDataService = mock(CharmDataService.class);
-        
+
         java.util.List<String> styles = java.util.List.of("Single Point", "Steel Devil");
         org.mockito.Mockito.when(charmDataService.getAvailableMartialArtsStyles())
                 .thenReturn(styles);
-                
+
         viewModel = new MartialArtsViewModel(data, charmDataService, new HashMap<>());
     }
 
@@ -56,12 +56,13 @@ public class MartialArtsViewModelTest {
 
     @Test
     void testRefreshStylesUpdatesAvailableList() {
-        java.util.List<String> newStyles = java.util.List.of("Single Point", "Steel Devil", "Dreaming Pearl");
+        java.util.List<String> newStyles =
+                java.util.List.of("Single Point", "Steel Devil", "Dreaming Pearl");
         org.mockito.Mockito.when(charmDataService.getAvailableMartialArtsStyles())
                 .thenReturn(newStyles);
-        
+
         viewModel.refreshStyles();
-        
+
         assertTrue(viewModel.getAvailableStyles().contains("Dreaming Pearl"));
         assertEquals(3, viewModel.getAvailableStyles().size());
     }
