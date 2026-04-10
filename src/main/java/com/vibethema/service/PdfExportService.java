@@ -5,10 +5,15 @@ import com.vibethema.model.combat.*;
 import com.vibethema.model.equipment.*;
 import com.vibethema.model.mystic.*;
 import com.vibethema.model.traits.*;
+import java.awt.EventQueue;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -21,164 +26,241 @@ import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
+import org.apache.pdfbox.printing.PDFPageable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PdfExportService {
+    private static final Logger logger = LoggerFactory.getLogger(PdfExportService.class);
     private static final String TEMPLATE_PATH = "/interactive_sheet.pdf";
 
+    private void printDocument(PDDocument doc) throws PrinterException {
+        PrinterJob job = PrinterJob.getPrinterJob();
+        job.setPageable(new PDFPageable(doc));
+        if (job.printDialog()) {
+            job.print();
+        }
+    }
+
     public void exportToPdf(CharacterData data, File outputFile) throws IOException {
-        try (InputStream is = getClass().getResourceAsStream(TEMPLATE_PATH)) {
-            if (is == null) {
-                throw new IOException("Template not found: " + TEMPLATE_PATH);
+        try (PDDocument doc = generateCharacterSheetDocument(data)) {
+            doc.save(outputFile);
+        }
+    }
+
+    public void printCharacterSheet(CharacterData data) {
+        new Thread(
+                        () -> {
+                            try {
+                                PDDocument doc = generateCharacterSheetDocument(data);
+                                EventQueue.invokeLater(
+                                        () -> {
+                                            try {
+                                                printDocument(doc);
+                                            } catch (PrinterException e) {
+                                                logger.error("Failed to print character sheet", e);
+                                            } finally {
+                                                try {
+                                                    doc.close();
+                                                } catch (IOException e) {
+                                                    logger.error("Error closing document", e);
+                                                }
+                                            }
+                                        });
+                            } catch (IOException e) {
+                                logger.error("Failed to generate document for printing", e);
+                            }
+                        })
+                .start();
+    }
+
+    private PDDocument generateCharacterSheetDocument(CharacterData data) throws IOException {
+        InputStream is = getClass().getResourceAsStream(TEMPLATE_PATH);
+        if (is == null) {
+            throw new IOException("Template not found: " + TEMPLATE_PATH);
+        }
+        try (is) {
+            PDDocument doc = Loader.loadPDF(is.readAllBytes());
+            PDAcroForm acroForm = doc.getDocumentCatalog().getAcroForm();
+            if (acroForm != null) {
+                fillForm(data, acroForm);
             }
-            try (PDDocument doc = Loader.loadPDF(is.readAllBytes())) {
-                PDAcroForm acroForm = doc.getDocumentCatalog().getAcroForm();
-                if (acroForm != null) {
-                    fillForm(data, acroForm);
-                }
-                doc.save(outputFile);
-            }
+            return doc;
         }
     }
 
     public void exportCharmsToPdf(
             CharacterData data, File outputFile, CharmDataService charmService) throws IOException {
-        try (PDDocument doc = new PDDocument()) {
-            ExportContext ctx = new ExportContext(doc);
-
-            // 1. Resolve and Sort Charms
-            Map<String, List<Charm>> abilityCache = new HashMap<>();
-
-            Map<String, Integer> charmCounts = new HashMap<>();
-            Map<String, Charm> distinctCharms = new HashMap<>();
-            for (PurchasedCharm pc : data.getUnlockedCharms()) {
-                charmCounts.merge(pc.id(), 1, Integer::sum);
-                if (!distinctCharms.containsKey(pc.id())) {
-                    String ability = pc.ability();
-                    List<Charm> charms =
-                            abilityCache.computeIfAbsent(
-                                    ability, k -> charmService.loadCharmsForAbility(ability));
-                    charms.stream()
-                            .filter(c -> c.getId().equals(pc.id()))
-                            .findFirst()
-                            .ifPresent(c -> distinctCharms.put(c.getId(), c));
-                }
-            }
-            List<Charm> allPurchased = new ArrayList<>(distinctCharms.values());
-
-            // Grouping: Charms vs Martial Arts vs Evocations
-            List<Charm> normalCharms = new ArrayList<>();
-            List<Charm> martialArtsCharms = new ArrayList<>();
-            List<Charm> evocations = new ArrayList<>();
-            for (Charm c : allPurchased) {
-                if ("martialArts".equalsIgnoreCase(c.getCategory())) {
-                    martialArtsCharms.add(c);
-                } else if ("evocation".equalsIgnoreCase(c.getCategory())) {
-                    evocations.add(c);
-                } else {
-                    normalCharms.add(c);
-                }
-            }
-
-            Comparator<Charm> charmComparator =
-                    (c1, c2) -> {
-                        int abilityComp = c1.getAbility().compareTo(c2.getAbility());
-                        if (abilityComp != 0) return abilityComp;
-                        int essenceComp = Integer.compare(c1.getMinEssence(), c2.getMinEssence());
-                        if (essenceComp != 0) return essenceComp;
-                        int minAbComp = Integer.compare(c1.getMinAbility(), c2.getMinAbility());
-                        if (minAbComp != 0) return minAbComp;
-                        return c1.getName().compareTo(c2.getName());
-                    };
-
-            normalCharms.sort(charmComparator);
-            martialArtsCharms.sort(charmComparator);
-
-            Comparator<Charm> evocationComparator =
-                    (c1, c2) -> {
-                        String a1 = data.getArtifactName(((Evocation) c1).getArtifactId());
-                        String a2 = data.getArtifactName(((Evocation) c2).getArtifactId());
-                        int artComp = a1.compareToIgnoreCase(a2);
-                        if (artComp != 0) return artComp;
-                        int essenceComp = Integer.compare(c1.getMinEssence(), c2.getMinEssence());
-                        if (essenceComp != 0) return essenceComp;
-                        return c1.getName().compareToIgnoreCase(c2.getName());
-                    };
-            evocations.sort(evocationComparator);
-
-            // 2. Resolve and Sort Spells
-            Map<String, Integer> spellCounts = new HashMap<>();
-            Map<String, Spell> distinctSpells = new HashMap<>();
-            for (Spell s : data.getSpells()) {
-                spellCounts.merge(s.getId(), 1, Integer::sum);
-                distinctSpells.putIfAbsent(s.getId(), s);
-            }
-            List<Spell> spells = new ArrayList<>(distinctSpells.values());
-            spells.sort(
-                    (s1, s2) -> {
-                        int circleComp =
-                                Spell.Circle.valueOf(s1.getCircle()).ordinal()
-                                        - Spell.Circle.valueOf(s2.getCircle()).ordinal();
-                        if (circleComp != 0) return circleComp;
-                        return s1.getName().compareTo(s2.getName());
-                    });
-
-            // 3. Rendering
-            ctx.drawMainTitle(data.nameProperty().get() + " - Charms & Spells");
-
-            if (!normalCharms.isEmpty()) {
-                ctx.drawSectionHeader("Charms", ctx.getCharmHeaderHeight(normalCharms.get(0)));
-                String currentAbility = "";
-                for (Charm c : normalCharms) {
-                    if (!c.getAbility().equals(currentAbility)) {
-                        currentAbility = c.getAbility();
-                        ctx.drawSubsectionHeader(currentAbility, ctx.getCharmHeaderHeight(c));
-                    }
-                    ctx.drawCharm(c, charmCounts.getOrDefault(c.getId(), 1));
-                }
-            }
-
-            if (!martialArtsCharms.isEmpty()) {
-                ctx.drawSectionHeader(
-                        "Martial Arts", ctx.getCharmHeaderHeight(martialArtsCharms.get(0)));
-                String currentStyle = "";
-                for (Charm c : martialArtsCharms) {
-                    if (!c.getAbility().equals(currentStyle)) {
-                        currentStyle = c.getAbility();
-                        ctx.drawSubsectionHeader(currentStyle, ctx.getCharmHeaderHeight(c));
-                    }
-                    ctx.drawCharm(c, charmCounts.getOrDefault(c.getId(), 1));
-                }
-            }
-
-            if (!spells.isEmpty()) {
-                ctx.drawSectionHeader("Spells", ctx.getSpellHeaderHeight(spells.get(0)));
-                String currentCircle = "";
-                for (Spell s : spells) {
-                    if (!s.getCircle().equals(currentCircle)) {
-                        currentCircle = s.getCircle();
-                        ctx.drawSubsectionHeader(
-                                currentCircle + " Circle", ctx.getSpellHeaderHeight(s));
-                    }
-                    ctx.drawSpell(s, spellCounts.getOrDefault(s.getId(), 1));
-                }
-            }
-
-            if (!evocations.isEmpty()) {
-                ctx.drawSectionHeader("Evocations", ctx.getCharmHeaderHeight(evocations.get(0)));
-                String currentArtifact = "";
-                for (Charm c : evocations) {
-                    String artifactName = data.getArtifactName(((Evocation) c).getArtifactId());
-                    if (!artifactName.equals(currentArtifact)) {
-                        currentArtifact = artifactName;
-                        ctx.drawSubsectionHeader(currentArtifact, ctx.getCharmHeaderHeight(c));
-                    }
-                    ctx.drawCharm(c, charmCounts.getOrDefault(c.getId(), 1));
-                }
-            }
-
-            ctx.close();
+        try (PDDocument doc = generateCharmsDocument(data, charmService)) {
             doc.save(outputFile);
         }
+    }
+
+    public void printCharms(CharacterData data, CharmDataService charmService) {
+        new Thread(
+                        () -> {
+                            try {
+                                PDDocument doc = generateCharmsDocument(data, charmService);
+                                EventQueue.invokeLater(
+                                        () -> {
+                                            try {
+                                                printDocument(doc);
+                                            } catch (PrinterException e) {
+                                                logger.error("Failed to print charms", e);
+                                            } finally {
+                                                try {
+                                                    doc.close();
+                                                } catch (IOException e) {
+                                                    logger.error("Error closing document", e);
+                                                }
+                                            }
+                                        });
+                            } catch (IOException e) {
+                                logger.error("Failed to generate charms document for printing", e);
+                            }
+                        })
+                .start();
+    }
+
+    private PDDocument generateCharmsDocument(CharacterData data, CharmDataService charmService)
+            throws IOException {
+        PDDocument doc = new PDDocument();
+        ExportContext ctx = new ExportContext(doc);
+
+        // 1. Resolve and Sort Charms
+        Map<String, List<Charm>> abilityCache = new HashMap<>();
+
+        Map<String, Integer> charmCounts = new HashMap<>();
+        Map<String, Charm> distinctCharms = new HashMap<>();
+        for (PurchasedCharm pc : data.getUnlockedCharms()) {
+            charmCounts.merge(pc.id(), 1, Integer::sum);
+            if (!distinctCharms.containsKey(pc.id())) {
+                String ability = pc.ability();
+                List<Charm> charms =
+                        abilityCache.computeIfAbsent(
+                                ability, k -> charmService.loadCharmsForAbility(ability));
+                charms.stream()
+                        .filter(c -> c.getId().equals(pc.id()))
+                        .findFirst()
+                        .ifPresent(c -> distinctCharms.put(c.getId(), c));
+            }
+        }
+        List<Charm> allPurchased = new ArrayList<>(distinctCharms.values());
+
+        // Grouping: Charms vs Martial Arts vs Evocations
+        List<Charm> normalCharms = new ArrayList<>();
+        List<Charm> martialArtsCharms = new ArrayList<>();
+        List<Charm> evocations = new ArrayList<>();
+        for (Charm c : allPurchased) {
+            if ("martialArts".equalsIgnoreCase(c.getCategory())) {
+                martialArtsCharms.add(c);
+            } else if ("evocation".equalsIgnoreCase(c.getCategory())) {
+                evocations.add(c);
+            } else {
+                normalCharms.add(c);
+            }
+        }
+
+        Comparator<Charm> charmComparator =
+                (c1, c2) -> {
+                    int abilityComp = c1.getAbility().compareTo(c2.getAbility());
+                    if (abilityComp != 0) return abilityComp;
+                    int essenceComp = Integer.compare(c1.getMinEssence(), c2.getMinEssence());
+                    if (essenceComp != 0) return essenceComp;
+                    int minAbComp = Integer.compare(c1.getMinAbility(), c2.getMinAbility());
+                    if (minAbComp != 0) return minAbComp;
+                    return c1.getName().compareTo(c2.getName());
+                };
+
+        normalCharms.sort(charmComparator);
+        martialArtsCharms.sort(charmComparator);
+
+        Comparator<Charm> evocationComparator =
+                (c1, c2) -> {
+                    String a1 = data.getArtifactName(((Evocation) c1).getArtifactId());
+                    String a2 = data.getArtifactName(((Evocation) c2).getArtifactId());
+                    int artComp = a1.compareToIgnoreCase(a2);
+                    if (artComp != 0) return artComp;
+                    int essenceComp = Integer.compare(c1.getMinEssence(), c2.getMinEssence());
+                    if (essenceComp != 0) return essenceComp;
+                    return c1.getName().compareTo(c2.getName());
+                };
+        evocations.sort(evocationComparator);
+
+        List<Spell> spells = new ArrayList<>();
+        Map<String, Integer> spellCounts = new HashMap<>();
+        Map<String, Spell> distinctSpells = new HashMap<>();
+        for (Spell s : data.getSpells()) {
+            spellCounts.merge(s.getId(), 1, Integer::sum);
+            distinctSpells.putIfAbsent(s.getId(), s);
+        }
+        spells.addAll(distinctSpells.values());
+
+        spells.sort(
+                (s1, s2) -> {
+                    int circleComp =
+                            Spell.Circle.valueOf(s1.getCircle().toUpperCase()).ordinal()
+                                    - Spell.Circle.valueOf(s2.getCircle().toUpperCase()).ordinal();
+                    if (circleComp != 0) return circleComp;
+                    return s1.getName().compareTo(s2.getName());
+                });
+
+        // 2. Render
+        ctx.drawMainTitle(data.nameProperty().get() + " - Charms & Spells");
+
+        if (!normalCharms.isEmpty()) {
+            ctx.drawSectionHeader("Charms", ctx.getCharmHeaderHeight(normalCharms.get(0)));
+            String currentAbility = "";
+            for (Charm c : normalCharms) {
+                if (!c.getAbility().equals(currentAbility)) {
+                    currentAbility = c.getAbility();
+                    ctx.drawSubsectionHeader(currentAbility, ctx.getCharmHeaderHeight(c));
+                }
+                ctx.drawCharm(c, charmCounts.getOrDefault(c.getId(), 1));
+            }
+        }
+
+        if (!martialArtsCharms.isEmpty()) {
+            ctx.drawSectionHeader(
+                    "Martial Arts", ctx.getCharmHeaderHeight(martialArtsCharms.get(0)));
+            String currentStyle = "";
+            for (Charm c : martialArtsCharms) {
+                if (!c.getAbility().equals(currentStyle)) {
+                    currentStyle = c.getAbility();
+                    ctx.drawSubsectionHeader(currentStyle, ctx.getCharmHeaderHeight(c));
+                }
+                ctx.drawCharm(c, charmCounts.getOrDefault(c.getId(), 1));
+            }
+        }
+
+        if (!spells.isEmpty()) {
+            ctx.drawSectionHeader("Spells", ctx.getSpellHeaderHeight(spells.get(0)));
+            String currentCircle = "";
+            for (Spell s : spells) {
+                if (!s.getCircle().equals(currentCircle)) {
+                    currentCircle = s.getCircle();
+                    ctx.drawSubsectionHeader(
+                            currentCircle + " Circle", ctx.getSpellHeaderHeight(s));
+                }
+                ctx.drawSpell(s, spellCounts.getOrDefault(s.getId(), 1));
+            }
+        }
+
+        if (!evocations.isEmpty()) {
+            ctx.drawSectionHeader("Evocations", ctx.getCharmHeaderHeight(evocations.get(0)));
+            String currentArtifact = "";
+            for (Charm c : evocations) {
+                String artifactName = data.getArtifactName(((Evocation) c).getArtifactId());
+                if (!artifactName.equals(currentArtifact)) {
+                    currentArtifact = artifactName;
+                    ctx.drawSubsectionHeader(currentArtifact, ctx.getCharmHeaderHeight(c));
+                }
+                ctx.drawCharm(c, charmCounts.getOrDefault(c.getId(), 1));
+            }
+        }
+
+        ctx.close();
+        return doc;
     }
 
     private static class ExportContext {

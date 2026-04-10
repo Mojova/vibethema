@@ -452,6 +452,14 @@ public class MainViewModel implements ViewModel {
         Messenger.publish("request_charms_pdf_save_location", suggestName);
     }
 
+    public void onPrintPdfRequest() {
+        Messenger.publish("request_print_pdf");
+    }
+
+    public void onPrintCharmsPdfRequest() {
+        Messenger.publish("request_print_charms_pdf");
+    }
+
     public void onPreferencesRequest() {
         Messenger.publish("show_preferences_dialog");
     }
@@ -465,6 +473,14 @@ public class MainViewModel implements ViewModel {
             logger.error("Failed to export PDF to {}: {}", file.getAbsolutePath(), ex.getMessage());
             Messenger.publish("pdf_export_error", "Export failed: " + ex.getMessage());
         }
+    }
+
+    public void printCharacterSheet() {
+        pdfExportService.printCharacterSheet(data);
+    }
+
+    public void printCharms() {
+        pdfExportService.printCharms(data, charmDataService);
     }
 
     public void exportCharmsToPdf(File file) {
