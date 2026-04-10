@@ -525,7 +525,7 @@ public class CharacterData {
 
             getUnlockedCharms().clear();
             getMerits().clear();
-            getMerits().add(new Merit("", 1));
+            getMerits().add(new Merit(java.util.UUID.randomUUID().toString(), "", 1));
             getSpecialties().clear();
             getSpecialties().add(new Specialty("", ""));
             getCrafts().clear();
@@ -844,8 +844,16 @@ public class CharacterData {
 
             getMerits().clear();
             if (state.merits != null)
-                state.merits.forEach((k, v) -> getMerits().add(new Merit(k, v)));
-            if (getMerits().isEmpty()) getMerits().add(new Merit("", 1));
+                state.merits.forEach(
+                        (k, v) ->
+                                getMerits()
+                                        .add(
+                                                new Merit(
+                                                        java.util.UUID.randomUUID().toString(),
+                                                        k,
+                                                        v)));
+            if (getMerits().isEmpty())
+                getMerits().add(new Merit(java.util.UUID.randomUUID().toString(), "", 1));
 
             getSpecialties().clear();
             if (state.specialties != null)

@@ -48,8 +48,8 @@ public class FinalizationTest {
 
         // 3. Merits: 10 dots
         data.getMerits().clear();
-        data.getMerits().add(new Merit("Merit 1", 5));
-        data.getMerits().add(new Merit("Merit 2", 5));
+        data.getMerits().add(new Merit("m1", "Merit 1", 5));
+        data.getMerits().add(new Merit("m2", "Merit 2", 5));
 
         // 4. Specialties: 4
         data.getSpecialties().clear();
@@ -94,15 +94,15 @@ public class FinalizationTest {
                 .set(5); // +5 dots. Favored cost is 1 BP per dot. Total pool is now > 28.
         // This math is complex because of how the engine sorts pools.
         // Let's just use Merit dots which are 1 BP each.
-        data.getMerits().add(new Merit("BP Merit", 5)); // +5 BP
+        data.getMerits().add(new Merit("bpm", "BP Merit", 5)); // +5 BP
         // Total: 4 (WP) + 6 (Abil) + 5 (Merit) = 15 BP?
         // Let's be simpler.
         data.willpowerProperty().set(5);
         data.getAbility(SystemData.ABILITIES.get(10)).set(0);
         data.getAbility(SystemData.ABILITIES.get(11)).set(0);
         data.getMerits().clear();
-        data.getMerits().add(new Merit("M1", 10)); // Free
-        data.getMerits().add(new Merit("M2", 15)); // 15 dots spent above 10 = 15 BP.
+        data.getMerits().add(new Merit("m1", "M1", 10)); // Free
+        data.getMerits().add(new Merit("m2", "M2", 15)); // 15 dots spent above 10 = 15 BP.
 
         // 8. Attribute Priorities: Required for finalization
         data.getAttributePriority(Attribute.Category.PHYSICAL).set(AttributePriority.PRIMARY);
@@ -140,7 +140,7 @@ public class FinalizationTest {
         for (int i = 0; i < 9; i++) data.getAbility(SystemData.ABILITIES.get(i)).set(3);
         data.getAbility(SystemData.ABILITIES.get(9)).set(1); // 28 dots
 
-        data.getMerits().add(new Merit("M1", 10)); // 10 dots
+        data.getMerits().add(new Merit("m1", "M1", 10)); // 10 dots
 
         data.getSpecialties().add(new Specialty("1", "S1", "Melee"));
         data.getSpecialties().add(new Specialty("2", "S2", "Melee"));

@@ -103,7 +103,7 @@ public class ExperienceRuleEngineTest {
     @Test
     void testMeritCost() {
         snapshot.merits.put("Resources", 2);
-        data.getMerits().add(new Merit("Resources", 4));
+        data.getMerits().add(new Merit("res1", "Resources", 4));
 
         ExperienceRuleEngine.ExperienceStatus status =
                 ExperienceRuleEngine.calculateStatus(data, snapshot);

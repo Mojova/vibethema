@@ -776,9 +776,10 @@ public class MainViewModel implements ViewModel {
                     + "Licensed under GNU GPL v3.0.\n\n"
                     + "--- LEGAL ---\n"
                     + "Vibethema is not official Exalted material.\n\n"
-                    + "Portions of the materials are the copyrights and trademarks of Paradox"
-                    + " Interactive AB, and are used with permission. All rights reserved. For more"
-                    + " information please visit worldofdarkness.com.";
+                    + " information please visit worldofdarkness.com.\n\n"
+                    + "--- CREDITS ---\n"
+                    + "Includes Libertinus Serif font by Khaled Hosny, licensed under the SIL Open Font"
+                    + " License.";
         Messenger.publish("show_about_dialog", new Object[] {"About Vibethema", msg});
     }
 }

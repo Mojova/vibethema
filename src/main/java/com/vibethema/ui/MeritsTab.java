@@ -1,7 +1,8 @@
 package com.vibethema.ui;
 
-import com.vibethema.model.traits.*;
+import com.vibethema.ui.traits.MeritRowView;
 import com.vibethema.viewmodel.MeritsViewModel;
+import com.vibethema.viewmodel.stats.MeritRowViewModel;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
 import java.net.URL;
@@ -9,14 +10,9 @@ import java.util.ResourceBundle;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 public class MeritsTab extends ScrollPane implements JavaView<MeritsViewModel>, Initializable {
@@ -42,21 +38,8 @@ public class MeritsTab extends ScrollPane implements JavaView<MeritsViewModel>, 
 
         refreshMerits();
         viewModel
-                .getMerits()
-                .addListener(
-                        (ListChangeListener<Merit>)
-                                c -> {
-                                    boolean shouldRefresh = false;
-                                    while (c.next()) {
-                                        if (c.wasAdded() || c.wasRemoved()) {
-                                            shouldRefresh = true;
-                                            break;
-                                        }
-                                    }
-                                    if (shouldRefresh) {
-                                        refreshMerits();
-                                    }
-                                });
+                .getMeritRows()
+                .addListener((ListChangeListener<MeritRowViewModel>) c -> refreshMerits());
 
         Button addBtn = new Button("+ Add Merit");
         addBtn.getStyleClass().add("action-btn");
@@ -70,34 +53,10 @@ public class MeritsTab extends ScrollPane implements JavaView<MeritsViewModel>, 
         if (meritsList == null) return;
         meritsList.getChildren().clear();
 
-        for (Merit merit : viewModel.getMerits()) {
-            HBox row = new HBox(15);
-            row.setAlignment(Pos.CENTER_LEFT);
-            row.getStyleClass().add("merit-row");
-            row.setPadding(new Insets(10));
-
-            TextField nameField = new TextField();
-            nameField.setPromptText("Merit Name (e.g. Artifact)");
-            nameField.textProperty().bindBidirectional(merit.nameProperty());
-            nameField.setPrefWidth(250);
-
-            Region spacer = new Region();
-            HBox.setHgrow(spacer, Priority.ALWAYS);
-
-            Label hiddenLabel = new Label();
-            hiddenLabel.textProperty().bind(nameField.textProperty());
-            hiddenLabel.setVisible(false);
-            hiddenLabel.setManaged(false);
-
-            DotSelector selector = new DotSelector(hiddenLabel, merit.ratingProperty(), 1, 5);
-            selector.descriptionProperty().bind(merit.nameProperty());
-
-            Button removeBtn = new Button("✕");
-            removeBtn.getStyleClass().add("remove-btn");
-            removeBtn.setOnAction(e -> viewModel.removeMerit(merit));
-
-            row.getChildren().addAll(nameField, spacer, hiddenLabel, selector, removeBtn);
-            meritsList.getChildren().add(row);
+        for (MeritRowViewModel rowVm : viewModel.getMeritRows()) {
+            MeritRowView rowView = new MeritRowView(rowVm);
+            rowView.setOnRemove(e -> viewModel.removeMerit(rowVm.getModel()));
+            meritsList.getChildren().add(rowView);
         }
     }
 }

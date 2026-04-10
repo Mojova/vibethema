@@ -15,6 +15,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
@@ -144,6 +145,7 @@ public class PdfExportService {
         private PDPage currentPage;
         private PDPageContentStream contentStream;
         private float currentY;
+        private float columnTopY;
         private int currentColumn = 0; // 0 or 1
 
         private final float margin = 50;
@@ -152,14 +154,28 @@ public class PdfExportService {
         private final float pageHeight = PDRectangle.A4.getHeight();
         private final float columnWidth = (pageWidth - (2 * margin) - columnSpacing) / 2;
 
-        private final PDFont fontBold = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
-        private final PDFont fontItalic =
-                new PDType1Font(Standard14Fonts.FontName.HELVETICA_OBLIQUE);
-        private final PDFont fontRegular = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
+        private final PDFont fontBold;
+        private final PDFont fontItalic;
+        private final PDFont fontRegular;
 
         public ExportContext(PDDocument doc) throws IOException {
             this.doc = doc;
+            this.fontBold = loadFont("/fonts/LibertinusSerif-Bold.ttf", Standard14Fonts.FontName.TIMES_BOLD);
+            this.fontItalic =
+                    loadFont("/fonts/LibertinusSerif-Italic.ttf", Standard14Fonts.FontName.TIMES_ITALIC);
+            this.fontRegular =
+                    loadFont("/fonts/LibertinusSerif-Regular.ttf", Standard14Fonts.FontName.TIMES_ROMAN);
             addNewPage();
+        }
+
+        private PDFont loadFont(String resourcePath, Standard14Fonts.FontName fallback)
+                throws IOException {
+            try (InputStream is = getClass().getResourceAsStream(resourcePath)) {
+                if (is == null) {
+                    return new PDType1Font(fallback);
+                }
+                return PDType0Font.load(doc, is);
+            }
         }
 
         private void addNewPage() throws IOException {
@@ -170,6 +186,7 @@ public class PdfExportService {
             doc.addPage(currentPage);
             contentStream = new PDPageContentStream(doc, currentPage);
             currentY = pageHeight - margin;
+            columnTopY = currentY;
             currentColumn = 0;
         }
 
@@ -177,7 +194,7 @@ public class PdfExportService {
             if (currentY - spaceNeeded < margin) {
                 if (currentColumn == 0) {
                     currentColumn = 1;
-                    currentY = pageHeight - margin;
+                    currentY = columnTopY;
                 } else {
                     addNewPage();
                 }
@@ -192,28 +209,39 @@ public class PdfExportService {
             contentStream.showText(title);
             contentStream.endText();
             currentY -= 40;
+            columnTopY = currentY;
         }
 
         public void drawSectionHeader(String title) throws IOException {
-            ensureSpace(40);
-            float x = margin + (currentColumn * (columnWidth + columnSpacing));
+            ensureSpace(50);
             contentStream.setLineWidth(1.5f);
-            contentStream.moveTo(x, currentY);
-            contentStream.lineTo(x + columnWidth, currentY);
+            contentStream.moveTo(margin, currentY);
+            contentStream.lineTo(pageWidth - margin, currentY);
             contentStream.stroke();
             currentY -= 20;
 
             contentStream.beginText();
             contentStream.setFont(fontBold, 14);
-            contentStream.newLineAtOffset(x, currentY);
+            contentStream.newLineAtOffset(margin, currentY);
             contentStream.showText(title.toUpperCase());
             contentStream.endText();
             currentY -= 20;
+
+            // Reset column state
+            currentColumn = 0;
+            columnTopY = currentY;
         }
 
         public void drawSubsectionHeader(String title) throws IOException {
-            ensureSpace(30);
+            ensureSpace(40);
             float x = margin + (currentColumn * (columnWidth + columnSpacing));
+
+            contentStream.setLineWidth(1.0f);
+            contentStream.moveTo(x, currentY);
+            contentStream.lineTo(x + columnWidth, currentY);
+            contentStream.stroke();
+            currentY -= 15;
+
             contentStream.beginText();
             contentStream.setFont(fontBold, 12);
             contentStream.newLineAtOffset(x, currentY);
@@ -223,76 +251,91 @@ public class PdfExportService {
         }
 
         public void drawCharm(Charm c) throws IOException {
-            ensureSpace(60); // Estimate minimum height
+            ensureSpace(12);
             float x = margin + (currentColumn * (columnWidth + columnSpacing));
 
-            // Name and Requirements
             contentStream.beginText();
             contentStream.setFont(fontBold, 10);
             contentStream.newLineAtOffset(x, currentY);
-            String header =
-                    String.format(
-                            "%s (E%d, A%d)", c.getName(), c.getMinEssence(), c.getMinAbility());
-            contentStream.showText(header);
+            contentStream.showText(sanitizeText(c.getName()));
             contentStream.endText();
             currentY -= 12;
 
-            // Details (Cost, Duration, Keywords)
-            contentStream.beginText();
-            contentStream.setFont(fontItalic, 9);
-            contentStream.newLineAtOffset(x, currentY);
-            String details =
+            drawField("Cost:", c.getCost(), x);
+            drawField(
+                    "Mins:",
                     String.format(
-                            "Cost: %s; Duration: %s",
-                            c.getCost() != null ? c.getCost() : "None",
-                            c.getDuration() != null ? c.getDuration() : "Instant");
-            contentStream.showText(details);
-            contentStream.endText();
-            currentY -= 11;
+                            "%s %d, Essence %d",
+                            c.getAbility(), c.getMinAbility(), c.getMinEssence()),
+                    x);
+            drawField("Type:", c.getType(), x);
+            drawField(
+                    "Keywords:",
+                    (c.getKeywords() != null && !c.getKeywords().isEmpty()
+                            ? String.join(", ", c.getKeywords())
+                            : null),
+                    x);
+            drawField("Duration:", c.getDuration(), x);
 
-            if (c.getKeywords() != null && !c.getKeywords().isEmpty()) {
-                contentStream.beginText();
-                contentStream.setFont(fontItalic, 9);
-                contentStream.newLineAtOffset(x, currentY);
-                contentStream.showText("Keywords: " + String.join(", ", c.getKeywords()));
-                contentStream.endText();
-                currentY -= 11;
-            }
-
-            // Full Text (Wrapped)
+            currentY -= 5; // Line break before description
             if (c.getFullText() != null && !c.getFullText().isEmpty()) {
                 drawWrappedText(c.getFullText(), 8, x);
             }
-            currentY -= 10; // Spacer
+            currentY -= 15;
         }
 
         public void drawSpell(Spell s) throws IOException {
-            ensureSpace(50);
+            ensureSpace(12);
             float x = margin + (currentColumn * (columnWidth + columnSpacing));
 
             contentStream.beginText();
             contentStream.setFont(fontBold, 10);
             contentStream.newLineAtOffset(x, currentY);
-            contentStream.showText(s.getName());
+            contentStream.showText(sanitizeText(s.getName()));
             contentStream.endText();
             currentY -= 12;
 
-            contentStream.beginText();
-            contentStream.setFont(fontItalic, 9);
-            contentStream.newLineAtOffset(x, currentY);
-            String details = String.format("Cost: %s; Duration: %s", s.getCost(), s.getDuration());
-            contentStream.showText(details);
-            contentStream.endText();
-            currentY -= 11;
+            drawField("Circle:", s.getCircle(), x);
+            drawField("Cost:", s.getCost(), x);
+            drawField(
+                    "Keywords:",
+                    (s.getKeywords() != null && !s.getKeywords().isEmpty()
+                            ? String.join(", ", s.getKeywords())
+                            : null),
+                    x);
+            drawField("Duration:", s.getDuration(), x);
 
+            currentY -= 5; // Line break before description
             if (s.getDescription() != null && !s.getDescription().isEmpty()) {
                 drawWrappedText(s.getDescription(), 8, x);
             }
-            currentY -= 10;
+            currentY -= 15;
+        }
+
+        private void drawField(String label, String value, float x) throws IOException {
+            if (value == null
+                    || value.isEmpty()
+                    || value.equalsIgnoreCase("None")
+                    || value.equals("0")) return;
+
+            ensureSpace(11);
+            float currentX = margin + (currentColumn * (columnWidth + columnSpacing));
+
+            contentStream.beginText();
+            contentStream.setFont(fontBold, 9);
+            contentStream.newLineAtOffset(currentX, currentY);
+            contentStream.showText(sanitizeText(label));
+
+            float labelWidth = fontBold.getStringWidth(sanitizeText(label)) / 1000 * 9;
+            contentStream.setFont(fontRegular, 9);
+            contentStream.newLineAtOffset(labelWidth, 0);
+            contentStream.showText(sanitizeText(" " + value));
+            contentStream.endText();
+
+            currentY -= 11;
         }
 
         private void drawWrappedText(String text, float fontSize, float x) throws IOException {
-            contentStream.setFont(fontRegular, fontSize);
             List<String> lines = new ArrayList<>();
             String[] words = text.split("\\s+");
             StringBuilder line = new StringBuilder();
@@ -313,6 +356,7 @@ public class PdfExportService {
                 // After ensureSpace, x and currentY might have changed if we jumped columns/pages
                 float currentX = margin + (currentColumn * (columnWidth + columnSpacing));
                 contentStream.beginText();
+                contentStream.setFont(fontRegular, fontSize);
                 contentStream.newLineAtOffset(currentX, currentY);
                 contentStream.showText(sanitizeText(l));
                 contentStream.endText();

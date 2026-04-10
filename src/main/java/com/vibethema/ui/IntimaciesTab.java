@@ -1,7 +1,8 @@
 package com.vibethema.ui;
 
-import com.vibethema.model.social.*;
+import com.vibethema.ui.social.IntimacyRowView;
 import com.vibethema.viewmodel.IntimaciesViewModel;
+import com.vibethema.viewmodel.social.IntimacyRowViewModel;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
 import java.net.URL;
@@ -9,10 +10,9 @@ import java.util.ResourceBundle;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 
 public class IntimaciesTab extends ScrollPane
@@ -39,21 +39,8 @@ public class IntimaciesTab extends ScrollPane
 
         refreshIntimacies();
         viewModel
-                .getIntimacies()
-                .addListener(
-                        (ListChangeListener<Intimacy>)
-                                c -> {
-                                    boolean shouldRefresh = false;
-                                    while (c.next()) {
-                                        if (c.wasAdded() || c.wasRemoved()) {
-                                            shouldRefresh = true;
-                                            break;
-                                        }
-                                    }
-                                    if (shouldRefresh) {
-                                        refreshIntimacies();
-                                    }
-                                });
+                .getIntimacyRows()
+                .addListener((ListChangeListener<IntimacyRowViewModel>) c -> refreshIntimacies());
 
         Button addBtn = new Button("+ Add Intimacy");
         addBtn.getStyleClass().add("action-btn");
@@ -67,33 +54,10 @@ public class IntimaciesTab extends ScrollPane
         if (intimaciesList == null) return;
         intimaciesList.getChildren().clear();
 
-        for (Intimacy intimacy : viewModel.getIntimacies()) {
-            HBox row = new HBox(15);
-            row.setAlignment(Pos.CENTER_LEFT);
-            row.getStyleClass().add("merit-row");
-            row.setPadding(new Insets(10));
-
-            TextField nameField = new TextField();
-            nameField.setPromptText("Intimacy Name (e.g. \"Love for my Sister\")");
-            nameField.textProperty().bindBidirectional(intimacy.nameProperty());
-            HBox.setHgrow(nameField, Priority.ALWAYS);
-
-            ComboBox<Intimacy.Type> typeBox = new ComboBox<>();
-            typeBox.getItems().setAll(Intimacy.Type.values());
-            typeBox.valueProperty().bindBidirectional(intimacy.typeProperty());
-            typeBox.setPrefWidth(100);
-
-            ComboBox<Intimacy.Intensity> intensityBox = new ComboBox<>();
-            intensityBox.getItems().setAll(Intimacy.Intensity.values());
-            intensityBox.valueProperty().bindBidirectional(intimacy.intensityProperty());
-            intensityBox.setPrefWidth(120);
-
-            Button removeBtn = new Button("✕");
-            removeBtn.getStyleClass().add("remove-btn");
-            removeBtn.setOnAction(e -> viewModel.removeIntimacy(intimacy));
-
-            row.getChildren().addAll(nameField, typeBox, intensityBox, removeBtn);
-            intimaciesList.getChildren().add(row);
+        for (IntimacyRowViewModel rowVm : viewModel.getIntimacyRows()) {
+            IntimacyRowView rowView = new IntimacyRowView(rowVm);
+            rowView.setOnRemove(e -> viewModel.removeIntimacy(rowVm.getModel()));
+            intimaciesList.getChildren().add(rowView);
         }
     }
 }
