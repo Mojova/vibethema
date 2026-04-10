@@ -41,7 +41,22 @@ public class MeritsTab extends ScrollPane implements JavaView<MeritsViewModel>, 
         meritsList.getStyleClass().add("merits-list");
 
         refreshMerits();
-        viewModel.getMerits().addListener((ListChangeListener<Merit>) c -> refreshMerits());
+        viewModel
+                .getMerits()
+                .addListener(
+                        (ListChangeListener<Merit>)
+                                c -> {
+                                    boolean shouldRefresh = false;
+                                    while (c.next()) {
+                                        if (c.wasAdded() || c.wasRemoved()) {
+                                            shouldRefresh = true;
+                                            break;
+                                        }
+                                    }
+                                    if (shouldRefresh) {
+                                        refreshMerits();
+                                    }
+                                });
 
         Button addBtn = new Button("+ Add Merit");
         addBtn.getStyleClass().add("action-btn");

@@ -40,7 +40,20 @@ public class IntimaciesTab extends ScrollPane
         refreshIntimacies();
         viewModel
                 .getIntimacies()
-                .addListener((ListChangeListener<Intimacy>) c -> refreshIntimacies());
+                .addListener(
+                        (ListChangeListener<Intimacy>)
+                                c -> {
+                                    boolean shouldRefresh = false;
+                                    while (c.next()) {
+                                        if (c.wasAdded() || c.wasRemoved()) {
+                                            shouldRefresh = true;
+                                            break;
+                                        }
+                                    }
+                                    if (shouldRefresh) {
+                                        refreshIntimacies();
+                                    }
+                                });
 
         Button addBtn = new Button("+ Add Intimacy");
         addBtn.getStyleClass().add("action-btn");
