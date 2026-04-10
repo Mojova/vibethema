@@ -100,36 +100,38 @@ public class PdfExportService {
             ctx.drawMainTitle(data.nameProperty().get() + " - Charms & Spells");
 
             if (!normalCharms.isEmpty()) {
-                ctx.drawSectionHeader("Charms");
+                ctx.drawSectionHeader("Charms", ctx.getCharmHeaderHeight(normalCharms.get(0)));
                 String currentAbility = "";
                 for (Charm c : normalCharms) {
                     if (!c.getAbility().equals(currentAbility)) {
                         currentAbility = c.getAbility();
-                        ctx.drawSubsectionHeader(currentAbility);
+                        ctx.drawSubsectionHeader(currentAbility, ctx.getCharmHeaderHeight(c));
                     }
                     ctx.drawCharm(c);
                 }
             }
 
             if (!martialArtsCharms.isEmpty()) {
-                ctx.drawSectionHeader("Martial Arts");
+                ctx.drawSectionHeader(
+                        "Martial Arts", ctx.getCharmHeaderHeight(martialArtsCharms.get(0)));
                 String currentStyle = "";
                 for (Charm c : martialArtsCharms) {
                     if (!c.getAbility().equals(currentStyle)) {
                         currentStyle = c.getAbility();
-                        ctx.drawSubsectionHeader(currentStyle);
+                        ctx.drawSubsectionHeader(currentStyle, ctx.getCharmHeaderHeight(c));
                     }
                     ctx.drawCharm(c);
                 }
             }
 
             if (!spells.isEmpty()) {
-                ctx.drawSectionHeader("Spells");
+                ctx.drawSectionHeader("Spells", ctx.getSpellHeaderHeight(spells.get(0)));
                 String currentCircle = "";
                 for (Spell s : spells) {
                     if (!s.getCircle().equals(currentCircle)) {
                         currentCircle = s.getCircle();
-                        ctx.drawSubsectionHeader(currentCircle + " Circle");
+                        ctx.drawSubsectionHeader(
+                                currentCircle + " Circle", ctx.getSpellHeaderHeight(s));
                     }
                     ctx.drawSpell(s);
                 }
@@ -212,8 +214,8 @@ public class PdfExportService {
             columnTopY = currentY;
         }
 
-        public void drawSectionHeader(String title) throws IOException {
-            ensureSpace(50);
+        public void drawSectionHeader(String title, float lookaheadHeight) throws IOException {
+            ensureSpace(50 + lookaheadHeight);
             if (currentY < columnTopY) {
                 contentStream.setLineWidth(1.5f);
                 contentStream.moveTo(margin, currentY);
@@ -234,8 +236,8 @@ public class PdfExportService {
             columnTopY = currentY;
         }
 
-        public void drawSubsectionHeader(String title) throws IOException {
-            ensureSpace(40);
+        public void drawSubsectionHeader(String title, float lookaheadHeight) throws IOException {
+            ensureSpace(40 + lookaheadHeight);
             float x = margin + (currentColumn * (columnWidth + columnSpacing));
 
             if (currentY < columnTopY) {
@@ -255,22 +257,7 @@ public class PdfExportService {
         }
 
         public void drawCharm(Charm c) throws IOException {
-            // Calculate total height needed for the header block (Name + metadata fields)
-            float headerHeight = 12 + 5; // Name + Line break before description
-            if (isFieldVisible(c.getCost())) headerHeight += 11;
-            String mins =
-                    String.format(
-                            "%s %d, Essence %d",
-                            c.getAbility(), c.getMinAbility(), c.getMinEssence());
-            if (isFieldVisible(mins)) headerHeight += 11;
-            if (isFieldVisible(c.getType())) headerHeight += 11;
-            String keywords =
-                    (c.getKeywords() != null && !c.getKeywords().isEmpty()
-                            ? String.join(", ", c.getKeywords())
-                            : null);
-            if (isFieldVisible(keywords)) headerHeight += 11;
-            if (isFieldVisible(c.getDuration())) headerHeight += 11;
-
+            float headerHeight = getCharmHeaderHeight(c);
             ensureSpace(headerHeight);
             float x = margin + (currentColumn * (columnWidth + columnSpacing));
 
@@ -282,9 +269,9 @@ public class PdfExportService {
             currentY -= 12;
 
             drawField("Cost:", c.getCost(), x);
-            drawField("Mins:", mins, x);
+            drawField("Mins:", getCharmMinsString(c), x);
             drawField("Type:", c.getType(), x);
-            drawField("Keywords:", keywords, x);
+            drawField("Keywords:", getCharmKeywordsString(c), x);
             drawField("Duration:", c.getDuration(), x);
 
             currentY -= 5; // Spacer
@@ -295,17 +282,7 @@ public class PdfExportService {
         }
 
         public void drawSpell(Spell s) throws IOException {
-            // Calculate total height needed for the header block (Name + metadata fields)
-            float headerHeight = 12 + 5; // Name + Line break before description
-            if (isFieldVisible(s.getCircle())) headerHeight += 11;
-            if (isFieldVisible(s.getCost())) headerHeight += 11;
-            String keywords =
-                    (s.getKeywords() != null && !s.getKeywords().isEmpty()
-                            ? String.join(", ", s.getKeywords())
-                            : null);
-            if (isFieldVisible(keywords)) headerHeight += 11;
-            if (isFieldVisible(s.getDuration())) headerHeight += 11;
-
+            float headerHeight = getSpellHeaderHeight(s);
             ensureSpace(headerHeight);
             float x = margin + (currentColumn * (columnWidth + columnSpacing));
 
@@ -318,7 +295,7 @@ public class PdfExportService {
 
             drawField("Circle:", s.getCircle(), x);
             drawField("Cost:", s.getCost(), x);
-            drawField("Keywords:", keywords, x);
+            drawField("Keywords:", getSpellKeywordsString(s), x);
             drawField("Duration:", s.getDuration(), x);
 
             currentY -= 5; // Spacer
@@ -353,6 +330,42 @@ public class PdfExportService {
                     && !value.isEmpty()
                     && !value.equalsIgnoreCase("None")
                     && !value.equals("0");
+        }
+
+        public float getCharmHeaderHeight(Charm c) {
+            float h = 12 + 5;
+            if (isFieldVisible(c.getCost())) h += 11;
+            if (isFieldVisible(getCharmMinsString(c))) h += 11;
+            if (isFieldVisible(c.getType())) h += 11;
+            if (isFieldVisible(getCharmKeywordsString(c))) h += 11;
+            if (isFieldVisible(c.getDuration())) h += 11;
+            return h;
+        }
+
+        private String getCharmMinsString(Charm c) {
+            return String.format(
+                    "%s %d, Essence %d", c.getAbility(), c.getMinAbility(), c.getMinEssence());
+        }
+
+        private String getCharmKeywordsString(Charm c) {
+            return (c.getKeywords() != null && !c.getKeywords().isEmpty()
+                    ? String.join(", ", c.getKeywords())
+                    : null);
+        }
+
+        public float getSpellHeaderHeight(Spell s) {
+            float h = 12 + 5;
+            if (isFieldVisible(s.getCircle())) h += 11;
+            if (isFieldVisible(s.getCost())) h += 11;
+            if (isFieldVisible(getSpellKeywordsString(s))) h += 11;
+            if (isFieldVisible(s.getDuration())) h += 11;
+            return h;
+        }
+
+        private String getSpellKeywordsString(Spell s) {
+            return (s.getKeywords() != null && !s.getKeywords().isEmpty()
+                    ? String.join(", ", s.getKeywords())
+                    : null);
         }
 
         private void drawWrappedText(String text, float fontSize, float x) throws IOException {
