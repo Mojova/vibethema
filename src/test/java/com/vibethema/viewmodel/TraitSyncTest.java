@@ -11,11 +11,14 @@ import org.junit.jupiter.api.Test;
 
 public class TraitSyncTest {
     private CharacterData data;
+    @SuppressWarnings("unused")
+    private MainViewModel mainViewModel;
     private NotificationObserver mockObserver;
 
     @BeforeEach
     void setUp() {
         data = CharacterFactory.createNewCharacter();
+        mainViewModel = new MainViewModel(data);
         mockObserver = mock(NotificationObserver.class);
         Messenger.subscribe("refresh_all_ui", mockObserver);
     }
