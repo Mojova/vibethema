@@ -191,9 +191,10 @@ public class PdfExportService {
 
         private final float margin = 50;
         private final float columnSpacing = 30;
-        private final float pageWidth = PDRectangle.A4.getWidth();
-        private final float pageHeight = PDRectangle.A4.getHeight();
-        private final float columnWidth = (pageWidth - (2 * margin) - columnSpacing) / 2;
+        private final float pageWidth;
+        private final float pageHeight;
+        private final float columnWidth;
+        private final PDRectangle paperSize;
 
         private final PDFont fontBold;
         private final PDFont fontItalic;
@@ -201,6 +202,11 @@ public class PdfExportService {
 
         public ExportContext(PDDocument doc) throws IOException {
             this.doc = doc;
+            this.paperSize = UserPreferencesService.getInstance().getPDRectangle();
+            this.pageWidth = paperSize.getWidth();
+            this.pageHeight = paperSize.getHeight();
+            this.columnWidth = (pageWidth - (2 * margin) - columnSpacing) / 2;
+
             this.fontBold = loadFont("/fonts/LibertinusSerif-Bold.ttf", Standard14Fonts.FontName.TIMES_BOLD);
             this.fontItalic =
                     loadFont("/fonts/LibertinusSerif-Italic.ttf", Standard14Fonts.FontName.TIMES_ITALIC);
@@ -223,7 +229,7 @@ public class PdfExportService {
             if (contentStream != null) {
                 contentStream.close();
             }
-            currentPage = new PDPage(PDRectangle.A4);
+            currentPage = new PDPage(paperSize);
             doc.addPage(currentPage);
             contentStream = new PDPageContentStream(doc, currentPage);
             currentY = pageHeight - margin;

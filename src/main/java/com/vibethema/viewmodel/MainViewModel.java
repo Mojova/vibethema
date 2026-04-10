@@ -452,6 +452,10 @@ public class MainViewModel implements ViewModel {
         Messenger.publish("request_charms_pdf_save_location", suggestName);
     }
 
+    public void onPreferencesRequest() {
+        Messenger.publish("show_preferences_dialog");
+    }
+
     public void exportToPdf(File file) {
         if (file == null) return;
         try {

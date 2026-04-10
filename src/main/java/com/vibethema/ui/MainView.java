@@ -249,6 +249,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                                     : "Charms_Spells.pdf";
                     handleExportCharmsPdf(suggestName);
                 });
+        addObserver("show_preferences_dialog", (name, payload) -> showPreferencesDialog());
         addObserver(
                 "pdf_export_success",
                 (name, payload) -> {
@@ -476,6 +477,10 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         exportCharmsPdf.setAccelerator(KeyCombination.keyCombination("Shortcut+Shift+E"));
         exportCharmsPdf.setOnAction(e -> viewModel.onExportCharmsPdfRequest());
 
+        MenuItem preferencesItem = new MenuItem("Preferences...");
+        preferencesItem.setAccelerator(KeyCombination.keyCombination("Shortcut+Comma"));
+        preferencesItem.setOnAction(e -> viewModel.onPreferencesRequest());
+
         MenuItem quitItem = new MenuItem("Quit");
         quitItem.setOnAction(e -> Platform.exit());
 
@@ -488,6 +493,8 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                         new SeparatorMenuItem(),
                         exportPdf,
                         exportCharmsPdf,
+                        new SeparatorMenuItem(),
+                        preferencesItem,
                         new SeparatorMenuItem(),
                         quitItem);
         menuBar.getMenus().add(fileMenu);
@@ -808,6 +815,33 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                                 viewModel.proceedWithFinalization();
                             }
                         });
+    }
+
+    private void showPreferencesDialog() {
+        PreferencesViewModel prefViewModel = new PreferencesViewModel();
+        ViewTuple<PreferencesView, PreferencesViewModel> viewTuple =
+                de.saxsys.mvvmfx.FluentViewLoader.javaView(PreferencesView.class)
+                        .viewModel(prefViewModel)
+                        .load();
+
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Preferences");
+
+        applyDialogStyle(dialog);
+        dialog.getDialogPane().setContent(viewTuple.getView());
+
+        ButtonType saveType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveType, ButtonType.CANCEL);
+
+        dialog.setResultConverter(
+                bt -> {
+                    if (bt == saveType) {
+                        prefViewModel.save();
+                    }
+                    return bt;
+                });
+
+        dialog.showAndWait();
     }
 
     private void showEditCharmDialog(
