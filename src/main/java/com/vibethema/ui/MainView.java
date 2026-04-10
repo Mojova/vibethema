@@ -4,6 +4,7 @@ import com.vibethema.model.*;
 import com.vibethema.model.mystic.*;
 import com.vibethema.ui.charms.CharmsTab;
 import com.vibethema.ui.charms.EditCharmView;
+import com.vibethema.ui.martialarts.MartialArtsTab;
 import com.vibethema.ui.equipment.DefaultEquipmentDialogService;
 import com.vibethema.ui.equipment.EquipmentTab;
 import com.vibethema.ui.experience.ExperienceTab;
@@ -14,6 +15,7 @@ import com.vibethema.service.UserPreferencesService;
 import com.vibethema.viewmodel.*;
 import com.vibethema.viewmodel.charms.CharmsViewModel;
 import com.vibethema.viewmodel.charms.EditCharmViewModel;
+import com.vibethema.viewmodel.martialarts.MartialArtsViewModel;
 import com.vibethema.viewmodel.equipment.EquipmentViewModel;
 import com.vibethema.viewmodel.experience.ExperienceViewModel;
 import com.vibethema.viewmodel.footer.FooterViewModel;
@@ -49,6 +51,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
     private TabPane mainTabPane;
     private Tab experienceTab;
     private Map<String, CharmsTab> charmTabs = new HashMap<>();
+    private MartialArtsTab martialArtsTab;
     private final List<NotificationObserver> observers = new ArrayList<>();
 
     @Override
@@ -83,7 +86,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                                                 IntimaciesTab.class,
                                                 viewModel.getIntimaciesViewModel())),
                         createCharmsLazyTab("Solar Charms", "Ability"),
-                        createCharmsLazyTab("Martial Arts", "Martial Arts Style"),
+                        createMartialArtsLazyTab(),
                         createLazyTab(
                                 "Sorcery",
                                 () ->
@@ -148,6 +151,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                 "refresh_all_ui",
                 (name, payload) -> {
                     charmTabs.values().forEach(CharmsTab::refresh);
+                    if (martialArtsTab != null) martialArtsTab.refresh();
                 });
 
         addObserver(
@@ -393,6 +397,19 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                     CharmsTab view = (CharmsTab) vt.getView();
                     charmTabs.put(title, view);
                     return new Tab(title, view);
+                });
+    }
+
+    private Tab createMartialArtsLazyTab() {
+        return createLazyTab(
+                "Martial Arts",
+                () -> {
+                    ViewTuple<MartialArtsTab, MartialArtsViewModel> vt =
+                            de.saxsys.mvvmfx.FluentViewLoader.javaView(MartialArtsTab.class)
+                                    .viewModel(viewModel.getMartialArtsViewModel())
+                                    .load();
+                    martialArtsTab = (MartialArtsTab) vt.getView();
+                    return new Tab("Martial Arts", martialArtsTab);
                 });
     }
 
@@ -954,17 +971,28 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
     }
 
     private void performNavigation(MainViewModel.NavigationTarget target) {
-        CharmsViewModel cvm = viewModel.getCharmsViewModel(target.filterType());
-        if (cvm != null) {
-            String selection = target.filterValue();
-            if (cvm.getFilterOptions().contains(selection)) {
-                cvm.selectedFilterValueProperty().set(selection);
-            }
-            for (Tab tab : mainTabPane.getTabs()) {
-                if (target.tabName().equals(tab.getText())) {
-                    mainTabPane.getSelectionModel().select(tab);
-                    break;
+        if ("Martial Arts Style".equals(target.filterType())) {
+            MartialArtsViewModel mavm = viewModel.getMartialArtsViewModel();
+            if (mavm != null) {
+                String selection = target.filterValue();
+                if (mavm.getFilterOptions().contains(selection)) {
+                    mavm.selectedFilterValueProperty().set(selection);
                 }
+            }
+        } else {
+            CharmsViewModel cvm = viewModel.getCharmsViewModel(target.filterType());
+            if (cvm != null) {
+                String selection = target.filterValue();
+                if (cvm.getFilterOptions().contains(selection)) {
+                    cvm.selectedFilterValueProperty().set(selection);
+                }
+            }
+        }
+
+        for (Tab tab : mainTabPane.getTabs()) {
+            if (target.tabName().equals(tab.getText())) {
+                mainTabPane.getSelectionModel().select(tab);
+                break;
             }
         }
     }

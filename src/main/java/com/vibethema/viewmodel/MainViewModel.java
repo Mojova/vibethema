@@ -12,6 +12,7 @@ import com.vibethema.service.PdfExportService;
 import com.vibethema.service.SystemDataService;
 import com.vibethema.service.UndoManager;
 import com.vibethema.viewmodel.charms.CharmsViewModel;
+import com.vibethema.viewmodel.martialarts.MartialArtsViewModel;
 import com.vibethema.viewmodel.equipment.EquipmentViewModel;
 import com.vibethema.viewmodel.experience.ExperienceViewModel;
 import com.vibethema.viewmodel.footer.FooterViewModel;
@@ -70,6 +71,7 @@ public class MainViewModel implements ViewModel {
     private SorceryViewModel sorceryViewModel;
     private EquipmentViewModel equipmentViewModel;
     private ExperienceViewModel experienceViewModel;
+    private MartialArtsViewModel martialArtsViewModel;
     private final Map<String, CharmsViewModel> charmViewModels = new HashMap<>();
 
     // Export Messages
@@ -584,6 +586,14 @@ public class MainViewModel implements ViewModel {
     public CharmsViewModel getCharmsViewModel(String filterType) {
         return charmViewModels.computeIfAbsent(
                 filterType, ft -> new CharmsViewModel(data, charmDataService, keywordDefs, ft));
+    }
+
+    public MartialArtsViewModel getMartialArtsViewModel() {
+        if (martialArtsViewModel == null) {
+            martialArtsViewModel =
+                    new MartialArtsViewModel(data, charmDataService, keywordDefs);
+        }
+        return martialArtsViewModel;
     }
 
     public EquipmentViewModel getEquipmentViewModel() {
