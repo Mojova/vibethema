@@ -1,18 +1,19 @@
 package com.vibethema.ui;
 
+import com.vibethema.model.traits.MeritReference;
 import com.vibethema.ui.traits.MeritRowView;
 import com.vibethema.viewmodel.MeritsViewModel;
 import com.vibethema.viewmodel.stats.MeritRowViewModel;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
 public class MeritsTab extends ScrollPane implements JavaView<MeritsViewModel>, Initializable {
@@ -41,11 +42,34 @@ public class MeritsTab extends ScrollPane implements JavaView<MeritsViewModel>, 
                 .getMeritRows()
                 .addListener((ListChangeListener<MeritRowViewModel>) c -> refreshMerits());
 
-        Button addBtn = new Button("+ Add Merit");
-        addBtn.getStyleClass().add("action-btn");
-        addBtn.setOnAction(e -> viewModel.addMerit());
+        MenuButton addMenuBtn = new MenuButton("+ Add Merit");
+        addMenuBtn.getStyleClass().add("action-btn");
 
-        content.getChildren().addAll(title, meritsList, addBtn);
+        // Group available merits by category
+        Map<String, Menu> categoryMenus = new HashMap<>();
+        for (MeritReference ref : viewModel.getAvailableMerits()) {
+            String category = ref.getCategory();
+            Menu catMenu =
+                    categoryMenus.computeIfAbsent(
+                            category,
+                            c -> {
+                                Menu m = new Menu(c);
+                                addMenuBtn.getItems().add(m);
+                                return m;
+                            });
+
+            MenuItem item = new MenuItem(ref.getName());
+            item.setOnAction(e -> viewModel.addMerit(ref));
+            catMenu.getItems().add(item);
+        }
+
+        // Add "Custom" option
+        MenuItem customItem = new MenuItem("Custom...");
+        customItem.setOnAction(e -> viewModel.addMerit());
+        addMenuBtn.getItems().add(new SeparatorMenuItem());
+        addMenuBtn.getItems().add(customItem);
+
+        content.getChildren().addAll(title, meritsList, addMenuBtn);
         setContent(content);
     }
 

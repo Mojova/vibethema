@@ -2,6 +2,7 @@ package com.vibethema.viewmodel;
 
 import com.vibethema.model.*;
 import com.vibethema.model.traits.*;
+import com.vibethema.service.MeritService;
 import com.vibethema.viewmodel.stats.MeritRowViewModel;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.collections.FXCollections;
@@ -10,9 +11,12 @@ import javafx.collections.ObservableList;
 public class MeritsViewModel implements ViewModel {
     private final CharacterData data;
     private final ObservableList<MeritRowViewModel> meritRows = FXCollections.observableArrayList();
+    private final ObservableList<MeritReference> availableMerits = FXCollections.observableArrayList();
+    private final MeritService meritService = new MeritService();
 
     public MeritsViewModel(CharacterData data) {
         this.data = data;
+        this.availableMerits.addAll(meritService.getAvailableMerits());
 
         // Sync rows surgically to preserve stability and focus
         updateRows();
@@ -59,8 +63,27 @@ public class MeritsViewModel implements ViewModel {
         return meritRows;
     }
 
+    public ObservableList<MeritReference> getAvailableMerits() {
+        return availableMerits;
+    }
+
     public void addMerit() {
         data.getMerits().add(new Merit(java.util.UUID.randomUUID().toString(), "", 1));
+        data.setDirty(true);
+    }
+
+    public void addMerit(MeritReference ref) {
+        int initialRating =
+                (ref.getRatings() != null && !ref.getRatings().isEmpty())
+                        ? ref.getRatings().get(0)
+                        : 1;
+        data.getMerits()
+                .add(
+                        new Merit(
+                                java.util.UUID.randomUUID().toString(),
+                                ref.getName(),
+                                initialRating,
+                                ref.getDescription()));
         data.setDirty(true);
     }
 
