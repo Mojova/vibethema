@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
@@ -590,6 +591,20 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                             }
                         });
 
+        Label casteValueLabel = new Label();
+        casteValueLabel.getStyleClass().add("caste-marker"); // Reuse style from elsewhere if appropriate or add new
+        casteValueLabel.setStyle("-fx-text-fill: #d4af37; -fx-font-weight: bold; -fx-font-size: 14px;");
+        casteValueLabel.textProperty().bind(Bindings.createStringBinding(
+                () -> viewModel.getData().casteProperty().get().toString(),
+                viewModel.getData().casteProperty()
+        ));
+
+        // Visibility bindings for Caste
+        casteBox.visibleProperty().bind(viewModel.getData().modeProperty().isEqualTo(CharacterMode.CREATION));
+        casteBox.managedProperty().bind(casteBox.visibleProperty());
+        casteValueLabel.visibleProperty().bind(viewModel.getData().modeProperty().isEqualTo(CharacterMode.EXPERIENCED));
+        casteValueLabel.managedProperty().bind(casteValueLabel.visibleProperty());
+
         // Keep UI in sync with Model (for loads/imports)
         viewModel
                 .getData()
@@ -639,6 +654,16 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         supernalContainer.setAlignment(Pos.CENTER_LEFT);
         supernalContainer.getChildren().addAll(supernalDropdown, helpBtn);
 
+        Label supernalValueLabel = new Label();
+        supernalValueLabel.setStyle("-fx-text-fill: #3498db; -fx-font-weight: bold; -fx-font-size: 14px;");
+        supernalValueLabel.textProperty().bind(viewModel.getData().supernalAbilityProperty());
+
+        // Visibility bindings for Supernal
+        supernalContainer.visibleProperty().bind(viewModel.getData().modeProperty().isEqualTo(CharacterMode.CREATION));
+        supernalContainer.managedProperty().bind(supernalContainer.visibleProperty());
+        supernalValueLabel.visibleProperty().bind(viewModel.getData().modeProperty().isEqualTo(CharacterMode.EXPERIENCED));
+        supernalValueLabel.managedProperty().bind(supernalValueLabel.visibleProperty());
+
         basicInfo
                 .getChildren()
                 .addAll(
@@ -646,8 +671,10 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                         nameField,
                         casteLabel,
                         casteBox,
+                        casteValueLabel,
                         supernalLabel,
-                        supernalContainer);
+                        supernalContainer,
+                        supernalValueLabel);
 
         header.getChildren().addAll(titleText, basicInfo);
         return header;
