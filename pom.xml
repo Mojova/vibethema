@@ -95,6 +95,7 @@
           <options>
             <option>-Dapple.awt.application.name=Vibethema</option>
             <option>--enable-native-access=ALL-UNNAMED</option>
+            <option>--enable-native-access=javafx.graphics</option>
           </options>
         </configuration>
       </plugin>
