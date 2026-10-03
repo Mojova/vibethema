@@ -109,7 +109,20 @@ public class CharmDataService {
 
         java.util.LinkedHashMap<String, Charm> merged = new java.util.LinkedHashMap<>();
         for (Charm charm : allCharms) {
-            if (charm.getId() != null && !charm.getId().isBlank()) merged.put(charm.getId(), charm);
+            if (charm.getId() == null || charm.getId().isBlank()) continue;
+
+            Charm existing = merged.get(charm.getId());
+            // Older imported custom copies can have the same official IDs while only carrying
+            // prerequisiteGroups. Gson intentionally no longer maps that legacy field, so such
+            // a copy would erase the structured prerequisites from the current official source.
+            // Keep the current definition in that narrow case; ordinary custom overrides remain
+            // supported.
+            if (existing != null
+                    && existing.getPrerequisites() != null
+                    && charm.getPrerequisites() == null) {
+                continue;
+            }
+            merged.put(charm.getId(), charm);
         }
         return new ArrayList<>(merged.values());
     }
