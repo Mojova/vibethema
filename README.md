@@ -24,7 +24,7 @@ Vibethema is a JavaFX-based character builder for Exalted 3rd Edition. It provid
 
 ## Technology Stack
 
-- **Language**: Java 25
+- **Language**: Java 27
 - **UI Framework**: JavaFX
 - **Build System**: Maven
 - **Serialization**: GSON
@@ -34,7 +34,7 @@ Vibethema is a JavaFX-based character builder for Exalted 3rd Edition. It provid
 
 ### Prerequisites
 
-- Java Development Kit (JDK) 25 or higher.
+- Java Development Kit (JDK) 27 or higher.
 - Maven 3.8.1 or higher.
 
 ### Installation

@@ -12,7 +12,7 @@ import/export, custom data, and `.vbtm` JSON character files.
 
 | Concern | Current implementation |
 | --- | --- |
-| Language/runtime | Java 25; Maven compiler source/target 25 |
+| Language/runtime | Java 27; Maven compiler release 27 |
 | UI | JavaFX 26 with mvvmFX 1.8 |
 | Serialization | Gson 2.10.1 |
 | PDF processing | Apache PDFBox 3.0.3 |
