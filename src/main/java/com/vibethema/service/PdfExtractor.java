@@ -28,20 +28,22 @@ public class PdfExtractor {
 
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    public void extractAll(File pdfFile, Consumer<Double> progressCallback) throws IOException {
-        extractAll(pdfFile, "", true, PdfSource.CORE, null, progressCallback);
+    public void extractAll(File pdfFile, ImportContext context, Consumer<Double> progressCallback)
+            throws IOException {
+        extractAll(pdfFile, context, true, PdfSource.CORE, progressCallback);
     }
 
     public void extractAll(
             File pdfFile,
-            String suffix,
+            ImportContext context,
             boolean extractKeywords,
             PdfSource source,
-            Path outputBasePath,
             Consumer<Double> progressCallback)
             throws IOException {
+        String sourceId = context == null ? SourceManifest.coreBook().sourceId : context.sourceId();
+        if (context != null) context.writeManifest();
         try (PDDocument document = Loader.loadPDF(pdfFile)) {
-            PDFTextStripper stripper = new PDFTextStripper();
+                PDFTextStripper stripper = new PDFTextStripper();
 
             if (source == PdfSource.CORE) {
                 // 1. Solar Charms (Pages 250 - 466)
@@ -50,9 +52,9 @@ public class PdfExtractor {
                 stripper.setEndPage(466);
                 String charmText = stripper.getText(document);
                 CoreCharmExtractor charmExtractor = new CoreCharmExtractor();
-                if (outputBasePath != null)
-                    charmExtractor.setOverrideOutputPath(outputBasePath.resolve("charms"));
-                charmExtractor.extractAndSave(charmText, suffix);
+                charmExtractor.setSourceId(sourceId);
+                if (context != null) charmExtractor.setOverrideOutputPath(context.sourceDirectory());
+                charmExtractor.extractAndSave(charmText, "");
 
                 // 2. Sorcery (Pages 470 - 495)
                 if (progressCallback != null) progressCallback.accept(0.5);
@@ -60,9 +62,9 @@ public class PdfExtractor {
                 stripper.setEndPage(495);
                 String spellText = stripper.getText(document);
                 CoreSpellExtractor spellExtractor = new CoreSpellExtractor();
-                if (outputBasePath != null)
-                    spellExtractor.setOverrideOutputPath(outputBasePath.resolve("spells"));
-                spellExtractor.extractAndSave(spellText, suffix);
+                spellExtractor.setSourceId(sourceId);
+                if (context != null) spellExtractor.setOverrideOutputPath(context.sourceDirectory());
+                spellExtractor.extractAndSave(spellText, "");
 
                 // 3. Equipment Tags & Gear (Pages 585 - 610)
                 if (progressCallback != null) progressCallback.accept(0.8);
@@ -70,7 +72,8 @@ public class PdfExtractor {
                 stripper.setEndPage(610);
                 String equipText = stripper.getText(document);
                 CoreEquipmentExtractor equipExtractor = new CoreEquipmentExtractor();
-                if (outputBasePath != null) equipExtractor.setOverrideOutputPath(outputBasePath);
+                equipExtractor.setSourceId(sourceId);
+                if (context != null) equipExtractor.setOverrideOutputPath(context.sourceDirectory());
                 equipExtractor.extractAndSaveTags(equipText);
 
                 // 4. Merits (Pages 157 - 168)
@@ -79,9 +82,9 @@ public class PdfExtractor {
                 stripper.setEndPage(168);
                 String meritText = stripper.getText(document);
                 CoreMeritExtractor meritExtractor = new CoreMeritExtractor();
-                if (outputBasePath != null)
-                    meritExtractor.setOverrideOutputPath(outputBasePath.resolve("merits"));
-                meritExtractor.extractAndSave(meritText, suffix);
+                meritExtractor.setSourceId(sourceId);
+                if (context != null) meritExtractor.setOverrideOutputPath(context.sourceDirectory());
+                meritExtractor.extractAndSave(meritText, "");
 
                 // 5. Keywords (Page range overlap with charms + martial arts section)
                 if (extractKeywords) {
@@ -97,19 +100,20 @@ public class PdfExtractor {
                     stripper.setEndPage(428);
                     combinedKeywords.append("\n").append(stripper.getText(document));
 
-                    extractAndSaveKeywords(combinedKeywords.toString(), outputBasePath);
+                    extractAndSaveKeywords(
+                            combinedKeywords.toString(),
+                            context == null ? null : context.sourceDirectory());
                 }
 
-                saveDefaultUnarmedWeapon(outputBasePath);
+                saveDefaultUnarmedWeapon(context == null ? null : context.sourceDirectory());
             } else if (source == PdfSource.MOSE) {
                 // MoSE specifically - keep simple whole-text for now or add MoSEExtractor
                 if (progressCallback != null) progressCallback.accept(0.1);
                 String fullText = stripper.getText(document);
                 CoreCharmExtractor charmExtractor = new CoreCharmExtractor();
-                if (outputBasePath != null)
-                    charmExtractor.setOverrideOutputPath(outputBasePath.resolve("charms"));
-                charmExtractor.extractAndSave(
-                        fullText, suffix); // Fallback to Core extractor for MoSE
+                charmExtractor.setSourceId(sourceId);
+                if (context != null) charmExtractor.setOverrideOutputPath(context.sourceDirectory());
+                charmExtractor.extractAndSave(fullText, ""); // Fallback to Core extractor for MoSE
             }
 
             if (progressCallback != null) progressCallback.accept(1.0);

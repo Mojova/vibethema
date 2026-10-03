@@ -3,6 +3,7 @@ package com.vibethema.service.pdf.core;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.vibethema.service.CharmDataService;
+import com.vibethema.service.DefinitionId;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -13,9 +14,14 @@ import java.util.*;
 public class CoreSpellExtractor {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private Path overrideOutputPath;
+    private String sourceId = "exalted-3e-core";
 
     public void setOverrideOutputPath(Path path) {
         this.overrideOutputPath = path;
+    }
+
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
     }
 
     public void extractAndSave(String text, String suffix) throws IOException {
@@ -80,12 +86,12 @@ public class CoreSpellExtractor {
                 i = k - 1;
 
                 String description = cleanDescription(descRaw.toString());
-                String spellId =
-                        UUID.nameUUIDFromBytes((name.trim() + "|" + currentCircle).getBytes())
-                                .toString();
+                String spellId = DefinitionId.forSpell(sourceId, name, currentCircle);
 
                 Map<String, Object> spellMap = new LinkedHashMap<>();
                 spellMap.put("id", spellId);
+                spellMap.put("sourceId", sourceId);
+                spellMap.put("exaltTypes", List.of("SOLAR"));
                 spellMap.put("name", name);
                 spellMap.put("circle", currentCircle);
                 spellMap.put("cost", cost);
@@ -112,7 +118,7 @@ public class CoreSpellExtractor {
             throws IOException {
         Path outDir =
                 overrideOutputPath != null
-                        ? overrideOutputPath
+                        ? overrideOutputPath.resolve("spells")
                         : CharmDataService.getUserSpellsPath();
         if (!Files.exists(outDir)) Files.createDirectories(outDir);
 
@@ -123,6 +129,7 @@ public class CoreSpellExtractor {
             try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
                 Map<String, Object> wrapper = new LinkedHashMap<>();
                 wrapper.put("version", "0.1.0");
+                wrapper.put("sourceId", sourceId);
                 wrapper.put("circle", entry.getKey());
                 wrapper.put("spells", entry.getValue());
                 gson.toJson(wrapper, writer);

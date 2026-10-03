@@ -8,6 +8,8 @@ import java.util.List;
  */
 public class MeritReference {
     private String id;
+    private String sourceId;
+    private List<String> exaltTypes;
     private String name;
     private String category;
     private List<Integer> ratings;
@@ -23,6 +25,18 @@ public class MeritReference {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
+    }
+
+    public List<String> getExaltTypes() {
+        return exaltTypes;
     }
 
     public String getName() {

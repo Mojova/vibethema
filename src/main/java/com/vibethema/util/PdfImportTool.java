@@ -1,36 +1,44 @@
 package com.vibethema.util;
 
+import com.vibethema.service.ImportContext;
 import com.vibethema.service.PathService;
 import com.vibethema.service.PdfExtractor;
+import com.vibethema.service.SourceManifest;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 /**
  * CLI utility to run the PDF extraction process and inspect the results. Usage: mvn compile
  * exec:java -Dexec.mainClass="com.vibethema.util.PdfImportTool" -Dexec.args="<pdf-path>
- * [output-dir]"
+ * <source-id> <output-root>"
  */
 public class PdfImportTool {
 
     public static void main(String[] args) {
-        if (args.length < 1) {
-            System.err.println("Usage: PdfImportTool <pdf-path> [output-dir]");
+        if (args.length < 1 || args.length == 2) {
+            System.err.println(
+                    "Usage: PdfImportTool <pdf-path> [<source-id> <output-root>]");
             System.exit(1);
         }
 
         String pdfPath = args[0];
-        String outputDir = args.length > 1 ? args[1] : null;
+        String sourceId = args.length > 1 ? args[1] : SourceManifest.coreBook().sourceId;
+        Path outputDir =
+                args.length > 1
+                        ? Paths.get(args[2]).resolve(sourceId)
+                        : PathService.getOfficialSourcePath(sourceId);
 
-        if (outputDir != null) {
-            System.setProperty("vibethema.data.dir", outputDir);
-            System.out.println("Using custom data directory: " + outputDir);
-        } else {
-            System.out.println(
-                    "Using default application data directory: " + PathService.getDataPath());
-        }
+        SourceManifest manifest =
+                sourceId.equals(SourceManifest.coreBook().sourceId)
+                        ? SourceManifest.coreBook()
+                        : new SourceManifest(sourceId, sourceId, "3e", "imported");
+        ImportContext context = new ImportContext(manifest, outputDir);
+
+        System.out.println("Using source directory: " + outputDir);
 
         File pdfFile = new File(pdfPath);
         if (!pdfFile.exists()) {
@@ -44,12 +52,11 @@ public class PdfImportTool {
         try {
             extractor.extractAll(
                     pdfFile,
-                    progress -> {
-                        System.out.printf("Progress: %.1f%%\r", progress * 100);
-                    });
+                    context,
+                    progress -> System.out.printf("Progress: %.1f%%\r", progress * 100));
             System.out.println("\nExtraction Complete!");
 
-            inspectResults();
+            inspectResults(outputDir);
 
         } catch (IOException e) {
             System.err.println("\nError during extraction: " + e.getMessage());
@@ -58,8 +65,7 @@ public class PdfImportTool {
         }
     }
 
-    private static void inspectResults() {
-        Path dataPath = PathService.getDataPath();
+    private static void inspectResults(Path dataPath) {
         System.out.println("\n--- Post-Import Inspection ---");
         System.out.println("Data Path: " + dataPath);
 

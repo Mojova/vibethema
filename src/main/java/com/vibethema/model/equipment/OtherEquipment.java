@@ -6,6 +6,7 @@ import javafx.beans.property.StringProperty;
 
 public class OtherEquipment {
     private final StringProperty id = new SimpleStringProperty(UUID.randomUUID().toString());
+    private String sourceId;
     private final StringProperty instanceId =
             new SimpleStringProperty(UUID.randomUUID().toString());
     private final StringProperty name = new SimpleStringProperty("");
@@ -42,6 +43,14 @@ public class OtherEquipment {
 
     public String getId() {
         return id.get();
+    }
+
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
     }
 
     public StringProperty instanceIdProperty() {
@@ -119,6 +128,7 @@ public class OtherEquipment {
     // --- Persistence Support (DTO) ---
     public static class OtherEquipmentData {
         public String id;
+        public String sourceId;
         public String instanceId;
         public String name;
         public String description;
@@ -129,6 +139,7 @@ public class OtherEquipment {
     public OtherEquipmentData toData() {
         OtherEquipmentData data = new OtherEquipmentData();
         data.id = getId();
+        data.sourceId = getSourceId();
         data.instanceId = getInstanceId();
         data.name = getName();
         data.description = getDescription();
@@ -141,6 +152,7 @@ public class OtherEquipment {
         if (data == null) return null;
         OtherEquipment oe =
                 new OtherEquipment(data.id, data.instanceId, data.name, data.description);
+        oe.setSourceId(data.sourceId);
         oe.setArtifact(data.artifact);
         oe.setAttunement(data.attunement);
         return oe;

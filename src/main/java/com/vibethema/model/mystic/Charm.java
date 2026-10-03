@@ -6,6 +6,8 @@ import java.util.UUID;
 
 public abstract class Charm {
     private String id;
+    private String sourceId;
+    private List<String> exaltTypes;
     private String name;
     private int minEssence;
     private List<PrerequisiteGroup> prerequisiteGroups;
@@ -64,6 +66,18 @@ public abstract class Charm {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
+    }
+
+    public List<String> getExaltTypes() {
+        return exaltTypes;
     }
 
     public Charm() {

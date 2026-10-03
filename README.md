@@ -101,11 +101,12 @@ You can run the PDF extraction process without launching the UI. This is useful 
 ```bash
 mvn compile exec:java \
   -Dexec.mainClass="com.vibethema.util.PdfImportTool" \
-  -Dexec.args="/path/to/Ex3_Core.pdf ./debug_import"
+  -Dexec.args="/path/to/Ex3_Core.pdf exalted-3e-core ./debug_import"
 ```
 
 - **Arg 1**: Path to the Exalted 3e Core PDF.
-- **Arg 2** (Optional): Custom data directory. If provided, the tool will set the `vibethema.data.dir` property to redirect all output there, keeping it separate from your main application data.
+- **Arg 2**: Source ID for the imported book.
+- **Arg 3**: Output root; the importer writes to `<output root>/<source ID>/`.
 
 The tool will print a summary of all extracted Charms, Spells, and Equipment tags after completion.
 

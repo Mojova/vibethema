@@ -2,6 +2,7 @@ package com.vibethema.service;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.vibethema.model.ExaltType;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
@@ -22,11 +23,11 @@ public class EquipmentDataService {
     private final Gson gson = new Gson();
 
     public static Path getEquipmentTagsPath() {
-        return PathService.getDataPath().resolve(TAGS_FILE);
+        return PathService.getCustomDataPath().resolve(TAGS_FILE);
     }
 
     private static Path getGlobalEquipmentPath() {
-        return PathService.getDataPath().resolve(EQUIPMENT_DIR);
+        return PathService.getCustomDataPath().resolve(EQUIPMENT_DIR);
     }
 
     public static Path getWeaponsPath() {
@@ -43,6 +44,24 @@ public class EquipmentDataService {
 
     public static Path getOtherEquipmentPath() {
         return getGlobalEquipmentPath().resolve("other");
+    }
+
+    private static List<Path> officialEquipmentPaths(String category) {
+        return officialEquipmentPaths(null, category);
+    }
+
+    private static List<Path> officialEquipmentPaths(ExaltType exaltType, String category) {
+        List<Path> paths = new ArrayList<>();
+        List<Path> sourcePaths =
+                exaltType == null
+                        ? PathService.getOfficialSourcePaths()
+                        : new SourceCatalog().getSourcesFor(exaltType).stream()
+                                .map(source -> PathService.getOfficialSourcePath(source.sourceId))
+                                .toList();
+        for (Path source : sourcePaths) {
+            paths.add(source.resolve(EQUIPMENT_DIR).resolve(category));
+        }
+        return paths;
     }
 
     public EquipmentDataService() {
@@ -120,9 +139,16 @@ public class EquipmentDataService {
     }
 
     public List<com.vibethema.model.equipment.Weapon> getGlobalWeapons() {
-        return listGlobalItems(
-                        getWeaponsPath(), com.vibethema.model.equipment.Weapon.WeaponData.class)
-                .stream()
+        return getGlobalWeapons(null);
+    }
+
+    public List<com.vibethema.model.equipment.Weapon> getGlobalWeapons(ExaltType exaltType) {
+        List<com.vibethema.model.equipment.Weapon.WeaponData> data = new ArrayList<>();
+        for (Path path : officialEquipmentPaths(exaltType, "weapons")) {
+            data.addAll(listGlobalItems(path, com.vibethema.model.equipment.Weapon.WeaponData.class));
+        }
+        data.addAll(listGlobalItems(getWeaponsPath(), com.vibethema.model.equipment.Weapon.WeaponData.class));
+        return data.stream()
                 .map(com.vibethema.model.equipment.Weapon::fromData)
                 .collect(java.util.stream.Collectors.toList());
     }
@@ -142,8 +168,16 @@ public class EquipmentDataService {
     }
 
     public List<com.vibethema.model.equipment.Armor> getGlobalArmors() {
-        return listGlobalItems(getArmorsPath(), com.vibethema.model.equipment.Armor.ArmorData.class)
-                .stream()
+        return getGlobalArmors(null);
+    }
+
+    public List<com.vibethema.model.equipment.Armor> getGlobalArmors(ExaltType exaltType) {
+        List<com.vibethema.model.equipment.Armor.ArmorData> data = new ArrayList<>();
+        for (Path path : officialEquipmentPaths(exaltType, "armors")) {
+            data.addAll(listGlobalItems(path, com.vibethema.model.equipment.Armor.ArmorData.class));
+        }
+        data.addAll(listGlobalItems(getArmorsPath(), com.vibethema.model.equipment.Armor.ArmorData.class));
+        return data.stream()
                 .map(com.vibethema.model.equipment.Armor::fromData)
                 .collect(java.util.stream.Collectors.toList());
     }
@@ -165,10 +199,16 @@ public class EquipmentDataService {
     }
 
     public List<com.vibethema.model.equipment.Hearthstone> getGlobalHearthstones() {
-        return listGlobalItems(
-                        getHearthstonesPath(),
-                        com.vibethema.model.equipment.Hearthstone.HearthstoneData.class)
-                .stream()
+        return getGlobalHearthstones(null);
+    }
+
+    public List<com.vibethema.model.equipment.Hearthstone> getGlobalHearthstones(ExaltType exaltType) {
+        List<com.vibethema.model.equipment.Hearthstone.HearthstoneData> data = new ArrayList<>();
+        for (Path path : officialEquipmentPaths(exaltType, "hearthstones")) {
+            data.addAll(listGlobalItems(path, com.vibethema.model.equipment.Hearthstone.HearthstoneData.class));
+        }
+        data.addAll(listGlobalItems(getHearthstonesPath(), com.vibethema.model.equipment.Hearthstone.HearthstoneData.class));
+        return data.stream()
                 .map(com.vibethema.model.equipment.Hearthstone::fromData)
                 .collect(java.util.stream.Collectors.toList());
     }
@@ -191,10 +231,16 @@ public class EquipmentDataService {
     }
 
     public List<com.vibethema.model.equipment.OtherEquipment> getGlobalOtherEquipment() {
-        return listGlobalItems(
-                        getOtherEquipmentPath(),
-                        com.vibethema.model.equipment.OtherEquipment.OtherEquipmentData.class)
-                .stream()
+        return getGlobalOtherEquipment(null);
+    }
+
+    public List<com.vibethema.model.equipment.OtherEquipment> getGlobalOtherEquipment(ExaltType exaltType) {
+        List<com.vibethema.model.equipment.OtherEquipment.OtherEquipmentData> data = new ArrayList<>();
+        for (Path path : officialEquipmentPaths(exaltType, "other")) {
+            data.addAll(listGlobalItems(path, com.vibethema.model.equipment.OtherEquipment.OtherEquipmentData.class));
+        }
+        data.addAll(listGlobalItems(getOtherEquipmentPath(), com.vibethema.model.equipment.OtherEquipment.OtherEquipmentData.class));
+        return data.stream()
                 .map(com.vibethema.model.equipment.OtherEquipment::fromData)
                 .collect(java.util.stream.Collectors.toList());
     }
@@ -226,16 +272,24 @@ public class EquipmentDataService {
     }
 
     public Map<String, List<Tag>> loadEquipmentTags() {
-        Path path = getEquipmentTagsPath();
-        if (!Files.exists(path)) return new HashMap<>();
+        Map<String, List<Tag>> result = new HashMap<>();
+        for (Path source : PathService.getOfficialSourcePaths()) {
+            mergeTagsFromFile(source.resolve(EQUIPMENT_DIR).resolve(TAGS_FILE), result);
+        }
+        mergeTagsFromFile(getEquipmentTagsPath(), result);
+        return result;
+    }
 
+    private void mergeTagsFromFile(Path path, Map<String, List<Tag>> target) {
+        if (!Files.exists(path)) return;
         try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             Type type = new TypeToken<Map<String, List<Tag>>>() {}.getType();
             Map<String, List<Tag>> tags = gson.fromJson(reader, type);
-            return tags != null ? tags : new HashMap<>();
+            if (tags != null) {
+                tags.forEach((category, values) -> target.computeIfAbsent(category, k -> new ArrayList<>()).addAll(values));
+            }
         } catch (IOException e) {
             logger.error("Error loading equipment tags from: {}", path, e);
-            return new HashMap<>();
         }
     }
 
@@ -252,10 +306,12 @@ public class EquipmentDataService {
     }
 
     public int getTotalEquipmentCount() {
-        return countItemsInDir(getWeaponsPath())
-                + countItemsInDir(getArmorsPath())
-                + countItemsInDir(getHearthstonesPath())
-                + countItemsInDir(getOtherEquipmentPath());
+        return countAll("weapons") + countAll("armors") + countAll("hearthstones") + countAll("other");
+    }
+
+    private int countAll(String category) {
+        int count = officialEquipmentPaths(category).stream().mapToInt(this::countItemsInDir).sum();
+        return count + countItemsInDir(getGlobalEquipmentPath().resolve(category));
     }
 
     private int countItemsInDir(Path dir) {

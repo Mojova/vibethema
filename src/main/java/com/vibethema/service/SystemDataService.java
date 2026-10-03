@@ -16,7 +16,8 @@ public class SystemDataService {
      * @return true if core data is present, false otherwise.
      */
     public boolean isCoreDataImported() {
-        Path keywordsPath = PathService.getDataPath().resolve("charms").resolve("keywords.json");
-        return Files.exists(keywordsPath);
+        return PathService.getOfficialSourcePaths().stream()
+                .map(source -> source.resolve("charms").resolve("keywords.json"))
+                .anyMatch(Files::exists);
     }
 }

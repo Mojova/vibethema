@@ -1,6 +1,7 @@
 package com.vibethema.service.pdf.core;
 
 import com.vibethema.service.pdf.base.BaseCharmExtractor;
+import com.vibethema.service.DefinitionId;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -258,12 +259,12 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
             }
 
             String fullText = cleanDescription(descRaw.toString());
-            String charmId =
-                    UUID.nameUUIDFromBytes((name.trim() + "|" + ability.trim()).getBytes())
-                            .toString();
+            String charmId = DefinitionId.forCharm(sourceId, name, ability);
 
             Map<String, Object> charmMap = new LinkedHashMap<>();
             charmMap.put("id", charmId);
+            charmMap.put("sourceId", sourceId);
+            charmMap.put("exaltTypes", List.of("SOLAR"));
             charmMap.put("name", name);
             charmMap.put("ability", ability);
             charmMap.put("minAbility", minAbilityValue);

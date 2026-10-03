@@ -72,4 +72,20 @@ class PathServiceTest {
         assertTrue(dataPath.toString().contains("/home/tester/.local/share/mojova/vibethema"));
         assertTrue(configPath.toString().contains("/home/tester/.config/mojova/vibethema"));
     }
+
+    @Test
+    void sourcePathsAreNestedUnderOfficialData() {
+        System.setProperty("os.name", "Linux");
+        System.setProperty("user.home", "/home/tester");
+
+        assertEquals(
+                Path.of("/home/tester/.local/share/mojova/vibethema/official"),
+                PathService.getOfficialSourcesPath());
+        assertEquals(
+                Path.of("/home/tester/.local/share/mojova/vibethema/official/exalted-3e-core"),
+                PathService.getOfficialSourcePath("exalted-3e-core"));
+        assertEquals(
+                Path.of("/home/tester/.local/share/mojova/vibethema/custom"),
+                PathService.getCustomDataPath());
+    }
 }

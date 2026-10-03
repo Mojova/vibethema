@@ -110,6 +110,7 @@ public class CharacterSaveState {
 
     public static class WeaponLink {
         public String id;
+        public String sourceId;
         public String instanceId;
         public String specialtyId;
         public boolean equipped;
@@ -121,18 +122,20 @@ public class CharacterSaveState {
             WeaponLink that = (WeaponLink) o;
             return equipped == that.equipped
                     && Objects.equals(id, that.id)
+                    && Objects.equals(sourceId, that.sourceId)
                     && Objects.equals(instanceId, that.instanceId)
                     && Objects.equals(specialtyId, that.specialtyId);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(id, instanceId, specialtyId, equipped);
+            return Objects.hash(id, sourceId, instanceId, specialtyId, equipped);
         }
     }
 
     public static class ArmorLink {
         public String id;
+        public String sourceId;
         public String instanceId;
         public boolean equipped;
 
@@ -143,17 +146,19 @@ public class CharacterSaveState {
             ArmorLink armorLink = (ArmorLink) o;
             return equipped == armorLink.equipped
                     && Objects.equals(id, armorLink.id)
+                    && Objects.equals(sourceId, armorLink.sourceId)
                     && Objects.equals(instanceId, armorLink.instanceId);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(id, instanceId, equipped);
+            return Objects.hash(id, sourceId, instanceId, equipped);
         }
     }
 
     public static class HearthstoneLink {
         public String id;
+        public String sourceId;
         public String instanceId;
         public boolean equipped;
 
@@ -164,17 +169,19 @@ public class CharacterSaveState {
             HearthstoneLink that = (HearthstoneLink) o;
             return equipped == that.equipped
                     && Objects.equals(id, that.id)
+                    && Objects.equals(sourceId, that.sourceId)
                     && Objects.equals(instanceId, that.instanceId);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(id, instanceId, equipped);
+            return Objects.hash(id, sourceId, instanceId, equipped);
         }
     }
 
     public static class OtherEquipmentLink {
         public String id;
+        public String sourceId;
         public String instanceId;
         public boolean equipped;
 
@@ -185,12 +192,13 @@ public class CharacterSaveState {
             OtherEquipmentLink that = (OtherEquipmentLink) o;
             return equipped == that.equipped
                     && Objects.equals(id, that.id)
+                    && Objects.equals(sourceId, that.sourceId)
                     && Objects.equals(instanceId, that.instanceId);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(id, instanceId, equipped);
+            return Objects.hash(id, sourceId, instanceId, equipped);
         }
     }
 
@@ -217,6 +225,7 @@ public class CharacterSaveState {
 
     public static class MeritData {
         public String id;
+        public String sourceId;
         public String definitionId;
         public String name;
         public int rating;
@@ -267,6 +276,7 @@ public class CharacterSaveState {
 
     public static class MartialArtsData {
         public String id;
+        public String sourceId;
         public String styleName;
         public int rating;
         public boolean isCaste;
@@ -346,6 +356,7 @@ public class CharacterSaveState {
 
     public static class SpellData {
         public String id;
+        public String sourceId;
         public String name;
         public String circle;
         public String cost;
@@ -370,6 +381,19 @@ public class CharacterSaveState {
             this.keywords = keywords;
             this.duration = duration;
             this.description = description;
+        }
+
+        public SpellData(
+                String id,
+                String name,
+                String circle,
+                String cost,
+                List<String> keywords,
+                String duration,
+                String description,
+                String sourceId) {
+            this(id, name, circle, cost, keywords, duration, description);
+            this.sourceId = sourceId;
         }
 
         @Override

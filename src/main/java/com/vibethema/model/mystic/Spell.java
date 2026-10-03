@@ -21,6 +21,8 @@ public class Spell {
     }
 
     private final StringProperty id = new SimpleStringProperty(UUID.randomUUID().toString());
+    private String sourceId;
+    private List<String> exaltTypes;
     private final StringProperty name = new SimpleStringProperty("");
     private final StringProperty circle = new SimpleStringProperty(Circle.TERRESTRIAL.name());
     private final StringProperty cost = new SimpleStringProperty("");
@@ -51,6 +53,31 @@ public class Spell {
         if (keywords != null) this.keywords.setAll(keywords);
         this.duration.set(duration);
         this.description.set(description);
+    }
+
+    public Spell(
+            String id,
+            String name,
+            String circle,
+            String cost,
+            List<String> keywords,
+            String duration,
+            String description,
+            String sourceId) {
+        this(id, name, circle, cost, keywords, duration, description);
+        this.sourceId = sourceId;
+    }
+
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
+    }
+
+    public List<String> getExaltTypes() {
+        return exaltTypes;
     }
 
     public StringProperty idProperty() {

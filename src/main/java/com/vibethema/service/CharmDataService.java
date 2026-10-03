@@ -51,33 +51,67 @@ public class CharmDataService {
                     .create();
 
     public static Path getUserCharmsPath() {
-        return PathService.getDataPath().resolve(CHARMS_DIR);
+        return PathService.getCustomDataPath().resolve(CHARMS_DIR);
     }
 
     public static Path getUserMartialArtsPath() {
-        return PathService.getDataPath().resolve(CHARMS_DIR).resolve(MA_DIR);
+        return PathService.getCustomDataPath().resolve(CHARMS_DIR).resolve(MA_DIR);
     }
 
     public static Path getUserEvocationsPath() {
-        return PathService.getDataPath().resolve(CHARMS_DIR).resolve(EVOCATIONS_DIR);
+        return PathService.getCustomDataPath().resolve(CHARMS_DIR).resolve(EVOCATIONS_DIR);
     }
 
     public static Path getUserSpellsPath() {
-        return PathService.getDataPath().resolve(SPELLS_DIR);
+        return PathService.getCustomDataPath().resolve(SPELLS_DIR);
+    }
+
+    private static List<Path> officialPaths(String... components) {
+        return officialPaths(null, components);
+    }
+
+    private static List<Path> officialPaths(ExaltType exaltType, String... components) {
+        List<Path> paths = new ArrayList<>();
+        List<Path> sourcePaths =
+                exaltType == null
+                        ? PathService.getOfficialSourcePaths()
+                        : new SourceCatalog().getSourcesFor(exaltType).stream()
+                                .map(source -> PathService.getOfficialSourcePath(source.sourceId))
+                                .toList();
+        for (Path source : sourcePaths) {
+            Path path = source;
+            for (String component : components) {
+                path = path.resolve(component);
+            }
+            paths.add(path);
+        }
+        return paths;
     }
 
     public List<Charm> loadCharmsForAbility(String ability) {
+        return loadCharmsForAbility(ability, null);
+    }
+
+    /** Loads charms from sources supporting the selected Exalt type plus custom definitions. */
+    public List<Charm> loadCharmsForAbility(String ability, ExaltType exaltType) {
         List<Charm> allCharms = new ArrayList<>();
         String baseName = ability.toLowerCase().replace(" ", "-");
 
-        // 1. Scan for all matching files in User Charms and Martial Arts directories
+        // Official sources are read first; custom data is layered on top.
+        for (Path path : officialPaths(exaltType, CHARMS_DIR)) {
+            scanAndLoadMatchingFiles(path, baseName, allCharms);
+        }
+        for (Path path : officialPaths(exaltType, CHARMS_DIR, MA_DIR)) {
+            scanAndLoadMatchingFiles(path, baseName, allCharms);
+        }
         scanAndLoadMatchingFiles(getUserCharmsPath(), baseName, allCharms);
         scanAndLoadMatchingFiles(getUserMartialArtsPath(), baseName, allCharms);
 
-        // Ensure standard charms have IDs (migration helper)
-        assignMigrationIds(allCharms, ability);
-
-        return allCharms;
+        java.util.LinkedHashMap<String, Charm> merged = new java.util.LinkedHashMap<>();
+        for (Charm charm : allCharms) {
+            if (charm.getId() != null && !charm.getId().isBlank()) merged.put(charm.getId(), charm);
+        }
+        return new ArrayList<>(merged.values());
     }
 
     private void scanAndLoadMatchingFiles(Path dir, String baseName, List<Charm> allCharms) {
@@ -183,12 +217,16 @@ public class CharmDataService {
 
     public int getGlobalSpellCount() {
         int count = 0;
+        List<Path> spellDirectories = new ArrayList<>(officialPaths(SPELLS_DIR));
+        spellDirectories.add(getUserSpellsPath());
         try {
-            if (Files.exists(getUserSpellsPath())) {
-                try (java.util.stream.Stream<Path> stream = Files.list(getUserSpellsPath())) {
+            for (Path spellDirectory : spellDirectories) {
+                if (!Files.exists(spellDirectory)) continue;
+                try (java.util.stream.Stream<Path> stream = Files.list(spellDirectory)) {
                     count =
-                            (int)
-                                    stream.filter(p -> p.toString().endsWith(".json"))
+                            count
+                                    + (int)
+                                            stream.filter(p -> p.toString().endsWith(".json"))
                                             .map(
                                                     p -> {
                                                         try (Reader r =
@@ -226,49 +264,50 @@ public class CharmDataService {
         logger.info("Building global charm index...");
         List<Charm> all = new ArrayList<>();
 
-        // Load all solar and martial arts
-        try {
-            if (Files.exists(getUserCharmsPath())) {
-                Files.list(getUserCharmsPath())
-                        .filter(
-                                p ->
-                                        p.toString().endsWith(".json")
-                                                && !p.getFileName()
-                                                        .toString()
-                                                        .equals("keywords.json")
-                                                && !p.getFileName()
-                                                        .toString()
-                                                        .equals("charm-schema.json"))
-                        .forEach(p -> loadFromFileForIndex(p, all));
-            }
-            if (Files.exists(getUserMartialArtsPath())) {
-                Files.list(getUserMartialArtsPath())
-                        .filter(p -> p.toString().endsWith(".json"))
-                        .forEach(p -> loadFromFileForIndex(p, all));
-            }
-            // Load evocations
-            if (Files.exists(getUserEvocationsPath())) {
-                Files.list(getUserEvocationsPath())
-                        .filter(p -> p.toString().endsWith(".json"))
-                        .forEach(
-                                p -> {
-                                    EvocationCollection coll =
-                                            loadEvocations(
-                                                    p.getFileName()
-                                                            .toString()
-                                                            .replace(".json", ""));
-                                    if (coll != null) all.addAll(coll.evocations);
-                                });
-            }
-        } catch (IOException e) {
-            logger.error("Error building global charm index", e);
+        for (Path path : officialPaths(CHARMS_DIR)) {
+            loadIndexDirectory(path, all, false);
         }
+        for (Path path : officialPaths(CHARMS_DIR, MA_DIR)) {
+            loadIndexDirectory(path, all, false);
+        }
+        for (Path path : officialPaths(CHARMS_DIR, EVOCATIONS_DIR)) {
+            loadIndexDirectory(path, all, true);
+        }
+        loadIndexDirectory(getUserCharmsPath(), all, false);
+        loadIndexDirectory(getUserMartialArtsPath(), all, false);
+        loadIndexDirectory(getUserEvocationsPath(), all, true);
 
         for (Charm c : all) {
             if (c.getId() != null) {
                 charmIdToNameMap.put(c.getId(), c.getName());
                 if (c.getAbility() != null) charmIdToAbilityMap.put(c.getId(), c.getAbility());
             }
+        }
+    }
+
+    private void loadIndexDirectory(Path directory, List<Charm> all, boolean evocations) {
+        if (!Files.exists(directory)) return;
+        try (java.util.stream.Stream<Path> files = Files.list(directory)) {
+            files.filter(path -> path.toString().endsWith(".json"))
+                    .filter(
+                            path ->
+                                    !path.getFileName().toString().equals("keywords.json")
+                                            && !path.getFileName()
+                                                    .toString()
+                                                    .equals("charm-schema.json"))
+                    .forEach(
+                            path -> {
+                                if (evocations) {
+                                    EvocationCollection coll =
+                                            loadEvocations(
+                                                    path.getFileName().toString().replace(".json", ""));
+                                    if (coll != null) all.addAll(coll.evocations);
+                                } else {
+                                    loadFromFileForIndex(path, all);
+                                }
+                            });
+        } catch (IOException e) {
+            logger.error("Error building global charm index from {}", directory, e);
         }
     }
 
@@ -506,6 +545,13 @@ public class CharmDataService {
 
     public List<Keyword> loadKeywords() {
         String filename = "keywords.json";
+        List<Keyword> result = new ArrayList<>();
+        for (Path sourcePath : officialPaths(CHARMS_DIR)) {
+            loadKeywordsFromFile(sourcePath.resolve(filename), result);
+        }
+        loadKeywordsFromFile(getUserCharmsPath().resolve(filename), result);
+        if (!result.isEmpty()) return result;
+
         Path userPath = getUserCharmsPath().resolve(filename);
 
         // Try user directory first
@@ -519,6 +565,17 @@ public class CharmDataService {
         }
 
         return new ArrayList<>();
+    }
+
+    private void loadKeywordsFromFile(Path path, List<Keyword> target) {
+        if (!Files.exists(path)) return;
+        try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+            Type listType = new TypeToken<ArrayList<Keyword>>() {}.getType();
+            List<Keyword> keywords = gson.fromJson(reader, listType);
+            if (keywords != null) target.addAll(keywords);
+        } catch (IOException e) {
+            logger.error("Error loading keyword file: {}", path, e);
+        }
     }
 
     private boolean loadFromFile(Path path, List<Charm> allCharms) {
@@ -641,33 +698,28 @@ public class CharmDataService {
         }
     }
 
-    private void assignMigrationIds(List<Charm> charms, String ability) {
-        for (Charm c : charms) {
-            if (c.getId() == null || c.getId().isEmpty()) {
-                String id =
-                        java.util
-                                .UUID
-                                .nameUUIDFromBytes(
-                                        (c.getName().trim() + "|" + ability.trim())
-                                                .getBytes(java.nio.charset.StandardCharsets.UTF_8))
-                                .toString();
-                c.setId(id);
-            }
-        }
+    public List<Spell> loadSpells(String circle) {
+        return loadSpells(circle, null);
     }
 
-    public List<Spell> loadSpells(String circle) {
+    /** Loads spells from sources supporting the selected Exalt type plus custom spells. */
+    public List<Spell> loadSpells(String circle, ExaltType exaltType) {
         List<Spell> result = new ArrayList<>();
 
-        // 1. Load standard circle spells
         String filename = circle.toLowerCase() + ".json";
-        loadSpellsFromFile(getUserSpellsPath().resolve(filename), result, false);
+        for (Path sourcePath : officialPaths(exaltType, SPELLS_DIR)) {
+            loadSpellsFromFile(sourcePath.resolve(filename), result, false);
+        }
+        loadSpellsFromFile(getUserSpellsPath().resolve(filename), result, true);
 
-        // 2. Load custom circle spells
         String customFilename = "custom-" + circle.toLowerCase() + ".json";
         loadSpellsFromFile(getUserSpellsPath().resolve(customFilename), result, true);
 
-        return result;
+        java.util.LinkedHashMap<String, Spell> merged = new java.util.LinkedHashMap<>();
+        for (Spell spell : result) {
+            if (spell.getId() != null && !spell.getId().isBlank()) merged.put(spell.getId(), spell);
+        }
+        return new ArrayList<>(merged.values());
     }
 
     private void loadSpellsFromFile(Path path, List<Spell> result, boolean isCustom) {

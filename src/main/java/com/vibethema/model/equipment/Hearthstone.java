@@ -6,6 +6,7 @@ import javafx.beans.property.StringProperty;
 
 public class Hearthstone {
     private final StringProperty id = new SimpleStringProperty(UUID.randomUUID().toString());
+    private String sourceId;
     private final StringProperty instanceId =
             new SimpleStringProperty(UUID.randomUUID().toString());
     private final StringProperty name = new SimpleStringProperty("");
@@ -38,6 +39,14 @@ public class Hearthstone {
 
     public String getId() {
         return id.get();
+    }
+
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
     }
 
     public StringProperty instanceIdProperty() {
@@ -91,6 +100,7 @@ public class Hearthstone {
     // --- Persistence Support (DTO) ---
     public static class HearthstoneData {
         public String id;
+        public String sourceId;
         public String instanceId;
         public String name;
         public String description;
@@ -99,6 +109,7 @@ public class Hearthstone {
     public HearthstoneData toData() {
         HearthstoneData data = new HearthstoneData();
         data.id = getId();
+        data.sourceId = getSourceId();
         data.instanceId = getInstanceId();
         data.name = getName();
         data.description = getDescription();
@@ -107,7 +118,9 @@ public class Hearthstone {
 
     public static Hearthstone fromData(HearthstoneData data) {
         if (data == null) return null;
-        return new Hearthstone(data.id, data.instanceId, data.name, data.description);
+        Hearthstone h = new Hearthstone(data.id, data.instanceId, data.name, data.description);
+        h.setSourceId(data.sourceId);
+        return h;
     }
 
     public Hearthstone copy() {

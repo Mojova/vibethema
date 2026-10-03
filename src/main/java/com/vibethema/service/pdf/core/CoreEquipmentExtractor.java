@@ -3,6 +3,7 @@ package com.vibethema.service.pdf.core;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.vibethema.service.CharmDataService;
+import com.vibethema.service.DefinitionId;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -15,9 +16,14 @@ import java.util.regex.Pattern;
 public class CoreEquipmentExtractor {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private Path overrideOutputPath;
+    private String sourceId = "exalted-3e-core";
 
     public void setOverrideOutputPath(Path path) {
         this.overrideOutputPath = path;
+    }
+
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
     }
 
     public void extractAndSaveTags(String text) throws IOException {
@@ -34,7 +40,7 @@ public class CoreEquipmentExtractor {
 
         Path outDir =
                 overrideOutputPath != null
-                        ? overrideOutputPath
+                        ? overrideOutputPath.resolve("equipment")
                         : CharmDataService.getUserCharmsPath().getParent();
         Path filePath = outDir.resolve("equipment_tags.json");
         if (!Files.exists(outDir)) Files.createDirectories(outDir);
@@ -74,9 +80,10 @@ public class CoreEquipmentExtractor {
                             .trim();
 
             Map<String, String> tag = new LinkedHashMap<>();
-            String id =
-                    java.util.UUID.nameUUIDFromBytes((category + "|" + name).getBytes()).toString();
+            String id = DefinitionId.forEquipment(sourceId, category, name);
             tag.put("id", id);
+            tag.put("sourceId", sourceId);
+            tag.put("exaltTypes", "SOLAR");
             tag.put("name", name);
             tag.put("description", desc);
             list.add(tag);

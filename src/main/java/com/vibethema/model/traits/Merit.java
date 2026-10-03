@@ -8,6 +8,7 @@ import javafx.beans.property.StringProperty;
 public class Merit {
     private final String id;
     private final String definitionId;
+    private String sourceId;
     private final StringProperty name = new SimpleStringProperty("");
     private final IntegerProperty rating = new SimpleIntegerProperty(1);
     private final StringProperty description = new SimpleStringProperty("");
@@ -34,6 +35,14 @@ public class Merit {
 
     public String getDefinitionId() {
         return definitionId;
+    }
+
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
     }
 
     public StringProperty nameProperty() {

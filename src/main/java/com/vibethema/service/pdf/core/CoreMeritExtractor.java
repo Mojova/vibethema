@@ -1,6 +1,7 @@
 package com.vibethema.service.pdf.core;
 
 import com.vibethema.service.pdf.base.BaseCharmExtractor;
+import com.vibethema.service.DefinitionId;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -98,10 +99,12 @@ public class CoreMeritExtractor extends BaseCharmExtractor {
             }
 
             String fullDescription = super.cleanDescription(descRaw.toString());
-            String meritId = UUID.nameUUIDFromBytes((name.trim()).getBytes()).toString();
+            String meritId = DefinitionId.forMerit(sourceId, name);
 
             Map<String, Object> meritMap = new LinkedHashMap<>();
             meritMap.put("id", meritId);
+            meritMap.put("sourceId", sourceId);
+            meritMap.put("exaltTypes", List.of("SOLAR"));
             meritMap.put("name", name);
             meritMap.put("category", category);
             meritMap.put("ratings", ratings);
@@ -166,7 +169,7 @@ public class CoreMeritExtractor extends BaseCharmExtractor {
     private void saveMerits(List<Map<String, Object>> merits, String suffix) throws IOException {
         Path outDir =
                 overrideOutputPath != null
-                        ? overrideOutputPath
+                        ? overrideOutputPath.resolve("merits")
                         : com.vibethema.service.CharmDataService.getUserCharmsPath()
                                 .getParent()
                                 .resolve("merits");
@@ -177,6 +180,7 @@ public class CoreMeritExtractor extends BaseCharmExtractor {
         try (java.io.Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
             Map<String, Object> wrapper = new LinkedHashMap<>();
             wrapper.put("version", "1.0.0");
+            wrapper.put("sourceId", sourceId);
             wrapper.put("merits", merits);
             gson.toJson(wrapper, writer);
         }

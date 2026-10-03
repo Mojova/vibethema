@@ -3,6 +3,7 @@ package com.vibethema.service.pdf.base;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.vibethema.service.CharmDataService;
+import com.vibethema.service.DefinitionId;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -42,9 +43,14 @@ public abstract class BaseCharmExtractor {
 
     protected final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     protected Path overrideOutputPath;
+    protected String sourceId = "exalted-3e-core";
 
     public void setOverrideOutputPath(Path path) {
         this.overrideOutputPath = path;
+    }
+
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
     }
 
     public abstract void extractAndSave(String text, String suffix) throws IOException;
@@ -274,10 +280,7 @@ public abstract class BaseCharmExtractor {
                         String cleanedName = pName.replaceAll("\\s+", " ").trim();
                         if (cleanedName.isEmpty()) continue;
 
-                        String pId =
-                                UUID.nameUUIDFromBytes(
-                                                (cleanedName + "|" + ability.trim()).getBytes())
-                                        .toString();
+                        String pId = DefinitionId.forCharm(sourceId, cleanedName, ability);
                         ids.add(pId);
                         if (!allExtractedIds.contains(pId)) problematic = true;
                     }
@@ -347,11 +350,7 @@ public abstract class BaseCharmExtractor {
                                     }
                                 } else {
                                     String cleanedName = name.replaceAll("\\s+", " ").trim();
-                                    String pId =
-                                            UUID.nameUUIDFromBytes(
-                                                            (cleanedName + "|" + ability.trim())
-                                                                    .getBytes())
-                                                    .toString();
+                                    String pId = DefinitionId.forCharm(sourceId, cleanedName, ability);
                                     ids.add(pId);
                                     if (!allExtractedIds.contains(pId)) problematic = true;
                                 }
@@ -380,10 +379,11 @@ public abstract class BaseCharmExtractor {
             throws IOException {
         Path outDir =
                 overrideOutputPath != null
-                        ? overrideOutputPath
+                        ? overrideOutputPath.resolve("charms")
                         : (isMartialArts
                                 ? CharmDataService.getUserMartialArtsPath()
                                 : CharmDataService.getUserCharmsPath());
+        if (isMartialArts && overrideOutputPath != null) outDir = outDir.resolve("martial_arts");
         if (!Files.exists(outDir)) Files.createDirectories(outDir);
 
         for (Map.Entry<String, List<Map<String, Object>>> entry : charmsByAbility.entrySet()) {
@@ -394,6 +394,11 @@ public abstract class BaseCharmExtractor {
                 Map<String, Object> wrapper = new LinkedHashMap<>();
                 wrapper.put("$schema", "./charm-schema.json");
                 wrapper.put("version", "0.1.0");
+                wrapper.put("sourceId", sourceId);
+                if (isMartialArts) {
+                    wrapper.put(
+                            "id", DefinitionId.forMartialArtsStyle(sourceId, entry.getKey()));
+                }
                 wrapper.put("ability", entry.getKey());
                 wrapper.put("type", isMartialArts ? "martialArts" : "solarAbility");
                 wrapper.put("exalt", "solar");
@@ -412,8 +417,7 @@ public abstract class BaseCharmExtractor {
     private TransitiveMetadata calculateTransitiveMetadata(
             String targetName, String ability, Collection<Map<String, Object>> charms) {
         TransitiveMetadata meta = new TransitiveMetadata();
-        String rootId =
-                UUID.nameUUIDFromBytes((targetName + "|" + ability.trim()).getBytes()).toString();
+        String rootId = DefinitionId.forCharm(sourceId, targetName, ability);
 
         Set<String> visited = new HashSet<>();
         Queue<String> queue = new LinkedList<>();
@@ -443,10 +447,7 @@ public abstract class BaseCharmExtractor {
                 if (rawPrereqs.get(0) instanceof String) {
                     // Mandatory simple list
                     for (Object p : rawPrereqs) {
-                        String pId =
-                                UUID.nameUUIDFromBytes(
-                                                ((String) p + "|" + ability.trim()).getBytes())
-                                        .toString();
+                        String pId = DefinitionId.forCharm(sourceId, (String) p, ability);
                         meta.mandatoryExcludedIds.add(pId);
                         queue.add(pId);
                     }
@@ -460,11 +461,7 @@ public abstract class BaseCharmExtractor {
                         boolean isMandatory = (minCount == 0 || minCount >= names.size());
 
                         for (String pName : names) {
-                            String pId =
-                                    UUID.nameUUIDFromBytes(
-                                                    (pName.trim() + "|" + ability.trim())
-                                                            .getBytes())
-                                            .toString();
+                            String pId = DefinitionId.forCharm(sourceId, pName, ability);
                             if (isMandatory) {
                                 meta.mandatoryExcludedIds.add(pId);
                                 queue.add(pId);

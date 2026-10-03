@@ -51,6 +51,7 @@ public class Weapon {
     }
 
     private final StringProperty id = new SimpleStringProperty(UUID.randomUUID().toString());
+    private String sourceId;
     private final StringProperty instanceId =
             new SimpleStringProperty(UUID.randomUUID().toString());
     private final StringProperty name = new SimpleStringProperty("");
@@ -381,6 +382,14 @@ public class Weapon {
         return id.get();
     }
 
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
+    }
+
     public void setId(String id) {
         this.id.set(id);
     }
@@ -476,6 +485,7 @@ public class Weapon {
     // --- Persistance Support (DTO) ---
     public static class WeaponData {
         public String id;
+        public String sourceId;
         public String instanceId;
         public String name;
         public WeaponRange range;
@@ -487,6 +497,7 @@ public class Weapon {
     public WeaponData toData() {
         WeaponData data = new WeaponData();
         data.id = getId();
+        data.sourceId = getSourceId();
         data.instanceId = getInstanceId();
         data.name = getName();
         data.range = getRange();
@@ -501,6 +512,7 @@ public class Weapon {
         Weapon w =
                 new Weapon(
                         data.id, data.instanceId, data.name, data.range, data.type, data.category);
+        w.setSourceId(data.sourceId);
         w.getTags().setAll(data.tags != null ? data.tags : java.util.Collections.emptyList());
         return w;
     }

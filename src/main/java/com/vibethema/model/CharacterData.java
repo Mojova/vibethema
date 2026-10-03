@@ -657,6 +657,7 @@ public class CharacterData {
                         m -> {
                             CharacterSaveState.MeritData md = new CharacterSaveState.MeritData();
                             md.id = m.getId();
+                            md.sourceId = m.getSourceId();
                             md.definitionId = m.getDefinitionId();
                             md.name = m.getName();
                             md.rating = m.getRating();
@@ -709,6 +710,7 @@ public class CharacterData {
                         w -> {
                             CharacterSaveState.WeaponLink wl = new CharacterSaveState.WeaponLink();
                             wl.id = w.getId();
+                            wl.sourceId = w.getSourceId();
                             wl.instanceId = w.getInstanceId();
                             wl.specialtyId = w.getSpecialtyId();
                             wl.equipped = w.isEquipped();
@@ -721,6 +723,7 @@ public class CharacterData {
                         a -> {
                             CharacterSaveState.ArmorLink al = new CharacterSaveState.ArmorLink();
                             al.id = a.getId();
+                            al.sourceId = a.getSourceId();
                             al.instanceId = a.getInstanceId();
                             al.equipped = a.isEquipped();
                             state.armors.add(al);
@@ -733,6 +736,7 @@ public class CharacterData {
                             CharacterSaveState.HearthstoneLink hl =
                                     new CharacterSaveState.HearthstoneLink();
                             hl.id = h.getId();
+                            hl.sourceId = h.getSourceId();
                             hl.instanceId = h.getInstanceId();
                             hl.equipped = h.isEquipped();
                             state.hearthstones.add(hl);
@@ -745,6 +749,7 @@ public class CharacterData {
                             CharacterSaveState.OtherEquipmentLink ol =
                                     new CharacterSaveState.OtherEquipmentLink();
                             ol.id = o.getId();
+                            ol.sourceId = o.getSourceId();
                             ol.instanceId = o.getInstanceId();
                             ol.equipped = o.isEquipped();
                             state.otherEquipment.add(ol);
@@ -776,7 +781,7 @@ public class CharacterData {
         getSpells()
                 .forEach(
                         s ->
-                                state.spells.add(
+                            state.spells.add(
                                         new CharacterSaveState.SpellData(
                                                 s.getId(),
                                                 s.getName(),
@@ -784,7 +789,8 @@ public class CharacterData {
                                                 s.getCost(),
                                                 s.getKeywords(),
                                                 s.getDuration(),
-                                                s.getDescription())));
+                                                s.getDescription(),
+                                                s.getSourceId())));
 
         state.xpAwards = new ArrayList<>();
         getXpAwards()
@@ -869,17 +875,17 @@ public class CharacterData {
             getMerits().clear();
             if (state.merits != null && !state.merits.isEmpty()) {
                 state.merits.forEach(
-                        md ->
-                                getMerits()
-                                        .add(
-                                                new Merit(
-                                                        md.id,
-                                                        md.definitionId,
-                                                        md.name,
-                                                        md.rating,
-                                                        md.description != null
-                                                                ? md.description
-                                                                : "")));
+                        md -> {
+                            Merit merit =
+                                    new Merit(
+                                            md.id,
+                                            md.definitionId,
+                                            md.name,
+                                            md.rating,
+                                            md.description != null ? md.description : "");
+                            merit.setSourceId(md.sourceId);
+                            getMerits().add(merit);
+                        });
             }
             if (getMerits().isEmpty())
                 getMerits().add(new Merit(java.util.UUID.randomUUID().toString(), "", 1));
@@ -923,6 +929,7 @@ public class CharacterData {
                                         wl.instanceId != null
                                                 ? wl.instanceId
                                                 : java.util.UUID.randomUUID().toString());
+                                w.setSourceId(wl.sourceId);
                                 w.setSpecialtyId(wl.specialtyId);
                                 w.setEquipped(wl.equipped);
                                 getWeapons().add(w);
@@ -939,6 +946,7 @@ public class CharacterData {
                                         al.instanceId != null
                                                 ? al.instanceId
                                                 : java.util.UUID.randomUUID().toString());
+                                a.setSourceId(al.sourceId);
                                 a.setEquipped(al.equipped);
                                 getArmors().add(a);
                             }
@@ -954,6 +962,7 @@ public class CharacterData {
                                         hl.instanceId != null
                                                 ? hl.instanceId
                                                 : java.util.UUID.randomUUID().toString());
+                                h.setSourceId(hl.sourceId);
                                 h.setEquipped(hl.equipped);
                                 getHearthstones().add(h);
                             }
@@ -969,6 +978,7 @@ public class CharacterData {
                                         ol.instanceId != null
                                                 ? ol.instanceId
                                                 : java.util.UUID.randomUUID().toString());
+                                oe.setSourceId(ol.sourceId);
                                 oe.setEquipped(ol.equipped);
                                 getOtherEquipment().add(oe);
                             }
@@ -1004,7 +1014,8 @@ public class CharacterData {
                                                         sd.cost,
                                                         sd.keywords,
                                                         sd.duration,
-                                                        sd.description)));
+                                                        sd.description,
+                                                        sd.sourceId)));
 
             getXpAwards().clear();
             if (state.xpAwards != null)

@@ -1,6 +1,9 @@
 package com.vibethema.ui;
 
 import com.vibethema.service.PdfExtractor;
+import com.vibethema.service.ImportContext;
+import com.vibethema.service.PathService;
+import com.vibethema.service.SourceManifest;
 import java.io.File;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -92,12 +95,16 @@ public class PdfImportHelper {
                     @Override
                     protected Void call() throws Exception {
                         PdfExtractor extractor = new PdfExtractor();
+                        ImportContext context =
+                                new ImportContext(
+                                        SourceManifest.coreBook(),
+                                        PathService.getOfficialSourcePath(
+                                                SourceManifest.coreBook().sourceId));
                         extractor.extractAll(
                                 pdfFile,
-                                suffix,
+                                context,
                                 extractKeywords,
                                 source,
-                                null,
                                 progress -> {
                                     Platform.runLater(() -> progressBar.setProgress(progress));
                                 });

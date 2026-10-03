@@ -7,6 +7,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.vibethema.service.PdfExtractor;
+import com.vibethema.service.ImportContext;
+import com.vibethema.service.SourceManifest;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
@@ -23,7 +25,8 @@ public class PdfImportRegressionTest {
     private static final Logger logger = LoggerFactory.getLogger(PdfImportRegressionTest.class);
     private static final Path DATA_SOURCE = Paths.get("data_source");
     private static final Path CORE_PDF = DATA_SOURCE.resolve("core_book.pdf");
-    private static final Path REFERENCE_DIR = DATA_SOURCE.resolve("reference");
+    private static final String SOURCE_ID = "exalted-3e-core";
+    private static final Path REFERENCE_DIR = DATA_SOURCE.resolve("reference").resolve(SOURCE_ID);
 
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -47,10 +50,8 @@ public class PdfImportRegressionTest {
         // Run full extraction to temp directory
         extractor.extractAll(
                 CORE_PDF.toFile(),
-                "",
-                true,
-                PdfExtractor.PdfSource.CORE,
-                tempDir,
+                new ImportContext(
+                        SourceManifest.coreBook(), tempDir.resolve(SOURCE_ID)),
                 progress -> {
                     // Log progress occasionally
                     if (progress % 0.2 < 0.01)
@@ -64,7 +65,7 @@ public class PdfImportRegressionTest {
                     .forEach(
                             refPath -> {
                                 Path relative = REFERENCE_DIR.relativize(refPath);
-                                Path actualPath = tempDir.resolve(relative);
+                                Path actualPath = tempDir.resolve(SOURCE_ID).resolve(relative);
 
                                 assertTrue(
                                         Files.exists(actualPath),
@@ -81,7 +82,8 @@ public class PdfImportRegressionTest {
                     .filter(p -> p.toString().endsWith(".json"))
                     .forEach(
                             actualPath -> {
-                                Path relative = tempDir.relativize(actualPath);
+                                Path relative =
+                                        tempDir.resolve(SOURCE_ID).relativize(actualPath);
                                 Path refPath = REFERENCE_DIR.resolve(relative);
                                 if (!Files.exists(refPath)) {
                                     logger.warn(
@@ -99,6 +101,11 @@ public class PdfImportRegressionTest {
 
             JsonElement refJson = JsonParser.parseReader(refReader);
             JsonElement actJson = JsonParser.parseReader(actReader);
+
+            if (expected.getFileName().toString().equals("manifest.json")) {
+                refJson.getAsJsonObject().remove("importedAt");
+                actJson.getAsJsonObject().remove("importedAt");
+            }
 
             // Using Gson's built-in equality which is content-based and formatting-agnostic
             if (!refJson.equals(actJson)) {
