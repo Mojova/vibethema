@@ -83,11 +83,9 @@ public class EditCharmViewModel implements ViewModel {
         refreshAvailablePrerequisites();
 
         // Populate current selections from model
-        if (charm.getPrerequisiteGroups() != null) {
-            java.util.Set<String> prereqIds =
-                    charm.getPrerequisiteGroups().stream()
-                            .flatMap(g -> g.getCharmIds().stream())
-                            .collect(Collectors.toSet());
+        if (charm.getPrerequisites() != null) {
+            java.util.Set<String> prereqIds = new java.util.HashSet<>();
+            charm.getPrerequisites().collectCharmIds(prereqIds);
 
             selectedPrerequisites.addAll(
                     availablePrerequisites.stream()
@@ -137,15 +135,15 @@ public class EditCharmViewModel implements ViewModel {
         // Save Keywords
         charm.setKeywords(new java.util.ArrayList<>(selectedKeywords));
 
-        // Save Prerequisites as a single group
+        // Save manually selected prerequisites as a clean all-of expression.
         if (!selectedPrerequisites.isEmpty()) {
-            java.util.List<String> ids =
-                    selectedPrerequisites.stream().map(Charm::getId).collect(Collectors.toList());
-            Charm.PrerequisiteGroup group =
-                    new Charm.PrerequisiteGroup("Prerequisites", ids, ids.size());
-            charm.setPrerequisiteGroups(java.util.Arrays.asList(group));
+            java.util.List<PrerequisiteRule> rules =
+                    selectedPrerequisites.stream()
+                            .map(c -> PrerequisiteRule.charm(c.getId()))
+                            .collect(Collectors.toList());
+            charm.setPrerequisites(PrerequisiteRule.allOf(rules));
         } else {
-            charm.setPrerequisiteGroups(new java.util.ArrayList<>());
+            charm.setPrerequisites(PrerequisiteRule.allOf(new java.util.ArrayList<>()));
         }
 
         // Persist

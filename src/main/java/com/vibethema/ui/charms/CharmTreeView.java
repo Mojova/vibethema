@@ -262,9 +262,10 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
         // Draw Lines
         for (Charm c : viewModel.getCurrentCharms()) {
             Pane target = charmNodeMap.get(c.getId());
-            if (target == null || c.getPrerequisiteGroups() == null) continue;
-            for (Charm.PrerequisiteGroup group : c.getPrerequisiteGroups()) {
-                for (String reqId : group.getCharmIds()) {
+            if (target == null || c.getPrerequisites() == null) continue;
+            java.util.Set<String> prerequisiteIds = new java.util.HashSet<>();
+            c.getPrerequisites().collectCharmIds(prerequisiteIds);
+            for (String reqId : prerequisiteIds) {
                     Pane source = charmNodeMap.get(reqId);
                     if (source != null) {
                         double startX = source.getLayoutX() + boxWidth / 2;
@@ -293,7 +294,6 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
                                 .computeIfAbsent(reqId, k -> new ArrayList<>())
                                 .add(curve);
                     }
-                }
             }
         }
 
@@ -312,7 +312,9 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
         content.setAlignment(Pos.CENTER);
         content.setPrefSize(w, h);
 
-        Label name = new Label((c.isPotentiallyProblematicImport() ? "⚠️ " : "") + c.getName());
+        Label name = new Label(
+                ((c.getImportWarnings() != null && !c.getImportWarnings().isEmpty()) ? "⚠️ " : "")
+                        + c.getName());
         name.getStyleClass().add("charm-node-title");
         name.setWrapText(true);
 
@@ -337,7 +339,7 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
 
         root.getChildren().addAll(content, checkLabel);
 
-        if (c.isPotentiallyProblematicImport()) {
+        if (c.getImportWarnings() != null && !c.getImportWarnings().isEmpty()) {
             Tooltip tt =
                     new Tooltip(
                             "Warning: This charm may have incomplete data due to a problematic PDF"

@@ -102,52 +102,7 @@ public class CharmDetailsViewModel implements ViewModel {
 
         detailTitle.set(c.getName());
 
-        // Prerequisite resolution logic (copied from CharmTreeViewModel)
-        List<String> prereqStrings = new ArrayList<>();
-        if (c.getPrerequisiteGroups() != null) {
-            for (Charm.PrerequisiteGroup group : c.getPrerequisiteGroups()) {
-                if (group.getLabel() != null && !group.getLabel().isEmpty()) {
-                    prereqStrings.add(group.getLabel());
-                } else {
-                    List<String> ids = group.getCharmIds();
-                    int min = group.getMinCount();
-                    if (ids.size() > 3) {
-                        String commonAbility = null;
-                        boolean allSame = true;
-                        for (String rid : ids) {
-                            String ab = dataService.getCharmAbility(rid);
-                            if (ab == null) {
-                                allSame = false;
-                                break;
-                            }
-                            if (commonAbility == null) commonAbility = ab;
-                            else if (!commonAbility.equals(ab)) {
-                                allSame = false;
-                                break;
-                            }
-                        }
-                        if (allSame && commonAbility != null) {
-                            String label =
-                                    (min > 0 && min < ids.size())
-                                            ? "Any "
-                                                    + min
-                                                    + " "
-                                                    + commonAbility
-                                                    + " Charm"
-                                                    + (min > 1 ? "s" : "")
-                                            : "All " + ids.size() + " " + commonAbility + " Charms";
-                            prereqStrings.add(label);
-                            continue;
-                        }
-                    }
-                    List<String> names = new ArrayList<>();
-                    for (String rid : ids) names.add(dataService.getCharmName(rid));
-                    String prefix = (min > 0 && min < ids.size()) ? "Any " + min + " of: " : "";
-                    prereqStrings.add(prefix + String.join(", ", names));
-                }
-            }
-        }
-        String prereqStr = prereqStrings.isEmpty() ? "None" : String.join("; ", prereqStrings);
+        String prereqStr = describePrerequisites(c.getPrerequisites());
 
         String baseReqs =
                 "Evocation".equals(filterType.get())
@@ -161,7 +116,7 @@ public class CharmDetailsViewModel implements ViewModel {
                                 + "\nPrereqs: "
                                 + prereqStr;
 
-        if (c.isPotentiallyProblematicImport()) {
+        if (c.getImportWarnings() != null && !c.getImportWarnings().isEmpty()) {
             baseReqs = "⚠️ WARNING: Problematic Import\n" + baseReqs;
         }
         detailReqs.set(baseReqs);
@@ -173,6 +128,26 @@ public class CharmDetailsViewModel implements ViewModel {
 
         updateButtonStates(c);
         editBtnVisible.set(true);
+    }
+
+    private String describePrerequisites(PrerequisiteRule rule) {
+        if (rule == null) return "None";
+        return switch (rule.getType()) {
+            case "charm" -> dataService.getCharmName(rule.getCharmId());
+            case "allOf" -> joinRules(rule.getRequirements(), " and ");
+            case "anyOf" -> joinRules(rule.getOptions(), " or ");
+            case "countOf" -> "Any " + rule.getCount() + " of: "
+                    + rule.getCharmIds().stream().map(dataService::getCharmName).collect(java.util.stream.Collectors.joining(", "));
+            case "countFromAbilities" -> "Any " + rule.getCount() + " Charms from " + String.join(", ", rule.getAbilities());
+            case "countFromSingleAbility" -> "Any " + rule.getCount() + " Charms from one Ability";
+            case "countMatchingPredicate" -> "Any " + rule.getCount() + " Charms that " + rule.getPredicate();
+            default -> "Unrecognized prerequisite";
+        };
+    }
+
+    private String joinRules(List<PrerequisiteRule> rules, String separator) {
+        if (rules == null || rules.isEmpty()) return "None";
+        return rules.stream().map(this::describePrerequisites).collect(java.util.stream.Collectors.joining(separator));
     }
 
     private void updateButtonStates(Charm c) {

@@ -10,6 +10,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class BaseCharmExtractor {
     protected static final List<String> ABILITIES =
@@ -264,112 +266,179 @@ public abstract class BaseCharmExtractor {
 
         for (Map<String, Object> charm : charms) {
             String ability = (String) charm.get("ability");
-            String currentCharmId = (String) charm.get("id");
 
             @SuppressWarnings("unchecked")
             List<Object> rawPrereqs = (List<Object>) charm.get("prerequisites");
-            List<Map<String, Object>> resolvedGroups = new ArrayList<>();
-            boolean problematic = false;
-
-            if (rawPrereqs != null && !rawPrereqs.isEmpty()) {
-                // If it's a simple list of strings, convert to one mandatory group
-                if (rawPrereqs.get(0) instanceof String) {
-                    List<String> ids = new ArrayList<>();
-                    for (Object p : rawPrereqs) {
-                        String pName = (String) p;
-                        String cleanedName = pName.replaceAll("\\s+", " ").trim();
-                        if (cleanedName.isEmpty()) continue;
-
-                        String pId = DefinitionId.forCharm(sourceId, cleanedName, ability);
-                        ids.add(pId);
-                        if (!allExtractedIds.contains(pId)) problematic = true;
-                    }
-                    if (!ids.isEmpty()) {
-                        Map<String, Object> group = new LinkedHashMap<>();
-                        group.put("charmIds", ids);
-                        group.put("minCount", 0); // 0 means ALL
-                        resolvedGroups.add(group);
-                    }
-                } else {
-                    // It's already in Group format (Maps)
-                    for (Object gObj : rawPrereqs) {
-                        @SuppressWarnings("unchecked")
-                        Map<String, Object> gMap = (Map<String, Object>) gObj;
-                        @SuppressWarnings("unchecked")
-                        List<String> names = (List<String>) gMap.get("names");
-                        List<String> ids = new ArrayList<>();
-
-                        if (names != null) {
-                            for (String name : names) {
-                                if (name.startsWith("__OTHERS")) {
-                                    Set<String> exclusions = new HashSet<>();
-                                    exclusions.add(currentCharmId);
-                                    int extraMinCount = 0;
-                                    boolean nonExcellency = name.contains("|non-Excellency");
-
-                                    if (name.startsWith("__OTHERS_EXCEPT:")) {
-                                        String targetName =
-                                                name.substring("__OTHERS_EXCEPT:".length())
-                                                        .split("\\|")[0]
-                                                        .replace("__", "");
-                                        TransitiveMetadata meta =
-                                                calculateTransitiveMetadata(
-                                                        targetName, ability, charms);
-                                        exclusions.addAll(meta.mandatoryExcludedIds);
-                                        extraMinCount = meta.additionalMinCount;
-                                    }
-
-                                    // Add all other charm IDs from this ability that are not
-                                    // excluded
-                                    for (Map<String, Object> other : charms) {
-                                        String otherAbility = (String) other.get("ability");
-                                        if (!ability.equals(otherAbility)) continue;
-
-                                        String otherId = (String) other.get("id");
-                                        String otherName = (String) other.get("name");
-                                        if (!exclusions.contains(otherId)) {
-                                            if (nonExcellency
-                                                    && (otherName
-                                                                    .toLowerCase()
-                                                                    .contains("excellency")
-                                                            || otherName
-                                                                    .toLowerCase()
-                                                                    .contains("ex-cellency"))) {
-                                                continue;
-                                            }
-                                            ids.add(otherId);
-                                        }
-                                    }
-
-                                    // Update minCount for this group if we added extra counts from
-                                    // AE's prereqs
-                                    if (extraMinCount > 0) {
-                                        int currentMinCount =
-                                                (int) gMap.getOrDefault("minCount", 0);
-                                        gMap.put("minCount", currentMinCount + extraMinCount);
-                                    }
-                                } else {
-                                    String cleanedName = name.replaceAll("\\s+", " ").trim();
-                                    String pId = DefinitionId.forCharm(sourceId, cleanedName, ability);
-                                    ids.add(pId);
-                                    if (!allExtractedIds.contains(pId)) problematic = true;
-                                }
-                            }
-                        }
-
-                        Map<String, Object> group = new LinkedHashMap<>();
-                        if (gMap.containsKey("label")) group.put("label", gMap.get("label"));
-                        group.put("charmIds", ids);
-                        group.put("minCount", gMap.getOrDefault("minCount", 0));
-                        resolvedGroups.add(group);
-                    }
+            List<String> warnings = new ArrayList<>();
+            Map<String, Object> resolved = resolveGroups(rawPrereqs, ability, allExtractedIds, warnings);
+            @SuppressWarnings("unchecked")
+            Map<String, Object> bridge = (Map<String, Object>) charm.get("bridgePrerequisite");
+            String prerequisiteText = (String) charm.get("prerequisiteText");
+            @SuppressWarnings("unchecked")
+            List<String> keywords = (List<String>) charm.getOrDefault("keywords", List.of());
+            if (keywords.stream().anyMatch(k -> k.equalsIgnoreCase("Bridge"))) {
+                Map<String, Object> rawBridge = extractBridgeFromRawData((String) charm.get("rawData"));
+                if (rawBridge != null) {
+                    bridge = rawBridge;
+                    warnings.clear();
                 }
             }
-
+            if (bridge == null && prerequisiteText != null
+                    && keywords.stream().anyMatch(k -> k.equalsIgnoreCase("Bridge"))) {
+                Matcher matcher = Pattern.compile("(?i)^(.+?)\\s+or\\s+any\\s+(\\d+)\\s+(.+)$")
+                        .matcher(prerequisiteText.replaceAll("[-\\u00AD]\\s*(?=[a-z])", ""));
+                if (matcher.find()) {
+                    bridge = new LinkedHashMap<>();
+                    bridge.put("normal", matcher.group(1).trim());
+                    bridge.put("alternate", "any " + matcher.group(2) + " " + matcher.group(3).trim());
+                }
+            }
+            if (bridge == null) bridge = detectBridgePrerequisite(rawPrereqs);
+            if (bridge != null) {
+                warnings.clear();
+                Map<String, Object> normal = ruleFromText((String) bridge.get("normal"), ability, allExtractedIds, warnings);
+                Map<String, Object> alternate = ruleFromText((String) bridge.get("alternate"), ability, allExtractedIds, warnings);
+                Map<String, Object> any = new LinkedHashMap<>();
+                any.put("type", "anyOf");
+                any.put("options", List.of(normal, alternate));
+                resolved = any;
+            }
             charm.remove("prerequisites"); // No backwards comp
-            charm.put("prerequisiteGroups", resolvedGroups);
-            charm.put("potentiallyProblematicImport", problematic);
+            charm.remove("bridgePrerequisite");
+            charm.remove("prerequisiteText");
+            charm.put("prerequisites", resolved);
+            if (!warnings.isEmpty()) charm.put("importWarnings", warnings);
         }
+    }
+
+    private Map<String, Object> resolveGroups(
+            List<Object> raw, String ability, Set<String> allIds, List<String> warnings) {
+        List<Map<String, Object>> rules = new ArrayList<>();
+        if (raw != null) {
+            for (Object value : raw) {
+                if (value instanceof String) {
+                    rules.add(ruleFromCharmName((String) value, ability, allIds, warnings));
+                    continue;
+                }
+                @SuppressWarnings("unchecked") Map<String, Object> group = (Map<String, Object>) value;
+                @SuppressWarnings("unchecked") List<String> names = (List<String>) group.get("names");
+                int count = ((Number) group.getOrDefault("minCount", 0)).intValue();
+                if (names == null || names.isEmpty()) continue;
+                String marker = names.get(0);
+                if (marker.startsWith("__ANY_ABILITIES__:")) {
+                    Map<String, Object> r = new LinkedHashMap<>();
+                    r.put("type", "countFromAbilities");
+                    r.put("abilities", Arrays.asList(marker.substring("__ANY_ABILITIES__:".length()).split("\\|")));
+                    r.put("count", count);
+                    rules.add(r);
+                } else if (marker.startsWith("__ANY_SINGLE_ABILITY__:")) {
+                    Map<String, Object> r = new LinkedHashMap<>();
+                    r.put("type", "countFromSingleAbility");
+                    r.put("count", Integer.parseInt(marker.substring("__ANY_SINGLE_ABILITY__:".length())));
+                    rules.add(r);
+                } else if (marker.startsWith("__PREDICATE__:")) {
+                    Map<String, Object> r = new LinkedHashMap<>();
+                    r.put("type", "countMatchingPredicate");
+                    r.put("predicate", marker.substring("__PREDICATE__:".length()));
+                    r.put("count", count);
+                    rules.add(r);
+                } else {
+                    List<String> ids = new ArrayList<>();
+                    for (String name : names) {
+                        String id = DefinitionId.forCharm(sourceId, name.replaceAll("\\s+", " ").trim(), ability);
+                        ids.add(id);
+                        if (!allIds.contains(id)) warnings.add("Unresolved prerequisite: " + name);
+                    }
+                    Map<String, Object> r = new LinkedHashMap<>();
+                    r.put("type", count > 0 ? "countOf" : "allOf");
+                    if (count > 0) r.put("count", count);
+                    if (count > 0) r.put("charmIds", ids);
+                    else r.put("requirements", ids.stream().map(id -> Map.of("type", "charm", "charmId", id)).toList());
+                    rules.add(r);
+                }
+            }
+        }
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("type", "allOf");
+        result.put("requirements", rules);
+        return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> detectBridgePrerequisite(List<Object> raw) {
+        if (raw == null || raw.size() != 1 || !(raw.get(0) instanceof Map)) return null;
+        Map<String, Object> group = (Map<String, Object>) raw.get(0);
+        List<String> names = (List<String>) group.get("names");
+        if (names == null || names.size() != 1) return null;
+        Matcher matcher = Pattern.compile("(?i)^(.+?)\\s+or\\s+any\\s+(\\d+)\\s+(.+)$").matcher(names.get(0).trim());
+        if (!matcher.find()) return null;
+        Map<String, Object> bridge = new LinkedHashMap<>();
+        bridge.put("normal", matcher.group(1).trim());
+        bridge.put("alternate", "any " + matcher.group(2) + " " + matcher.group(3).trim());
+        return bridge;
+    }
+
+    private Map<String, Object> extractBridgeFromRawData(String rawData) {
+        if (rawData == null) return null;
+        // The PDF text extractor wraps prerequisite lines arbitrarily.  A paragraph-boundary
+        // heuristic is therefore unreliable: several descriptions begin with an uppercase word
+        // and some prerequisite alternatives themselves continue onto a second line.  Bridge
+        // alternatives in the source end with either "Charms" or "Principle", so capture the
+        // first such terminator after the label and discard the description that follows it.
+        Matcher header = Pattern.compile(
+                        "(?is)Prerequisite Charms:\\s*(.*?(?:Charms\\s+that\\s+reflect.*?Principle|Charms|Principle))\\b")
+                .matcher(rawData);
+        if (!header.find()) return null;
+        String text = header.group(1)
+                .replaceAll("[-\\u00AD]\\s*(?=[a-z])", "")
+                .replaceAll("\\s+", " ")
+                .trim();
+        if (text.toLowerCase().startsWith("none ")) text = text.substring(5).trim();
+        if (text.toLowerCase().startsWith("or any ")) text = "None " + text;
+        Matcher bridge = Pattern.compile("(?i)^(.+?)\\s+or\\s+any\\s+(\\d+)\\s+(.+)$").matcher(text);
+        if (!bridge.find()) return null;
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("normal", bridge.group(1).trim());
+        result.put("alternate", "any " + bridge.group(2) + " " + bridge.group(3).trim());
+        return result;
+    }
+
+    private Map<String, Object> ruleFromText(String text, String ability, Set<String> allIds, List<String> warnings) {
+        if (text == null || text.isBlank() || text.equalsIgnoreCase("none")) return Map.of("type", "allOf", "requirements", List.of());
+        if (text.contains(",")
+                && !text.toLowerCase().matches("(?s).*\\bany\\s+\\d+\\b.*")) {
+            List<Map<String, Object>> requirements = new ArrayList<>();
+            for (String part : text.split(",")) {
+                if (!part.isBlank()) requirements.add(ruleFromCharmName(part.trim(), ability, allIds, warnings));
+            }
+            return Map.of("type", "allOf", "requirements", requirements);
+        }
+        Matcher any = Pattern.compile("(?i)any (\\d+) (.+)$").matcher(text.trim());
+        if (any.find()) {
+            int count = Integer.parseInt(any.group(1));
+            String scope = any.group(2).trim().replaceFirst("(?i)\\s+charms?$", "").trim();
+            if (scope.equalsIgnoreCase("one ability") || scope.equalsIgnoreCase("any one ability")) {
+                return Map.of("type", "countFromSingleAbility", "count", count);
+            }
+            if (scope.isEmpty() || scope.equalsIgnoreCase("charms")) {
+                return Map.of("type", "countFromSingleAbility", "count", count);
+            }
+            if (scope.toLowerCase().contains("that reflect")) {
+                return Map.of("type", "countMatchingPredicate", "predicate", "reflectsSelectedPrinciple", "count", count);
+            }
+            if (scope.equalsIgnoreCase("social")) scope = "Bureaucracy|Linguistics|Performance|Presence|Socialize";
+            if (scope.equalsIgnoreCase("martial arts")) scope = "Martial Arts";
+            if (scope.equalsIgnoreCase("caste")) return Map.of("type", "countMatchingPredicate", "predicate", "casteCharms", "count", count);
+            scope = scope.replaceAll("(?i)\\s+or\\s+", "|");
+            return Map.of("type", "countFromAbilities", "abilities", Arrays.asList(scope.split("\\s*,\\s*|\\|")), "count", count);
+        }
+        return ruleFromCharmName(text.trim(), ability, allIds, warnings);
+    }
+
+    private Map<String, Object> ruleFromCharmName(String name, String ability, Set<String> allIds, List<String> warnings) {
+        String id = DefinitionId.forCharm(sourceId, name.replaceAll("\\s+", " ").trim(), ability);
+        if (!allIds.contains(id)) warnings.add("Unresolved prerequisite: " + name);
+        return Map.of("type", "charm", "charmId", id);
     }
 
     protected void saveCharms(
@@ -393,7 +462,7 @@ public abstract class BaseCharmExtractor {
             try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
                 Map<String, Object> wrapper = new LinkedHashMap<>();
                 wrapper.put("$schema", "./charm-schema.json");
-                wrapper.put("version", "0.1.0");
+                wrapper.put("version", "0.2.0");
                 wrapper.put("sourceId", sourceId);
                 if (isMartialArts) {
                     wrapper.put(

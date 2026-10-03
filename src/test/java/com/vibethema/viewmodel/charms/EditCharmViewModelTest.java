@@ -79,14 +79,10 @@ class EditCharmViewModelTest {
         viewModel.save();
 
         // Verify charm has the prereq
-        assertNotNull(charm.getPrerequisiteGroups());
-        assertEquals(1, charm.getPrerequisiteGroups().size());
-        Charm.PrerequisiteGroup group = charm.getPrerequisiteGroups().get(0);
-        assertEquals(1, group.getCharmIds().size());
-        assertEquals("p1", group.getCharmIds().get(0));
-
-        // Verify minCount is set to total count (AND logic)
-        assertEquals(1, group.getMinCount());
+        assertNotNull(charm.getPrerequisites());
+        assertEquals("allOf", charm.getPrerequisites().getType());
+        assertEquals(1, charm.getPrerequisites().getRequirements().size());
+        assertEquals("p1", charm.getPrerequisites().getRequirements().get(0).getCharmId());
     }
 
     @Test

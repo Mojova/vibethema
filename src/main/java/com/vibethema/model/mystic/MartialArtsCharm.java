@@ -1,7 +1,6 @@
 package com.vibethema.model.mystic;
 
 import com.vibethema.model.*;
-import java.util.List;
 
 public class MartialArtsCharm extends Charm {
     private transient String styleName;
@@ -47,16 +46,6 @@ public class MartialArtsCharm extends Charm {
         if (effectiveEssence < getMinEssence()) return false;
         if (data.getAbilityRatingByName(styleName) < minAbility) return false;
 
-        List<PrerequisiteGroup> groups = getPrerequisiteGroups();
-        if (groups != null) {
-            for (PrerequisiteGroup group : groups) {
-                long metCount = group.getCharmIds().stream().filter(data::hasCharm).count();
-
-                int required =
-                        group.getMinCount() > 0 ? group.getMinCount() : group.getCharmIds().size();
-                if (metCount < required) return false;
-            }
-        }
-        return true;
+        return getPrerequisites() == null || getPrerequisites().isSatisfied(data);
     }
 }

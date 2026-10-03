@@ -132,12 +132,10 @@ public class CharmTreeViewModel implements ViewModel {
     private void addCharmAndPrereqs(Charm c, Set<String> ids, Map<String, Charm> map) {
         if (c == null || ids.contains(c.getId())) return;
         ids.add(c.getId());
-        if (c.getPrerequisiteGroups() != null) {
-            for (Charm.PrerequisiteGroup group : c.getPrerequisiteGroups()) {
-                for (String rid : group.getCharmIds()) {
-                    addCharmAndPrereqs(map.get(rid), ids, map);
-                }
-            }
+        if (c.getPrerequisites() != null) {
+            Set<String> prerequisiteIds = new HashSet<>();
+            c.getPrerequisites().collectCharmIds(prerequisiteIds);
+            for (String rid : prerequisiteIds) addCharmAndPrereqs(map.get(rid), ids, map);
         }
     }
 
@@ -153,11 +151,11 @@ public class CharmTreeViewModel implements ViewModel {
             for (Charm c : charms) {
                 int currentDepth = charmDepth.getOrDefault(c.getId(), 0);
                 int reqDepth = 0;
-                if (c.getPrerequisiteGroups() != null) {
-                    for (Charm.PrerequisiteGroup group : c.getPrerequisiteGroups()) {
-                        for (String reqId : group.getCharmIds()) {
-                            reqDepth = Math.max(reqDepth, charmDepth.getOrDefault(reqId, 0) + 1);
-                        }
+                if (c.getPrerequisites() != null) {
+                    Set<String> prerequisiteIds = new HashSet<>();
+                    c.getPrerequisites().collectCharmIds(prerequisiteIds);
+                    for (String reqId : prerequisiteIds) {
+                        reqDepth = Math.max(reqDepth, charmDepth.getOrDefault(reqId, 0) + 1);
                     }
                 }
                 if (reqDepth > currentDepth) {
@@ -186,14 +184,13 @@ public class CharmTreeViewModel implements ViewModel {
                                 c -> {
                                     double sum = 0;
                                     int count = 0;
-                                    if (c.getPrerequisiteGroups() != null) {
-                                        for (Charm.PrerequisiteGroup g :
-                                                c.getPrerequisiteGroups()) {
-                                            for (String rid : g.getCharmIds()) {
-                                                if (logicalX.containsKey(rid)) {
-                                                    sum += logicalX.get(rid);
-                                                    count++;
-                                                }
+                                    if (c.getPrerequisites() != null) {
+                                        Set<String> prerequisiteIds = new HashSet<>();
+                                        c.getPrerequisites().collectCharmIds(prerequisiteIds);
+                                        for (String rid : prerequisiteIds) {
+                                            if (logicalX.containsKey(rid)) {
+                                                sum += logicalX.get(rid);
+                                                count++;
                                             }
                                         }
                                     }

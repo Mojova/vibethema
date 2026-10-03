@@ -10,45 +10,7 @@ public abstract class Charm {
     private List<String> exaltTypes;
     private String name;
     private int minEssence;
-    private List<PrerequisiteGroup> prerequisiteGroups;
-
-    public static class PrerequisiteGroup {
-        private String label;
-        private List<String> charmIds;
-        private int minCount;
-
-        public PrerequisiteGroup() {}
-
-        public PrerequisiteGroup(String label, List<String> charmIds, int minCount) {
-            this.label = label;
-            this.charmIds = charmIds;
-            this.minCount = minCount;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        public List<String> getCharmIds() {
-            return charmIds;
-        }
-
-        public int getMinCount() {
-            return minCount;
-        }
-
-        public void setLabel(String label) {
-            this.label = label;
-        }
-
-        public void setCharmIds(List<String> charmIds) {
-            this.charmIds = charmIds;
-        }
-
-        public void setMinCount(int minCount) {
-            this.minCount = minCount;
-        }
-    }
+    private PrerequisiteRule prerequisites;
 
     private String cost;
     private String type;
@@ -56,7 +18,7 @@ public abstract class Charm {
     private String duration;
     private String fullText;
     private String rawData;
-    private boolean potentiallyProblematicImport;
+    private List<String> importWarnings;
     private String category; // "solar", "martialArts", "evocation"
     private transient boolean isCustom;
 
@@ -92,8 +54,8 @@ public abstract class Charm {
         return minEssence;
     }
 
-    public List<PrerequisiteGroup> getPrerequisiteGroups() {
-        return prerequisiteGroups;
+    public PrerequisiteRule getPrerequisites() {
+        return prerequisites;
     }
 
     public String getCost() {
@@ -136,8 +98,8 @@ public abstract class Charm {
         this.minEssence = minEssence;
     }
 
-    public void setPrerequisiteGroups(List<PrerequisiteGroup> prerequisiteGroups) {
-        this.prerequisiteGroups = prerequisiteGroups;
+    public void setPrerequisites(PrerequisiteRule prerequisites) {
+        this.prerequisites = prerequisites;
     }
 
     public void setCost(String cost) {
@@ -172,15 +134,19 @@ public abstract class Charm {
         isCustom = custom;
     }
 
-    public boolean isPotentiallyProblematicImport() {
-        return potentiallyProblematicImport;
+    public List<String> getImportWarnings() {
+        return importWarnings;
     }
 
-    public void setPotentiallyProblematicImport(boolean value) {
-        this.potentiallyProblematicImport = value;
+    public void setImportWarnings(List<String> importWarnings) {
+        this.importWarnings = importWarnings;
     }
 
     public abstract boolean isEligible(CharacterData data);
+
+    public boolean qualifiesForCasteFavoredDiscount(CharacterData data) {
+        return prerequisites == null || prerequisites.qualifiesForCasteFavoredDiscount(data);
+    }
 
     public abstract String getAbility();
 
