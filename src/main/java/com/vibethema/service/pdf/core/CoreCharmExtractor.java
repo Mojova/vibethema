@@ -161,6 +161,7 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
             List<Object> prereqGroups = new ArrayList<>();
             Map<String, Object> bridgePrerequisite = null;
             String cleanPrereqs = rawPrereqs.trim();
+            if (cleanPrereqs.equals("???")) cleanPrereqs = "";
             if (cleanPrereqs.toLowerCase().startsWith("none")) {
                 cleanPrereqs = cleanPrereqs.substring(4).trim();
             }
@@ -192,6 +193,58 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                     group.put("minCount", 10);
                     prereqGroups.add(group);
                     cleanPrereqs = "";
+                }
+
+                Matcher mandatoryCountMatcher =
+                        Pattern.compile(
+                                        "(?i)^(.+?)\\s*\\+\\s*Any\\s+(one|two|three|four|five|six|seven|eight|nine|ten|\\d+)\\s+(.+?)\\s+Charms?$")
+                                .matcher(cleanPrereqs);
+                if (mandatoryCountMatcher.find()) {
+                    Map<String, Object> countRule =
+                            countFromAbilitiesRule(
+                                    parseNumber(mandatoryCountMatcher.group(2)),
+                                    mandatoryCountMatcher.group(3));
+                    if (countRule != null) {
+                        Map<String, Object> mandatoryGroup = new LinkedHashMap<>();
+                        mandatoryGroup.put("names", List.of(mandatoryCountMatcher.group(1).trim()));
+                        mandatoryGroup.put("minCount", 0);
+                        prereqGroups.add(mandatoryGroup);
+                        Map<String, Object> countGroup = new LinkedHashMap<>();
+                        countGroup.put("rule", countRule);
+                        prereqGroups.add(countGroup);
+                        cleanPrereqs = "";
+                    }
+                } else {
+                    Matcher countMatcher =
+                            Pattern.compile(
+                                            "(?i)^Any\\s+(one|two|three|four|five|six|seven|eight|nine|ten|\\d+)\\s+(.+?)\\s+Charms?$")
+                                    .matcher(cleanPrereqs);
+                    if (countMatcher.find()) {
+                        Map<String, Object> countRule =
+                                countFromAbilitiesRule(
+                                        parseNumber(countMatcher.group(1)), countMatcher.group(2));
+                        if (countRule != null) {
+                            Map<String, Object> group = new LinkedHashMap<>();
+                            group.put("rule", countRule);
+                            prereqGroups.add(group);
+                            cleanPrereqs = "";
+                        }
+                    }
+                    if (!cleanPrereqs.isEmpty()) {
+                        Matcher anyAbilityMatcher =
+                                Pattern.compile("(?i)^Any\\s+(.+?)\\s+Charms?$")
+                                        .matcher(cleanPrereqs);
+                        if (anyAbilityMatcher.find()) {
+                            Map<String, Object> countRule =
+                                    countFromAbilitiesRule(1, anyAbilityMatcher.group(1));
+                            if (countRule != null) {
+                                Map<String, Object> group = new LinkedHashMap<>();
+                                group.put("rule", countRule);
+                                prereqGroups.add(group);
+                                cleanPrereqs = "";
+                            }
+                        }
+                    }
                 }
 
                 // Bridge prerequisites are alternatives to the ordinary path. Preserve both
@@ -635,6 +688,16 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                 return 4;
             case "five":
                 return 5;
+            case "six":
+                return 6;
+            case "seven":
+                return 7;
+            case "eight":
+                return 8;
+            case "nine":
+                return 9;
+            case "ten":
+                return 10;
             default:
                 try {
                     return Integer.parseInt(val);
@@ -642,5 +705,28 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                     return 0;
                 }
         }
+    }
+
+    private Map<String, Object> countFromAbilitiesRule(int count, String scope) {
+        if (count <= 0 || scope.toLowerCase(Locale.ROOT).contains("essence")) return null;
+        String normalizedScope = scope.replaceAll("(?i)\\s+or\\s+", "|");
+        List<String> abilities = new ArrayList<>();
+        for (String part : normalizedScope.split("\\s*,\\s*|\\|")) {
+            String candidate = part.trim();
+            if (candidate.isEmpty()) continue;
+            String ability =
+                    ABILITIES.stream()
+                            .filter(a -> a.equalsIgnoreCase(candidate))
+                            .findFirst()
+                            .orElse(null);
+            if (ability == null) return null;
+            abilities.add(ability);
+        }
+        if (abilities.isEmpty()) return null;
+        Map<String, Object> rule = new LinkedHashMap<>();
+        rule.put("type", "countFromAbilities");
+        rule.put("abilities", abilities);
+        rule.put("count", count);
+        return rule;
     }
 }

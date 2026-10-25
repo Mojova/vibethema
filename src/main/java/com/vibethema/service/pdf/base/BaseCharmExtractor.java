@@ -263,20 +263,27 @@ public abstract class BaseCharmExtractor {
     protected void resolvePrerequisites(Collection<Map<String, Object>> charms) {
         Set<String> allExtractedIds = new HashSet<>();
         Map<String, String> idsByCompactAbilityAndName = new HashMap<>();
+        Map<String, String> idsByCompactName = new HashMap<>();
         Map<String, String> namesByCompactAbilityAndName = new HashMap<>();
         charms.forEach(
                 c -> {
                     allExtractedIds.add((String) c.get("id"));
                     String ability = (String) c.get("ability");
                     String name = (String) c.get("name");
+                    String charmId = (String) c.get("id");
                     if (ability != null && name != null) {
                         String key = compactCharmKey(ability, name);
-                        String existingId = idsByCompactAbilityAndName.putIfAbsent(key, (String) c.get("id"));
+                        String existingId = idsByCompactAbilityAndName.putIfAbsent(key, charmId);
                         if (existingId != null) {
                             idsByCompactAbilityAndName.put(key, "");
                             namesByCompactAbilityAndName.put(key, "");
                         } else {
                             namesByCompactAbilityAndName.put(key, name);
+                        }
+                        String nameKey = compactCharmName(name);
+                        String existingGlobalId = idsByCompactName.putIfAbsent(nameKey, charmId);
+                        if (existingGlobalId != null && !existingGlobalId.equals(charmId)) {
+                            idsByCompactName.put(nameKey, "");
                         }
                     }
                 });
@@ -289,7 +296,13 @@ public abstract class BaseCharmExtractor {
             List<Object> rawPrereqs = (List<Object>) charm.get("prerequisites");
             List<String> warnings = new ArrayList<>();
             Map<String, Object> resolved =
-                    resolveGroups(rawPrereqs, ability, allExtractedIds, idsByCompactAbilityAndName, warnings);
+                    resolveGroups(
+                            rawPrereqs,
+                            ability,
+                            allExtractedIds,
+                            idsByCompactAbilityAndName,
+                            idsByCompactName,
+                            warnings);
             @SuppressWarnings("unchecked")
             Map<String, Object> bridge = (Map<String, Object>) charm.get("bridgePrerequisite");
             String prerequisiteText = (String) charm.get("prerequisiteText");
@@ -321,6 +334,7 @@ public abstract class BaseCharmExtractor {
                                 ability,
                                 allExtractedIds,
                                 idsByCompactAbilityAndName,
+                                idsByCompactName,
                                 warnings);
                 Map<String, Object> alternate =
                         ruleFromText(
@@ -328,6 +342,7 @@ public abstract class BaseCharmExtractor {
                                 ability,
                                 allExtractedIds,
                                 idsByCompactAbilityAndName,
+                                idsByCompactName,
                                 warnings);
                 Map<String, Object> any = new LinkedHashMap<>();
                 any.put("type", "anyOf");
@@ -558,6 +573,7 @@ public abstract class BaseCharmExtractor {
             String ability,
             Set<String> allIds,
             Map<String, String> idsByCompactAbilityAndName,
+            Map<String, String> idsByCompactName,
             List<String> warnings) {
         List<Map<String, Object>> rules = new ArrayList<>();
         if (raw != null) {
@@ -569,6 +585,7 @@ public abstract class BaseCharmExtractor {
                                     ability,
                                     allIds,
                                     idsByCompactAbilityAndName,
+                                    idsByCompactName,
                                     warnings));
                     continue;
                 }
@@ -604,7 +621,14 @@ public abstract class BaseCharmExtractor {
                     List<String> ids = new ArrayList<>();
                     for (String name : names) {
                         String id = DefinitionId.forCharm(sourceId, name.replaceAll("\\s+", " ").trim(), ability);
-                        id = resolveCharmId(name, ability, id, allIds, idsByCompactAbilityAndName);
+                        id =
+                                resolveCharmId(
+                                        name,
+                                        ability,
+                                        id,
+                                        allIds,
+                                        idsByCompactAbilityAndName,
+                                        idsByCompactName);
                         ids.add(id);
                         if (!allIds.contains(id)) warnings.add("Unresolved prerequisite: " + name);
                     }
@@ -667,6 +691,7 @@ public abstract class BaseCharmExtractor {
             String ability,
             Set<String> allIds,
             Map<String, String> idsByCompactAbilityAndName,
+            Map<String, String> idsByCompactName,
             List<String> warnings) {
         if (text == null || text.isBlank() || text.equalsIgnoreCase("none")) return Map.of("type", "allOf", "requirements", List.of());
         if (text.contains(",")
@@ -676,7 +701,12 @@ public abstract class BaseCharmExtractor {
                 if (!part.isBlank())
                     requirements.add(
                             ruleFromCharmName(
-                                    part.trim(), ability, allIds, idsByCompactAbilityAndName, warnings));
+                                    part.trim(),
+                                    ability,
+                                    allIds,
+                                    idsByCompactAbilityAndName,
+                                    idsByCompactName,
+                                    warnings));
             }
             return Map.of("type", "allOf", "requirements", requirements);
         }
@@ -705,7 +735,12 @@ public abstract class BaseCharmExtractor {
             return Map.of("type", "countFromAbilities", "abilities", abilities, "count", count);
         }
         return ruleFromCharmName(
-                text.trim(), ability, allIds, idsByCompactAbilityAndName, warnings);
+                text.trim(),
+                ability,
+                allIds,
+                idsByCompactAbilityAndName,
+                idsByCompactName,
+                warnings);
     }
 
     private Map<String, Object> ruleFromCharmName(
@@ -713,9 +748,10 @@ public abstract class BaseCharmExtractor {
             String ability,
             Set<String> allIds,
             Map<String, String> idsByCompactAbilityAndName,
+            Map<String, String> idsByCompactName,
             List<String> warnings) {
         String id = DefinitionId.forCharm(sourceId, name.replaceAll("\\s+", " ").trim(), ability);
-        id = resolveCharmId(name, ability, id, allIds, idsByCompactAbilityAndName);
+        id = resolveCharmId(name, ability, id, allIds, idsByCompactAbilityAndName, idsByCompactName);
         if (!allIds.contains(id)) warnings.add("Unresolved prerequisite: " + name);
         return Map.of("type", "charm", "charmId", id);
     }
@@ -725,16 +761,23 @@ public abstract class BaseCharmExtractor {
             String ability,
             String id,
             Set<String> allIds,
-            Map<String, String> idsByCompactAbilityAndName) {
+            Map<String, String> idsByCompactAbilityAndName,
+            Map<String, String> idsByCompactName) {
         if (allIds.contains(id) || ability == null || name == null) return id;
         String compactMatch = idsByCompactAbilityAndName.get(compactCharmKey(ability, name));
-        return compactMatch == null || compactMatch.isEmpty() ? id : compactMatch;
+        if (compactMatch != null && !compactMatch.isEmpty()) return compactMatch;
+        String globalMatch = idsByCompactName.get(compactCharmName(name));
+        return globalMatch == null || globalMatch.isEmpty() ? id : globalMatch;
     }
 
     private String compactCharmKey(String ability, String name) {
         return ability.trim().toLowerCase(Locale.ROOT)
                 + "|"
                 + name.replaceAll("\\s+", "").toLowerCase(Locale.ROOT);
+    }
+
+    private String compactCharmName(String name) {
+        return name.replaceAll("\\s+", "").toLowerCase(Locale.ROOT);
     }
 
     private void normalizeRawPrerequisiteSpacing(
