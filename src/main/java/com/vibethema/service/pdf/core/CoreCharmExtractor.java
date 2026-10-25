@@ -398,6 +398,15 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
             return false;
         }
 
+        // A wrapped prerequisite may split after a complete hyphenated word ("Red-Toothed"
+        // + "Execution Order, Saga Beast Virtue"). Keep a comma-separated continuation with
+        // the metadata instead of mistaking its length for the start of the description.
+        if (currentField.equals("Prereqs")
+                && rawPrereqs.trim().matches("(?s).*\\b[A-Z][a-z]+-[A-Z][a-z]+$")
+                && trimmed.contains(",")) {
+            return false;
+        }
+
         // ALL CAPS lines are usually headers or sidebars
         if (trimmed.equals(trimmed.toUpperCase()) && trimmed.length() > 5) {
             // Ignore known page junk that isn't a real description or header
