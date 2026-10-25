@@ -1,6 +1,7 @@
 package com.vibethema.model.mystic;
 
 import com.vibethema.model.CharacterData;
+import com.vibethema.model.traits.Ability;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -116,7 +117,7 @@ public class PrerequisiteRule {
             case "countFromAbilities" -> countFromAbilities(data) >= count;
             case "countFromSingleAbility" -> maxDistinctOwnedInOneAbility(data) >= count;
             // Principle matching is deliberately deferred to the purchase UI/storyteller.
-            case "countMatchingPredicate" -> false;
+            case "countMatchingPredicate" -> countMatchingPredicate(data) >= count;
             default -> false;
         };
     }
@@ -133,7 +134,7 @@ public class PrerequisiteRule {
             case "countOf" -> countOfDiscountable(data, charmIds) >= count;
             case "countFromAbilities" -> countFromAbilitiesDiscountable(data) >= count;
             case "countFromSingleAbility" -> singleAbilityDiscountable(data) >= count;
-            case "countMatchingPredicate" -> false;
+            case "countMatchingPredicate" -> isAbilityCasteOrFavored(data);
             default -> false;
         };
     }
@@ -153,8 +154,23 @@ public class PrerequisiteRule {
             case "countOf" -> countDistinctOwned(data, charmIds);
             case "countFromAbilities" -> countFromAbilities(data);
             case "countFromSingleAbility" -> maxDistinctOwnedInOneAbility(data);
+            case "countMatchingPredicate" -> countMatchingPredicate(data);
             default -> 0;
         };
+    }
+
+    private int countMatchingPredicate(CharacterData data) {
+        return isAbilityCasteOrFavored(data) ? 1 : 0;
+    }
+
+    private boolean isAbilityCasteOrFavored(CharacterData data) {
+        String prefix = "abilityIsCasteOrFavored:";
+        if (predicate == null || !predicate.startsWith(prefix)) return false;
+        Ability ability = Ability.fromString(predicate.substring(prefix.length()));
+        return ability != null
+                && ((data.getCasteAbility(ability) != null && data.getCasteAbility(ability).get())
+                        || (data.getFavoredAbility(ability) != null
+                                && data.getFavoredAbility(ability).get()));
     }
 
     private static int countDistinctOwned(CharacterData data, List<String> ids) {

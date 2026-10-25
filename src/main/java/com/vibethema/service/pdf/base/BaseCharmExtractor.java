@@ -302,6 +302,8 @@ public abstract class BaseCharmExtractor {
                             allExtractedIds,
                             idsByCompactAbilityAndName,
                             idsByCompactName,
+                            charms,
+                            (String) charm.get("id"),
                             warnings);
             @SuppressWarnings("unchecked")
             Map<String, Object> bridge = (Map<String, Object>) charm.get("bridgePrerequisite");
@@ -574,6 +576,8 @@ public abstract class BaseCharmExtractor {
             Set<String> allIds,
             Map<String, String> idsByCompactAbilityAndName,
             Map<String, String> idsByCompactName,
+            Collection<Map<String, Object>> allCharms,
+            String currentCharmId,
             List<String> warnings) {
         List<Map<String, Object>> rules = new ArrayList<>();
         if (raw != null) {
@@ -604,6 +608,30 @@ public abstract class BaseCharmExtractor {
                     Map<String, Object> r = new LinkedHashMap<>();
                     r.put("type", "countFromAbilities");
                     r.put("abilities", Arrays.asList(marker.substring("__ANY_ABILITIES__:".length()).split("\\|")));
+                    r.put("count", count);
+                    rules.add(r);
+                } else if (marker.startsWith("__ANY_ABILITY_ESSENCE__:")) {
+                    String[] markerParts =
+                            marker.substring("__ANY_ABILITY_ESSENCE__:".length()).split(":", 2);
+                    int minimumEssence = Integer.parseInt(markerParts[0]);
+                    String eligibleAbility = markerParts[1];
+                    List<String> eligibleCharmIds =
+                            allCharms.stream()
+                                    .filter(
+                                            candidate ->
+                                                    eligibleAbility.equalsIgnoreCase(
+                                                            (String) candidate.get("ability")))
+                                    .filter(
+                                            candidate ->
+                                                    ((Number) candidate.getOrDefault("minEssence", 0))
+                                                                    .intValue()
+                                                            >= minimumEssence)
+                                    .map(candidate -> (String) candidate.get("id"))
+                                    .filter(id -> !id.equals(currentCharmId))
+                                    .toList();
+                    Map<String, Object> r = new LinkedHashMap<>();
+                    r.put("type", "countOf");
+                    r.put("charmIds", eligibleCharmIds);
                     r.put("count", count);
                     rules.add(r);
                 } else if (marker.startsWith("__ANY_SINGLE_ABILITY__:")) {
@@ -694,6 +722,23 @@ public abstract class BaseCharmExtractor {
             Map<String, String> idsByCompactName,
             List<String> warnings) {
         if (text == null || text.isBlank() || text.equalsIgnoreCase("none")) return Map.of("type", "allOf", "requirements", List.of());
+        Matcher casteFavoredAbility =
+                Pattern.compile("(?i)^(.+?)\\s+as\\s+Caste\\s+or\\s+Favored$")
+                        .matcher(text.trim());
+        if (casteFavoredAbility.find()) {
+            String abilityName = casteFavoredAbility.group(1).trim();
+            if (ABILITIES.stream().anyMatch(a -> a.equalsIgnoreCase(abilityName))) {
+                String canonicalAbility =
+                        ABILITIES.stream()
+                                .filter(a -> a.equalsIgnoreCase(abilityName))
+                                .findFirst()
+                                .orElseThrow();
+                return Map.of(
+                        "type", "countMatchingPredicate",
+                        "predicate", "abilityIsCasteOrFavored:" + canonicalAbility,
+                        "count", 1);
+            }
+        }
         if (text.contains(",")
                 && !text.toLowerCase().matches("(?s).*\\bany\\s+\\d+\\b.*")) {
             List<Map<String, Object>> requirements = new ArrayList<>();

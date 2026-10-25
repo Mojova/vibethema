@@ -200,6 +200,29 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                     cleanPrereqs = "";
                 }
 
+                Matcher anyCharmOrCasteFavoredMatcher =
+                        Pattern.compile(
+                                        "(?i)^Any\\s+(?:one|1)\\s+(.+?)\\s+Charms?\\s+or\\s+(.+?)\\s+as\\s+Caste\\s+or\\s+Favored$")
+                                .matcher(cleanPrereqs);
+                if (anyCharmOrCasteFavoredMatcher.find()) {
+                    String charmAbility = anyCharmOrCasteFavoredMatcher.group(1).trim();
+                    String casteFavoredAbility = anyCharmOrCasteFavoredMatcher.group(2).trim();
+                    String canonicalAbility =
+                            ABILITIES.stream()
+                                    .filter(a -> a.equalsIgnoreCase(charmAbility))
+                                    .findFirst()
+                                    .orElse(null);
+                    if (canonicalAbility != null
+                            && canonicalAbility.equalsIgnoreCase(casteFavoredAbility)) {
+                        bridgePrerequisite = new LinkedHashMap<>();
+                        bridgePrerequisite.put(
+                                "normal", "any 1 " + canonicalAbility + " Charms");
+                        bridgePrerequisite.put(
+                                "alternate", canonicalAbility + " as Caste or Favored");
+                        cleanPrereqs = "";
+                    }
+                }
+
                 // Some prerequisites allow either of two named Charms. Model those as an
                 // alternative only when both sides exactly match extracted Charm names.
                 Matcher charmAlternativeMatcher =
@@ -231,6 +254,24 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                         Pattern.compile(
                                         "(?i)^(.+?)\\s*\\+\\s*Any\\s+(one|two|three|four|five|six|seven|eight|nine|ten|\\d+)\\s+(.+?)\\s+Charms?$")
                                 .matcher(cleanPrereqs);
+                Matcher essenceThresholdCountMatcher =
+                        Pattern.compile(
+                                        "(?i)^Any\\s+(one|two|three|four|five|six|seven|eight|nine|ten|\\d+)\\s+Essence\\s+(\\d+)\\+\\s+(.+?)\\s+Charms?$")
+                                .matcher(cleanPrereqs);
+                if (essenceThresholdCountMatcher.find()) {
+                    Map<String, Object> countGroup = new LinkedHashMap<>();
+                    countGroup.put(
+                            "names",
+                            List.of(
+                                    "__ANY_ABILITY_ESSENCE__:"
+                                            + essenceThresholdCountMatcher.group(2)
+                                            + ":"
+                                            + essenceThresholdCountMatcher.group(3).trim()));
+                    countGroup.put("minCount", parseNumber(essenceThresholdCountMatcher.group(1)));
+                    prereqGroups.add(countGroup);
+                    cleanPrereqs = "";
+                }
+
                 if (mandatoryCountMatcher.find()) {
                     Map<String, Object> countRule =
                             countFromAbilitiesRule(
@@ -377,6 +418,10 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                         if (trimmed.isEmpty()
                                 || trimmed.startsWith("The ")
                                 || trimmed.length() > 100) continue;
+
+                        // The Core PDF misnames Crippling Pressure-Point Strike as
+                        // "Crippling Pressure-Point Attack" in Essence Venom Strike's prereqs.
+                        trimmed = canonicalKnownCharmName(trimmed, knownCharmNames);
 
                         Matcher countMatcher =
                                 Pattern.compile("(.*?) \\(x(\\d+)\\)").matcher(trimmed);
@@ -608,8 +653,14 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
         int lastComma = rawPrereqs.lastIndexOf(',');
         String trailingPrerequisite = rawPrereqs.substring(lastComma + 1).trim();
         if (trailingPrerequisite.isEmpty()) {
-            return rawPrereqs.trim().endsWith(",")
-                    && matchesOrStartsKnownCharmName(knownCharmNames, line);
+            if (!rawPrereqs.trim().endsWith(",")) return false;
+            String[] continuedPrerequisites = line.split(",");
+            if (continuedPrerequisites.length == 0) return false;
+            for (String prerequisite : continuedPrerequisites) {
+                if (!matchesOrStartsKnownCharmName(knownCharmNames, prerequisite.trim()))
+                    return false;
+            }
+            return true;
         }
 
         String[] continuedParts = line.split(",");
@@ -644,12 +695,25 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
         return knownCharmNames.stream().anyMatch(name -> normalizeCharmName(name).equals(normalized));
     }
 
+    private String canonicalKnownCharmName(String candidate, Set<String> knownCharmNames) {
+        String normalized = normalizeCharmName(candidate);
+        return knownCharmNames.stream()
+                .filter(name -> normalizeCharmName(name).equals(normalized))
+                .findFirst()
+                .orElse(candidate);
+    }
+
     private String normalizeCharmName(String name) {
-        return name.replaceAll("[-\\u00AD]\\s*(?=[a-z])", "")
+        String normalized =
+                name.replaceAll("[-\\u00AD]\\s*(?=[a-z])", "")
                 .replaceAll("[-\\u00AD]\\s*(?=[A-Z])", " ")
                 .replaceAll("\\s+", " ")
                 .trim()
                 .toLowerCase(Locale.ROOT);
+        if (normalized.equals("crippling pressure point attack")) {
+            return "crippling pressure point strike";
+        }
+        return normalized;
     }
 
     @Override

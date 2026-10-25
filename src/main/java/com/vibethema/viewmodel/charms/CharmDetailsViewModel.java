@@ -147,7 +147,14 @@ public class CharmDetailsViewModel implements ViewModel {
                 yield "Any " + rule.getCount() + " Charms from " + from;
             }
             case "countFromSingleAbility" -> "Any " + rule.getCount() + " Charms from one Ability";
-            case "countMatchingPredicate" -> "Any " + rule.getCount() + " Charms that " + rule.getPredicate();
+            case "countMatchingPredicate" -> {
+                String predicate = rule.getPredicate();
+                String casteFavoredPrefix = "abilityIsCasteOrFavored:";
+                if (predicate != null && predicate.startsWith(casteFavoredPrefix)) {
+                    yield predicate.substring(casteFavoredPrefix.length()) + " as Caste or Favored";
+                }
+                yield "Any " + rule.getCount() + " Charms that " + predicate;
+            }
             default -> "Unrecognized prerequisite";
         };
     }
