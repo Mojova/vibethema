@@ -59,6 +59,7 @@ public class PdfImportRegressionTest {
                 });
 
         assertEyeOfTheUnconqueredSunPrerequisite(tempDir.resolve(SOURCE_ID));
+        assertCharmDescriptionCleanup(tempDir.resolve(SOURCE_ID));
 
         // Verify all files in reference directory
         try (Stream<Path> stream = Files.walk(REFERENCE_DIR)) {
@@ -95,6 +96,124 @@ public class PdfImportRegressionTest {
                                 }
                             });
         }
+    }
+
+    private void assertCharmDescriptionCleanup(Path importedSource) throws IOException {
+        String whirlingBrush = charmDescription(importedSource, "linguistics", "Whirling Brush Method");
+        assertFalse(whirlingBrush.contains("WRITTEN VS. SPOKEN EFFECTS"));
+        assertTrue(whirlingBrush.contains("perfectly transcribe a rapid conversation"));
+
+        String flowingHand = charmDescription(importedSource, "linguistics", "Flowing Elegant Hand");
+        assertFalse(flowingHand.contains("ARTISTIC TALENT: LINGUISTICS OR CRAFT"));
+        assertTrue(flowingHand.contains("At Linguistics 5+"));
+
+        String singleVoice = charmDescription(importedSource, "linguistics", "Single Voice Kata");
+        assertFalse(singleVoice.contains("THAT BURNING QUESTION"));
+        assertTrue(singleVoice.contains("no intelligible words, letters or mechanics"));
+
+        String divineInspiration = charmDescription(importedSource, "craft", "Divine Inspiration Technique");
+        assertFalse(divineInspiration.startsWith("Supreme Masterwork Focus"));
+
+        String investigation = charmDescription(importedSource, "investigation", "Inquisitor’s Unfailing Notice");
+        assertFalse(investigation.contains("but those powers aren’t necessarily called out"));
+        assertFalse(investigation.contains("Divine Mantle exists"));
+
+        String melee = charmDescription(importedSource, "melee", "Ready in Eight Directions Stance");
+        assertFalse(melee.contains("Fivefold Bulwark Stance ignores"));
+        assertTrue(melee.contains("counter an opponent in the first round"));
+
+        String performance = charmDescription(importedSource, "performance", "Infectious Zealotry Approach");
+        assertFalse(performance.contains("mentarily blanks out"));
+
+        String war = charmDescription(importedSource, "war", "Battle-Visionary’s Foresight");
+        assertFalse(war.contains("The neighborhood had once been an affluent district"));
+        assertTrue(war.contains("two prepared tactics to counter one of these reflexively"));
+
+        String powerAwarding = charmDescription(importedSource, "lore", "Power-Awarding Prana");
+        assertFalse(powerAwarding.contains("FATE OF THE MIDDLEMARCHES"));
+
+        String stageFright = charmDescription(importedSource, "performance", "Stillness-Drawing Meditation");
+        assertFalse(stageFright.contains("DON’T GET STAGE FRIGHT"));
+
+        String redRule = charmDescription(importedSource, "presence", "Crowned King of Eternity");
+        assertFalse(redRule.contains("REMEMBER THE RED RULE"));
+
+        String mariner = charmDescription(importedSource, "sail", "Immortal Mariner’s Advantage");
+        assertFalse(mariner.contains("EXAMPLE HAZARD"));
+        assertTrue(mariner.contains("decisive marine gambits"));
+
+        String heartEclipsing = charmDescription(importedSource, "socialize", "Heart-Eclipsing Shroud");
+        assertFalse(heartEclipsing.contains("SOCIETAL INFLUENCE AND GROUP DYNAMICS"));
+        assertTrue(heartEclipsing.contains("Special rules:"));
+
+        String legendMask = charmDescription(importedSource, "socialize", "Legend Mask Methodology");
+        assertFalse(legendMask.contains("PERSONAS AND LIMIT BREAK"));
+
+        String stalkingWolf = charmDescription(importedSource, "stealth", "Stalking Wolf Attitude");
+        assertFalse(stalkingWolf.contains("PERSONAS: RULES AND LIMITATIONS"));
+
+        String camouflage = charmDescription(importedSource, "survival", "Eye-Deceiving Camouflage");
+        assertFalse(camouflage.contains("A FAMILIAR INVESTMENT"));
+        assertTrue(camouflage.contains("These successes directly counter"));
+
+        String mistOnWater = charmDescription(importedSource, "thrown", "Mist on Water Attack");
+        assertFalse(mistOnWater.contains("ELECTED TARGETS"));
+        assertTrue(mistOnWater.contains("they may die standing up"));
+
+        String destiny = charmDescription(importedSource, "integrity", "Destiny-Manifesting Method");
+        assertEquals(1, occurrences(destiny, "which she derived this Charm."));
+        assertFalse(destiny.contains("This means, literally"));
+
+        String measurement = charmDescription(importedSource, "bureaucracy", "Measuring Glance");
+        assertTrue(measurement.contains("([Social or Mental Attribute] + Bureaucracy)"));
+
+        String bodyRestoring = charmDescription(importedSource, "integrity", "Body-Restoring Benison");
+        assertFalse(bodyRestoring.contains("use this Divine Mantle"));
+        String divineMantle = charmDescription(importedSource, "integrity", "Divine Mantle");
+        assertTrue(divineMantle.contains("If a spirit recognizes the Lawgiver as king"));
+        assertTrue(divineMantle.contains("use this Divine Mantle to gain the powers"));
+
+        String repeatedFury = charmDescription(importedSource, "brawl", "Rampage-Berserker Attack");
+        assertTrue(repeatedFury.contains("but can be reset if"));
+        assertFalse(repeatedFury.contains("but if can be reset if"));
+
+        String firstMovement = charmDescription(importedSource, "brawl", "Fivefold Fury Onslaught");
+        assertTrue(firstMovement.contains("each successful strike"));
+
+        String dragonSoul = charmDescription(importedSource, "integrity", "Undying Solar Resolve");
+        assertTrue(dragonSoul.contains("the initiator’s roll"));
+
+        String oxStunning = charmDescription(importedSource, "brawl", "Ox-Stunning Blow");
+        assertTrue(oxStunning.contains("for every two successes"));
+
+        String forceRending = charmDescription(importedSource, "brawl", "Force-Rending Strike");
+        assertTrue(forceRending.contains("Brawl-based"));
+        String rampage = charmDescription(importedSource, "brawl", "Rampage-Berserker Attack");
+        assertTrue(rampage.contains("Brawl-based withering attack"));
+        assertFalse(rampage.contains("Brawlbased"));
+
+        assertFalse(whirlingBrush.contains("\u0007"));
+    }
+
+    private String charmDescription(Path importedSource, String ability, String charmName)
+            throws IOException {
+        Path charmFile = importedSource.resolve("charms").resolve(ability + ".json");
+        JsonElement charms = JsonParser.parseString(Files.readString(charmFile));
+        return charms.getAsJsonObject().getAsJsonArray("charms").asList().stream()
+                .filter(charm -> charmName.equals(charm.getAsJsonObject().get("name").getAsString()))
+                .map(charm -> charm.getAsJsonObject().get("fullText").getAsString())
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Missing charm: " + charmName));
+    }
+
+    private int occurrences(String text, String target) {
+        int count = 0;
+        int offset = 0;
+        while ((offset = text.indexOf(target, offset)) >= 0) {
+            count++;
+            offset += target.length();
+        }
+        return count;
     }
 
     private void assertEyeOfTheUnconqueredSunPrerequisite(Path importedSource) throws IOException {

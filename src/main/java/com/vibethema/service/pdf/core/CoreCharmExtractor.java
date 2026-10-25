@@ -100,10 +100,25 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
             String duration = "";
             String rawPrereqs = "";
             String currentField = "";
+            boolean skippingMetadataSidebar = false;
 
             for (int i = descStartIdx; i < Math.min(lines.length, descStartIdx + 10); i++) {
                 String line = lines[i].trim();
                 if (line.isEmpty()) continue;
+
+                if (isMetadataSidebarHeader(line)) {
+                    skippingMetadataSidebar = true;
+                    descStartIdx = i + 1;
+                    continue;
+                }
+                if (skippingMetadataSidebar) {
+                    if (line.startsWith("Duration:") || line.startsWith("Prerequisite Charms:")) {
+                        skippingMetadataSidebar = false;
+                    } else {
+                        descStartIdx = i + 1;
+                        continue;
+                    }
+                }
 
                 // Skip known sidebar/page junk lines in the metadata block
                 if (isSidebarLine(line)) {
@@ -412,8 +427,9 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                     optionalGroup.put("minCount", Integer.parseInt(countStr));
                     prereqGroups.add(optionalGroup);
                 } else {
-                    // Fallback to simple comma-separated list
-                    for (String p : cleanPrereqs.split(",")) {
+                    // Split on commas except when adjacent comma-delimited pieces form one
+                    // extracted Charm name, such as "One Weapon, Two Blows".
+                    for (String p : splitPrerequisiteNames(cleanPrereqs, knownCharmNames)) {
                         String trimmed = p.replaceAll("\\s+", " ").trim();
                         if (trimmed.isEmpty()
                                 || trimmed.startsWith("The ")
@@ -503,6 +519,7 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
         List<Map<String, Object>> allCharms = new ArrayList<>();
         charmsByAbility.values().forEach(allCharms::addAll);
         charmsByMartialArtsStyle.values().forEach(allCharms::addAll);
+        repairKnownDescriptionFlow(allCharms);
         resolvePrerequisites(allCharms);
 
         saveCharms(charmsByAbility, suffix, false);
@@ -703,6 +720,44 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                 .orElse(candidate);
     }
 
+    private List<String> splitPrerequisiteNames(
+            String prerequisites, Set<String> knownCharmNames) {
+        String[] pieces = prerequisites.split(",", -1);
+        List<String> names = new ArrayList<>();
+        for (int start = 0; start < pieces.length; ) {
+            StringBuilder candidate = new StringBuilder();
+            String matchedName = null;
+            int matchedEnd = start;
+            for (int end = start; end < pieces.length; end++) {
+                if (end > start) candidate.append(", ");
+                candidate.append(pieces[end].trim());
+                String possibleName = candidate.toString().trim();
+                if (!possibleName.isEmpty()
+                        && isExactKnownCharmName(possibleName, knownCharmNames)) {
+                    matchedName = canonicalKnownCharmName(possibleName, knownCharmNames);
+                    matchedEnd = end;
+                }
+            }
+            if (matchedName != null) {
+                names.add(matchedName);
+                start = matchedEnd + 1;
+            } else {
+                names.add(pieces[start].trim());
+                start++;
+            }
+        }
+        return names;
+    }
+
+    private boolean isMetadataSidebarHeader(String line) {
+        return Set.of(
+                        "SCENE OF DESTRUCTION",
+                        "MIXING STYLES",
+                        "…WHAT?",
+                        "ON TWISTED WORDS TECHNIQUE")
+                .contains(line.toUpperCase(Locale.ROOT));
+    }
+
     private String normalizeCharmName(String name) {
         String normalized =
                 name.replaceAll("[-\\u00AD]\\s*(?=[a-z])", "")
@@ -718,6 +773,8 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
 
     @Override
     protected String cleanDescription(String text) {
+        text = removeKnownSidebarInterleaving(text);
+
         // Surgical sidebar removal for Core book
         // Handles sidebars which often interrupt mid-sentence or mid-word.
         text = text.replaceAll("(?s)WHEN DO I NEED TO AIM\\?.*?waive the aim action\\.", "");
@@ -777,7 +834,108 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                         "");
         text = text.replaceAll("(?s)SHOCKWAVE\\s+TECHNIQUE.*?target\\s+is\\s+thrown\\.", "");
 
-        return super.cleanDescription(text);
+        // Correct a small set of source/PDF transcription errors that otherwise become
+        // misleading in the imported Charm descriptions. Keep these exact and auditable.
+        text = text.replace("Brawlbased", "Brawl-based");
+        text = text.replace("succesful strike", "successful strike");
+        text = text.replace("for every two success,", "for every two successes,");
+        text = text.replace("but if can be reset if", "but can be reset if");
+        text = text.replace("Dvine Mantle", "Divine Mantle");
+        text = text.replace("the initiate’s roll", "the initiator’s roll");
+        text = text.replaceAll("(?i)\\[Social or Mental\\s+Attribute\\]", "[Social or Mental Attribute]");
+
+        // PDF bullet glyph extraction can leave an ASCII bell control character after the
+        // visible bullet. It is not meaningful description content.
+        text = text.replace("\u0007", "");
+
+        text = super.cleanDescription(text);
+        // Base cleanup can resume after an uppercase sidebar heading and inadvertently retain
+        // its mixed-case body. Apply source-specific block rules to the cleaned result as well.
+        text = removeKnownSidebarInterleaving(text);
+        text = text.replace("Brawlbased", "Brawl-based");
+        return text.replace("\u0007", "");
+    }
+
+    private String removeKnownSidebarInterleaving(String text) {
+        // These rules remove editorial callouts which PDFBox interleaves with body text.
+        // Lookahead anchors preserve the Charm prose on either side of the callout.
+        text = text.replaceAll(
+                "(?is)WRITTEN\\s+VS\\.\\s+SPOKEN\\s+EFFECTS.*?(?=transcribe a rapid conversation between multiple parties\\.)",
+                "");
+        text = text.replaceAll(
+                "(?is)ARTISTIC TALENT:\\s*LINGUISTICS OR CRAFT\\?.*?(?=At Linguistics 5\\+)",
+                "");
+        text = text.replaceAll(
+                "(?is)THAT BURNING QUESTION\\s*Q:.*?A:\\s*You tell me\\.\\s*",
+                "");
+        text = text.replaceAll(
+                "(?is)\\s+but those powers aren’t necessarily called out in the text\\..*$",
+                "");
+        text = text.replaceAll(
+                "(?is)op-\\s*ON FIVEFOLD BULWARK STANCE.*?ponent in the first round",
+                "opponent in the first round");
+        text = text.replaceAll(
+                "(?is)\\s+mentarily blanks out a character’s mind, erasing his social impetus\\..*$",
+                "");
+        text = text.replaceAll(
+                "(?is)ON INFECTIOUS ZEALOTRY APPROACH.*?without a Resolve check\\.", "");
+        text = text.replaceAll("(?is)^\\s*Supreme Masterwork Focus \\(x2\\)\\s*", "");
+        text = text.replaceAll(
+                "(?is)FATE OF THE MIDDLEMARCHES.*?(?=The Solar can uplift another Lawgiver)",
+                "");
+        text = text.replaceAll(
+                "(?is)DON’T GET STAGE FRIGHT.*?page 221\\.", "");
+        text = text.replaceAll(
+                "(?is)REMEMBER THE RED RULE!?\\s*.*?(?=The Lawgiver sits at the cycle of events)",
+                "");
+        text = text.replaceAll(
+                "(?is)ON DESTINY-MANIFESTING METHOD.*?(?=This Charm may be repurchased for every ten different Charms)",
+                "");
+        text = text.replaceAll(
+                "(?is)\\s+which she derived this Charm\\. This means, literally,.*?(?=This Charm may be repurchased for every ten different Charms)",
+                "\n\n");
+        text = text.replaceAll(
+                "(?is)EXAMPLE HAZARD.*?has bested\\.", "");
+        text = text.replaceAll(
+                "(?is)SOCIETAL INFLUENCE AND GROUP DYNAMICS.*?(?=Special rules:)", "");
+        text = text.replaceAll(
+                "(?is)PERSONAS AND LIMIT BREAK.*?$", "");
+        text = text.replaceAll(
+                "(?is)PERSONAS: RULES AND LIMITATIONS.*?$", "");
+        text = text.replaceAll(
+                "(?is)A FAMILIAR INVESTMENT.*?(?=These successes directly counter)", "");
+        text = text.replaceAll(
+                "(?is)ELECTED TARGETS.*?(?=they may die standing up)", "");
+        text = text.replaceAll(
+                "(?is)\\n\\s*T\\s+he neighborhood had once been an affluent district.*$", "");
+        return text;
+    }
+
+    private void repairKnownDescriptionFlow(List<Map<String, Object>> charms) {
+        // PDFBox interleaves the end of Divine Mantle's right-column rules with the next
+        // Charm in reading order. Move that exact paragraph back to its owning Charm rather
+        // than dropping it or leaving it in Body-Restoring Benison.
+        Map<String, Object> divineMantle = findCharm(charms, "Divine Mantle");
+        Map<String, Object> bodyRestoring = findCharm(charms, "Body-Restoring Benison");
+        if (divineMantle == null || bodyRestoring == null) return;
+
+        String bodyText = String.valueOf(bodyRestoring.get("fullText"));
+        String continuationStart = "If a spirit recognizes the Lawgiver as king";
+        int continuationIndex = bodyText.indexOf(continuationStart);
+        if (continuationIndex < 0) return;
+
+        String continuation = bodyText.substring(continuationIndex).trim();
+        continuation = continuation.replace("Dvine Mantle", "Divine Mantle");
+        bodyRestoring.put("fullText", bodyText.substring(0, continuationIndex).trim());
+        String mantleText = String.valueOf(divineMantle.get("fullText"));
+        divineMantle.put("fullText", mantleText + "\n\n" + continuation);
+    }
+
+    private Map<String, Object> findCharm(List<Map<String, Object>> charms, String name) {
+        return charms.stream()
+                .filter(charm -> name.equals(charm.get("name")))
+                .findFirst()
+                .orElse(null);
     }
 
     private int parseNumber(String val) {
