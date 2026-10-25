@@ -32,6 +32,16 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
 
         // Split by Name + Cost line
         String[] parts = text.split("\n(?=[^\n]+\nCost:)");
+        Set<String> knownCharmNames = new HashSet<>();
+        for (String candidatePart : parts) {
+            String[] candidateLines = candidatePart.trim().split("\n");
+            for (int i = 0; i < candidateLines.length - 1; i++) {
+                if (candidateLines[i + 1].trim().startsWith("Cost:")) {
+                    knownCharmNames.add(candidateLines[i].trim());
+                    break;
+                }
+            }
+        }
 
         for (String part : parts) {
             String[] lines = part.trim().split("\n");
@@ -135,7 +145,8 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                 } else if (!currentField.isEmpty()
                         && !line.contains(":")
                         && !line.contains("Cost:")) {
-                    if (isLikelyDescription(line, currentField, keywords, rawPrereqs)) break;
+                    if (isLikelyDescription(
+                            line, currentField, keywords, rawPrereqs, knownCharmNames)) break;
 
                     if (currentField.equals("Type")) type += " " + line;
                     else if (currentField.equals("Keywords")) keywords += ", " + line;
@@ -384,28 +395,19 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
     }
 
     private boolean isLikelyDescription(
-            String line, String currentField, String keywords, String rawPrereqs) {
+            String line,
+            String currentField,
+            String keywords,
+            String rawPrereqs,
+            Set<String> knownCharmNames) {
         if (currentField.equals("Keywords") && keywords.equalsIgnoreCase("none")) return true;
         if (currentField.equals("Prereqs") && rawPrereqs.equalsIgnoreCase("none")) return true;
 
         String trimmed = line.trim();
         if (trimmed.isEmpty()) return false;
 
-        // A prerequisite ending in a hyphen may continue on the next line, including when the
-        // continuation starts with a capitalized charm name (for example, "Letter-" +
-        // "Within-A-Letter Technique"). Keep that line in the prerequisite field.
-        if (currentField.equals("Prereqs") && rawPrereqs.trim().matches("(?s).*[-\\u00AD]$")) {
+        if (isKnownPrerequisiteContinuation(trimmed, currentField, rawPrereqs, knownCharmNames))
             return false;
-        }
-
-        // A wrapped prerequisite may split after a complete hyphenated word ("Red-Toothed"
-        // + "Execution Order, Saga Beast Virtue"). Keep a comma-separated continuation with
-        // the metadata instead of mistaking its length for the start of the description.
-        if (currentField.equals("Prereqs")
-                && rawPrereqs.trim().matches("(?s).*\\b[A-Z][a-z]+-[A-Z][a-z]+$")
-                && trimmed.contains(",")) {
-            return false;
-        }
 
         // ALL CAPS lines are usually headers or sidebars
         if (trimmed.equals(trimmed.toUpperCase()) && trimmed.length() > 5) {
@@ -506,6 +508,51 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                 || trimmed.startsWith("Pulling ")
                 || trimmed.startsWith("That’s ")
                 || trimmed.startsWith("Note: ");
+    }
+
+    private boolean isKnownPrerequisiteContinuation(
+            String line,
+            String currentField,
+            String rawPrereqs,
+            Set<String> knownCharmNames) {
+        if (!currentField.equals("Prereqs") || rawPrereqs.isBlank()) return false;
+
+        int lastComma = rawPrereqs.lastIndexOf(',');
+        String trailingPrerequisite = rawPrereqs.substring(lastComma + 1).trim();
+        if (trailingPrerequisite.isEmpty()) return false;
+
+        String[] continuedParts = line.split(",");
+        String firstPart = continuedParts[0].trim();
+        String separator = trailingPrerequisite.endsWith("-") ? "" : " ";
+        String completedName = trailingPrerequisite + separator + firstPart;
+        if (!matchesOrStartsKnownCharmName(knownCharmNames, completedName)) return false;
+
+        // A comma-separated continuation may include additional prerequisites. Keep the line
+        // in metadata only when each remaining item matches or begins an extracted Charm name.
+        for (int i = 1; i < continuedParts.length; i++) {
+            if (!matchesOrStartsKnownCharmName(knownCharmNames, continuedParts[i].trim()))
+                return false;
+        }
+        return true;
+    }
+
+    private boolean matchesOrStartsKnownCharmName(Set<String> knownCharmNames, String candidate) {
+        String normalized = normalizeCharmName(candidate).replaceAll("[-\\u00AD]$", "");
+        String compactCandidate = normalized.replaceAll("\\s+", "");
+        if (compactCandidate.isEmpty()) return false;
+        return knownCharmNames.stream()
+                .anyMatch(
+                        name -> {
+                            String compactName = normalizeCharmName(name).replaceAll("\\s+", "");
+                            return compactName.startsWith(compactCandidate);
+                        });
+    }
+
+    private String normalizeCharmName(String name) {
+        return name.replaceAll("[-\\u00AD]\\s*(?=[a-z])", "")
+                .replaceAll("\\s+", " ")
+                .trim()
+                .toLowerCase(Locale.ROOT);
     }
 
     @Override
