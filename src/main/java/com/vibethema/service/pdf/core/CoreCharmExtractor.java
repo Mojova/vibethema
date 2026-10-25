@@ -391,6 +391,13 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
         String trimmed = line.trim();
         if (trimmed.isEmpty()) return false;
 
+        // A prerequisite ending in a hyphen may continue on the next line, including when the
+        // continuation starts with a capitalized charm name (for example, "Letter-" +
+        // "Within-A-Letter Technique"). Keep that line in the prerequisite field.
+        if (currentField.equals("Prereqs") && rawPrereqs.trim().matches("(?s).*[-\\u00AD]$")) {
+            return false;
+        }
+
         // ALL CAPS lines are usually headers or sidebars
         if (trimmed.equals(trimmed.toUpperCase()) && trimmed.length() > 5) {
             // Ignore known page junk that isn't a real description or header
