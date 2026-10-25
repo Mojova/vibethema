@@ -41,9 +41,10 @@ public class PdfExtractor {
             Consumer<Double> progressCallback)
             throws IOException {
         String sourceId = context == null ? SourceManifest.coreBook().sourceId : context.sourceId();
-        if (context != null) context.writeManifest();
         try (PDDocument document = Loader.loadPDF(pdfFile)) {
-                PDFTextStripper stripper = new PDFTextStripper();
+            if (source == PdfSource.CORE) validateCorePdf(document);
+            if (context != null) context.writeManifest();
+            PDFTextStripper stripper = new PDFTextStripper();
 
             if (source == PdfSource.CORE) {
                 // 1. Solar Charms (Pages 250 - 466)
@@ -117,6 +118,30 @@ public class PdfExtractor {
             }
 
             if (progressCallback != null) progressCallback.accept(1.0);
+        }
+    }
+
+    /** Reject PDFs that do not resemble the Core book before creating any import output. */
+    static void validateCorePdf(PDDocument document) throws IOException {
+        if (document.getNumberOfPages() < 610) {
+            throw new IOException(
+                    "This PDF is too short to be the Exalted 3rd Edition Core book. "
+                            + "Please select the complete Core PDF.");
+        }
+
+        PDFTextStripper stripper = new PDFTextStripper();
+        String[] markers = {"Charms", "Sorcery", "weapons", "Merits"};
+        int[][] ranges = {{250, 466}, {470, 495}, {585, 610}, {157, 168}};
+        for (int i = 0; i < ranges.length; i++) {
+            stripper.setStartPage(ranges[i][0]);
+            stripper.setEndPage(ranges[i][1]);
+            String text = stripper.getText(document).toLowerCase(Locale.ROOT);
+            if (!text.contains(markers[i].toLowerCase(Locale.ROOT))) {
+                throw new IOException(
+                        "This PDF does not appear to be the Exalted 3rd Edition Core book "
+                                + "(expected the " + markers[i] + " section). "
+                                + "Please select the complete Core PDF.");
+            }
         }
     }
 
