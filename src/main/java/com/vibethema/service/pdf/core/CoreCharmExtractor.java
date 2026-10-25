@@ -200,6 +200,22 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                     cleanPrereqs = "";
                 }
 
+                // Some prerequisites allow either of two named Charms. Model those as an
+                // alternative only when both sides exactly match extracted Charm names.
+                Matcher charmAlternativeMatcher =
+                        Pattern.compile("(?i)^(.+?)\\s+or\\s+(.+)$").matcher(cleanPrereqs);
+                if (charmAlternativeMatcher.find()) {
+                    String firstCharm = charmAlternativeMatcher.group(1).trim();
+                    String secondCharm = charmAlternativeMatcher.group(2).trim();
+                    if (isExactKnownCharmName(firstCharm, knownCharmNames)
+                            && isExactKnownCharmName(secondCharm, knownCharmNames)) {
+                        bridgePrerequisite = new LinkedHashMap<>();
+                        bridgePrerequisite.put("normal", firstCharm);
+                        bridgePrerequisite.put("alternate", secondCharm);
+                        cleanPrereqs = "";
+                    }
+                }
+
                 Matcher anySingleAbility =
                         Pattern.compile("(?i)^(?:ten|10) charms from any one ability$")
                                 .matcher(cleanPrereqs);
