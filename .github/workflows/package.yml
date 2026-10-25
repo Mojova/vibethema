@@ -13,8 +13,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - arch: x64
-            os: macos-15-intel
           - arch: arm64
             os: macos-latest
     runs-on: ${{ matrix.os }}
@@ -171,7 +169,6 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            release-assets/Vibethema-macOS-x64/Vibethema-macOS-x64.dmg
             release-assets/Vibethema-macOS-arm64/Vibethema-macOS-arm64.dmg
             release-assets/Vibethema-Windows-MSI/*.msi
             release-assets/Vibethema-Linux-Packages/*.deb
