@@ -197,26 +197,23 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                 // Bridge prerequisites are alternatives to the ordinary path. Preserve both
                 // branches so the resolver does not turn the alternate Ability names into fake
                 // Charm IDs.
-                if (keywords.toLowerCase().contains("bridge")) {
-                    Matcher bridgeMatcher =
-                            Pattern.compile("(?i)^(.+?)\\s+or\\s+any\\s+(\\d+)\\s+(.+)$")
-                                    .matcher(cleanPrereqs);
-                    if (bridgeMatcher.find()) {
-                        Map<String, Object> bridge = new LinkedHashMap<>();
-                        bridge.put("normal", bridgeMatcher.group(1).trim());
-                        bridge.put(
-                                "alternate",
-                                "any "
-                                        + bridgeMatcher.group(2)
-                                        + " "
-                                        + bridgeMatcher.group(3).trim());
-                        // The normal branch is resolved from this marker after extraction.
-                        // Keep rawPrereqs empty so the generic fallback cannot add an AND branch.
-                        rawPrereqs = "";
-                        prereqGroups.clear();
-                        // Stored below on the charm map.
-                        bridgePrerequisite = bridge;
-                    }
+                Matcher bridgeMatcher =
+                        Pattern.compile("(?i)^(.+?)\\s+or\\s+any\\s+(\\d+)\\s+(.+)$")
+                                .matcher(cleanPrereqs);
+                if (bridgeMatcher.find()) {
+                    Map<String, Object> bridge = new LinkedHashMap<>();
+                    bridge.put("normal", bridgeMatcher.group(1).trim());
+                    bridge.put(
+                            "alternate",
+                            "any "
+                                    + bridgeMatcher.group(2)
+                                    + " "
+                                    + bridgeMatcher.group(3).trim());
+                    // The normal branch is resolved from this marker after extraction. Clear
+                    // groups so the generic fallback cannot add an AND branch.
+                    rawPrereqs = "";
+                    prereqGroups.clear();
+                    bridgePrerequisite = bridge;
                 }
 
                 // Detect patterns like "Any two Keen (Sense) Techniques"
@@ -405,6 +402,12 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
 
         String trimmed = line.trim();
         if (trimmed.isEmpty()) return false;
+
+        // Count-based alternatives often wrap the Ability list onto the following line.
+        if (currentField.equals("Prereqs")
+                && rawPrereqs.trim().matches("(?is).*\\bor\\s+any\\s+\\d+$")) {
+            return false;
+        }
 
         if (isKnownPrerequisiteContinuation(trimmed, currentField, rawPrereqs, knownCharmNames))
             return false;

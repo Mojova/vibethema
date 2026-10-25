@@ -697,7 +697,12 @@ public abstract class BaseCharmExtractor {
             if (scope.equalsIgnoreCase("martial arts")) scope = "Martial Arts";
             if (scope.equalsIgnoreCase("caste")) return Map.of("type", "countMatchingPredicate", "predicate", "casteCharms", "count", count);
             scope = scope.replaceAll("(?i)\\s+or\\s+", "|");
-            return Map.of("type", "countFromAbilities", "abilities", Arrays.asList(scope.split("\\s*,\\s*|\\|")), "count", count);
+            List<String> abilities =
+                    Arrays.stream(scope.split("\\s*,\\s*|\\|"))
+                            .map(String::trim)
+                            .filter(abilityName -> !abilityName.isEmpty())
+                            .toList();
+            return Map.of("type", "countFromAbilities", "abilities", abilities, "count", count);
         }
         return ruleFromCharmName(
                 text.trim(), ability, allIds, idsByCompactAbilityAndName, warnings);
