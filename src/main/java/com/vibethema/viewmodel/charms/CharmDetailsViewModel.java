@@ -138,7 +138,14 @@ public class CharmDetailsViewModel implements ViewModel {
             case "anyOf" -> joinRules(rule.getOptions(), " or ");
             case "countOf" -> "Any " + rule.getCount() + " of: "
                     + rule.getCharmIds().stream().map(dataService::getCharmName).collect(java.util.stream.Collectors.joining(", "));
-            case "countFromAbilities" -> "Any " + rule.getCount() + " Charms from " + String.join(", ", rule.getAbilities());
+            case "countFromAbilities" -> {
+                String from = rule.getAbilities() == null ? "" : String.join(", ", rule.getAbilities());
+                if (rule.isExcludeExcellencies()) {
+                    yield "Other non-Excellency " + from + " Charms: "
+                            + rule.getSatisfiedCount(data) + "/" + rule.getCount();
+                }
+                yield "Any " + rule.getCount() + " Charms from " + from;
+            }
             case "countFromSingleAbility" -> "Any " + rule.getCount() + " Charms from one Ability";
             case "countMatchingPredicate" -> "Any " + rule.getCount() + " Charms that " + rule.getPredicate();
             default -> "Unrecognized prerequisite";

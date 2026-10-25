@@ -14,6 +14,9 @@ public class PrerequisiteRule {
     private List<PrerequisiteRule> options = new ArrayList<>();
     private List<String> charmIds = new ArrayList<>();
     private List<String> abilities = new ArrayList<>();
+    private List<String> excludedCharmIds = new ArrayList<>();
+    private List<List<String>> excludedPrerequisitePaths = new ArrayList<>();
+    private boolean excludeExcellencies;
     private int count;
     private String predicate;
 
@@ -54,6 +57,15 @@ public class PrerequisiteRule {
         return rule;
     }
 
+    public static PrerequisiteRule countFromAbilities(
+            List<String> abilities, int count, List<String> excludedCharmIds,
+            boolean excludeExcellencies) {
+        PrerequisiteRule rule = countFromAbilities(abilities, count);
+        rule.excludedCharmIds = excludedCharmIds == null ? new ArrayList<>() : excludedCharmIds;
+        rule.excludeExcellencies = excludeExcellencies;
+        return rule;
+    }
+
     public static PrerequisiteRule countFromSingleAbility(int count) {
         PrerequisiteRule rule = new PrerequisiteRule();
         rule.type = "countFromSingleAbility";
@@ -81,6 +93,14 @@ public class PrerequisiteRule {
     public void setCharmIds(List<String> charmIds) { this.charmIds = charmIds; }
     public List<String> getAbilities() { return abilities; }
     public void setAbilities(List<String> abilities) { this.abilities = abilities; }
+    public List<String> getExcludedCharmIds() { return excludedCharmIds; }
+    public void setExcludedCharmIds(List<String> excludedCharmIds) { this.excludedCharmIds = excludedCharmIds; }
+    public List<List<String>> getExcludedPrerequisitePaths() { return excludedPrerequisitePaths; }
+    public void setExcludedPrerequisitePaths(List<List<String>> excludedPrerequisitePaths) {
+        this.excludedPrerequisitePaths = excludedPrerequisitePaths;
+    }
+    public boolean isExcludeExcellencies() { return excludeExcellencies; }
+    public void setExcludeExcellencies(boolean excludeExcellencies) { this.excludeExcellencies = excludeExcellencies; }
     public int getCount() { return count; }
     public void setCount(int count) { this.count = count; }
     public String getPredicate() { return predicate; }
@@ -93,7 +113,7 @@ public class PrerequisiteRule {
             case "allOf" -> requirements == null || requirements.stream().allMatch(r -> r.isSatisfied(data));
             case "anyOf" -> options != null && options.stream().anyMatch(r -> r.isSatisfied(data));
             case "countOf" -> countDistinctOwned(data, charmIds) >= count;
-            case "countFromAbilities" -> countDistinctOwnedFromAbilities(data, abilities) >= count;
+            case "countFromAbilities" -> countFromAbilities(data) >= count;
             case "countFromSingleAbility" -> maxDistinctOwnedInOneAbility(data) >= count;
             // Principle matching is deliberately deferred to the purchase UI/storyteller.
             case "countMatchingPredicate" -> false;
@@ -111,7 +131,7 @@ public class PrerequisiteRule {
             case "anyOf" -> options != null && options.stream()
                     .anyMatch(r -> r.isSatisfied(data) && r.qualifiesForCasteFavoredDiscount(data));
             case "countOf" -> countOfDiscountable(data, charmIds) >= count;
-            case "countFromAbilities" -> countFromAbilitiesDiscountable(data, abilities) >= count;
+            case "countFromAbilities" -> countFromAbilitiesDiscountable(data) >= count;
             case "countFromSingleAbility" -> singleAbilityDiscountable(data) >= count;
             case "countMatchingPredicate" -> false;
             default -> false;
@@ -126,6 +146,17 @@ public class PrerequisiteRule {
         if (options != null) options.forEach(r -> r.collectCharmIds(ids));
     }
 
+    /** Returns how many owned Charms currently satisfy this count rule. */
+    public int getSatisfiedCount(CharacterData data) {
+        if (data == null) return 0;
+        return switch (type == null ? "allOf" : type) {
+            case "countOf" -> countDistinctOwned(data, charmIds);
+            case "countFromAbilities" -> countFromAbilities(data);
+            case "countFromSingleAbility" -> maxDistinctOwnedInOneAbility(data);
+            default -> 0;
+        };
+    }
+
     private static int countDistinctOwned(CharacterData data, List<String> ids) {
         if (ids == null) return 0;
         int count = 0;
@@ -133,15 +164,47 @@ public class PrerequisiteRule {
         return count;
     }
 
-    private static int countDistinctOwnedFromAbilities(CharacterData data, List<String> abilities) {
+    private int countFromAbilities(CharacterData data) {
         if (abilities == null) return 0;
         Set<String> allowed = new HashSet<>();
         for (String ability : abilities) allowed.add(ability.toLowerCase());
+        Set<String> excluded = getExcludedIdsFor(data);
         Set<String> owned = new HashSet<>();
         data.getUnlockedCharms().forEach(c -> {
-            if (c.ability() != null && allowed.contains(c.ability().toLowerCase())) owned.add(c.id());
+            if (c.ability() != null
+                    && allowed.contains(c.ability().toLowerCase())
+                    && !excluded.contains(c.id())
+                    && !(excludeExcellencies && isExcellency(c.name()))) owned.add(c.id());
         });
         return owned.size();
+    }
+
+    private static boolean isExcellency(String name) {
+        return name != null && name.toLowerCase().contains("excellency");
+    }
+
+    private Set<String> getExcludedIdsFor(CharacterData data) {
+        Set<String> excluded = excludedCharmIds == null
+                ? new HashSet<>()
+                : new HashSet<>(excludedCharmIds);
+        if (excludedPrerequisitePaths == null || excludedPrerequisitePaths.isEmpty()) return excluded;
+
+        List<String> selectedPath = null;
+        int bestOwnedCount = -1;
+        for (List<String> path : excludedPrerequisitePaths) {
+            if (path == null) continue;
+            int ownedCount = (int) path.stream().filter(data::hasCharm).distinct().count();
+            if (ownedCount > bestOwnedCount
+                    || (ownedCount == bestOwnedCount
+                            && (selectedPath == null || path.size() < selectedPath.size()))) {
+                selectedPath = path;
+                bestOwnedCount = ownedCount;
+            }
+        }
+        if (selectedPath != null) {
+            for (String id : selectedPath) if (data.hasCharm(id)) excluded.add(id);
+        }
+        return excluded;
     }
 
     private static int maxDistinctOwnedInOneAbility(CharacterData data) {
@@ -161,13 +224,16 @@ public class PrerequisiteRule {
         return count;
     }
 
-    private static int countFromAbilitiesDiscountable(CharacterData data, List<String> abilities) {
+    private int countFromAbilitiesDiscountable(CharacterData data) {
         if (abilities == null) return 0;
         Set<String> allowed = new HashSet<>();
         for (String ability : abilities) allowed.add(ability.toLowerCase());
+        Set<String> excluded = getExcludedIdsFor(data);
         Set<String> owned = new HashSet<>();
         data.getUnlockedCharms().forEach(c -> {
             if (c.ability() != null && allowed.contains(c.ability().toLowerCase())
+                    && !excluded.contains(c.id())
+                    && !(excludeExcellencies && isExcellency(c.name()))
                     && isDiscountableAbility(data, c.ability())) owned.add(c.id());
         });
         return owned.size();

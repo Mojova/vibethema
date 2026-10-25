@@ -58,6 +58,8 @@ public class PdfImportRegressionTest {
                         logger.info("Extraction progress: {}%", (int) (progress * 100));
                 });
 
+        assertEyeOfTheUnconqueredSunPrerequisite(tempDir.resolve(SOURCE_ID));
+
         // Verify all files in reference directory
         try (Stream<Path> stream = Files.walk(REFERENCE_DIR)) {
             stream.filter(Files::isRegularFile)
@@ -93,6 +95,100 @@ public class PdfImportRegressionTest {
                                 }
                             });
         }
+    }
+
+    private void assertEyeOfTheUnconqueredSunPrerequisite(Path importedSource) throws IOException {
+        Path awarenessFile = importedSource.resolve("charms/awareness.json");
+        JsonElement awareness = JsonParser.parseString(Files.readString(awarenessFile));
+        JsonElement eye =
+                awareness.getAsJsonObject().getAsJsonArray("charms").asList().stream()
+                        .filter(charm -> "Eye of the Unconquered Sun".equals(
+                                charm.getAsJsonObject().get("name").getAsString()))
+                        .findFirst()
+                        .orElseThrow();
+        JsonElement prerequisites = eye.getAsJsonObject().get("prerequisites");
+        assertFalse(eye.getAsJsonObject().has("importWarnings"));
+        assertTrue(hasCharmPrerequisite(prerequisites, "Awakening Eye"));
+        JsonElement countRule = findRule(prerequisites, "countFromAbilities");
+        assertNotNull(countRule, "The non-Excellency Awareness count should be structured");
+        assertEquals(3, countRule.getAsJsonObject().get("count").getAsInt());
+        assertEquals(
+                "Awareness",
+                countRule.getAsJsonObject().getAsJsonArray("abilities").get(0).getAsString());
+        assertTrue(countRule.getAsJsonObject().get("excludeExcellencies").getAsBoolean());
+        java.util.Set<String> excludedIds = new java.util.HashSet<>();
+        countRule.getAsJsonObject()
+                .getAsJsonArray("excludedCharmIds")
+                .forEach(id -> excludedIds.add(id.getAsString()));
+        assertEquals(java.util.Set.of(charmId("Awakening Eye")), excludedIds);
+
+        java.util.Set<java.util.Set<String>> prerequisitePaths = new java.util.HashSet<>();
+        countRule.getAsJsonObject()
+                .getAsJsonArray("excludedPrerequisitePaths")
+                .forEach(
+                        path -> {
+                            java.util.Set<String> ids = new java.util.HashSet<>();
+                            path.getAsJsonArray().forEach(id -> ids.add(id.getAsString()));
+                            prerequisitePaths.add(ids);
+                        });
+        String sensoryAcuity = charmId("Sensory Acuity Prana");
+        assertEquals(
+                java.util.Set.of(
+                        java.util.Set.of(
+                                sensoryAcuity,
+                                charmId("Keen Sight Technique"),
+                                charmId("Keen Hearing and Touch Technique")),
+                        java.util.Set.of(
+                                sensoryAcuity,
+                                charmId("Keen Sight Technique"),
+                                charmId("Keen Taste and Smell Technique")),
+                        java.util.Set.of(
+                                sensoryAcuity,
+                                charmId("Keen Hearing and Touch Technique"),
+                                charmId("Keen Taste and Smell Technique"))),
+                prerequisitePaths,
+                "Each valid two-of-three Awakening Eye path should be an alternative exclusion");
+    }
+
+    private String charmId(String name) {
+        return com.vibethema.service.DefinitionId.forCharm(SOURCE_ID, name, "Awareness");
+    }
+
+    private boolean hasCharmPrerequisite(JsonElement rule, String charmName) {
+        if (rule == null || !rule.isJsonObject()) return false;
+        JsonElement charmId = rule.getAsJsonObject().get("charmId");
+        if ("charm".equals(rule.getAsJsonObject().get("type").getAsString())
+                && charmId != null
+                && charmId.getAsString().equals(
+                        com.vibethema.service.DefinitionId.forCharm(
+                                SOURCE_ID, charmName, "Awareness"))) return true;
+        return hasRuleInChildren(rule, "requirements", charmName)
+                || hasRuleInChildren(rule, "options", charmName);
+    }
+
+    private boolean hasRuleInChildren(JsonElement rule, String key, String charmName) {
+        JsonElement children = rule.getAsJsonObject().get(key);
+        if (children == null || !children.isJsonArray()) return false;
+        for (JsonElement child : children.getAsJsonArray()) {
+            if (hasCharmPrerequisite(child, charmName)) return true;
+        }
+        return false;
+    }
+
+    private JsonElement findRule(JsonElement rule, String type) {
+        if (rule == null || !rule.isJsonObject()) return null;
+        JsonElement ruleType = rule.getAsJsonObject().get("type");
+        if (ruleType != null && type.equals(ruleType.getAsString())) return rule;
+        for (String key : new String[] {"requirements", "options"}) {
+            JsonElement children = rule.getAsJsonObject().get(key);
+            if (children != null && children.isJsonArray()) {
+                for (JsonElement child : children.getAsJsonArray()) {
+                    JsonElement found = findRule(child, type);
+                    if (found != null) return found;
+                }
+            }
+        }
+        return null;
     }
 
     private void assertJsonEquals(Path expected, Path actual) {

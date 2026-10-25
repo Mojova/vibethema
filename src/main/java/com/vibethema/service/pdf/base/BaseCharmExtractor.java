@@ -309,6 +309,217 @@ public abstract class BaseCharmExtractor {
             charm.put("prerequisites", resolved);
             if (!warnings.isEmpty()) charm.put("importWarnings", warnings);
         }
+
+        expandCharmExclusions(charms);
+    }
+
+    private void expandCharmExclusions(Collection<Map<String, Object>> charms) {
+        Map<String, Map<String, Object>> byId = new HashMap<>();
+        for (Map<String, Object> charm : charms) byId.put((String) charm.get("id"), charm);
+
+        for (Map<String, Object> charm : charms) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> prerequisites =
+                    (Map<String, Object>) charm.get("prerequisites");
+            expandRuleExclusions(prerequisites, byId);
+        }
+    }
+
+    private void expandRuleExclusions(
+            Map<String, Object> rule, Map<String, Map<String, Object>> charmsById) {
+        if (rule == null) return;
+        if ("countFromAbilities".equals(rule.get("type"))
+                && Boolean.TRUE.equals(rule.get("excludeExcellencies"))) {
+            @SuppressWarnings("unchecked")
+            List<String> excludedIds =
+                    (List<String>) rule.getOrDefault("excludedCharmIds", List.of());
+            List<List<String>> paths = List.of(List.of());
+            for (String excludedId : excludedIds) {
+                Map<String, Object> excludedCharm = charmsById.get(excludedId);
+                if (excludedCharm == null) continue;
+                @SuppressWarnings("unchecked")
+                Map<String, Object> prerequisiteRule =
+                        (Map<String, Object>) excludedCharm.get("prerequisites");
+                paths = combinePaths(paths, prerequisitePaths(prerequisiteRule, charmsById, new HashSet<>()));
+            }
+            rule.put("excludedPrerequisitePaths", paths);
+        }
+
+        for (String childKey : List.of("requirements", "options")) {
+            Object children = rule.get(childKey);
+            if (children instanceof List<?> list) {
+                for (Object child : list) {
+                    if (child instanceof Map<?, ?> childMap) {
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> typedChild = (Map<String, Object>) childMap;
+                        expandRuleExclusions(typedChild, charmsById);
+                    }
+                }
+            }
+        }
+    }
+
+    private List<List<String>> prerequisitePaths(
+            Map<String, Object> rule,
+            Map<String, Map<String, Object>> charmsById,
+            Set<String> visiting) {
+        if (rule == null) return List.of(List.of());
+        String type = (String) rule.get("type");
+        if ("charm".equals(type) && rule.get("charmId") instanceof String charmId) {
+            return pathsForCharm(charmId, charmsById, visiting);
+        }
+        if ("allOf".equals(type)) {
+            List<List<String>> paths = List.of(List.of());
+            for (Map<String, Object> child : childRules(rule, "requirements")) {
+                paths = combinePaths(paths, prerequisitePaths(child, charmsById, visiting));
+            }
+            return paths;
+        }
+        if ("anyOf".equals(type)) {
+            List<List<String>> paths = new ArrayList<>();
+            for (Map<String, Object> child : childRules(rule, "options")) {
+                paths.addAll(prerequisitePaths(child, charmsById, visiting));
+            }
+            return uniquePaths(paths);
+        }
+        if ("countOf".equals(type) && rule.get("charmIds") instanceof List<?> ids) {
+            return chooseCharmPaths(stringIds(ids), number(rule.get("count")), charmsById, visiting);
+        }
+        if ("countFromAbilities".equals(type)) {
+            Set<String> abilities = stringSet(rule.get("abilities"));
+            Set<String> excluded = stringSet(rule.get("excludedCharmIds"));
+            List<String> candidates = charmsById.values().stream()
+                    .filter(charm -> abilities.contains(
+                            String.valueOf(charm.get("ability")).toLowerCase(Locale.ROOT)))
+                    .filter(charm -> !excluded.contains(charm.get("id")))
+                    .filter(charm -> !Boolean.TRUE.equals(rule.get("excludeExcellencies"))
+                            || !String.valueOf(charm.get("name")).toLowerCase(Locale.ROOT).contains("excellency"))
+                    .map(charm -> (String) charm.get("id"))
+                    .sorted()
+                    .toList();
+            return chooseCharmPaths(candidates, number(rule.get("count")), charmsById, visiting);
+        }
+        if ("countFromSingleAbility".equals(type)) {
+            Map<String, List<String>> byAbility = new TreeMap<>();
+            for (Map<String, Object> charm : charmsById.values()) {
+                byAbility.computeIfAbsent(
+                                String.valueOf(charm.get("ability")), key -> new ArrayList<>())
+                        .add((String) charm.get("id"));
+            }
+            List<List<String>> paths = new ArrayList<>();
+            for (List<String> candidates : byAbility.values()) {
+                paths.addAll(chooseCharmPaths(
+                        candidates, number(rule.get("count")), charmsById, visiting));
+            }
+            return uniquePaths(paths);
+        }
+        return List.of(List.of());
+    }
+
+    private List<List<String>> pathsForCharm(
+            String charmId,
+            Map<String, Map<String, Object>> charmsById,
+            Set<String> visiting) {
+        if (!visiting.add(charmId)) return List.of(List.of(charmId));
+        Map<String, Object> charm = charmsById.get(charmId);
+        if (charm == null) return List.of(List.of(charmId));
+        @SuppressWarnings("unchecked")
+        Map<String, Object> prerequisites = (Map<String, Object>) charm.get("prerequisites");
+        List<List<String>> paths = new ArrayList<>();
+        for (List<String> path : prerequisitePaths(prerequisites, charmsById, visiting)) {
+            LinkedHashSet<String> completePath = new LinkedHashSet<>();
+            completePath.add(charmId);
+            completePath.addAll(path);
+            paths.add(new ArrayList<>(completePath));
+        }
+        visiting.remove(charmId);
+        return uniquePaths(paths);
+    }
+
+    private List<List<String>> chooseCharmPaths(
+            List<String> candidates,
+            int required,
+            Map<String, Map<String, Object>> charmsById,
+            Set<String> visiting) {
+        List<List<String>> combinations = new ArrayList<>();
+        chooseCombinations(candidates, required, 0, new ArrayList<>(), combinations);
+        List<List<String>> paths = new ArrayList<>();
+        for (List<String> combination : combinations) {
+            List<List<String>> combinationPaths = List.of(List.of());
+            for (String charmId : combination) {
+                combinationPaths = combinePaths(
+                        combinationPaths, pathsForCharm(charmId, charmsById, visiting));
+            }
+            paths.addAll(combinationPaths);
+        }
+        return paths.isEmpty() ? List.of(List.of()) : uniquePaths(paths);
+    }
+
+    private void chooseCombinations(
+            List<String> candidates,
+            int required,
+            int start,
+            List<String> selected,
+            List<List<String>> result) {
+        if (selected.size() == required) {
+            result.add(new ArrayList<>(selected));
+            return;
+        }
+        for (int index = start; index <= candidates.size() - (required - selected.size()); index++) {
+            selected.add(candidates.get(index));
+            chooseCombinations(candidates, required, index + 1, selected, result);
+            selected.remove(selected.size() - 1);
+        }
+    }
+
+    private List<List<String>> combinePaths(List<List<String>> left, List<List<String>> right) {
+        List<List<String>> combined = new ArrayList<>();
+        for (List<String> leftPath : left) {
+            for (List<String> rightPath : right) {
+                LinkedHashSet<String> merged = new LinkedHashSet<>(leftPath);
+                merged.addAll(rightPath);
+                combined.add(new ArrayList<>(merged));
+            }
+        }
+        return uniquePaths(combined);
+    }
+
+    private List<List<String>> uniquePaths(List<List<String>> paths) {
+        LinkedHashMap<String, List<String>> unique = new LinkedHashMap<>();
+        for (List<String> path : paths) {
+            List<String> normalized = new ArrayList<>(new LinkedHashSet<>(path));
+            List<String> keyParts = new ArrayList<>(normalized);
+            Collections.sort(keyParts);
+            unique.putIfAbsent(String.join("|", keyParts), normalized);
+        }
+        return new ArrayList<>(unique.values());
+    }
+
+    private List<Map<String, Object>> childRules(Map<String, Object> rule, String key) {
+        Object children = rule.get(key);
+        if (!(children instanceof List<?> list)) return List.of();
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Object child : list) {
+            if (child instanceof Map<?, ?> childMap) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> typed = (Map<String, Object>) childMap;
+                result.add(typed);
+            }
+        }
+        return result;
+    }
+
+    private List<String> stringIds(List<?> values) {
+        return values.stream().filter(String.class::isInstance).map(String.class::cast).toList();
+    }
+
+    private Set<String> stringSet(Object value) {
+        if (!(value instanceof List<?> list)) return Set.of();
+        return stringIds(list).stream().map(s -> s.toLowerCase(Locale.ROOT)).collect(java.util.stream.Collectors.toSet());
+    }
+
+    private int number(Object value) {
+        return value instanceof Number n ? n.intValue() : 0;
     }
 
     private Map<String, Object> resolveGroups(
@@ -321,6 +532,12 @@ public abstract class BaseCharmExtractor {
                     continue;
                 }
                 @SuppressWarnings("unchecked") Map<String, Object> group = (Map<String, Object>) value;
+                @SuppressWarnings("unchecked") Map<String, Object> explicitRule =
+                        (Map<String, Object>) group.get("rule");
+                if (explicitRule != null) {
+                    rules.add(explicitRule);
+                    continue;
+                }
                 @SuppressWarnings("unchecked") List<String> names = (List<String>) group.get("names");
                 int count = ((Number) group.getOrDefault("minCount", 0)).intValue();
                 if (names == null || names.isEmpty()) continue;

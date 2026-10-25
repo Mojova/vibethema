@@ -220,6 +220,10 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                                 "(?i)(.*?) \\+ Any (\\d+) (?:non-Ex-?\\s*cellency )?(?:[\\w\\s-]+?"
                                         + " )?Charms");
                 Matcher complexMatcher = complexAnyPattern.matcher(cleanPrereqs);
+                Matcher nonExcellencyAbilityMatcher =
+                        Pattern.compile(
+                                        "(?i)^(.+?)\\s*\\+\\s*Any\\s+(\\d+)\\s+non-Ex-?\\s*cellency\\s+(.+?)\\s+Charms$")
+                                .matcher(cleanPrereqs);
 
                 if (keenMatcher.find()) {
                     Map<String, Object> group = new LinkedHashMap<>();
@@ -232,6 +236,24 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                                     "Keen Taste and Smell Technique"));
                     group.put("minCount", parseNumber(keenMatcher.group(1)));
                     prereqGroups.add(group);
+                } else if (nonExcellencyAbilityMatcher.find()) {
+                    String mandatoryName = nonExcellencyAbilityMatcher.group(1).trim();
+                    Map<String, Object> mandatoryGroup = new LinkedHashMap<>();
+                    mandatoryGroup.put("names", List.of(mandatoryName));
+                    mandatoryGroup.put("minCount", 0);
+                    prereqGroups.add(mandatoryGroup);
+
+                    Map<String, Object> countRule = new LinkedHashMap<>();
+                    countRule.put("type", "countFromAbilities");
+                    countRule.put("abilities", List.of(nonExcellencyAbilityMatcher.group(3).trim()));
+                    countRule.put("count", Integer.parseInt(nonExcellencyAbilityMatcher.group(2)));
+                    countRule.put(
+                            "excludedCharmIds",
+                            List.of(DefinitionId.forCharm(sourceId, mandatoryName, ability)));
+                    countRule.put("excludeExcellencies", true);
+                    Map<String, Object> countGroup = new LinkedHashMap<>();
+                    countGroup.put("rule", countRule);
+                    prereqGroups.add(countGroup);
                 } else if (complexMatcher.find()) {
                     String mandatoryName = complexMatcher.group(1).trim();
                     String countStr = complexMatcher.group(2);
