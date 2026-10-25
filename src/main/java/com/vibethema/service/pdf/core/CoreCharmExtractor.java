@@ -20,7 +20,12 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                                         + "\\d{3}\\s*\\n",
                                 "\n")
                         .replaceAll(
-                                "(?m)^\\n\\d{3}\\s*\\nE\\s*X\\s*3\\s*\\n(?:[A-Z\\s]{5,})", "\n");
+                                "(?m)^\\n\\d{3}\\s*\\nE\\s*X\\s*3\\s*\\n(?:[A-Z\\s]{5,})", "\n")
+                        // PDF extraction can wrap a charm title at the line end immediately
+                        // before its Cost line (for example, "Disci-\\npline\\nCost:").
+                        .replaceAll(
+                                "(?m)^([A-Z][^\\n]*?)[-\\u00AD\\u2010-\\u2014]\\n([a-z][^\\n]*)\\n(?=Cost:)",
+                                "$1$2\n");
 
         Map<String, List<Map<String, Object>>> charmsByAbility = new HashMap<>();
         Map<String, List<Map<String, Object>>> charmsByMartialArtsStyle = new HashMap<>();
@@ -74,6 +79,7 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                 fullMinsLine += " " + lines[descStartIdx].trim();
                 descStartIdx++;
             }
+            fullMinsLine = fullMinsLine.replaceAll("[-\\u00AD\\u2010-\\u2014]\\s*(?=[a-z])", "");
 
             Pattern minsPattern =
                     Pattern.compile("Mins: (.*?) (\\d+), Essence (\\d+)", Pattern.CASE_INSENSITIVE);
@@ -183,6 +189,16 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                     cleanPrereqs = "None " + cleanPrereqs;
                 }
                 String normalizedPrerequisiteText = cleanPrereqs;
+
+                // Charm names can themselves contain commas, such as "One Weapon, Two Blows".
+                // Prefer an exact extracted Charm name before treating commas as separators.
+                if (isExactKnownCharmName(cleanPrereqs, knownCharmNames)) {
+                    Map<String, Object> group = new LinkedHashMap<>();
+                    group.put("names", List.of(cleanPrereqs));
+                    group.put("minCount", 0);
+                    prereqGroups.add(group);
+                    cleanPrereqs = "";
+                }
 
                 Matcher anySingleAbility =
                         Pattern.compile("(?i)^(?:ten|10) charms from any one ability$")
@@ -575,7 +591,10 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
 
         int lastComma = rawPrereqs.lastIndexOf(',');
         String trailingPrerequisite = rawPrereqs.substring(lastComma + 1).trim();
-        if (trailingPrerequisite.isEmpty()) return false;
+        if (trailingPrerequisite.isEmpty()) {
+            return rawPrereqs.trim().endsWith(",")
+                    && matchesOrStartsKnownCharmName(knownCharmNames, line);
+        }
 
         String[] continuedParts = line.split(",");
         String firstPart = continuedParts[0].trim();
@@ -604,8 +623,14 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                         });
     }
 
+    private boolean isExactKnownCharmName(String candidate, Set<String> knownCharmNames) {
+        String normalized = normalizeCharmName(candidate);
+        return knownCharmNames.stream().anyMatch(name -> normalizeCharmName(name).equals(normalized));
+    }
+
     private String normalizeCharmName(String name) {
         return name.replaceAll("[-\\u00AD]\\s*(?=[a-z])", "")
+                .replaceAll("[-\\u00AD]\\s*(?=[A-Z])", " ")
                 .replaceAll("\\s+", " ")
                 .trim()
                 .toLowerCase(Locale.ROOT);

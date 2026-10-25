@@ -771,13 +771,11 @@ public abstract class BaseCharmExtractor {
     }
 
     private String compactCharmKey(String ability, String name) {
-        return ability.trim().toLowerCase(Locale.ROOT)
-                + "|"
-                + name.replaceAll("\\s+", "").toLowerCase(Locale.ROOT);
+        return ability.trim().toLowerCase(Locale.ROOT) + "|" + compactCharmName(name);
     }
 
     private String compactCharmName(String name) {
-        return name.replaceAll("\\s+", "").toLowerCase(Locale.ROOT);
+        return name.replaceAll("[-\\u00AD\\u2010-\\u2014\\s]+", "").toLowerCase(Locale.ROOT);
     }
 
     private void normalizeRawPrerequisiteSpacing(
