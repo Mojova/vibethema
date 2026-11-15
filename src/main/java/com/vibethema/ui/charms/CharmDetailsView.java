@@ -99,20 +99,18 @@ public class CharmDetailsView extends VBox
 
         deleteCustomBtn.getStyleClass().add("charm-btn");
         deleteCustomBtn.setStyle("-fx-base: #a03030;");
-        deleteCustomBtn.setOnAction(
-                e -> {
-                    Alert confirm =
-                            new Alert(
-                                    Alert.AlertType.CONFIRMATION,
-                                    "Are you sure you want to delete this custom charm?",
-                                    ButtonType.YES,
-                                    ButtonType.NO);
-                    confirm.showAndWait()
-                            .ifPresent(
-                                    r -> {
-                                        if (r == ButtonType.YES) viewModel.deleteCustom();
-                                    });
-                });
+        deleteCustomBtn.setOnAction(e -> {
+            Alert confirm =
+                    new Alert(
+                            Alert.AlertType.CONFIRMATION,
+                            "Are you sure you want to delete this custom charm?",
+                            ButtonType.YES,
+                            ButtonType.NO);
+            confirm.showAndWait()
+                    .ifPresent(r -> {
+                        if (r == ButtonType.YES) viewModel.deleteCustom();
+                    });
+        });
 
         HBox charmButtons = new HBox(10, purchaseBtn, refundBtn, deleteCustomBtn, editBtn);
 

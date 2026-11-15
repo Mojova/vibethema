@@ -61,12 +61,15 @@ class SourceCatalogTest {
         Files.createDirectories(coreCharms);
         Files.writeString(
                 coreCharms.resolve("athletics.json"),
-                "{\"ability\":\"Athletics\",\"charms\":[{\"id\":\"solar\",\"name\":\"Solar Charm\",\"category\":\"solar\"}]}" );
-        Path lunarsCharms = PathService.getOfficialSourcePath("exalted-3e-lunars").resolve("charms");
+                "{\"ability\":\"Athletics\",\"charms\":[{\"id\":\"solar\",\"name\":\"Solar"
+                        + " Charm\",\"category\":\"solar\"}]}");
+        Path lunarsCharms =
+                PathService.getOfficialSourcePath("exalted-3e-lunars").resolve("charms");
         Files.createDirectories(lunarsCharms);
         Files.writeString(
                 lunarsCharms.resolve("athletics.json"),
-                "{\"ability\":\"Athletics\",\"charms\":[{\"id\":\"lunar\",\"name\":\"Lunar Charm\",\"category\":\"solar\"}]}" );
+                "{\"ability\":\"Athletics\",\"charms\":[{\"id\":\"lunar\",\"name\":\"Lunar"
+                        + " Charm\",\"category\":\"solar\"}]}");
 
         CharmDataService service = new CharmDataService();
 

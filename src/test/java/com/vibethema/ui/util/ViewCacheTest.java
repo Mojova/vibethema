@@ -33,20 +33,19 @@ public class ViewCacheTest {
         ViewCache.warmup(MainView.class);
 
         // 2. Wait for the warmup to potentially complete (one pulse)
-        Platform.runLater(
-                () -> {
-                    // 3. Retrieve from cache
-                    ViewTuple<MainView, MainViewModel> tuple = ViewCache.get(MainView.class);
-                    assertNotNull(tuple, "Should retrieve cached tuple");
-                    assertNotNull(tuple.getView(), "View should be instantiated");
-                    assertNotNull(tuple.getViewModel(), "ViewModel should be instantiated");
+        Platform.runLater(() -> {
+            // 3. Retrieve from cache
+            ViewTuple<MainView, MainViewModel> tuple = ViewCache.get(MainView.class);
+            assertNotNull(tuple, "Should retrieve cached tuple");
+            assertNotNull(tuple.getView(), "View should be instantiated");
+            assertNotNull(tuple.getViewModel(), "ViewModel should be instantiated");
 
-                    // 4. Verify cache is now empty for this type (single ownership)
-                    // Note: we can't easily check internal cache size, but a second get should load
-                    // fresh
-                    // but for this test we focus on the first success.
-                    latch.countDown();
-                });
+            // 4. Verify cache is now empty for this type (single ownership)
+            // Note: we can't easily check internal cache size, but a second get should load
+            // fresh
+            // but for this test we focus on the first success.
+            latch.countDown();
+        });
 
         assertTrue(latch.await(10, TimeUnit.SECONDS), "Test timed out");
     }
@@ -55,16 +54,15 @@ public class ViewCacheTest {
     void testGetFallback() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
 
-        Platform.runLater(
-                () -> {
-                    // Ensure cache is clear for this call
-                    ViewCache.get(MainView.class);
+        Platform.runLater(() -> {
+            // Ensure cache is clear for this call
+            ViewCache.get(MainView.class);
 
-                    // Should still return a tuple (freshly loaded)
-                    ViewTuple<MainView, MainViewModel> tuple = ViewCache.get(MainView.class);
-                    assertNotNull(tuple, "Fallback should return a fresh tuple");
-                    latch.countDown();
-                });
+            // Should still return a tuple (freshly loaded)
+            ViewTuple<MainView, MainViewModel> tuple = ViewCache.get(MainView.class);
+            assertNotNull(tuple, "Fallback should return a fresh tuple");
+            latch.countDown();
+        });
 
         assertTrue(latch.await(10, TimeUnit.SECONDS), "Test timed out");
     }

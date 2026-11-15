@@ -136,13 +136,23 @@ public class CharmDetailsViewModel implements ViewModel {
             case "charm" -> dataService.getCharmName(rule.getCharmId());
             case "allOf" -> joinRules(rule.getRequirements(), " and ");
             case "anyOf" -> joinRules(rule.getOptions(), " or ");
-            case "countOf" -> "Any " + rule.getCount() + " of: "
-                    + rule.getCharmIds().stream().map(dataService::getCharmName).collect(java.util.stream.Collectors.joining(", "));
+            case "countOf" ->
+                    "Any "
+                            + rule.getCount()
+                            + " of: "
+                            + rule.getCharmIds().stream()
+                                    .map(dataService::getCharmName)
+                                    .collect(java.util.stream.Collectors.joining(", "));
             case "countFromAbilities" -> {
-                String from = rule.getAbilities() == null ? "" : String.join(", ", rule.getAbilities());
+                String from =
+                        rule.getAbilities() == null ? "" : String.join(", ", rule.getAbilities());
                 if (rule.isExcludeExcellencies()) {
-                    yield "Other non-Excellency " + from + " Charms: "
-                            + rule.getSatisfiedCount(data) + "/" + rule.getCount();
+                    yield "Other non-Excellency "
+                            + from
+                            + " Charms: "
+                            + rule.getSatisfiedCount(data)
+                            + "/"
+                            + rule.getCount();
                 }
                 yield "Any " + rule.getCount() + " Charms from " + from;
             }
@@ -161,7 +171,9 @@ public class CharmDetailsViewModel implements ViewModel {
 
     private String joinRules(List<PrerequisiteRule> rules, String separator) {
         if (rules == null || rules.isEmpty()) return "None";
-        return rules.stream().map(this::describePrerequisites).collect(java.util.stream.Collectors.joining(separator));
+        return rules.stream()
+                .map(this::describePrerequisites)
+                .collect(java.util.stream.Collectors.joining(separator));
     }
 
     private void updateButtonStates(Charm c) {

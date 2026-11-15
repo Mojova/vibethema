@@ -25,15 +25,13 @@ public class EquipmentDatabaseViewModel implements ViewModel {
 
     public EquipmentDatabaseViewModel() {
         // Setup search filtering
-        searchQuery.addListener(
-                (obs, oldVal, newVal) -> {
-                    filteredItems.setPredicate(
-                            item -> {
-                                if (newVal == null || newVal.isEmpty()) return true;
-                                String lower = newVal.toLowerCase();
-                                return item.toString().toLowerCase().contains(lower);
-                            });
-                });
+        searchQuery.addListener((obs, oldVal, newVal) -> {
+            filteredItems.setPredicate(item -> {
+                if (newVal == null || newVal.isEmpty()) return true;
+                String lower = newVal.toLowerCase();
+                return item.toString().toLowerCase().contains(lower);
+            });
+        });
     }
 
     public void setItems(java.util.Collection<?> items) {

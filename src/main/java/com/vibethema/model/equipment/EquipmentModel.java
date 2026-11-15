@@ -24,27 +24,24 @@ public class EquipmentModel {
         this.dirtyListener = dirtyListener;
         this.statUpdateTrigger = statUpdateTrigger;
 
-        armors.addListener(
-                (javafx.collections.ListChangeListener.Change<? extends Armor> c) -> {
-                    while (c.next()) {
-                        if (c.wasAdded()) {
-                            for (Armor a : c.getAddedSubList()) {
-                                a.equippedProperty()
-                                        .addListener(
-                                                (obs, old, nv) -> {
-                                                    if (nv && !isImporting) {
-                                                        for (Armor other : armors) {
-                                                            if (other != a)
-                                                                other.setEquipped(false);
-                                                        }
-                                                    }
-                                                    updateArmorStats();
-                                                });
-                            }
-                        }
+        armors.addListener((javafx.collections.ListChangeListener.Change<? extends Armor> c) -> {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    for (Armor a : c.getAddedSubList()) {
+                        a.equippedProperty()
+                                .addListener((obs, old, nv) -> {
+                                    if (nv && !isImporting) {
+                                        for (Armor other : armors) {
+                                            if (other != a) other.setEquipped(false);
+                                        }
+                                    }
+                                    updateArmorStats();
+                                });
                     }
-                    updateArmorStats();
-                });
+                }
+            }
+            updateArmorStats();
+        });
 
         weapons.addListener(
                 (javafx.collections.ListChangeListener<? super Weapon>)

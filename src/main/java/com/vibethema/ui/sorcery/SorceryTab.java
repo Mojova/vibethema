@@ -217,94 +217,79 @@ public class SorceryTab extends ScrollPane implements JavaView<SorceryViewModel>
             List<Spell> availableSpells = viewModel.getCharmDataService().loadSpells(circle);
             listView.getItems().addAll(availableSpells);
 
-            listView.setCellFactory(
-                    lv ->
-                            new ListCell<Spell>() {
-                                @Override
-                                protected void updateItem(Spell item, boolean empty) {
-                                    super.updateItem(item, empty);
-                                    if (empty || item == null) {
-                                        setText(null);
-                                        setGraphic(null);
-                                    } else {
-                                        VBox box = new VBox(2);
-                                        Label name =
-                                                new Label(
-                                                        item.getName()
-                                                                + (item.isCustom()
-                                                                        ? " (Custom)"
-                                                                        : ""));
-                                        name.setStyle(
-                                                "-fx-font-weight: bold; -fx-text-fill: white;");
-                                        Label cost = new Label(item.getCost());
-                                        cost.setStyle(
-                                                "-fx-font-size: 0.9em; -fx-opacity: 0.8;"
-                                                        + " -fx-text-fill: #cccccc;");
-                                        box.getChildren().addAll(name, cost);
-                                        setGraphic(box);
-                                    }
-                                }
-                            });
+            listView.setCellFactory(lv ->
+                    new ListCell<Spell>() {
+                        @Override
+                        protected void updateItem(Spell item, boolean empty) {
+                            super.updateItem(item, empty);
+                            if (empty || item == null) {
+                                setText(null);
+                                setGraphic(null);
+                            } else {
+                                VBox box = new VBox(2);
+                                Label name =
+                                        new Label(
+                                                item.getName()
+                                                        + (item.isCustom() ? " (Custom)" : ""));
+                                name.setStyle("-fx-font-weight: bold; -fx-text-fill: white;");
+                                Label cost = new Label(item.getCost());
+                                cost.setStyle(
+                                        "-fx-font-size: 0.9em; -fx-opacity: 0.8;"
+                                                + " -fx-text-fill: #cccccc;");
+                                box.getChildren().addAll(name, cost);
+                                setGraphic(box);
+                            }
+                        }
+                    });
 
             listView.getSelectionModel()
                     .selectedItemProperty()
-                    .addListener(
-                            (obs, oldV, newV) -> {
-                                addBtn.setDisable(newV == null);
-                            });
+                    .addListener((obs, oldV, newV) -> {
+                        addBtn.setDisable(newV == null);
+                    });
 
             filterField
                     .textProperty()
-                    .addListener(
-                            (obs, ov, nv) -> {
-                                String filter = nv.toLowerCase();
-                                listView.getItems()
-                                        .setAll(
-                                                availableSpells.stream()
-                                                        .filter(
-                                                                s ->
-                                                                        s.getName()
-                                                                                        .toLowerCase()
-                                                                                        .contains(
-                                                                                                filter)
-                                                                                || s.getDescription()
-                                                                                        .toLowerCase()
-                                                                                        .contains(
-                                                                                                filter))
-                                                        .collect(Collectors.toList()));
-                            });
+                    .addListener((obs, ov, nv) -> {
+                        String filter = nv.toLowerCase();
+                        listView.getItems()
+                                .setAll(
+                                        availableSpells.stream()
+                                                .filter(s ->
+                                                        s.getName().toLowerCase().contains(filter)
+                                                                || s.getDescription()
+                                                                        .toLowerCase()
+                                                                        .contains(filter))
+                                                .collect(Collectors.toList()));
+                    });
 
             tab.setContent(listView);
             circlesTabPane.getTabs().add(tab);
         }
 
-        addBtn.setOnAction(
-                e -> {
-                    Tab activeTab = circlesTabPane.getSelectionModel().getSelectedItem();
-                    if (activeTab != null && activeTab.getContent() instanceof ListView<?> lv) {
-                        Spell selected = (Spell) lv.getSelectionModel().getSelectedItem();
-                        if (selected != null
-                                && viewModel.getSpells().stream()
-                                        .noneMatch(
-                                                existing ->
-                                                        existing.getName()
-                                                                .equals(selected.getName()))) {
-                            viewModel.getSpells().add(selected);
-                            stage.close();
-                        }
-                    }
-                });
+        addBtn.setOnAction(e -> {
+            Tab activeTab = circlesTabPane.getSelectionModel().getSelectedItem();
+            if (activeTab != null && activeTab.getContent() instanceof ListView<?> lv) {
+                Spell selected = (Spell) lv.getSelectionModel().getSelectedItem();
+                if (selected != null
+                        && viewModel.getSpells().stream()
+                                .noneMatch(existing ->
+                                        existing.getName().equals(selected.getName()))) {
+                    viewModel.getSpells().add(selected);
+                    stage.close();
+                }
+            }
+        });
 
         layout.getChildren().addAll(filterField, circlesTabPane, addBtn);
         Scene selectionScene = new Scene(layout, 600, 600);
         selectionScene.getStylesheets().addAll(getScene().getStylesheets());
 
-        selectionScene.setOnKeyPressed(
-                event -> {
-                    if (event.getCode() == KeyCode.ESCAPE) {
-                        stage.close();
-                    }
-                });
+        selectionScene.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ESCAPE) {
+                stage.close();
+            }
+        });
 
         stage.setScene(selectionScene);
         stage.show();

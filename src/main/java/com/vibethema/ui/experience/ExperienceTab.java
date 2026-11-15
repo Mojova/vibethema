@@ -73,14 +73,13 @@ public class ExperienceTab extends ScrollPane implements JavaView<ExperienceView
 
         Button addBtn = new Button("+ Add");
         addBtn.getStyleClass().addAll("action-btn", "add-btn");
-        addBtn.setOnAction(
-                e -> {
-                    viewModel.addAward(
-                            descField.getText(), amountSpinner.getValue(), solarCheck.isSelected());
-                    descField.clear();
-                    amountSpinner.getValueFactory().setValue(5);
-                    solarCheck.setSelected(false);
-                });
+        addBtn.setOnAction(e -> {
+            viewModel.addAward(
+                    descField.getText(), amountSpinner.getValue(), solarCheck.isSelected());
+            descField.clear();
+            amountSpinner.getValueFactory().setValue(5);
+            solarCheck.setSelected(false);
+        });
 
         HBox addRow = new HBox(8, descField, amountSpinner, solarCheck, addBtn);
         addRow.setAlignment(Pos.CENTER_LEFT);

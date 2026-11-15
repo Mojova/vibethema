@@ -43,10 +43,9 @@ public class WeaponRowViewModel implements ViewModel {
         characterSpecialties.addListener(
                 (ListChangeListener<Specialty>) c -> updateAvailableSpecialties());
 
-        selectedSpecialty.addListener(
-                (obs, ov, nv) -> {
-                    weapon.setSpecialtyId(nv == null ? "" : nv.getId());
-                });
+        selectedSpecialty.addListener((obs, ov, nv) -> {
+            weapon.setSpecialtyId(nv == null ? "" : nv.getId());
+        });
     }
 
     private void updateAvailableSpecialties() {

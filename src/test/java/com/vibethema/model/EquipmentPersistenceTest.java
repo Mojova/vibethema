@@ -27,19 +27,18 @@ public class EquipmentPersistenceTest {
 
         // Ensure loadWeapon returns a NEW instance each time (crucial)
         when(mockService.loadWeapon(anyString()))
-                .thenAnswer(
-                        invocation -> {
-                            String id = invocation.getArgument(0);
-                            if (id.equals(templateId)) {
-                                return new Weapon(
-                                        templateId,
-                                        "Short Sword",
-                                        Weapon.WeaponRange.CLOSE,
-                                        Weapon.WeaponType.MORTAL,
-                                        Weapon.WeaponCategory.LIGHT);
-                            }
-                            return null;
-                        });
+                .thenAnswer(invocation -> {
+                    String id = invocation.getArgument(0);
+                    if (id.equals(templateId)) {
+                        return new Weapon(
+                                templateId,
+                                "Short Sword",
+                                Weapon.WeaponRange.CLOSE,
+                                Weapon.WeaponType.MORTAL,
+                                Weapon.WeaponCategory.LIGHT);
+                    }
+                    return null;
+                });
 
         CharacterData data = new CharacterData();
         data.getWeapons().clear(); // Remove default "Unarmed" if present

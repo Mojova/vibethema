@@ -17,16 +17,8 @@ class CatalogServiceTest {
     @BeforeEach
     void setUp() throws Exception {
         System.setProperty("vibethema.data.dir", dataDirectory.toString());
-        writeSource(
-                "solar-book",
-                "SOLAR",
-                "Solar Charm",
-                "solar-charm");
-        writeSource(
-                "lunar-book",
-                "LUNAR",
-                "Lunar Charm",
-                "lunar-charm");
+        writeSource("solar-book", "SOLAR", "Solar Charm", "solar-charm");
+        writeSource("lunar-book", "LUNAR", "Lunar Charm", "lunar-charm");
     }
 
     @AfterEach
@@ -40,7 +32,8 @@ class CatalogServiceTest {
         Files.createDirectories(custom);
         Files.writeString(
                 custom.resolve("athletics.json"),
-                "{\"ability\":\"Athletics\",\"charms\":[{\"id\":\"custom\",\"name\":\"Custom Charm\",\"category\":\"solar\"}]}",
+                "{\"ability\":\"Athletics\",\"charms\":[{\"id\":\"custom\",\"name\":\"Custom"
+                        + " Charm\",\"category\":\"solar\"}]}",
                 StandardCharsets.UTF_8);
 
         CatalogService catalog = new CatalogService();
@@ -56,7 +49,8 @@ class CatalogServiceTest {
         Files.createDirectories(custom);
         Files.writeString(
                 custom.resolve("athletics.json"),
-                "{\"ability\":\"Athletics\",\"charms\":[{\"id\":\"solar-charm\",\"name\":\"Custom Replacement\",\"category\":\"solar\"}]}",
+                "{\"ability\":\"Athletics\",\"charms\":[{\"id\":\"solar-charm\",\"name\":\"Custom"
+                        + " Replacement\",\"category\":\"solar\"}]}",
                 StandardCharsets.UTF_8);
 
         CatalogService catalog = new CatalogService();

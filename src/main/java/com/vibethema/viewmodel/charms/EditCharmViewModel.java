@@ -94,14 +94,13 @@ public class EditCharmViewModel implements ViewModel {
         }
 
         // Listener to refresh prerequisites when ability changes
-        this.ability.addListener(
-                (obs, oldV, newV) -> {
-                    if (newV != null && !newV.equals(oldV)) {
-                        refreshAvailablePrerequisites();
-                        // Clear selections as they might not be valid for the new ability/group
-                        selectedPrerequisites.clear();
-                    }
-                });
+        this.ability.addListener((obs, oldV, newV) -> {
+            if (newV != null && !newV.equals(oldV)) {
+                refreshAvailablePrerequisites();
+                // Clear selections as they might not be valid for the new ability/group
+                selectedPrerequisites.clear();
+            }
+        });
     }
 
     private void refreshAvailablePrerequisites() {

@@ -14,11 +14,10 @@ public class MysticModel {
             FXCollections.observableArrayList(
                     r -> new javafx.beans.Observable[] {r.nameProperty(), r.descriptionProperty()});
     private final ObservableList<Spell> spells =
-            FXCollections.observableArrayList(
-                    s ->
-                            new javafx.beans.Observable[] {
-                                s.nameProperty(), s.descriptionProperty(), s.circleProperty()
-                            });
+            FXCollections.observableArrayList(s ->
+                    new javafx.beans.Observable[] {
+                        s.nameProperty(), s.descriptionProperty(), s.circleProperty()
+                    });
 
     private final BooleanProperty terrestrialSorceryAvailable = new SimpleBooleanProperty(false);
     private final BooleanProperty celestialSorceryAvailable = new SimpleBooleanProperty(false);

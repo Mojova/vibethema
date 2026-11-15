@@ -45,48 +45,40 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         if (viewModel != null && !contentLoaded) {
             // Fill content staggered over multiple pulses to ensure UI thread remains
             // responsive
-            javafx.application.Platform.runLater(
-                    () -> {
-                        if (contentLoaded) return;
+            javafx.application.Platform.runLater(() -> {
+                if (contentLoaded) return;
 
-                        VBox content = new VBox(20);
-                        content.getStyleClass().add("content-area");
-                        content.setPadding(new Insets(20));
-                        CharacterData data = viewModel.getData();
-                        setContent(content);
+                VBox content = new VBox(20);
+                content.getStyleClass().add("content-area");
+                content.setPadding(new Insets(20));
+                CharacterData data = viewModel.getData();
+                setContent(content);
 
-                        // Step 1: Top section
-                        content.getChildren().add(createBasicAdvantagesSection(data));
+                // Step 1: Top section
+                content.getChildren().add(createBasicAdvantagesSection(data));
 
-                        // Step 2: Attributes (next pulse)
-                        javafx.application.Platform.runLater(
-                                () -> {
-                                    content.getChildren().add(createAttributesSection(data));
+                // Step 2: Attributes (next pulse)
+                javafx.application.Platform.runLater(() -> {
+                    content.getChildren().add(createAttributesSection(data));
 
-                                    // Step 3: Abilities (next pulse)
-                                    javafx.application.Platform.runLater(
-                                            () -> {
-                                                content.getChildren()
-                                                        .addAll(
-                                                                createAbilitiesAndSideStuff(data),
-                                                                new Separator());
+                    // Step 3: Abilities (next pulse)
+                    javafx.application.Platform.runLater(() -> {
+                        content.getChildren()
+                                .addAll(createAbilitiesAndSideStuff(data), new Separator());
 
-                                                // Step 4: Stats and
-                                                // Combat (final pulse)
-                                                javafx.application.Platform.runLater(
-                                                        () -> {
-                                                            content.getChildren()
-                                                                    .addAll(
-                                                                            createStatsRow(data),
-                                                                            createAttackPoolsSection(
-                                                                                    data),
-                                                                            createGreatCurseSection(
-                                                                                    data));
-                                                            contentLoaded = true;
-                                                        });
-                                            });
-                                });
+                        // Step 4: Stats and
+                        // Combat (final pulse)
+                        javafx.application.Platform.runLater(() -> {
+                            content.getChildren()
+                                    .addAll(
+                                            createStatsRow(data),
+                                            createAttackPoolsSection(data),
+                                            createGreatCurseSection(data));
+                            contentLoaded = true;
+                        });
                     });
+                });
+            });
         }
     }
 
@@ -170,10 +162,9 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
             if (abil == Ability.CRAFT || abil == Ability.MARTIAL_ARTS) continue;
 
             AbilityRowView rowView = new AbilityRowView(rowVm);
-            rowView.setOnNameClick(
-                    e -> {
-                        if (e.getClickCount() == 2) viewModel.jumpToCharms(abil.getDisplayName());
-                    });
+            rowView.setOnNameClick(e -> {
+                if (e.getClickCount() == 2) viewModel.jumpToCharms(abil.getDisplayName());
+            });
 
             // We use the minDotsProperty directly from the ViewModel now
             rowView.getSelector().minDotsProperty().bind(rowVm.minDotsProperty());
@@ -206,14 +197,12 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
 
         Button addBtn = new Button("+ Add Craft");
         addBtn.getStyleClass().add("action-btn");
-        addBtn.setOnAction(
-                e -> {
-                    showCraftExpertiseDialog("")
-                            .ifPresent(
-                                    expertise -> {
-                                        viewModel.addCraft(expertise);
-                                    });
-                });
+        addBtn.setOnAction(e -> {
+            showCraftExpertiseDialog("")
+                    .ifPresent(expertise -> {
+                        viewModel.addCraft(expertise);
+                    });
+        });
 
         section.getChildren().addAll(createCraftsHeader(data), craftList, addBtn);
         return section;
@@ -321,32 +310,27 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
             ds.contextIdProperty().set("Stats");
 
             // Configure Buttons
-            view.setOnEdit(
-                    e -> {
-                        showCraftExpertiseDialog(rvm.expertiseProperty().get())
-                                .ifPresent(
-                                        newExpertise -> {
-                                            viewModel.editCraft(rvm.getModel(), newExpertise);
-                                        });
-                    });
+            view.setOnEdit(e -> {
+                showCraftExpertiseDialog(rvm.expertiseProperty().get())
+                        .ifPresent(newExpertise -> {
+                            viewModel.editCraft(rvm.getModel(), newExpertise);
+                        });
+            });
 
-            view.setOnDelete(
-                    e -> {
-                        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-                        confirm.setTitle("Delete Craft");
-                        confirm.setHeaderText("Delete " + rvm.expertiseProperty().get() + "?");
-                        confirm.setContentText("Are you sure you want to delete this craft?");
-                        confirm.initOwner(getScene().getWindow());
-                        confirm.showAndWait()
-                                .filter(response -> response == ButtonType.OK)
-                                .ifPresent(response -> viewModel.deleteCraft(rvm.getModel()));
-                    });
+            view.setOnDelete(e -> {
+                Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+                confirm.setTitle("Delete Craft");
+                confirm.setHeaderText("Delete " + rvm.expertiseProperty().get() + "?");
+                confirm.setContentText("Are you sure you want to delete this craft?");
+                confirm.initOwner(getScene().getWindow());
+                confirm.showAndWait()
+                        .filter(response -> response == ButtonType.OK)
+                        .ifPresent(response -> viewModel.deleteCraft(rvm.getModel()));
+            });
 
-            view.setOnNameClick(
-                    e -> {
-                        if (e.getClickCount() == 2)
-                            viewModel.jumpToCharms(rvm.expertiseProperty().get());
-                    });
+            view.setOnNameClick(e -> {
+                if (e.getClickCount() == 2) viewModel.jumpToCharms(rvm.expertiseProperty().get());
+            });
 
             craftList.getChildren().add(view);
         }
@@ -380,14 +364,12 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
 
         Button addBtn = new Button("+ Add Specialty");
         addBtn.getStyleClass().add("action-btn");
-        addBtn.setOnAction(
-                e -> {
-                    showSpecialtyDialog("", "")
-                            .ifPresent(
-                                    result -> {
-                                        viewModel.addSpecialty(result.getKey(), result.getValue());
-                                    });
-                });
+        addBtn.setOnAction(e -> {
+            showSpecialtyDialog("", "")
+                    .ifPresent(result -> {
+                        viewModel.addSpecialty(result.getKey(), result.getValue());
+                    });
+        });
 
         section.getChildren().addAll(title, specList, addBtn);
         return section;
@@ -398,35 +380,28 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         for (SpecialtyRowViewModel rvm : viewModel.getSpecialtyRows()) {
             SpecialtyRowView view = new SpecialtyRowView(rvm);
 
-            view.setOnEdit(
-                    e -> {
-                        showSpecialtyDialog(rvm.nameProperty().get(), rvm.abilityProperty().get())
-                                .ifPresent(
-                                        result -> {
-                                            viewModel.editSpecialty(
-                                                    rvm.getModel(),
-                                                    result.getKey(),
-                                                    result.getValue());
-                                        });
-                    });
+            view.setOnEdit(e -> {
+                showSpecialtyDialog(rvm.nameProperty().get(), rvm.abilityProperty().get())
+                        .ifPresent(result -> {
+                            viewModel.editSpecialty(
+                                    rvm.getModel(), result.getKey(), result.getValue());
+                        });
+            });
 
-            view.setOnDelete(
-                    e -> {
-                        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-                        confirm.setTitle("Delete Specialty");
-                        confirm.setHeaderText("Delete " + rvm.nameProperty().get() + "?");
-                        confirm.setContentText("Are you sure you want to delete this specialty?");
-                        confirm.initOwner(getScene().getWindow());
-                        confirm.showAndWait()
-                                .filter(response -> response == ButtonType.OK)
-                                .ifPresent(response -> viewModel.deleteSpecialty(rvm.getModel()));
-                    });
+            view.setOnDelete(e -> {
+                Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+                confirm.setTitle("Delete Specialty");
+                confirm.setHeaderText("Delete " + rvm.nameProperty().get() + "?");
+                confirm.setContentText("Are you sure you want to delete this specialty?");
+                confirm.initOwner(getScene().getWindow());
+                confirm.showAndWait()
+                        .filter(response -> response == ButtonType.OK)
+                        .ifPresent(response -> viewModel.deleteSpecialty(rvm.getModel()));
+            });
 
-            view.setOnNameClick(
-                    e -> {
-                        if (e.getClickCount() == 2)
-                            viewModel.jumpToCharms(rvm.abilityProperty().get());
-                    });
+            view.setOnNameClick(e -> {
+                if (e.getClickCount() == 2) viewModel.jumpToCharms(rvm.abilityProperty().get());
+            });
 
             specList.getChildren().add(view);
         }
@@ -469,13 +444,12 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
         dialog.getDialogPane().setContent(grid);
         dialog.getDialogPane().getStyleClass().add("dialog-pane-custom");
 
-        dialog.setResultConverter(
-                dialogButton -> {
-                    if (dialogButton == saveButtonType) {
-                        return new Pair<>(nameField.getText(), abilityCombo.getValue());
-                    }
-                    return null;
-                });
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == saveButtonType) {
+                return new Pair<>(nameField.getText(), abilityCombo.getValue());
+            }
+            return null;
+        });
 
         return dialog.showAndWait();
     }

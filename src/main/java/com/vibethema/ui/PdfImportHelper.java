@@ -1,8 +1,8 @@
 package com.vibethema.ui;
 
-import com.vibethema.service.PdfExtractor;
 import com.vibethema.service.ImportContext;
 import com.vibethema.service.PathService;
+import com.vibethema.service.PdfExtractor;
 import com.vibethema.service.SourceManifest;
 import java.io.File;
 import javafx.application.Platform;
@@ -112,33 +112,30 @@ public class PdfImportHelper {
                     }
                 };
 
-        task.setOnSucceeded(
-                e -> {
-                    progressStage.close();
-                    Alert alert =
-                            new Alert(
-                                    Alert.AlertType.INFORMATION,
-                                    "Import complete! Charms, spells, and keywords have been"
-                                            + " updated.",
-                                    ButtonType.OK);
-                    alert.showAndWait();
-                    if (onComplete != null) {
-                        onComplete.run();
-                    }
-                });
+        task.setOnSucceeded(e -> {
+            progressStage.close();
+            Alert alert =
+                    new Alert(
+                            Alert.AlertType.INFORMATION,
+                            "Import complete! Charms, spells, and keywords have been" + " updated.",
+                            ButtonType.OK);
+            alert.showAndWait();
+            if (onComplete != null) {
+                onComplete.run();
+            }
+        });
 
-        task.setOnFailed(
-                e -> {
-                    progressStage.close();
-                    Throwable ex = task.getException();
-                    logger.error("PDF Import failed for source: {}", source, ex);
-                    Alert alert =
-                            new Alert(
-                                    Alert.AlertType.ERROR,
-                                    "Import failed: " + ex.getMessage(),
-                                    ButtonType.OK);
-                    alert.showAndWait();
-                });
+        task.setOnFailed(e -> {
+            progressStage.close();
+            Throwable ex = task.getException();
+            logger.error("PDF Import failed for source: {}", source, ex);
+            Alert alert =
+                    new Alert(
+                            Alert.AlertType.ERROR,
+                            "Import failed: " + ex.getMessage(),
+                            ButtonType.OK);
+            alert.showAndWait();
+        });
 
         new Thread(task).start();
     }

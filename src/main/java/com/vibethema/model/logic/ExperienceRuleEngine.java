@@ -261,11 +261,9 @@ public class ExperienceRuleEngine {
                 boolean wasTCSFreeAtCreation =
                         snapshot.spells != null
                                 && snapshot.spells.stream()
-                                        .anyMatch(
-                                                s ->
-                                                        s.name.equals(
-                                                                SystemData
-                                                                        .TERRESTRIAL_CIRCLE_SORCERY));
+                                        .anyMatch(s ->
+                                                s.name.equals(
+                                                        SystemData.TERRESTRIAL_CIRCLE_SORCERY));
 
                 // If it wasn't bought at creation, maybe it's the free one now
                 boolean isTCS = spell.getName().equals(SystemData.TERRESTRIAL_CIRCLE_SORCERY);

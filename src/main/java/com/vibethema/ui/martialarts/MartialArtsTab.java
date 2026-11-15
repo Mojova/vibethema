@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
-import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -58,7 +57,8 @@ public class MartialArtsTab extends VBox implements JavaView<MartialArtsViewMode
                                 c -> {
                                     while (c.next()) {
                                         if (c.wasRemoved()) {
-                                            stylesList.getChildren()
+                                            stylesList
+                                                    .getChildren()
                                                     .remove(
                                                             c.getFrom(),
                                                             c.getFrom() + c.getRemovedSize());
@@ -172,12 +172,9 @@ public class MartialArtsTab extends VBox implements JavaView<MartialArtsViewMode
         rowView.setOnRemove(e -> viewModel.removeStyle(rowVm.getModel()));
 
         // Clicking the row selects it in the charm tree
-        rowView.setOnMouseClicked(
-                e -> {
-                    viewModel
-                            .selectedFilterValueProperty()
-                            .set(rowVm.getModel().getStyleName());
-                });
+        rowView.setOnMouseClicked(e -> {
+            viewModel.selectedFilterValueProperty().set(rowVm.getModel().getStyleName());
+        });
 
         // Highlight if selected using style class (fixes CSS parsing error)
         rowView.getStyleClass().remove("selected");

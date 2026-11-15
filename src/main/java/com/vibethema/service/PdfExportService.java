@@ -51,20 +51,19 @@ public class PdfExportService {
                         () -> {
                             try {
                                 PDDocument doc = generateCharacterSheetDocument(data);
-                                EventQueue.invokeLater(
-                                        () -> {
-                                            try {
-                                                printDocument(doc);
-                                            } catch (PrinterException e) {
-                                                logger.error("Failed to print character sheet", e);
-                                            } finally {
-                                                try {
-                                                    doc.close();
-                                                } catch (IOException e) {
-                                                    logger.error("Error closing document", e);
-                                                }
-                                            }
-                                        });
+                                EventQueue.invokeLater(() -> {
+                                    try {
+                                        printDocument(doc);
+                                    } catch (PrinterException e) {
+                                        logger.error("Failed to print character sheet", e);
+                                    } finally {
+                                        try {
+                                            doc.close();
+                                        } catch (IOException e) {
+                                            logger.error("Error closing document", e);
+                                        }
+                                    }
+                                });
                             } catch (IOException e) {
                                 logger.error("Failed to generate document for printing", e);
                             }
@@ -99,20 +98,19 @@ public class PdfExportService {
                         () -> {
                             try {
                                 PDDocument doc = generateCharmsDocument(data, charmService);
-                                EventQueue.invokeLater(
-                                        () -> {
-                                            try {
-                                                printDocument(doc);
-                                            } catch (PrinterException e) {
-                                                logger.error("Failed to print charms", e);
-                                            } finally {
-                                                try {
-                                                    doc.close();
-                                                } catch (IOException e) {
-                                                    logger.error("Error closing document", e);
-                                                }
-                                            }
-                                        });
+                                EventQueue.invokeLater(() -> {
+                                    try {
+                                        printDocument(doc);
+                                    } catch (PrinterException e) {
+                                        logger.error("Failed to print charms", e);
+                                    } finally {
+                                        try {
+                                            doc.close();
+                                        } catch (IOException e) {
+                                            logger.error("Error closing document", e);
+                                        }
+                                    }
+                                });
                             } catch (IOException e) {
                                 logger.error("Failed to generate charms document for printing", e);
                             }
@@ -194,14 +192,13 @@ public class PdfExportService {
         }
         spells.addAll(distinctSpells.values());
 
-        spells.sort(
-                (s1, s2) -> {
-                    int circleComp =
-                            Spell.Circle.valueOf(s1.getCircle().toUpperCase()).ordinal()
-                                    - Spell.Circle.valueOf(s2.getCircle().toUpperCase()).ordinal();
-                    if (circleComp != 0) return circleComp;
-                    return s1.getName().compareTo(s2.getName());
-                });
+        spells.sort((s1, s2) -> {
+            int circleComp =
+                    Spell.Circle.valueOf(s1.getCircle().toUpperCase()).ordinal()
+                            - Spell.Circle.valueOf(s2.getCircle().toUpperCase()).ordinal();
+            if (circleComp != 0) return circleComp;
+            return s1.getName().compareTo(s2.getName());
+        });
 
         // 2. Render
         ctx.drawMainTitle(data.nameProperty().get() + " - Charms & Spells");

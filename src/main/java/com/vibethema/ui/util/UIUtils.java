@@ -84,41 +84,39 @@ public class UIUtils {
         HBox.setHgrow(customField, Priority.ALWAYS);
         Button addBtn = new Button("Add");
         addBtn.getStyleClass().add("secondary-btn");
-        addBtn.setOnAction(
-                e -> {
-                    String name = customField.getText().trim();
-                    if (!name.isEmpty() && !checkBoxes.containsKey(name)) {
-                        try {
-                            dataService.saveCustomKeyword(name);
-                            CheckBox cb = new CheckBox(name);
-                            cb.setStyle("-fx-text-fill: #f9f6e6;");
-                            cb.setSelected(true);
-                            checkBoxes.put(name, cb);
-                            listContainer.getChildren().add(cb);
-                            customField.clear();
-                        } catch (IOException ex) {
-                            new Alert(
-                                            Alert.AlertType.ERROR,
-                                            "Could not save custom keyword: " + ex.getMessage())
-                                    .showAndWait();
-                        }
-                    }
-                });
+        addBtn.setOnAction(e -> {
+            String name = customField.getText().trim();
+            if (!name.isEmpty() && !checkBoxes.containsKey(name)) {
+                try {
+                    dataService.saveCustomKeyword(name);
+                    CheckBox cb = new CheckBox(name);
+                    cb.setStyle("-fx-text-fill: #f9f6e6;");
+                    cb.setSelected(true);
+                    checkBoxes.put(name, cb);
+                    listContainer.getChildren().add(cb);
+                    customField.clear();
+                } catch (IOException ex) {
+                    new Alert(
+                                    Alert.AlertType.ERROR,
+                                    "Could not save custom keyword: " + ex.getMessage())
+                            .showAndWait();
+                }
+            }
+        });
         customBox.getChildren().addAll(customField, addBtn);
 
         Button okBtn = new Button("Confirm Selection");
         okBtn.getStyleClass().add("action-btn");
         okBtn.setMaxWidth(Double.MAX_VALUE);
-        okBtn.setOnAction(
-                e -> {
-                    List<String> selected =
-                            checkBoxes.entrySet().stream()
-                                    .filter(entry -> entry.getValue().isSelected())
-                                    .map(Map.Entry::getKey)
-                                    .collect(Collectors.toList());
-                    onResult.accept(selected);
-                    stage.close();
-                });
+        okBtn.setOnAction(e -> {
+            List<String> selected =
+                    checkBoxes.entrySet().stream()
+                            .filter(entry -> entry.getValue().isSelected())
+                            .map(Map.Entry::getKey)
+                            .collect(Collectors.toList());
+            onResult.accept(selected);
+            stage.close();
+        });
 
         root.getChildren().addAll(title, sp, sep, new Label("Add New Keyword:"), customBox, okBtn);
         for (javafx.scene.Node n : root.getChildren())

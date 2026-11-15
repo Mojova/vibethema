@@ -65,10 +65,9 @@ public class MartialArtsViewModel implements ViewModel {
                                         if (c.wasAdded()) {
                                             for (MartialArtsStyle style : c.getAddedSubList()) {
                                                 style.ratingProperty()
-                                                        .addListener(
-                                                                (obs, oldV, newV) ->
-                                                                        Messenger.publish(
-                                                                                "refresh_all_ui"));
+                                                        .addListener((obs, oldV, newV) ->
+                                                                Messenger.publish(
+                                                                        "refresh_all_ui"));
                                             }
                                         }
                                         if (c.wasAdded() || c.wasRemoved()) {

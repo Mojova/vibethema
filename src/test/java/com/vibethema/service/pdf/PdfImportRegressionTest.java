@@ -6,8 +6,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.vibethema.service.PdfExtractor;
 import com.vibethema.service.ImportContext;
+import com.vibethema.service.PdfExtractor;
 import com.vibethema.service.SourceManifest;
 import java.io.IOException;
 import java.io.Reader;
@@ -50,8 +50,7 @@ public class PdfImportRegressionTest {
         // Run full extraction to temp directory
         extractor.extractAll(
                 CORE_PDF.toFile(),
-                new ImportContext(
-                        SourceManifest.coreBook(), tempDir.resolve(SOURCE_ID)),
+                new ImportContext(SourceManifest.coreBook(), tempDir.resolve(SOURCE_ID)),
                 progress -> {
                     // Log progress occasionally
                     if (progress % 0.2 < 0.01)
@@ -65,45 +64,44 @@ public class PdfImportRegressionTest {
         try (Stream<Path> stream = Files.walk(REFERENCE_DIR)) {
             stream.filter(Files::isRegularFile)
                     .filter(p -> p.toString().endsWith(".json"))
-                    .forEach(
-                            refPath -> {
-                                Path relative = REFERENCE_DIR.relativize(refPath);
-                                Path actualPath = tempDir.resolve(SOURCE_ID).resolve(relative);
+                    .forEach(refPath -> {
+                        Path relative = REFERENCE_DIR.relativize(refPath);
+                        Path actualPath = tempDir.resolve(SOURCE_ID).resolve(relative);
 
-                                assertTrue(
-                                        Files.exists(actualPath),
-                                        "Expected file missing in output: " + relative);
+                        assertTrue(
+                                Files.exists(actualPath),
+                                "Expected file missing in output: " + relative);
 
-                                logger.info("Comparing: {}", relative);
-                                assertJsonEquals(refPath, actualPath);
-                            });
+                        logger.info("Comparing: {}", relative);
+                        assertJsonEquals(refPath, actualPath);
+                    });
         }
 
         // Warning for unverified files in output
         try (Stream<Path> stream = Files.walk(tempDir)) {
             stream.filter(Files::isRegularFile)
                     .filter(p -> p.toString().endsWith(".json"))
-                    .forEach(
-                            actualPath -> {
-                                Path relative =
-                                        tempDir.resolve(SOURCE_ID).relativize(actualPath);
-                                Path refPath = REFERENCE_DIR.resolve(relative);
-                                if (!Files.exists(refPath)) {
-                                    logger.warn(
-                                            "UNVERIFIED: File present in output but missing from"
-                                                    + " reference: {}",
-                                            relative);
-                                }
-                            });
+                    .forEach(actualPath -> {
+                        Path relative = tempDir.resolve(SOURCE_ID).relativize(actualPath);
+                        Path refPath = REFERENCE_DIR.resolve(relative);
+                        if (!Files.exists(refPath)) {
+                            logger.warn(
+                                    "UNVERIFIED: File present in output but missing from"
+                                            + " reference: {}",
+                                    relative);
+                        }
+                    });
         }
     }
 
     private void assertCharmDescriptionCleanup(Path importedSource) throws IOException {
-        String whirlingBrush = charmDescription(importedSource, "linguistics", "Whirling Brush Method");
+        String whirlingBrush =
+                charmDescription(importedSource, "linguistics", "Whirling Brush Method");
         assertFalse(whirlingBrush.contains("WRITTEN VS. SPOKEN EFFECTS"));
         assertTrue(whirlingBrush.contains("perfectly transcribe a rapid conversation"));
 
-        String flowingHand = charmDescription(importedSource, "linguistics", "Flowing Elegant Hand");
+        String flowingHand =
+                charmDescription(importedSource, "linguistics", "Flowing Elegant Hand");
         assertFalse(flowingHand.contains("ARTISTIC TALENT: LINGUISTICS OR CRAFT"));
         assertTrue(flowingHand.contains("At Linguistics 5+"));
 
@@ -111,18 +109,22 @@ public class PdfImportRegressionTest {
         assertFalse(singleVoice.contains("THAT BURNING QUESTION"));
         assertTrue(singleVoice.contains("no intelligible words, letters or mechanics"));
 
-        String divineInspiration = charmDescription(importedSource, "craft", "Divine Inspiration Technique");
+        String divineInspiration =
+                charmDescription(importedSource, "craft", "Divine Inspiration Technique");
         assertFalse(divineInspiration.startsWith("Supreme Masterwork Focus"));
 
-        String investigation = charmDescription(importedSource, "investigation", "Inquisitor’s Unfailing Notice");
+        String investigation =
+                charmDescription(importedSource, "investigation", "Inquisitor’s Unfailing Notice");
         assertFalse(investigation.contains("but those powers aren’t necessarily called out"));
         assertFalse(investigation.contains("Divine Mantle exists"));
 
-        String melee = charmDescription(importedSource, "melee", "Ready in Eight Directions Stance");
+        String melee =
+                charmDescription(importedSource, "melee", "Ready in Eight Directions Stance");
         assertFalse(melee.contains("Fivefold Bulwark Stance ignores"));
         assertTrue(melee.contains("counter an opponent in the first round"));
 
-        String performance = charmDescription(importedSource, "performance", "Infectious Zealotry Approach");
+        String performance =
+                charmDescription(importedSource, "performance", "Infectious Zealotry Approach");
         assertFalse(performance.contains("mentarily blanks out"));
 
         String war = charmDescription(importedSource, "war", "Battle-Visionary’s Foresight");
@@ -132,7 +134,8 @@ public class PdfImportRegressionTest {
         String powerAwarding = charmDescription(importedSource, "lore", "Power-Awarding Prana");
         assertFalse(powerAwarding.contains("FATE OF THE MIDDLEMARCHES"));
 
-        String stageFright = charmDescription(importedSource, "performance", "Stillness-Drawing Meditation");
+        String stageFright =
+                charmDescription(importedSource, "performance", "Stillness-Drawing Meditation");
         assertFalse(stageFright.contains("DON’T GET STAGE FRIGHT"));
 
         String redRule = charmDescription(importedSource, "presence", "Crowned King of Eternity");
@@ -142,17 +145,20 @@ public class PdfImportRegressionTest {
         assertFalse(mariner.contains("EXAMPLE HAZARD"));
         assertTrue(mariner.contains("decisive marine gambits"));
 
-        String heartEclipsing = charmDescription(importedSource, "socialize", "Heart-Eclipsing Shroud");
+        String heartEclipsing =
+                charmDescription(importedSource, "socialize", "Heart-Eclipsing Shroud");
         assertFalse(heartEclipsing.contains("SOCIETAL INFLUENCE AND GROUP DYNAMICS"));
         assertTrue(heartEclipsing.contains("Special rules:"));
 
-        String legendMask = charmDescription(importedSource, "socialize", "Legend Mask Methodology");
+        String legendMask =
+                charmDescription(importedSource, "socialize", "Legend Mask Methodology");
         assertFalse(legendMask.contains("PERSONAS AND LIMIT BREAK"));
 
         String stalkingWolf = charmDescription(importedSource, "stealth", "Stalking Wolf Attitude");
         assertFalse(stalkingWolf.contains("PERSONAS: RULES AND LIMITATIONS"));
 
-        String camouflage = charmDescription(importedSource, "survival", "Eye-Deceiving Camouflage");
+        String camouflage =
+                charmDescription(importedSource, "survival", "Eye-Deceiving Camouflage");
         assertFalse(camouflage.contains("A FAMILIAR INVESTMENT"));
         assertTrue(camouflage.contains("These successes directly counter"));
 
@@ -160,14 +166,16 @@ public class PdfImportRegressionTest {
         assertFalse(mistOnWater.contains("ELECTED TARGETS"));
         assertTrue(mistOnWater.contains("they may die standing up"));
 
-        String destiny = charmDescription(importedSource, "integrity", "Destiny-Manifesting Method");
+        String destiny =
+                charmDescription(importedSource, "integrity", "Destiny-Manifesting Method");
         assertEquals(1, occurrences(destiny, "which she derived this Charm."));
         assertFalse(destiny.contains("This means, literally"));
 
         String measurement = charmDescription(importedSource, "bureaucracy", "Measuring Glance");
         assertTrue(measurement.contains("([Social or Mental Attribute] + Bureaucracy)"));
 
-        String bodyRestoring = charmDescription(importedSource, "integrity", "Body-Restoring Benison");
+        String bodyRestoring =
+                charmDescription(importedSource, "integrity", "Body-Restoring Benison");
         assertFalse(bodyRestoring.contains("use this Divine Mantle"));
         String divineMantle = charmDescription(importedSource, "integrity", "Divine Mantle");
         assertTrue(divineMantle.contains("If a spirit recognizes the Lawgiver as king"));
@@ -200,7 +208,8 @@ public class PdfImportRegressionTest {
         Path charmFile = importedSource.resolve("charms").resolve(ability + ".json");
         JsonElement charms = JsonParser.parseString(Files.readString(charmFile));
         return charms.getAsJsonObject().getAsJsonArray("charms").asList().stream()
-                .filter(charm -> charmName.equals(charm.getAsJsonObject().get("name").getAsString()))
+                .filter(charm ->
+                        charmName.equals(charm.getAsJsonObject().get("name").getAsString()))
                 .map(charm -> charm.getAsJsonObject().get("fullText").getAsString())
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Missing charm: " + charmName));
@@ -221,8 +230,9 @@ public class PdfImportRegressionTest {
         JsonElement awareness = JsonParser.parseString(Files.readString(awarenessFile));
         JsonElement eye =
                 awareness.getAsJsonObject().getAsJsonArray("charms").asList().stream()
-                        .filter(charm -> "Eye of the Unconquered Sun".equals(
-                                charm.getAsJsonObject().get("name").getAsString()))
+                        .filter(charm ->
+                                "Eye of the Unconquered Sun"
+                                        .equals(charm.getAsJsonObject().get("name").getAsString()))
                         .findFirst()
                         .orElseThrow();
         JsonElement prerequisites = eye.getAsJsonObject().get("prerequisites");
@@ -236,20 +246,21 @@ public class PdfImportRegressionTest {
                 countRule.getAsJsonObject().getAsJsonArray("abilities").get(0).getAsString());
         assertTrue(countRule.getAsJsonObject().get("excludeExcellencies").getAsBoolean());
         java.util.Set<String> excludedIds = new java.util.HashSet<>();
-        countRule.getAsJsonObject()
+        countRule
+                .getAsJsonObject()
                 .getAsJsonArray("excludedCharmIds")
                 .forEach(id -> excludedIds.add(id.getAsString()));
         assertEquals(java.util.Set.of(charmId("Awakening Eye")), excludedIds);
 
         java.util.Set<java.util.Set<String>> prerequisitePaths = new java.util.HashSet<>();
-        countRule.getAsJsonObject()
+        countRule
+                .getAsJsonObject()
                 .getAsJsonArray("excludedPrerequisitePaths")
-                .forEach(
-                        path -> {
-                            java.util.Set<String> ids = new java.util.HashSet<>();
-                            path.getAsJsonArray().forEach(id -> ids.add(id.getAsString()));
-                            prerequisitePaths.add(ids);
-                        });
+                .forEach(path -> {
+                    java.util.Set<String> ids = new java.util.HashSet<>();
+                    path.getAsJsonArray().forEach(id -> ids.add(id.getAsString()));
+                    prerequisitePaths.add(ids);
+                });
         String sensoryAcuity = charmId("Sensory Acuity Prana");
         assertEquals(
                 java.util.Set.of(
@@ -278,9 +289,10 @@ public class PdfImportRegressionTest {
         JsonElement charmId = rule.getAsJsonObject().get("charmId");
         if ("charm".equals(rule.getAsJsonObject().get("type").getAsString())
                 && charmId != null
-                && charmId.getAsString().equals(
-                        com.vibethema.service.DefinitionId.forCharm(
-                                SOURCE_ID, charmName, "Awareness"))) return true;
+                && charmId.getAsString()
+                        .equals(
+                                com.vibethema.service.DefinitionId.forCharm(
+                                        SOURCE_ID, charmName, "Awareness"))) return true;
         return hasRuleInChildren(rule, "requirements", charmName)
                 || hasRuleInChildren(rule, "options", charmName);
     }

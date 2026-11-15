@@ -1,7 +1,7 @@
 package com.vibethema.service.pdf.core;
 
-import com.vibethema.service.pdf.base.BaseCharmExtractor;
 import com.vibethema.service.DefinitionId;
+import com.vibethema.service.pdf.base.BaseCharmExtractor;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -19,8 +19,7 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                                         + "E\\s*X\\s*3\\s*\\n"
                                         + "\\d{3}\\s*\\n",
                                 "\n")
-                        .replaceAll(
-                                "(?m)^\\n\\d{3}\\s*\\nE\\s*X\\s*3\\s*\\n(?:[A-Z\\s]{5,})", "\n")
+                        .replaceAll("(?m)^\\n\\d{3}\\s*\\nE\\s*X\\s*3\\s*\\n(?:[A-Z\\s]{5,})", "\n")
                         // PDF extraction can wrap a charm title at the line end immediately
                         // before its Cost line (for example, "Disci-\\npline\\nCost:").
                         .replaceAll(
@@ -230,8 +229,7 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                     if (canonicalAbility != null
                             && canonicalAbility.equalsIgnoreCase(casteFavoredAbility)) {
                         bridgePrerequisite = new LinkedHashMap<>();
-                        bridgePrerequisite.put(
-                                "normal", "any 1 " + canonicalAbility + " Charms");
+                        bridgePrerequisite.put("normal", "any 1 " + canonicalAbility + " Charms");
                         bridgePrerequisite.put(
                                 "alternate", canonicalAbility + " as Caste or Favored");
                         cleanPrereqs = "";
@@ -346,10 +344,7 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                     bridge.put("normal", bridgeMatcher.group(1).trim());
                     bridge.put(
                             "alternate",
-                            "any "
-                                    + bridgeMatcher.group(2)
-                                    + " "
-                                    + bridgeMatcher.group(3).trim());
+                            "any " + bridgeMatcher.group(2) + " " + bridgeMatcher.group(3).trim());
                     // The normal branch is resolved from this marker after extraction. Clear
                     // groups so the generic fallback cannot add an AND branch.
                     rawPrereqs = "";
@@ -394,7 +389,8 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
 
                     Map<String, Object> countRule = new LinkedHashMap<>();
                     countRule.put("type", "countFromAbilities");
-                    countRule.put("abilities", List.of(nonExcellencyAbilityMatcher.group(3).trim()));
+                    countRule.put(
+                            "abilities", List.of(nonExcellencyAbilityMatcher.group(3).trim()));
                     countRule.put("count", Integer.parseInt(nonExcellencyAbilityMatcher.group(2)));
                     countRule.put(
                             "excludedCharmIds",
@@ -661,10 +657,7 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
     }
 
     private boolean isKnownPrerequisiteContinuation(
-            String line,
-            String currentField,
-            String rawPrereqs,
-            Set<String> knownCharmNames) {
+            String line, String currentField, String rawPrereqs, Set<String> knownCharmNames) {
         if (!currentField.equals("Prereqs") || rawPrereqs.isBlank()) return false;
 
         int lastComma = rawPrereqs.lastIndexOf(',');
@@ -700,16 +693,16 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
         String compactCandidate = normalized.replaceAll("\\s+", "");
         if (compactCandidate.isEmpty()) return false;
         return knownCharmNames.stream()
-                .anyMatch(
-                        name -> {
-                            String compactName = normalizeCharmName(name).replaceAll("\\s+", "");
-                            return compactName.startsWith(compactCandidate);
-                        });
+                .anyMatch(name -> {
+                    String compactName = normalizeCharmName(name).replaceAll("\\s+", "");
+                    return compactName.startsWith(compactCandidate);
+                });
     }
 
     private boolean isExactKnownCharmName(String candidate, Set<String> knownCharmNames) {
         String normalized = normalizeCharmName(candidate);
-        return knownCharmNames.stream().anyMatch(name -> normalizeCharmName(name).equals(normalized));
+        return knownCharmNames.stream()
+                .anyMatch(name -> normalizeCharmName(name).equals(normalized));
     }
 
     private String canonicalKnownCharmName(String candidate, Set<String> knownCharmNames) {
@@ -720,8 +713,7 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                 .orElse(candidate);
     }
 
-    private List<String> splitPrerequisiteNames(
-            String prerequisites, Set<String> knownCharmNames) {
+    private List<String> splitPrerequisiteNames(String prerequisites, Set<String> knownCharmNames) {
         String[] pieces = prerequisites.split(",", -1);
         List<String> names = new ArrayList<>();
         for (int start = 0; start < pieces.length; ) {
@@ -761,10 +753,10 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
     private String normalizeCharmName(String name) {
         String normalized =
                 name.replaceAll("[-\\u00AD]\\s*(?=[a-z])", "")
-                .replaceAll("[-\\u00AD]\\s*(?=[A-Z])", " ")
-                .replaceAll("\\s+", " ")
-                .trim()
-                .toLowerCase(Locale.ROOT);
+                        .replaceAll("[-\\u00AD]\\s*(?=[A-Z])", " ")
+                        .replaceAll("\\s+", " ")
+                        .trim()
+                        .toLowerCase(Locale.ROOT);
         if (normalized.equals("crippling pressure point attack")) {
             return "crippling pressure point strike";
         }
@@ -842,7 +834,9 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
         text = text.replace("but if can be reset if", "but can be reset if");
         text = text.replace("Dvine Mantle", "Divine Mantle");
         text = text.replace("the initiate’s roll", "the initiator’s roll");
-        text = text.replaceAll("(?i)\\[Social or Mental\\s+Attribute\\]", "[Social or Mental Attribute]");
+        text =
+                text.replaceAll(
+                        "(?i)\\[Social or Mental\\s+Attribute\\]", "[Social or Mental Attribute]");
 
         // PDF bullet glyph extraction can leave an ASCII bell control character after the
         // visible bullet. It is not meaningful description content.
@@ -859,55 +853,69 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
     private String removeKnownSidebarInterleaving(String text) {
         // These rules remove editorial callouts which PDFBox interleaves with body text.
         // Lookahead anchors preserve the Charm prose on either side of the callout.
-        text = text.replaceAll(
-                "(?is)WRITTEN\\s+VS\\.\\s+SPOKEN\\s+EFFECTS.*?(?=transcribe a rapid conversation between multiple parties\\.)",
-                "");
-        text = text.replaceAll(
-                "(?is)ARTISTIC TALENT:\\s*LINGUISTICS OR CRAFT\\?.*?(?=At Linguistics 5\\+)",
-                "");
-        text = text.replaceAll(
-                "(?is)THAT BURNING QUESTION\\s*Q:.*?A:\\s*You tell me\\.\\s*",
-                "");
-        text = text.replaceAll(
-                "(?is)\\s+but those powers aren’t necessarily called out in the text\\..*$",
-                "");
-        text = text.replaceAll(
-                "(?is)op-\\s*ON FIVEFOLD BULWARK STANCE.*?ponent in the first round",
-                "opponent in the first round");
-        text = text.replaceAll(
-                "(?is)\\s+mentarily blanks out a character’s mind, erasing his social impetus\\..*$",
-                "");
-        text = text.replaceAll(
-                "(?is)ON INFECTIOUS ZEALOTRY APPROACH.*?without a Resolve check\\.", "");
+        text =
+                text.replaceAll(
+                        "(?is)WRITTEN\\s+VS\\.\\s+SPOKEN\\s+EFFECTS.*?(?=transcribe a rapid"
+                                + " conversation between multiple parties\\.)",
+                        "");
+        text =
+                text.replaceAll(
+                        "(?is)ARTISTIC TALENT:\\s*LINGUISTICS OR CRAFT\\?.*?(?=At Linguistics"
+                                + " 5\\+)",
+                        "");
+        text = text.replaceAll("(?is)THAT BURNING QUESTION\\s*Q:.*?A:\\s*You tell me\\.\\s*", "");
+        text =
+                text.replaceAll(
+                        "(?is)\\s+but those powers aren’t necessarily called out in the text\\..*$",
+                        "");
+        text =
+                text.replaceAll(
+                        "(?is)op-\\s*ON FIVEFOLD BULWARK STANCE.*?ponent in the first round",
+                        "opponent in the first round");
+        text =
+                text.replaceAll(
+                        "(?is)\\s+mentarily blanks out a character’s mind, erasing his social"
+                                + " impetus\\..*$",
+                        "");
+        text =
+                text.replaceAll(
+                        "(?is)ON INFECTIOUS ZEALOTRY APPROACH.*?without a Resolve check\\.", "");
         text = text.replaceAll("(?is)^\\s*Supreme Masterwork Focus \\(x2\\)\\s*", "");
-        text = text.replaceAll(
-                "(?is)FATE OF THE MIDDLEMARCHES.*?(?=The Solar can uplift another Lawgiver)",
-                "");
-        text = text.replaceAll(
-                "(?is)DON’T GET STAGE FRIGHT.*?page 221\\.", "");
-        text = text.replaceAll(
-                "(?is)REMEMBER THE RED RULE!?\\s*.*?(?=The Lawgiver sits at the cycle of events)",
-                "");
-        text = text.replaceAll(
-                "(?is)ON DESTINY-MANIFESTING METHOD.*?(?=This Charm may be repurchased for every ten different Charms)",
-                "");
-        text = text.replaceAll(
-                "(?is)\\s+which she derived this Charm\\. This means, literally,.*?(?=This Charm may be repurchased for every ten different Charms)",
-                "\n\n");
-        text = text.replaceAll(
-                "(?is)EXAMPLE HAZARD.*?has bested\\.", "");
-        text = text.replaceAll(
-                "(?is)SOCIETAL INFLUENCE AND GROUP DYNAMICS.*?(?=Special rules:)", "");
-        text = text.replaceAll(
-                "(?is)PERSONAS AND LIMIT BREAK.*?$", "");
-        text = text.replaceAll(
-                "(?is)PERSONAS: RULES AND LIMITATIONS.*?$", "");
-        text = text.replaceAll(
-                "(?is)A FAMILIAR INVESTMENT.*?(?=These successes directly counter)", "");
-        text = text.replaceAll(
-                "(?is)ELECTED TARGETS.*?(?=they may die standing up)", "");
-        text = text.replaceAll(
-                "(?is)\\n\\s*T\\s+he neighborhood had once been an affluent district.*$", "");
+        text =
+                text.replaceAll(
+                        "(?is)FATE OF THE MIDDLEMARCHES.*?(?=The Solar can uplift another"
+                                + " Lawgiver)",
+                        "");
+        text = text.replaceAll("(?is)DON’T GET STAGE FRIGHT.*?page 221\\.", "");
+        text =
+                text.replaceAll(
+                        "(?is)REMEMBER THE RED RULE!?\\s*.*?(?=The Lawgiver sits at the cycle of"
+                                + " events)",
+                        "");
+        text =
+                text.replaceAll(
+                        "(?is)ON DESTINY-MANIFESTING METHOD.*?(?=This Charm may be repurchased for"
+                                + " every ten different Charms)",
+                        "");
+        text =
+                text.replaceAll(
+                        "(?is)\\s+which she derived this Charm\\. This means, literally,.*?(?=This"
+                                + " Charm may be repurchased for every ten different Charms)",
+                        "\n\n");
+        text = text.replaceAll("(?is)EXAMPLE HAZARD.*?has bested\\.", "");
+        text =
+                text.replaceAll(
+                        "(?is)SOCIETAL INFLUENCE AND GROUP DYNAMICS.*?(?=Special rules:)", "");
+        text = text.replaceAll("(?is)PERSONAS AND LIMIT BREAK.*?$", "");
+        text = text.replaceAll("(?is)PERSONAS: RULES AND LIMITATIONS.*?$", "");
+        text =
+                text.replaceAll(
+                        "(?is)A FAMILIAR INVESTMENT.*?(?=These successes directly counter)", "");
+        text = text.replaceAll("(?is)ELECTED TARGETS.*?(?=they may die standing up)", "");
+        text =
+                text.replaceAll(
+                        "(?is)\\n\\s*T\\s+he neighborhood had once been an affluent district.*$",
+                        "");
         return text;
     }
 

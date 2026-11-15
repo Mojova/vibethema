@@ -1,7 +1,7 @@
 package com.vibethema.scratch;
 
-import com.vibethema.service.PdfExtractor;
 import com.vibethema.service.ImportContext;
+import com.vibethema.service.PdfExtractor;
 import com.vibethema.service.SourceManifest;
 import java.io.File;
 import java.nio.file.Paths;

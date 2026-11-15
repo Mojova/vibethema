@@ -50,27 +50,25 @@ public class TraitModel {
             attributes.put(attr, new SimpleIntegerProperty(1));
             attributes
                     .get(attr)
-                    .addListener(
-                            (obs, oldV, newV) -> {
-                                markDirty();
-                                statUpdateTrigger.run();
-                            });
+                    .addListener((obs, oldV, newV) -> {
+                        markDirty();
+                        statUpdateTrigger.run();
+                    });
         }
 
         for (Attribute.Category cat : Attribute.Category.values()) {
             ObjectProperty<AttributePriority> priority = new SimpleObjectProperty<>(null);
-            priority.addListener(
-                    (obs, oldV, newV) -> {
-                        if (newV != null && !isImporting) {
-                            for (Map.Entry<Attribute.Category, ObjectProperty<AttributePriority>>
-                                    entry : attributePriorities.entrySet()) {
-                                if (entry.getKey() != cat && entry.getValue().get() == newV) {
-                                    entry.getValue().set(null);
-                                }
-                            }
+            priority.addListener((obs, oldV, newV) -> {
+                if (newV != null && !isImporting) {
+                    for (Map.Entry<Attribute.Category, ObjectProperty<AttributePriority>> entry :
+                            attributePriorities.entrySet()) {
+                        if (entry.getKey() != cat && entry.getValue().get() == newV) {
+                            entry.getValue().set(null);
                         }
-                        markDirty();
-                    });
+                    }
+                }
+                markDirty();
+            });
             attributePriorities.put(cat, priority);
         }
 
@@ -78,66 +76,61 @@ public class TraitModel {
             abilities.put(ability, new SimpleIntegerProperty(0));
             abilities
                     .get(ability)
-                    .addListener(
-                            (obs, oldV, newV) -> {
-                                markDirty();
-                                statUpdateTrigger.run();
-                            });
+                    .addListener((obs, oldV, newV) -> {
+                        markDirty();
+                        statUpdateTrigger.run();
+                    });
 
             casteAbilities.put(ability, new SimpleBooleanProperty(false));
             casteAbilities
                     .get(ability)
-                    .addListener(
-                            (obs, oldV, newV) -> {
-                                if (newV && !isImporting) {
-                                    favoredAbilities.get(ability).set(false);
-                                }
-                                if (!isImporting
-                                        && (ability == Ability.BRAWL
-                                                || ability == Ability.MARTIAL_ARTS)) {
-                                    isImporting = true;
-                                    try {
-                                        Ability other =
-                                                (ability == Ability.BRAWL)
-                                                        ? Ability.MARTIAL_ARTS
-                                                        : Ability.BRAWL;
-                                        casteAbilities.get(other).set(newV);
-                                        favoredAbilities.get(other).set(false);
-                                    } finally {
-                                        isImporting = false;
-                                    }
-                                }
-                                updateCasteFavoredCounts();
-                                updateValidSupernalAbilities();
-                                markDirty();
-                            });
+                    .addListener((obs, oldV, newV) -> {
+                        if (newV && !isImporting) {
+                            favoredAbilities.get(ability).set(false);
+                        }
+                        if (!isImporting
+                                && (ability == Ability.BRAWL || ability == Ability.MARTIAL_ARTS)) {
+                            isImporting = true;
+                            try {
+                                Ability other =
+                                        (ability == Ability.BRAWL)
+                                                ? Ability.MARTIAL_ARTS
+                                                : Ability.BRAWL;
+                                casteAbilities.get(other).set(newV);
+                                favoredAbilities.get(other).set(false);
+                            } finally {
+                                isImporting = false;
+                            }
+                        }
+                        updateCasteFavoredCounts();
+                        updateValidSupernalAbilities();
+                        markDirty();
+                    });
 
             favoredAbilities.put(ability, new SimpleBooleanProperty(false));
             favoredAbilities
                     .get(ability)
-                    .addListener(
-                            (obs, oldV, newV) -> {
-                                if (newV && !isImporting) {
-                                    casteAbilities.get(ability).set(false);
-                                }
-                                if (!isImporting
-                                        && (ability == Ability.BRAWL
-                                                || ability == Ability.MARTIAL_ARTS)) {
-                                    isImporting = true;
-                                    try {
-                                        Ability other =
-                                                (ability == Ability.BRAWL)
-                                                        ? Ability.MARTIAL_ARTS
-                                                        : Ability.BRAWL;
-                                        favoredAbilities.get(other).set(newV);
-                                        casteAbilities.get(other).set(false);
-                                    } finally {
-                                        isImporting = false;
-                                    }
-                                }
-                                updateCasteFavoredCounts();
-                                markDirty();
-                            });
+                    .addListener((obs, oldV, newV) -> {
+                        if (newV && !isImporting) {
+                            casteAbilities.get(ability).set(false);
+                        }
+                        if (!isImporting
+                                && (ability == Ability.BRAWL || ability == Ability.MARTIAL_ARTS)) {
+                            isImporting = true;
+                            try {
+                                Ability other =
+                                        (ability == Ability.BRAWL)
+                                                ? Ability.MARTIAL_ARTS
+                                                : Ability.BRAWL;
+                                favoredAbilities.get(other).set(newV);
+                                casteAbilities.get(other).set(false);
+                            } finally {
+                                isImporting = false;
+                            }
+                        }
+                        updateCasteFavoredCounts();
+                        markDirty();
+                    });
         }
 
         specialties.addListener(

@@ -101,12 +101,11 @@ public class EquipmentDatabaseView extends VBox implements JavaView<EquipmentDat
                     alert.initOwner(getScene().getWindow());
 
                     alert.showAndWait()
-                            .ifPresent(
-                                    response -> {
-                                        if (response == ButtonType.OK) {
-                                            viewModel.performDelete();
-                                        }
-                                    });
+                            .ifPresent(response -> {
+                                if (response == ButtonType.OK) {
+                                    viewModel.performDelete();
+                                }
+                            });
                 });
 
         // Title binding

@@ -90,11 +90,10 @@ public class CombatStatsModel {
 
     private boolean hasSpecialtyFor(Ability ability) {
         return traitModel.getSpecialties().stream()
-                .anyMatch(
-                        s ->
-                                ability.getDisplayName().equals(s.getAbility())
-                                        && s.getName() != null
-                                        && !s.getName().trim().isEmpty());
+                .anyMatch(s ->
+                        ability.getDisplayName().equals(s.getAbility())
+                                && s.getName() != null
+                                && !s.getName().trim().isEmpty());
     }
 
     public void updateMotesAndHealth() {

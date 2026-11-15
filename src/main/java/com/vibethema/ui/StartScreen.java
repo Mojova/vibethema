@@ -141,13 +141,12 @@ public class StartScreen extends StackPane implements JavaView<StartScreenViewMo
         loadBtn.defaultButtonProperty().bind(loadBtn.focusedProperty());
         importBtn.defaultButtonProperty().bind(importBtn.focusedProperty());
 
-        Platform.runLater(
-                () -> {
-                    if (viewModel.coreDataImportedProperty().get()) {
-                        newBtn.requestFocus();
-                    } else {
-                        importBtn.requestFocus();
-                    }
-                });
+        Platform.runLater(() -> {
+            if (viewModel.coreDataImportedProperty().get()) {
+                newBtn.requestFocus();
+            } else {
+                importBtn.requestFocus();
+            }
+        });
     }
 }

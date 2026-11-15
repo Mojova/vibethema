@@ -25,18 +25,17 @@ public class ViewCache {
         if (cache.containsKey(viewType)) return;
 
         // We load it on the UI thread to be safe with JavaFX node creation rules
-        Platform.runLater(
-                () -> {
-                    try {
-                        if (!cache.containsKey(viewType)) {
-                            logger.info("Warming up view: {}", viewType.getSimpleName());
-                            ViewTuple<V, VM> tuple = FluentViewLoader.javaView(viewType).load();
-                            cache.put(viewType, tuple);
-                        }
-                    } catch (Exception e) {
-                        logger.error("Failed to warmup view: {}", viewType.getSimpleName(), e);
-                    }
-                });
+        Platform.runLater(() -> {
+            try {
+                if (!cache.containsKey(viewType)) {
+                    logger.info("Warming up view: {}", viewType.getSimpleName());
+                    ViewTuple<V, VM> tuple = FluentViewLoader.javaView(viewType).load();
+                    cache.put(viewType, tuple);
+                }
+            } catch (Exception e) {
+                logger.error("Failed to warmup view: {}", viewType.getSimpleName(), e);
+            }
+        });
     }
 
     /**

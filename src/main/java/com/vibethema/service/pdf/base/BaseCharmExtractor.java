@@ -265,28 +265,27 @@ public abstract class BaseCharmExtractor {
         Map<String, String> idsByCompactAbilityAndName = new HashMap<>();
         Map<String, String> idsByCompactName = new HashMap<>();
         Map<String, String> namesByCompactAbilityAndName = new HashMap<>();
-        charms.forEach(
-                c -> {
-                    allExtractedIds.add((String) c.get("id"));
-                    String ability = (String) c.get("ability");
-                    String name = (String) c.get("name");
-                    String charmId = (String) c.get("id");
-                    if (ability != null && name != null) {
-                        String key = compactCharmKey(ability, name);
-                        String existingId = idsByCompactAbilityAndName.putIfAbsent(key, charmId);
-                        if (existingId != null) {
-                            idsByCompactAbilityAndName.put(key, "");
-                            namesByCompactAbilityAndName.put(key, "");
-                        } else {
-                            namesByCompactAbilityAndName.put(key, name);
-                        }
-                        String nameKey = compactCharmName(name);
-                        String existingGlobalId = idsByCompactName.putIfAbsent(nameKey, charmId);
-                        if (existingGlobalId != null && !existingGlobalId.equals(charmId)) {
-                            idsByCompactName.put(nameKey, "");
-                        }
-                    }
-                });
+        charms.forEach(c -> {
+            allExtractedIds.add((String) c.get("id"));
+            String ability = (String) c.get("ability");
+            String name = (String) c.get("name");
+            String charmId = (String) c.get("id");
+            if (ability != null && name != null) {
+                String key = compactCharmKey(ability, name);
+                String existingId = idsByCompactAbilityAndName.putIfAbsent(key, charmId);
+                if (existingId != null) {
+                    idsByCompactAbilityAndName.put(key, "");
+                    namesByCompactAbilityAndName.put(key, "");
+                } else {
+                    namesByCompactAbilityAndName.put(key, name);
+                }
+                String nameKey = compactCharmName(name);
+                String existingGlobalId = idsByCompactName.putIfAbsent(nameKey, charmId);
+                if (existingGlobalId != null && !existingGlobalId.equals(charmId)) {
+                    idsByCompactName.put(nameKey, "");
+                }
+            }
+        });
 
         for (Map<String, Object> charm : charms) {
             String ability = (String) charm.get("ability");
@@ -311,20 +310,25 @@ public abstract class BaseCharmExtractor {
             @SuppressWarnings("unchecked")
             List<String> keywords = (List<String>) charm.getOrDefault("keywords", List.of());
             if (keywords.stream().anyMatch(k -> k.equalsIgnoreCase("Bridge"))) {
-                Map<String, Object> rawBridge = extractBridgeFromRawData((String) charm.get("rawData"));
+                Map<String, Object> rawBridge =
+                        extractBridgeFromRawData((String) charm.get("rawData"));
                 if (rawBridge != null) {
                     bridge = rawBridge;
                     warnings.clear();
                 }
             }
-            if (bridge == null && prerequisiteText != null
+            if (bridge == null
+                    && prerequisiteText != null
                     && keywords.stream().anyMatch(k -> k.equalsIgnoreCase("Bridge"))) {
-                Matcher matcher = Pattern.compile("(?i)^(.+?)\\s+or\\s+any\\s+(\\d+)\\s+(.+)$")
-                        .matcher(prerequisiteText.replaceAll("[-\\u00AD]\\s*(?=[a-z])", ""));
+                Matcher matcher =
+                        Pattern.compile("(?i)^(.+?)\\s+or\\s+any\\s+(\\d+)\\s+(.+)$")
+                                .matcher(
+                                        prerequisiteText.replaceAll("[-\\u00AD]\\s*(?=[a-z])", ""));
                 if (matcher.find()) {
                     bridge = new LinkedHashMap<>();
                     bridge.put("normal", matcher.group(1).trim());
-                    bridge.put("alternate", "any " + matcher.group(2) + " " + matcher.group(3).trim());
+                    bridge.put(
+                            "alternate", "any " + matcher.group(2) + " " + matcher.group(3).trim());
                 }
             }
             if (bridge == null) bridge = detectBridgePrerequisite(rawPrereqs);
@@ -367,8 +371,7 @@ public abstract class BaseCharmExtractor {
 
         for (Map<String, Object> charm : charms) {
             @SuppressWarnings("unchecked")
-            Map<String, Object> prerequisites =
-                    (Map<String, Object>) charm.get("prerequisites");
+            Map<String, Object> prerequisites = (Map<String, Object>) charm.get("prerequisites");
             expandRuleExclusions(prerequisites, byId);
         }
     }
@@ -388,7 +391,10 @@ public abstract class BaseCharmExtractor {
                 @SuppressWarnings("unchecked")
                 Map<String, Object> prerequisiteRule =
                         (Map<String, Object>) excludedCharm.get("prerequisites");
-                paths = combinePaths(paths, prerequisitePaths(prerequisiteRule, charmsById, new HashSet<>()));
+                paths =
+                        combinePaths(
+                                paths,
+                                prerequisitePaths(prerequisiteRule, charmsById, new HashSet<>()));
             }
             rule.put("excludedPrerequisitePaths", paths);
         }
@@ -431,33 +437,42 @@ public abstract class BaseCharmExtractor {
             return uniquePaths(paths);
         }
         if ("countOf".equals(type) && rule.get("charmIds") instanceof List<?> ids) {
-            return chooseCharmPaths(stringIds(ids), number(rule.get("count")), charmsById, visiting);
+            return chooseCharmPaths(
+                    stringIds(ids), number(rule.get("count")), charmsById, visiting);
         }
         if ("countFromAbilities".equals(type)) {
             Set<String> abilities = stringSet(rule.get("abilities"));
             Set<String> excluded = stringSet(rule.get("excludedCharmIds"));
-            List<String> candidates = charmsById.values().stream()
-                    .filter(charm -> abilities.contains(
-                            String.valueOf(charm.get("ability")).toLowerCase(Locale.ROOT)))
-                    .filter(charm -> !excluded.contains(charm.get("id")))
-                    .filter(charm -> !Boolean.TRUE.equals(rule.get("excludeExcellencies"))
-                            || !String.valueOf(charm.get("name")).toLowerCase(Locale.ROOT).contains("excellency"))
-                    .map(charm -> (String) charm.get("id"))
-                    .sorted()
-                    .toList();
+            List<String> candidates =
+                    charmsById.values().stream()
+                            .filter(charm ->
+                                    abilities.contains(
+                                            String.valueOf(charm.get("ability"))
+                                                    .toLowerCase(Locale.ROOT)))
+                            .filter(charm -> !excluded.contains(charm.get("id")))
+                            .filter(charm ->
+                                    !Boolean.TRUE.equals(rule.get("excludeExcellencies"))
+                                            || !String.valueOf(charm.get("name"))
+                                                    .toLowerCase(Locale.ROOT)
+                                                    .contains("excellency"))
+                            .map(charm -> (String) charm.get("id"))
+                            .sorted()
+                            .toList();
             return chooseCharmPaths(candidates, number(rule.get("count")), charmsById, visiting);
         }
         if ("countFromSingleAbility".equals(type)) {
             Map<String, List<String>> byAbility = new TreeMap<>();
             for (Map<String, Object> charm : charmsById.values()) {
-                byAbility.computeIfAbsent(
+                byAbility
+                        .computeIfAbsent(
                                 String.valueOf(charm.get("ability")), key -> new ArrayList<>())
                         .add((String) charm.get("id"));
             }
             List<List<String>> paths = new ArrayList<>();
             for (List<String> candidates : byAbility.values()) {
-                paths.addAll(chooseCharmPaths(
-                        candidates, number(rule.get("count")), charmsById, visiting));
+                paths.addAll(
+                        chooseCharmPaths(
+                                candidates, number(rule.get("count")), charmsById, visiting));
             }
             return uniquePaths(paths);
         }
@@ -465,9 +480,7 @@ public abstract class BaseCharmExtractor {
     }
 
     private List<List<String>> pathsForCharm(
-            String charmId,
-            Map<String, Map<String, Object>> charmsById,
-            Set<String> visiting) {
+            String charmId, Map<String, Map<String, Object>> charmsById, Set<String> visiting) {
         if (!visiting.add(charmId)) return List.of(List.of(charmId));
         Map<String, Object> charm = charmsById.get(charmId);
         if (charm == null) return List.of(List.of(charmId));
@@ -495,8 +508,9 @@ public abstract class BaseCharmExtractor {
         for (List<String> combination : combinations) {
             List<List<String>> combinationPaths = List.of(List.of());
             for (String charmId : combination) {
-                combinationPaths = combinePaths(
-                        combinationPaths, pathsForCharm(charmId, charmsById, visiting));
+                combinationPaths =
+                        combinePaths(
+                                combinationPaths, pathsForCharm(charmId, charmsById, visiting));
             }
             paths.addAll(combinationPaths);
         }
@@ -513,7 +527,9 @@ public abstract class BaseCharmExtractor {
             result.add(new ArrayList<>(selected));
             return;
         }
-        for (int index = start; index <= candidates.size() - (required - selected.size()); index++) {
+        for (int index = start;
+                index <= candidates.size() - (required - selected.size());
+                index++) {
             selected.add(candidates.get(index));
             chooseCombinations(candidates, required, index + 1, selected, result);
             selected.remove(selected.size() - 1);
@@ -563,7 +579,9 @@ public abstract class BaseCharmExtractor {
 
     private Set<String> stringSet(Object value) {
         if (!(value instanceof List<?> list)) return Set.of();
-        return stringIds(list).stream().map(s -> s.toLowerCase(Locale.ROOT)).collect(java.util.stream.Collectors.toSet());
+        return stringIds(list).stream()
+                .map(s -> s.toLowerCase(Locale.ROOT))
+                .collect(java.util.stream.Collectors.toSet());
     }
 
     private int number(Object value) {
@@ -593,21 +611,26 @@ public abstract class BaseCharmExtractor {
                                     warnings));
                     continue;
                 }
-                @SuppressWarnings("unchecked") Map<String, Object> group = (Map<String, Object>) value;
-                @SuppressWarnings("unchecked") Map<String, Object> explicitRule =
-                        (Map<String, Object>) group.get("rule");
+                @SuppressWarnings("unchecked")
+                Map<String, Object> group = (Map<String, Object>) value;
+                @SuppressWarnings("unchecked")
+                Map<String, Object> explicitRule = (Map<String, Object>) group.get("rule");
                 if (explicitRule != null) {
                     rules.add(explicitRule);
                     continue;
                 }
-                @SuppressWarnings("unchecked") List<String> names = (List<String>) group.get("names");
+                @SuppressWarnings("unchecked")
+                List<String> names = (List<String>) group.get("names");
                 int count = ((Number) group.getOrDefault("minCount", 0)).intValue();
                 if (names == null || names.isEmpty()) continue;
                 String marker = names.get(0);
                 if (marker.startsWith("__ANY_ABILITIES__:")) {
                     Map<String, Object> r = new LinkedHashMap<>();
                     r.put("type", "countFromAbilities");
-                    r.put("abilities", Arrays.asList(marker.substring("__ANY_ABILITIES__:".length()).split("\\|")));
+                    r.put(
+                            "abilities",
+                            Arrays.asList(
+                                    marker.substring("__ANY_ABILITIES__:".length()).split("\\|")));
                     r.put("count", count);
                     rules.add(r);
                 } else if (marker.startsWith("__ANY_ABILITY_ESSENCE__:")) {
@@ -617,15 +640,13 @@ public abstract class BaseCharmExtractor {
                     String eligibleAbility = markerParts[1];
                     List<String> eligibleCharmIds =
                             allCharms.stream()
-                                    .filter(
-                                            candidate ->
-                                                    eligibleAbility.equalsIgnoreCase(
-                                                            (String) candidate.get("ability")))
-                                    .filter(
-                                            candidate ->
-                                                    ((Number) candidate.getOrDefault("minEssence", 0))
-                                                                    .intValue()
-                                                            >= minimumEssence)
+                                    .filter(candidate ->
+                                            eligibleAbility.equalsIgnoreCase(
+                                                    (String) candidate.get("ability")))
+                                    .filter(candidate ->
+                                            ((Number) candidate.getOrDefault("minEssence", 0))
+                                                            .intValue()
+                                                    >= minimumEssence)
                                     .map(candidate -> (String) candidate.get("id"))
                                     .filter(id -> !id.equals(currentCharmId))
                                     .toList();
@@ -637,7 +658,9 @@ public abstract class BaseCharmExtractor {
                 } else if (marker.startsWith("__ANY_SINGLE_ABILITY__:")) {
                     Map<String, Object> r = new LinkedHashMap<>();
                     r.put("type", "countFromSingleAbility");
-                    r.put("count", Integer.parseInt(marker.substring("__ANY_SINGLE_ABILITY__:".length())));
+                    r.put(
+                            "count",
+                            Integer.parseInt(marker.substring("__ANY_SINGLE_ABILITY__:".length())));
                     rules.add(r);
                 } else if (marker.startsWith("__PREDICATE__:")) {
                     Map<String, Object> r = new LinkedHashMap<>();
@@ -648,7 +671,9 @@ public abstract class BaseCharmExtractor {
                 } else {
                     List<String> ids = new ArrayList<>();
                     for (String name : names) {
-                        String id = DefinitionId.forCharm(sourceId, name.replaceAll("\\s+", " ").trim(), ability);
+                        String id =
+                                DefinitionId.forCharm(
+                                        sourceId, name.replaceAll("\\s+", " ").trim(), ability);
                         id =
                                 resolveCharmId(
                                         name,
@@ -664,7 +689,12 @@ public abstract class BaseCharmExtractor {
                     r.put("type", count > 0 ? "countOf" : "allOf");
                     if (count > 0) r.put("count", count);
                     if (count > 0) r.put("charmIds", ids);
-                    else r.put("requirements", ids.stream().map(id -> Map.of("type", "charm", "charmId", id)).toList());
+                    else
+                        r.put(
+                                "requirements",
+                                ids.stream()
+                                        .map(id -> Map.of("type", "charm", "charmId", id))
+                                        .toList());
                     rules.add(r);
                 }
             }
@@ -681,7 +711,9 @@ public abstract class BaseCharmExtractor {
         Map<String, Object> group = (Map<String, Object>) raw.get(0);
         List<String> names = (List<String>) group.get("names");
         if (names == null || names.size() != 1) return null;
-        Matcher matcher = Pattern.compile("(?i)^(.+?)\\s+or\\s+any\\s+(\\d+)\\s+(.+)$").matcher(names.get(0).trim());
+        Matcher matcher =
+                Pattern.compile("(?i)^(.+?)\\s+or\\s+any\\s+(\\d+)\\s+(.+)$")
+                        .matcher(names.get(0).trim());
         if (!matcher.find()) return null;
         Map<String, Object> bridge = new LinkedHashMap<>();
         bridge.put("normal", matcher.group(1).trim());
@@ -696,17 +728,21 @@ public abstract class BaseCharmExtractor {
         // and some prerequisite alternatives themselves continue onto a second line.  Bridge
         // alternatives in the source end with either "Charms" or "Principle", so capture the
         // first such terminator after the label and discard the description that follows it.
-        Matcher header = Pattern.compile(
-                        "(?is)Prerequisite Charms:\\s*(.*?(?:Charms\\s+that\\s+reflect.*?Principle|Charms|Principle))\\b")
-                .matcher(rawData);
+        Matcher header =
+                Pattern.compile(
+                                "(?is)Prerequisite"
+                                    + " Charms:\\s*(.*?(?:Charms\\s+that\\s+reflect.*?Principle|Charms|Principle))\\b")
+                        .matcher(rawData);
         if (!header.find()) return null;
-        String text = header.group(1)
-                .replaceAll("[-\\u00AD]\\s*(?=[a-z])", "")
-                .replaceAll("\\s+", " ")
-                .trim();
+        String text =
+                header.group(1)
+                        .replaceAll("[-\\u00AD]\\s*(?=[a-z])", "")
+                        .replaceAll("\\s+", " ")
+                        .trim();
         if (text.toLowerCase().startsWith("none ")) text = text.substring(5).trim();
         if (text.toLowerCase().startsWith("or any ")) text = "None " + text;
-        Matcher bridge = Pattern.compile("(?i)^(.+?)\\s+or\\s+any\\s+(\\d+)\\s+(.+)$").matcher(text);
+        Matcher bridge =
+                Pattern.compile("(?i)^(.+?)\\s+or\\s+any\\s+(\\d+)\\s+(.+)$").matcher(text);
         if (!bridge.find()) return null;
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("normal", bridge.group(1).trim());
@@ -721,10 +757,10 @@ public abstract class BaseCharmExtractor {
             Map<String, String> idsByCompactAbilityAndName,
             Map<String, String> idsByCompactName,
             List<String> warnings) {
-        if (text == null || text.isBlank() || text.equalsIgnoreCase("none")) return Map.of("type", "allOf", "requirements", List.of());
+        if (text == null || text.isBlank() || text.equalsIgnoreCase("none"))
+            return Map.of("type", "allOf", "requirements", List.of());
         Matcher casteFavoredAbility =
-                Pattern.compile("(?i)^(.+?)\\s+as\\s+Caste\\s+or\\s+Favored$")
-                        .matcher(text.trim());
+                Pattern.compile("(?i)^(.+?)\\s+as\\s+Caste\\s+or\\s+Favored$").matcher(text.trim());
         if (casteFavoredAbility.find()) {
             String abilityName = casteFavoredAbility.group(1).trim();
             if (ABILITIES.stream().anyMatch(a -> a.equalsIgnoreCase(abilityName))) {
@@ -734,13 +770,15 @@ public abstract class BaseCharmExtractor {
                                 .findFirst()
                                 .orElseThrow();
                 return Map.of(
-                        "type", "countMatchingPredicate",
-                        "predicate", "abilityIsCasteOrFavored:" + canonicalAbility,
-                        "count", 1);
+                        "type",
+                        "countMatchingPredicate",
+                        "predicate",
+                        "abilityIsCasteOrFavored:" + canonicalAbility,
+                        "count",
+                        1);
             }
         }
-        if (text.contains(",")
-                && !text.toLowerCase().matches("(?s).*\\bany\\s+\\d+\\b.*")) {
+        if (text.contains(",") && !text.toLowerCase().matches("(?s).*\\bany\\s+\\d+\\b.*")) {
             List<Map<String, Object>> requirements = new ArrayList<>();
             for (String part : text.split(",")) {
                 if (!part.isBlank())
@@ -759,18 +797,33 @@ public abstract class BaseCharmExtractor {
         if (any.find()) {
             int count = Integer.parseInt(any.group(1));
             String scope = any.group(2).trim().replaceFirst("(?i)\\s+charms?$", "").trim();
-            if (scope.equalsIgnoreCase("one ability") || scope.equalsIgnoreCase("any one ability")) {
+            if (scope.equalsIgnoreCase("one ability")
+                    || scope.equalsIgnoreCase("any one ability")) {
                 return Map.of("type", "countFromSingleAbility", "count", count);
             }
             if (scope.isEmpty() || scope.equalsIgnoreCase("charms")) {
                 return Map.of("type", "countFromSingleAbility", "count", count);
             }
             if (scope.toLowerCase().contains("that reflect")) {
-                return Map.of("type", "countMatchingPredicate", "predicate", "reflectsSelectedPrinciple", "count", count);
+                return Map.of(
+                        "type",
+                        "countMatchingPredicate",
+                        "predicate",
+                        "reflectsSelectedPrinciple",
+                        "count",
+                        count);
             }
-            if (scope.equalsIgnoreCase("social")) scope = "Bureaucracy|Linguistics|Performance|Presence|Socialize";
+            if (scope.equalsIgnoreCase("social"))
+                scope = "Bureaucracy|Linguistics|Performance|Presence|Socialize";
             if (scope.equalsIgnoreCase("martial arts")) scope = "Martial Arts";
-            if (scope.equalsIgnoreCase("caste")) return Map.of("type", "countMatchingPredicate", "predicate", "casteCharms", "count", count);
+            if (scope.equalsIgnoreCase("caste"))
+                return Map.of(
+                        "type",
+                        "countMatchingPredicate",
+                        "predicate",
+                        "casteCharms",
+                        "count",
+                        count);
             scope = scope.replaceAll("(?i)\\s+or\\s+", "|");
             List<String> abilities =
                     Arrays.stream(scope.split("\\s*,\\s*|\\|"))
@@ -796,7 +849,9 @@ public abstract class BaseCharmExtractor {
             Map<String, String> idsByCompactName,
             List<String> warnings) {
         String id = DefinitionId.forCharm(sourceId, name.replaceAll("\\s+", " ").trim(), ability);
-        id = resolveCharmId(name, ability, id, allIds, idsByCompactAbilityAndName, idsByCompactName);
+        id =
+                resolveCharmId(
+                        name, ability, id, allIds, idsByCompactAbilityAndName, idsByCompactName);
         if (!allIds.contains(id)) warnings.add("Unresolved prerequisite: " + name);
         return Map.of("type", "charm", "charmId", id);
     }
@@ -829,7 +884,8 @@ public abstract class BaseCharmExtractor {
             Map<String, String> namesByCompactAbilityAndName) {
         String rawData = (String) charm.get("rawData");
         if (rawData == null || ability == null) return;
-        Matcher matcher = Pattern.compile("(?m)(Prerequisite Charms:\\s*)([^\\r\\n]*)").matcher(rawData);
+        Matcher matcher =
+                Pattern.compile("(?m)(Prerequisite Charms:\\s*)([^\\r\\n]*)").matcher(rawData);
         if (!matcher.find()) return;
         String canonicalName =
                 namesByCompactAbilityAndName.get(compactCharmKey(ability, matcher.group(2)));
@@ -865,8 +921,7 @@ public abstract class BaseCharmExtractor {
                 wrapper.put("version", "0.2.0");
                 wrapper.put("sourceId", sourceId);
                 if (isMartialArts) {
-                    wrapper.put(
-                            "id", DefinitionId.forMartialArtsStyle(sourceId, entry.getKey()));
+                    wrapper.put("id", DefinitionId.forMartialArtsStyle(sourceId, entry.getKey()));
                 }
                 wrapper.put("ability", entry.getKey());
                 wrapper.put("type", isMartialArts ? "martialArts" : "solarAbility");

@@ -18,7 +18,8 @@ class PrerequisiteRuleTest {
         data.addCharm(new PurchasedCharm("sensory", "Sensory Acuity Prana", "Awareness"));
         data.addCharm(new PurchasedCharm("excellency", "Awareness Excellency", "Awareness"));
         data.addCharm(new PurchasedCharm("other", "Excellent Strike", "Melee"));
-        data.addCharm(new PurchasedCharm("awareness-extra-1", "Knowing Beyond Silence", "Awareness"));
+        data.addCharm(
+                new PurchasedCharm("awareness-extra-1", "Knowing Beyond Silence", "Awareness"));
 
         PrerequisiteRule rule =
                 PrerequisiteRule.countFromAbilities(
@@ -41,8 +42,10 @@ class PrerequisiteRuleTest {
         assertTrue(graphEdges.isEmpty(), "Count pools must not create individual charm web edges");
 
         data.addCharm(new PurchasedCharm("awareness-3", "Foe-Scenting Method", "Awareness"));
-        assertEquals(2, rule.getSatisfiedCount(data), "The third optional Keen Charm counts as extra");
-        data.addCharm(new PurchasedCharm("awareness-extra-2", "Living Pulse Perception", "Awareness"));
+        assertEquals(
+                2, rule.getSatisfiedCount(data), "The third optional Keen Charm counts as extra");
+        data.addCharm(
+                new PurchasedCharm("awareness-extra-2", "Living Pulse Perception", "Awareness"));
         assertEquals(3, rule.getSatisfiedCount(data));
         assertTrue(rule.isSatisfied(data));
     }

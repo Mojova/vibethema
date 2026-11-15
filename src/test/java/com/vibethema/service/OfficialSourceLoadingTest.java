@@ -54,7 +54,8 @@ class OfficialSourceLoadingTest {
         assertEquals(1, new MeritService().getAvailableMerits().size());
         assertEquals(1, new CharmDataService().loadSpells("terrestrial").size());
         assertEquals(1, new CharmDataService().getGlobalCharmCount());
-        Map<String, List<EquipmentDataService.Tag>> tags = new EquipmentDataService().loadEquipmentTags();
+        Map<String, List<EquipmentDataService.Tag>> tags =
+                new EquipmentDataService().loadEquipmentTags();
         assertTrue(tags.containsKey("weapon"));
         assertEquals("Reach", tags.get("weapon").get(0).getName());
     }
@@ -74,6 +75,8 @@ class OfficialSourceLoadingTest {
                 StandardCharsets.UTF_8);
 
         assertEquals(2, new CharmDataService().loadCharmsForAbility("Athletics").size());
-        assertEquals(PathService.getCustomDataPath().resolve("charms"), CharmDataService.getUserCharmsPath());
+        assertEquals(
+                PathService.getCustomDataPath().resolve("charms"),
+                CharmDataService.getUserCharmsPath());
     }
 }

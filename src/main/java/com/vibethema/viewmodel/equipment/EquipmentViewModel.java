@@ -77,12 +77,10 @@ public class EquipmentViewModel implements ViewModel {
                                         if (c.wasAdded()) {
                                             weapons.addAll(
                                                     c.getAddedSubList().stream()
-                                                            .map(
-                                                                    w ->
-                                                                            new WeaponRowViewModel(
-                                                                                    w,
-                                                                                    data
-                                                                                            .getSpecialties()))
+                                                            .map(w ->
+                                                                    new WeaponRowViewModel(
+                                                                            w,
+                                                                            data.getSpecialties()))
                                                             .collect(Collectors.toList()));
                                         }
                                         if (c.wasRemoved()) {
@@ -124,10 +122,8 @@ public class EquipmentViewModel implements ViewModel {
                                                             .collect(Collectors.toList()));
                                         }
                                         if (c.wasRemoved()) {
-                                            hearthstones.removeIf(
-                                                    vm ->
-                                                            c.getRemoved()
-                                                                    .contains(vm.getHearthstone()));
+                                            hearthstones.removeIf(vm ->
+                                                    c.getRemoved().contains(vm.getHearthstone()));
                                         }
                                     }
                                 });
@@ -144,12 +140,9 @@ public class EquipmentViewModel implements ViewModel {
                                                             .collect(Collectors.toList()));
                                         }
                                         if (c.wasRemoved()) {
-                                            otherEquipment.removeIf(
-                                                    vm ->
-                                                            c.getRemoved()
-                                                                    .contains(
-                                                                            vm
-                                                                                    .getOtherEquipment()));
+                                            otherEquipment.removeIf(vm ->
+                                                    c.getRemoved()
+                                                            .contains(vm.getOtherEquipment()));
                                         }
                                     }
                                 });

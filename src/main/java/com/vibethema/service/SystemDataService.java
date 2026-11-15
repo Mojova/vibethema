@@ -1,7 +1,6 @@
 package com.vibethema.service;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
 
 /**
  * Service to check the status of system-wide data (charms, equipment) and whether required PDF

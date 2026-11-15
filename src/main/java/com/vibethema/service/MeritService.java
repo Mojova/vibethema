@@ -39,9 +39,11 @@ public class MeritService {
         List<Path> sourcePaths =
                 exaltType == null
                         ? PathService.getOfficialSourcePaths()
-                        : new SourceCatalog().getSourcesFor(exaltType).stream()
-                                .map(source -> PathService.getOfficialSourcePath(source.sourceId))
-                                .toList();
+                        : new SourceCatalog()
+                                .getSourcesFor(exaltType).stream()
+                                        .map(source ->
+                                                PathService.getOfficialSourcePath(source.sourceId))
+                                        .toList();
         for (Path sourcePath : sourcePaths) {
             loadMeritsFromFile(sourcePath.resolve("merits").resolve(MERITS_FILE), merits);
         }

@@ -230,10 +230,8 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
             evBtn.setTooltip(new Tooltip("Evocations"));
             evBtn.setVisible(wvm.isArtifact());
             evBtn.setManaged(wvm.isArtifact());
-            evBtn.setOnAction(
-                    e ->
-                            viewModel.callEvocations(
-                                    wvm.idProperty().get(), wvm.nameProperty().get()));
+            evBtn.setOnAction(e ->
+                    viewModel.callEvocations(wvm.idProperty().get(), wvm.nameProperty().get()));
 
             Button delBtn = new Button("🗑");
             delBtn.getStyleClass().add("remove-btn");
@@ -310,10 +308,8 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
             evBtn.setTooltip(new Tooltip("Evocations"));
             evBtn.setVisible(avm.isArtifact());
             evBtn.setManaged(avm.isArtifact());
-            evBtn.setOnAction(
-                    e ->
-                            viewModel.callEvocations(
-                                    avm.idProperty().get(), avm.nameProperty().get()));
+            evBtn.setOnAction(e ->
+                    viewModel.callEvocations(avm.idProperty().get(), avm.nameProperty().get()));
 
             Button delBtn = new Button("🗑");
             delBtn.getStyleClass().add("remove-btn");
@@ -404,10 +400,8 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
             evBtn.setTooltip(new Tooltip("Evocations"));
             evBtn.setVisible(ovm.artifactProperty().get());
             evBtn.setManaged(ovm.artifactProperty().get());
-            evBtn.setOnAction(
-                    e ->
-                            viewModel.callEvocations(
-                                    ovm.idProperty().get(), ovm.nameProperty().get()));
+            evBtn.setOnAction(e ->
+                    viewModel.callEvocations(ovm.idProperty().get(), ovm.nameProperty().get()));
 
             Button delBtn = new Button("🗑");
             delBtn.getStyleClass().add("remove-btn");
@@ -476,25 +470,23 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         dbVm.createNewTextProperty().set("+ Create New " + type);
         dbVm.setItems(items);
 
-        dbVm.setDeleteAction(
-                item -> {
-                    try {
-                        com.vibethema.service.EquipmentDataService svc =
-                                viewModel.getEquipmentService();
-                        if (item instanceof Weapon) svc.deleteWeapon(((Weapon) item).getId());
-                        else if (item instanceof Armor) svc.deleteArmor(((Armor) item).getId());
-                        else if (item instanceof Hearthstone)
-                            svc.deleteHearthstone(((Hearthstone) item).getId());
-                        else if (item instanceof OtherEquipment)
-                            svc.deleteOtherEquipment(((OtherEquipment) item).getId());
-                    } catch (java.io.IOException e) {
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setTitle("Deletion Failed");
-                        alert.setHeaderText("Could not delete item");
-                        alert.setContentText(e.getMessage());
-                        alert.showAndWait();
-                    }
-                });
+        dbVm.setDeleteAction(item -> {
+            try {
+                com.vibethema.service.EquipmentDataService svc = viewModel.getEquipmentService();
+                if (item instanceof Weapon) svc.deleteWeapon(((Weapon) item).getId());
+                else if (item instanceof Armor) svc.deleteArmor(((Armor) item).getId());
+                else if (item instanceof Hearthstone)
+                    svc.deleteHearthstone(((Hearthstone) item).getId());
+                else if (item instanceof OtherEquipment)
+                    svc.deleteOtherEquipment(((OtherEquipment) item).getId());
+            } catch (java.io.IOException e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Deletion Failed");
+                alert.setHeaderText("Could not delete item");
+                alert.setContentText(e.getMessage());
+                alert.showAndWait();
+            }
+        });
 
         Dialog<Object> dialog = new Dialog<>();
         dialog.setTitle(dbVm.titleProperty().get());
@@ -506,27 +498,24 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         }
 
         // Handle "Create New" - it will open the creation dialog
-        dbVm.setCreateNewAction(
-                () -> {
-                    boolean success = onCreateNew.getAsBoolean();
-                    if (success) {
-                        dialog.setResult(Boolean.TRUE);
-                        dialog.close();
-                    }
-                });
+        dbVm.setCreateNewAction(() -> {
+            boolean success = onCreateNew.getAsBoolean();
+            if (success) {
+                dialog.setResult(Boolean.TRUE);
+                dialog.close();
+            }
+        });
 
         // Handle "Add Selected"
         view.getAddSelectedBtn()
-                .setOnAction(
-                        e -> {
-                            Object selected = dbVm.getSelectedItem();
-                            if (selected != null) {
-                                dialog.setResult(selected);
-                                dialog.close();
-                                javafx.application.Platform.runLater(
-                                        () -> onSelect.accept(selected));
-                            }
-                        });
+                .setOnAction(e -> {
+                    Object selected = dbVm.getSelectedItem();
+                    if (selected != null) {
+                        dialog.setResult(selected);
+                        dialog.close();
+                        javafx.application.Platform.runLater(() -> onSelect.accept(selected));
+                    }
+                });
 
         // Add standard Cancel button to the dialog pane
         // This also enables the ESC key dismissal automatically in JavaFX dialogs

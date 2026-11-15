@@ -44,13 +44,11 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
                 .addListener((javafx.collections.ListChangeListener<? super Charm>) c -> render());
         viewModel
                 .selectedCharmProperty()
-                .addListener(
-                        (obs, oldV, newV) -> {
-                            updateLineHighlights(newV != null ? newV.getId() : null);
-                            updateSelectionStyles(
-                                    oldV != null ? oldV.getId() : null,
-                                    newV != null ? newV.getId() : null);
-                        });
+                .addListener((obs, oldV, newV) -> {
+                    updateLineHighlights(newV != null ? newV.getId() : null);
+                    updateSelectionStyles(
+                            oldV != null ? oldV.getId() : null, newV != null ? newV.getId() : null);
+                });
 
         setupKeyHandlers();
 
@@ -62,10 +60,9 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
         setFocusTraversable(false);
         charmScroll.setFocusTraversable(true);
 
-        charmCanvas.setOnMousePressed(
-                e -> {
-                    if (!charmScroll.isFocused()) charmScroll.requestFocus();
-                });
+        charmCanvas.setOnMousePressed(e -> {
+            if (!charmScroll.isFocused()) charmScroll.requestFocus();
+        });
 
         charmScroll.addEventHandler(
                 javafx.scene.input.KeyEvent.KEY_PRESSED,
@@ -218,21 +215,19 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
         // Remove old nodes and lines
         charmCanvas
                 .getChildren()
-                .removeIf(
-                        node -> {
-                            if (node instanceof CubicCurve)
-                                return true; // Always redraw lines for now
-                            String id = node.getId();
-                            if (id != null && id.startsWith("charm_")) {
-                                String charmId = id.substring(6);
-                                if (!newIds.contains(charmId)) {
-                                    charmNodeMap.remove(charmId);
-                                    charmCheckMap.remove(charmId);
-                                    return true;
-                                }
-                            }
-                            return false;
-                        });
+                .removeIf(node -> {
+                    if (node instanceof CubicCurve) return true; // Always redraw lines for now
+                    String id = node.getId();
+                    if (id != null && id.startsWith("charm_")) {
+                        String charmId = id.substring(6);
+                        if (!newIds.contains(charmId)) {
+                            charmNodeMap.remove(charmId);
+                            charmCheckMap.remove(charmId);
+                            return true;
+                        }
+                    }
+                    return false;
+                });
 
         for (int d = 0; d <= maxDepth; d++) {
             List<Charm> row = levels.getOrDefault(d, new ArrayList<>());
@@ -247,11 +242,10 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
                 Pane box = charmNodeMap.get(c.getId());
                 if (box == null) {
                     box = createNodeBox(c, boxWidth, boxHeight);
-                    box.setOnMouseClicked(
-                            e -> {
-                                viewModel.selectedCharmProperty().set(c);
-                                if (e.getClickCount() == 2) viewModel.togglePurchase();
-                            });
+                    box.setOnMouseClicked(e -> {
+                        viewModel.selectedCharmProperty().set(c);
+                        if (e.getClickCount() == 2) viewModel.togglePurchase();
+                    });
                     charmCanvas.getChildren().add(box);
                 }
                 box.setLayoutX(x);
@@ -266,34 +260,32 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
             java.util.Set<String> prerequisiteIds = new java.util.HashSet<>();
             c.getPrerequisites().collectCharmIds(prerequisiteIds);
             for (String reqId : prerequisiteIds) {
-                    Pane source = charmNodeMap.get(reqId);
-                    if (source != null) {
-                        double startX = source.getLayoutX() + boxWidth / 2;
-                        double startY = source.getLayoutY() + boxHeight;
-                        double endX = target.getLayoutX() + boxWidth / 2;
-                        double endY = target.getLayoutY();
+                Pane source = charmNodeMap.get(reqId);
+                if (source != null) {
+                    double startX = source.getLayoutX() + boxWidth / 2;
+                    double startY = source.getLayoutY() + boxHeight;
+                    double endX = target.getLayoutX() + boxWidth / 2;
+                    double endY = target.getLayoutY();
 
-                        CubicCurve curve =
-                                new CubicCurve(
-                                        startX,
-                                        startY,
-                                        startX,
-                                        startY + gapY / 1.5,
-                                        endX,
-                                        endY - gapY / 1.5,
-                                        endX,
-                                        endY);
-                        curve.getStyleClass().add("charm-line");
-                        charmCanvas.getChildren().add(curve);
-                        curve.toBack();
+                    CubicCurve curve =
+                            new CubicCurve(
+                                    startX,
+                                    startY,
+                                    startX,
+                                    startY + gapY / 1.5,
+                                    endX,
+                                    endY - gapY / 1.5,
+                                    endX,
+                                    endY);
+                    curve.getStyleClass().add("charm-line");
+                    charmCanvas.getChildren().add(curve);
+                    curve.toBack();
 
-                        charmIncomingLines
-                                .computeIfAbsent(c.getId(), k -> new ArrayList<>())
-                                .add(curve);
-                        charmOutgoingLines
-                                .computeIfAbsent(reqId, k -> new ArrayList<>())
-                                .add(curve);
-                    }
+                    charmIncomingLines
+                            .computeIfAbsent(c.getId(), k -> new ArrayList<>())
+                            .add(curve);
+                    charmOutgoingLines.computeIfAbsent(reqId, k -> new ArrayList<>()).add(curve);
+                }
             }
         }
 
@@ -312,9 +304,12 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
         content.setAlignment(Pos.CENTER);
         content.setPrefSize(w, h);
 
-        Label name = new Label(
-                ((c.getImportWarnings() != null && !c.getImportWarnings().isEmpty()) ? "⚠️ " : "")
-                        + c.getName());
+        Label name =
+                new Label(
+                        ((c.getImportWarnings() != null && !c.getImportWarnings().isEmpty())
+                                        ? "⚠️ "
+                                        : "")
+                                + c.getName());
         name.getStyleClass().add("charm-node-title");
         name.setWrapText(true);
 
@@ -456,30 +451,29 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
     public void selectCharm(String charmId) {
         Pane node = charmNodeMap.get(charmId);
         if (node != null) {
-            Platform.runLater(
-                    () -> {
-                        if (!charmScroll.isFocused()) charmScroll.requestFocus();
-                        node.fireEvent(
-                                new javafx.scene.input.MouseEvent(
-                                        javafx.scene.input.MouseEvent.MOUSE_CLICKED,
-                                        0,
-                                        0,
-                                        0,
-                                        0,
-                                        javafx.scene.input.MouseButton.PRIMARY,
-                                        1,
-                                        false,
-                                        false,
-                                        false,
-                                        false,
-                                        true,
-                                        false,
-                                        false,
-                                        true,
-                                        false,
-                                        false,
-                                        null));
-                    });
+            Platform.runLater(() -> {
+                if (!charmScroll.isFocused()) charmScroll.requestFocus();
+                node.fireEvent(
+                        new javafx.scene.input.MouseEvent(
+                                javafx.scene.input.MouseEvent.MOUSE_CLICKED,
+                                0,
+                                0,
+                                0,
+                                0,
+                                javafx.scene.input.MouseButton.PRIMARY,
+                                1,
+                                false,
+                                false,
+                                false,
+                                false,
+                                true,
+                                false,
+                                false,
+                                true,
+                                false,
+                                false,
+                                null));
+            });
         }
     }
 }

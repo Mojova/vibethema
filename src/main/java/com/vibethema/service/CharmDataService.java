@@ -75,9 +75,11 @@ public class CharmDataService {
         List<Path> sourcePaths =
                 exaltType == null
                         ? PathService.getOfficialSourcePaths()
-                        : new SourceCatalog().getSourcesFor(exaltType).stream()
-                                .map(source -> PathService.getOfficialSourcePath(source.sourceId))
-                                .toList();
+                        : new SourceCatalog()
+                                .getSourcesFor(exaltType).stream()
+                                        .map(source ->
+                                                PathService.getOfficialSourcePath(source.sourceId))
+                                        .toList();
         for (Path source : sourcePaths) {
             Path path = source;
             for (String component : components) {
@@ -240,8 +242,7 @@ public class CharmDataService {
                             count
                                     + (int)
                                             stream.filter(p -> p.toString().endsWith(".json"))
-                                            .map(
-                                                    p -> {
+                                                    .map(p -> {
                                                         try (Reader r =
                                                                 Files.newBufferedReader(
                                                                         p,
@@ -257,8 +258,8 @@ public class CharmDataService {
                                                             return 0;
                                                         }
                                                     })
-                                            .mapToInt(Integer::intValue)
-                                            .sum();
+                                                    .mapToInt(Integer::intValue)
+                                                    .sum();
                 }
             }
         } catch (IOException e) {
@@ -302,23 +303,19 @@ public class CharmDataService {
         if (!Files.exists(directory)) return;
         try (java.util.stream.Stream<Path> files = Files.list(directory)) {
             files.filter(path -> path.toString().endsWith(".json"))
-                    .filter(
-                            path ->
-                                    !path.getFileName().toString().equals("keywords.json")
-                                            && !path.getFileName()
-                                                    .toString()
-                                                    .equals("charm-schema.json"))
-                    .forEach(
-                            path -> {
-                                if (evocations) {
-                                    EvocationCollection coll =
-                                            loadEvocations(
-                                                    path.getFileName().toString().replace(".json", ""));
-                                    if (coll != null) all.addAll(coll.evocations);
-                                } else {
-                                    loadFromFileForIndex(path, all);
-                                }
-                            });
+                    .filter(path ->
+                            !path.getFileName().toString().equals("keywords.json")
+                                    && !path.getFileName().toString().equals("charm-schema.json"))
+                    .forEach(path -> {
+                        if (evocations) {
+                            EvocationCollection coll =
+                                    loadEvocations(
+                                            path.getFileName().toString().replace(".json", ""));
+                            if (coll != null) all.addAll(coll.evocations);
+                        } else {
+                            loadFromFileForIndex(path, all);
+                        }
+                    });
         } catch (IOException e) {
             logger.error("Error building global charm index from {}", directory, e);
         }
@@ -625,26 +622,23 @@ public class CharmDataService {
     private void scanDirectoryForStyles(Path dir, java.util.Set<String> styles) {
         if (!Files.exists(dir)) return;
         try (java.util.stream.Stream<Path> stream = Files.list(dir)) {
-            stream.filter(
-                            p ->
-                                    p.toString().endsWith(".json")
-                                            && !p.toString().endsWith("-custom.json")
-                                            && !p.toString().endsWith("keywords.json")
-                                            && !p.toString().endsWith("charm-schema.json"))
-                    .forEach(
-                            p -> {
-                                try (Reader reader =
-                                        Files.newBufferedReader(p, StandardCharsets.UTF_8)) {
-                                    CharmListWrapper wrapper =
-                                            gson.fromJson(reader, CharmListWrapper.class);
-                                    if (wrapper != null && "martialArts".equals(wrapper.type)) {
-                                        styles.add(wrapper.ability);
-                                    }
-                                } catch (Exception e) {
-                                    // Skip invalid/unreadable JSON or missing type fields
-                                    logger.warn("Skipping non-martialArts style file: {}", p, e);
-                                }
-                            });
+            stream.filter(p ->
+                            p.toString().endsWith(".json")
+                                    && !p.toString().endsWith("-custom.json")
+                                    && !p.toString().endsWith("keywords.json")
+                                    && !p.toString().endsWith("charm-schema.json"))
+                    .forEach(p -> {
+                        try (Reader reader = Files.newBufferedReader(p, StandardCharsets.UTF_8)) {
+                            CharmListWrapper wrapper =
+                                    gson.fromJson(reader, CharmListWrapper.class);
+                            if (wrapper != null && "martialArts".equals(wrapper.type)) {
+                                styles.add(wrapper.ability);
+                            }
+                        } catch (Exception e) {
+                            // Skip invalid/unreadable JSON or missing type fields
+                            logger.warn("Skipping non-martialArts style file: {}", p, e);
+                        }
+                    });
         } catch (IOException e) {
             logger.error("Failed to list files in directory: {}", dir, e);
         }
@@ -691,18 +685,15 @@ public class CharmDataService {
         if (!Files.exists(dir)) return null;
         try (java.util.stream.Stream<Path> stream = Files.list(dir)) {
             return stream.filter(p -> p.toString().endsWith(".json"))
-                    .filter(
-                            p -> {
-                                try (Reader reader =
-                                        Files.newBufferedReader(p, StandardCharsets.UTF_8)) {
-                                    CharmListWrapper wrapper =
-                                            gson.fromJson(reader, CharmListWrapper.class);
-                                    return wrapper != null
-                                            && ability.equalsIgnoreCase(wrapper.ability);
-                                } catch (Exception e) {
-                                    return false;
-                                }
-                            })
+                    .filter(p -> {
+                        try (Reader reader = Files.newBufferedReader(p, StandardCharsets.UTF_8)) {
+                            CharmListWrapper wrapper =
+                                    gson.fromJson(reader, CharmListWrapper.class);
+                            return wrapper != null && ability.equalsIgnoreCase(wrapper.ability);
+                        } catch (Exception e) {
+                            return false;
+                        }
+                    })
                     .findFirst()
                     .orElse(null);
         } catch (IOException e) {

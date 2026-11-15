@@ -58,13 +58,12 @@ public class DefaultEquipmentDialogService implements EquipmentDialogService {
         dialog.getDialogPane().getButtonTypes().addAll(saveBtnType, ButtonType.CANCEL);
         dialog.getDialogPane().setContent(viewTuple.getView());
 
-        dialog.setResultConverter(
-                dialogButton -> {
-                    if (dialogButton == saveBtnType) {
-                        return viewModel.applyTo(existing);
-                    }
-                    return null;
-                });
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == saveBtnType) {
+                return viewModel.applyTo(existing);
+            }
+            return null;
+        });
 
         return dialog.showAndWait();
     }
@@ -86,13 +85,12 @@ public class DefaultEquipmentDialogService implements EquipmentDialogService {
         dialog.getDialogPane().getButtonTypes().addAll(saveBtn, ButtonType.CANCEL);
         dialog.getDialogPane().setContent(vt.getView());
 
-        dialog.setResultConverter(
-                b -> {
-                    if (b == saveBtn) {
-                        return viewModel.applyTo(existing);
-                    }
-                    return null;
-                });
+        dialog.setResultConverter(b -> {
+            if (b == saveBtn) {
+                return viewModel.applyTo(existing);
+            }
+            return null;
+        });
 
         return dialog.showAndWait();
     }
@@ -119,19 +117,18 @@ public class DefaultEquipmentDialogService implements EquipmentDialogService {
         grid.add(description, 1, 1);
 
         dialog.getDialogPane().setContent(grid);
-        dialog.setResultConverter(
-                b -> {
-                    if (b == saveBtn) {
-                        Hearthstone h =
-                                (existing != null)
-                                        ? existing
-                                        : new Hearthstone(name.getText(), description.getText());
-                        h.setName(name.getText());
-                        h.setDescription(description.getText());
-                        return h;
-                    }
-                    return null;
-                });
+        dialog.setResultConverter(b -> {
+            if (b == saveBtn) {
+                Hearthstone h =
+                        (existing != null)
+                                ? existing
+                                : new Hearthstone(name.getText(), description.getText());
+                h.setName(name.getText());
+                h.setDescription(description.getText());
+                return h;
+            }
+            return null;
+        });
         return dialog.showAndWait();
     }
 
@@ -171,21 +168,20 @@ public class DefaultEquipmentDialogService implements EquipmentDialogService {
         grid.add(attunement, 1, 3);
 
         dialog.getDialogPane().setContent(grid);
-        dialog.setResultConverter(
-                b -> {
-                    if (b == saveBtn) {
-                        OtherEquipment oe =
-                                (existing != null)
-                                        ? existing
-                                        : new OtherEquipment(name.getText(), description.getText());
-                        oe.setName(name.getText());
-                        oe.setDescription(description.getText());
-                        oe.setArtifact(isArtifact.isSelected());
-                        oe.setAttunement(attunement.getValue());
-                        return oe;
-                    }
-                    return null;
-                });
+        dialog.setResultConverter(b -> {
+            if (b == saveBtn) {
+                OtherEquipment oe =
+                        (existing != null)
+                                ? existing
+                                : new OtherEquipment(name.getText(), description.getText());
+                oe.setName(name.getText());
+                oe.setDescription(description.getText());
+                oe.setArtifact(isArtifact.isSelected());
+                oe.setAttunement(attunement.getValue());
+                return oe;
+            }
+            return null;
+        });
         return dialog.showAndWait();
     }
 }

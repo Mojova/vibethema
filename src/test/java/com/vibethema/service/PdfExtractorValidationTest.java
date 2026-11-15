@@ -7,8 +7,8 @@ import java.io.IOException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.junit.jupiter.api.Test;
 
 class PdfExtractorValidationTest {
@@ -47,7 +47,8 @@ class PdfExtractorValidationTest {
         for (int i = 0; i < count; i++) document.addPage(new PDPage());
     }
 
-    private static void addText(PDDocument document, int pageIndex, String text) throws IOException {
+    private static void addText(PDDocument document, int pageIndex, String text)
+            throws IOException {
         try (PDPageContentStream stream =
                 new PDPageContentStream(document, document.getPage(pageIndex))) {
             stream.beginText();

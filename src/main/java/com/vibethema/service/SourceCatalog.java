@@ -62,9 +62,7 @@ public class SourceCatalog {
     public List<SourceManifest> getSourcesFor(ExaltType exaltType) {
         if (exaltType == null) return List.of();
         String expected = exaltType.name().toUpperCase(Locale.ROOT);
-        return sources.stream()
-                .filter(source -> supports(source, expected))
-                .toList();
+        return sources.stream().filter(source -> supports(source, expected)).toList();
     }
 
     public Path getSourcePath(SourceManifest source) {

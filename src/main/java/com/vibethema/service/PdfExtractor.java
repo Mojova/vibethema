@@ -54,7 +54,8 @@ public class PdfExtractor {
                 String charmText = stripper.getText(document);
                 CoreCharmExtractor charmExtractor = new CoreCharmExtractor();
                 charmExtractor.setSourceId(sourceId);
-                if (context != null) charmExtractor.setOverrideOutputPath(context.sourceDirectory());
+                if (context != null)
+                    charmExtractor.setOverrideOutputPath(context.sourceDirectory());
                 charmExtractor.extractAndSave(charmText, "");
 
                 // 2. Sorcery (Pages 470 - 495)
@@ -64,7 +65,8 @@ public class PdfExtractor {
                 String spellText = stripper.getText(document);
                 CoreSpellExtractor spellExtractor = new CoreSpellExtractor();
                 spellExtractor.setSourceId(sourceId);
-                if (context != null) spellExtractor.setOverrideOutputPath(context.sourceDirectory());
+                if (context != null)
+                    spellExtractor.setOverrideOutputPath(context.sourceDirectory());
                 spellExtractor.extractAndSave(spellText, "");
 
                 // 3. Equipment Tags & Gear (Pages 585 - 610)
@@ -74,7 +76,8 @@ public class PdfExtractor {
                 String equipText = stripper.getText(document);
                 CoreEquipmentExtractor equipExtractor = new CoreEquipmentExtractor();
                 equipExtractor.setSourceId(sourceId);
-                if (context != null) equipExtractor.setOverrideOutputPath(context.sourceDirectory());
+                if (context != null)
+                    equipExtractor.setOverrideOutputPath(context.sourceDirectory());
                 equipExtractor.extractAndSaveTags(equipText);
 
                 // 4. Merits (Pages 157 - 168)
@@ -84,7 +87,8 @@ public class PdfExtractor {
                 String meritText = stripper.getText(document);
                 CoreMeritExtractor meritExtractor = new CoreMeritExtractor();
                 meritExtractor.setSourceId(sourceId);
-                if (context != null) meritExtractor.setOverrideOutputPath(context.sourceDirectory());
+                if (context != null)
+                    meritExtractor.setOverrideOutputPath(context.sourceDirectory());
                 meritExtractor.extractAndSave(meritText, "");
 
                 // 5. Keywords (Page range overlap with charms + martial arts section)
@@ -113,7 +117,8 @@ public class PdfExtractor {
                 String fullText = stripper.getText(document);
                 CoreCharmExtractor charmExtractor = new CoreCharmExtractor();
                 charmExtractor.setSourceId(sourceId);
-                if (context != null) charmExtractor.setOverrideOutputPath(context.sourceDirectory());
+                if (context != null)
+                    charmExtractor.setOverrideOutputPath(context.sourceDirectory());
                 charmExtractor.extractAndSave(fullText, ""); // Fallback to Core extractor for MoSE
             }
 
@@ -139,7 +144,9 @@ public class PdfExtractor {
             if (!text.contains(markers[i].toLowerCase(Locale.ROOT))) {
                 throw new IOException(
                         "This PDF does not appear to be the Exalted 3rd Edition Core book "
-                                + "(expected the " + markers[i] + " section). "
+                                + "(expected the "
+                                + markers[i]
+                                + " section). "
                                 + "Please select the complete Core PDF.");
             }
         }

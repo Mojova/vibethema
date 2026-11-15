@@ -48,15 +48,13 @@ public class EditCharmView extends GridPane implements JavaView<EditCharmViewMod
 
         // Ensure values are committed when typing and losing focus
         minAb.focusedProperty()
-                .addListener(
-                        (obs, oldV, newV) -> {
-                            if (!newV) minAb.increment(0);
-                        });
+                .addListener((obs, oldV, newV) -> {
+                    if (!newV) minAb.increment(0);
+                });
         minEss.focusedProperty()
-                .addListener(
-                        (obs, oldV, newV) -> {
-                            if (!newV) minEss.increment(0);
-                        });
+                .addListener((obs, oldV, newV) -> {
+                    if (!newV) minEss.increment(0);
+                });
 
         minAb.getValueFactory()
                 .valueProperty()
@@ -103,15 +101,14 @@ public class EditCharmView extends GridPane implements JavaView<EditCharmViewMod
         prereqList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         prereqList.setPrefHeight(120);
         prereqList.getStyleClass().add("charm-tree");
-        prereqList.setCellFactory(
-                lv ->
-                        new ListCell<>() {
-                            @Override
-                            protected void updateItem(Charm item, boolean empty) {
-                                super.updateItem(item, empty);
-                                setText(empty || item == null ? null : item.getName());
-                            }
-                        });
+        prereqList.setCellFactory(lv ->
+                new ListCell<>() {
+                    @Override
+                    protected void updateItem(Charm item, boolean empty) {
+                        super.updateItem(item, empty);
+                        setText(empty || item == null ? null : item.getName());
+                    }
+                });
 
         // Sync selection from ViewModel to View (Initial)
         for (Charm c : viewModel.getSelectedPrerequisites()) {

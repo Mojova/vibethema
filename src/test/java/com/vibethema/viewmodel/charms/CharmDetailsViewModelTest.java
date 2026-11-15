@@ -5,17 +5,17 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 import com.vibethema.model.*;
-import com.vibethema.model.mystic.PurchasedCharm;
 import com.vibethema.model.mystic.PrerequisiteRule;
+import com.vibethema.model.mystic.PurchasedCharm;
 import com.vibethema.model.mystic.SolarCharm;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.utils.notifications.NotificationObserver;
 import java.util.HashMap;
 import java.util.List;
-import javafx.collections.FXCollections;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -95,25 +95,37 @@ public class CharmDetailsViewModelTest {
                 .thenReturn(
                         FXCollections.observableArrayList(
                                 new PurchasedCharm("awakening-eye", "Awakening Eye", "Awareness"),
-                                new PurchasedCharm("keen-sight", "Keen Sight Technique", "Awareness"),
-                                new PurchasedCharm("awareness-exc", "Awareness Excellency", "Awareness")));
+                                new PurchasedCharm(
+                                        "keen-sight", "Keen Sight Technique", "Awareness"),
+                                new PurchasedCharm(
+                                        "awareness-exc", "Awareness Excellency", "Awareness")));
 
         viewModel.updateSidebar(eye);
 
         assertTrue(viewModel.detailReqsProperty().get().contains("Awakening Eye"));
         assertTrue(
-                viewModel.detailReqsProperty().get().contains("Other non-Excellency Awareness Charms: 1/3"),
+                viewModel
+                        .detailReqsProperty()
+                        .get()
+                        .contains("Other non-Excellency Awareness Charms: 1/3"),
                 viewModel.detailReqsProperty().get());
 
         when(data.getUnlockedCharms())
                 .thenReturn(
                         FXCollections.observableArrayList(
                                 new PurchasedCharm("awakening-eye", "Awakening Eye", "Awareness"),
-                                new PurchasedCharm("keen-sight", "Keen Sight Technique", "Awareness"),
-                                new PurchasedCharm("studied-ear", "Studied Ear Espial", "Awareness"),
-                                new PurchasedCharm("awareness-exc", "Awareness Excellency", "Awareness")));
+                                new PurchasedCharm(
+                                        "keen-sight", "Keen Sight Technique", "Awareness"),
+                                new PurchasedCharm(
+                                        "studied-ear", "Studied Ear Espial", "Awareness"),
+                                new PurchasedCharm(
+                                        "awareness-exc", "Awareness Excellency", "Awareness")));
         viewModel.updateSidebar(eye);
-        assertTrue(viewModel.detailReqsProperty().get().contains("Other non-Excellency Awareness Charms: 2/3"));
+        assertTrue(
+                viewModel
+                        .detailReqsProperty()
+                        .get()
+                        .contains("Other non-Excellency Awareness Charms: 2/3"));
     }
 
     @Test

@@ -9,8 +9,8 @@ import com.vibethema.model.mystic.Charm;
 import com.vibethema.model.mystic.Spell;
 import com.vibethema.model.traits.MeritReference;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.function.Function;
 
 /** Unified read facade for official and custom game definitions. */
@@ -21,7 +21,11 @@ public class CatalogService {
     private final EquipmentDataService equipmentDataService;
 
     public CatalogService() {
-        this(new SourceCatalog(), new CharmDataService(), new MeritService(), new EquipmentDataService());
+        this(
+                new SourceCatalog(),
+                new CharmDataService(),
+                new MeritService(),
+                new EquipmentDataService());
     }
 
     CatalogService(
@@ -68,7 +72,8 @@ public class CatalogService {
     }
 
     public List<OtherEquipment> getOtherEquipment(ExaltType exaltType) {
-        return mergeById(equipmentDataService.getGlobalOtherEquipment(exaltType), OtherEquipment::getId);
+        return mergeById(
+                equipmentDataService.getGlobalOtherEquipment(exaltType), OtherEquipment::getId);
     }
 
     public Path getSourcePath(SourceManifest source) {

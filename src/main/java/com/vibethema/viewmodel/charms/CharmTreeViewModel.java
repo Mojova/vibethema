@@ -50,10 +50,9 @@ public class CharmTreeViewModel implements ViewModel {
     }
 
     private void setupListeners() {
-        selectedCharm.addListener(
-                (obs, oldV, newV) -> {
-                    Messenger.publish("charm_selected", new Object[] {newV});
-                });
+        selectedCharm.addListener((obs, oldV, newV) -> {
+            Messenger.publish("charm_selected", new Object[] {newV});
+        });
         showEligibleOnly.addListener((obs, oldV, newV) -> refresh());
         searchText.addListener((obs, oldV, newV) -> searchDebounce.playFromStart());
     }
@@ -180,22 +179,21 @@ public class CharmTreeViewModel implements ViewModel {
             List<Charm> row = levels.getOrDefault(d, new ArrayList<>());
             if (d > 0) {
                 row.sort(
-                        Comparator.comparingDouble(
-                                c -> {
-                                    double sum = 0;
-                                    int count = 0;
-                                    if (c.getPrerequisites() != null) {
-                                        Set<String> prerequisiteIds = new HashSet<>();
-                                        c.getPrerequisites().collectCharmIds(prerequisiteIds);
-                                        for (String rid : prerequisiteIds) {
-                                            if (logicalX.containsKey(rid)) {
-                                                sum += logicalX.get(rid);
-                                                count++;
-                                            }
-                                        }
+                        Comparator.comparingDouble(c -> {
+                            double sum = 0;
+                            int count = 0;
+                            if (c.getPrerequisites() != null) {
+                                Set<String> prerequisiteIds = new HashSet<>();
+                                c.getPrerequisites().collectCharmIds(prerequisiteIds);
+                                for (String rid : prerequisiteIds) {
+                                    if (logicalX.containsKey(rid)) {
+                                        sum += logicalX.get(rid);
+                                        count++;
                                     }
-                                    return count > 0 ? sum / count : (row.size() / 2.0);
-                                }));
+                                }
+                            }
+                            return count > 0 ? sum / count : (row.size() / 2.0);
+                        }));
             }
             for (int i = 0; i < row.size(); i++) {
                 logicalX.put(row.get(i).getId(), (double) i);

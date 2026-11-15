@@ -35,7 +35,8 @@ class SystemDataServiceTest {
     @Test
     void recognizesCoreImportInOfficialSourceLayout() throws Exception {
         Path keywords =
-                PathService.getOfficialSourcePath("exalted-3e-core").resolve("charms/keywords.json");
+                PathService.getOfficialSourcePath("exalted-3e-core")
+                        .resolve("charms/keywords.json");
         Files.createDirectories(keywords.getParent());
         Files.writeString(keywords, "[]", StandardCharsets.UTF_8);
 

@@ -23,7 +23,8 @@ public class ThemeManager {
 
         // Apply Exalt Type Theme
         if (exaltType != null) {
-            node.getStyleClass().add(BASE_PREFIX + exaltType.name().toLowerCase().replace('_', '-'));
+            node.getStyleClass()
+                    .add(BASE_PREFIX + exaltType.name().toLowerCase().replace('_', '-'));
         }
     }
 }

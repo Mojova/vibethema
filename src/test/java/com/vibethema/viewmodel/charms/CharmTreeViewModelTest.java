@@ -45,35 +45,33 @@ public class CharmTreeViewModelTest {
         // Mock return for Melee charms
         when(dataService.loadCharmsForAbility("Melee")).thenReturn(new java.util.ArrayList<>());
 
-        Platform.runLater(
-                () -> {
-                    // 1. Initial refresh should have happened in initialize()
-                    verify(dataService, atLeastOnce()).loadCharmsForAbility("Melee");
-                    reset(dataService); // Clear counts
+        Platform.runLater(() -> {
+            // 1. Initial refresh should have happened in initialize()
+            verify(dataService, atLeastOnce()).loadCharmsForAbility("Melee");
+            reset(dataService); // Clear counts
 
-                    // 2. Change search text
-                    viewModel.searchTextProperty().set("Fire");
+            // 2. Change search text
+            viewModel.searchTextProperty().set("Fire");
 
-                    // 3. Verify it hasn't refreshed immediately
-                    verify(dataService, never()).loadCharmsForAbility(anyString());
+            // 3. Verify it hasn't refreshed immediately
+            verify(dataService, never()).loadCharmsForAbility(anyString());
 
-                    // 4. Wait for debounce (250ms + margin)
-                    new Thread(
-                                    () -> {
-                                        try {
-                                            Thread.sleep(400); // 250ms debounce
-                                            Platform.runLater(
-                                                    () -> {
-                                                        verify(dataService, atLeastOnce())
-                                                                .loadCharmsForAbility("Melee");
-                                                        latch.countDown();
-                                                    });
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
-                                        }
-                                    })
-                            .start();
-                });
+            // 4. Wait for debounce (250ms + margin)
+            new Thread(
+                            () -> {
+                                try {
+                                    Thread.sleep(400); // 250ms debounce
+                                    Platform.runLater(() -> {
+                                        verify(dataService, atLeastOnce())
+                                                .loadCharmsForAbility("Melee");
+                                        latch.countDown();
+                                    });
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            })
+                    .start();
+        });
 
         assertTrue(latch.await(5, TimeUnit.SECONDS), "Debounce refresh did not happen in time");
     }

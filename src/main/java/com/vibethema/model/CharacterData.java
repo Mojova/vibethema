@@ -42,8 +42,7 @@ import javafx.collections.ObservableMap;
 public class CharacterData {
     private final StringProperty name = new SimpleStringProperty("");
     private final ObjectProperty<Caste> caste = new SimpleObjectProperty<>(Caste.NONE);
-    private final ObjectProperty<ExaltType> exaltType =
-            new SimpleObjectProperty<>(ExaltType.SOLAR);
+    private final ObjectProperty<ExaltType> exaltType = new SimpleObjectProperty<>(ExaltType.SOLAR);
     private final ObjectProperty<CharacterMode> mode =
             new SimpleObjectProperty<>(CharacterMode.CREATION);
     private final StringProperty supernalAbility = new SimpleStringProperty("");
@@ -75,11 +74,10 @@ public class CharacterData {
         name.addListener((obs, oldV, newV) -> markDirty());
         caste.addListener((obs, oldV, newV) -> markDirty());
         supernalAbility.addListener((obs, oldV, newV) -> markDirty());
-        essence.addListener(
-                (obs, oldV, newV) -> {
-                    updateDerivedStats();
-                    markDirty();
-                });
+        essence.addListener((obs, oldV, newV) -> {
+            updateDerivedStats();
+            markDirty();
+        });
         willpower.addListener((obs, oldV, newV) -> markDirty());
         limitTrigger.addListener((obs, oldV, newV) -> markDirty());
         limit.addListener((obs, oldV, newV) -> markDirty());
@@ -565,15 +563,13 @@ public class CharacterData {
     public boolean isArtifactPossessed(String artifactId) {
         if (artifactId == null || artifactId.isEmpty()) return false;
         if (getWeapons().stream()
-                .anyMatch(
-                        w ->
-                                w.getId().equals(artifactId)
-                                        && w.getType() == Weapon.WeaponType.ARTIFACT)) return true;
+                .anyMatch(w ->
+                        w.getId().equals(artifactId) && w.getType() == Weapon.WeaponType.ARTIFACT))
+            return true;
         if (getArmors().stream()
-                .anyMatch(
-                        a ->
-                                a.getId().equals(artifactId)
-                                        && a.getType() == Armor.ArmorType.ARTIFACT)) return true;
+                .anyMatch(a ->
+                        a.getId().equals(artifactId) && a.getType() == Armor.ArmorType.ARTIFACT))
+            return true;
         return getOtherEquipment().stream()
                 .anyMatch(oe -> oe.getId().equals(artifactId) && oe.isArtifact());
     }
@@ -625,11 +621,9 @@ public class CharacterData {
         state.attributePriorities = new HashMap<>();
         traitModel
                 .getAttributePriorities()
-                .forEach(
-                        (k, v) -> {
-                            if (v.get() != null)
-                                state.attributePriorities.put(k.name(), v.get().name());
-                        });
+                .forEach((k, v) -> {
+                    if (v.get() != null) state.attributePriorities.put(k.name(), v.get().name());
+                });
 
         state.abilities = new HashMap<>();
         traitModel.getAbilities().forEach((k, v) -> state.abilities.put(k.name(), v.get()));
@@ -637,171 +631,155 @@ public class CharacterData {
         state.casteAbilities = new ArrayList<>();
         traitModel
                 .getCasteAbilities()
-                .forEach(
-                        (k, v) -> {
-                            if (v.get()) state.casteAbilities.add(k.name());
-                        });
+                .forEach((k, v) -> {
+                    if (v.get()) state.casteAbilities.add(k.name());
+                });
 
         state.favoredAbilities = new ArrayList<>();
         traitModel
                 .getFavoredAbilities()
-                .forEach(
-                        (k, v) -> {
-                            if (v.get()) state.favoredAbilities.add(k.name());
-                        });
+                .forEach((k, v) -> {
+                    if (v.get()) state.favoredAbilities.add(k.name());
+                });
 
         state.unlockedCharms = new ArrayList<>(getUnlockedCharms());
 
         getMerits()
-                .forEach(
-                        m -> {
-                            CharacterSaveState.MeritData md = new CharacterSaveState.MeritData();
-                            md.id = m.getId();
-                            md.sourceId = m.getSourceId();
-                            md.definitionId = m.getDefinitionId();
-                            md.name = m.getName();
-                            md.rating = m.getRating();
-                            md.description = m.getDescription();
-                            state.merits.add(md);
-                        });
+                .forEach(m -> {
+                    CharacterSaveState.MeritData md = new CharacterSaveState.MeritData();
+                    md.id = m.getId();
+                    md.sourceId = m.getSourceId();
+                    md.definitionId = m.getDefinitionId();
+                    md.name = m.getName();
+                    md.rating = m.getRating();
+                    md.description = m.getDescription();
+                    state.merits.add(md);
+                });
 
         state.specialties = new ArrayList<>();
         getSpecialties()
-                .forEach(
-                        s -> {
-                            CharacterSaveState.SpecialtyData sd =
-                                    new CharacterSaveState.SpecialtyData();
-                            sd.id = s.getId();
-                            sd.name = s.getName();
-                            sd.ability = s.getAbility();
-                            state.specialties.add(sd);
-                        });
+                .forEach(s -> {
+                    CharacterSaveState.SpecialtyData sd = new CharacterSaveState.SpecialtyData();
+                    sd.id = s.getId();
+                    sd.name = s.getName();
+                    sd.ability = s.getAbility();
+                    state.specialties.add(sd);
+                });
 
         state.crafts = new ArrayList<>();
         getCrafts()
-                .forEach(
-                        ca -> {
-                            CharacterSaveState.CraftData cd = new CharacterSaveState.CraftData();
-                            cd.id = ca.getId().toString();
-                            cd.expertise = ca.getExpertise();
-                            cd.rating = ca.getRating();
-                            cd.isCaste = ca.isCaste();
-                            cd.isFavored = ca.isFavored();
-                            state.crafts.add(cd);
-                        });
+                .forEach(ca -> {
+                    CharacterSaveState.CraftData cd = new CharacterSaveState.CraftData();
+                    cd.id = ca.getId().toString();
+                    cd.expertise = ca.getExpertise();
+                    cd.rating = ca.getRating();
+                    cd.isCaste = ca.isCaste();
+                    cd.isFavored = ca.isFavored();
+                    state.crafts.add(cd);
+                });
 
         state.martialArts = new ArrayList<>();
         getMartialArtsStyles()
-                .forEach(
-                        mas -> {
-                            CharacterSaveState.MartialArtsData md =
-                                    new CharacterSaveState.MartialArtsData();
-                            md.id = mas.getId();
-                            md.styleName = mas.getStyleName();
-                            md.rating = mas.getRating();
-                            md.isCaste = mas.isCaste();
-                            md.isFavored = mas.isFavored();
-                            state.martialArts.add(md);
-                        });
+                .forEach(mas -> {
+                    CharacterSaveState.MartialArtsData md =
+                            new CharacterSaveState.MartialArtsData();
+                    md.id = mas.getId();
+                    md.styleName = mas.getStyleName();
+                    md.rating = mas.getRating();
+                    md.isCaste = mas.isCaste();
+                    md.isFavored = mas.isFavored();
+                    state.martialArts.add(md);
+                });
 
         state.weapons = new ArrayList<>();
         getWeapons()
-                .forEach(
-                        w -> {
-                            CharacterSaveState.WeaponLink wl = new CharacterSaveState.WeaponLink();
-                            wl.id = w.getId();
-                            wl.sourceId = w.getSourceId();
-                            wl.instanceId = w.getInstanceId();
-                            wl.specialtyId = w.getSpecialtyId();
-                            wl.equipped = w.isEquipped();
-                            state.weapons.add(wl);
-                        });
+                .forEach(w -> {
+                    CharacterSaveState.WeaponLink wl = new CharacterSaveState.WeaponLink();
+                    wl.id = w.getId();
+                    wl.sourceId = w.getSourceId();
+                    wl.instanceId = w.getInstanceId();
+                    wl.specialtyId = w.getSpecialtyId();
+                    wl.equipped = w.isEquipped();
+                    state.weapons.add(wl);
+                });
 
         state.armors = new ArrayList<>();
         getArmors()
-                .forEach(
-                        a -> {
-                            CharacterSaveState.ArmorLink al = new CharacterSaveState.ArmorLink();
-                            al.id = a.getId();
-                            al.sourceId = a.getSourceId();
-                            al.instanceId = a.getInstanceId();
-                            al.equipped = a.isEquipped();
-                            state.armors.add(al);
-                        });
+                .forEach(a -> {
+                    CharacterSaveState.ArmorLink al = new CharacterSaveState.ArmorLink();
+                    al.id = a.getId();
+                    al.sourceId = a.getSourceId();
+                    al.instanceId = a.getInstanceId();
+                    al.equipped = a.isEquipped();
+                    state.armors.add(al);
+                });
 
         state.hearthstones = new ArrayList<>();
         getHearthstones()
-                .forEach(
-                        h -> {
-                            CharacterSaveState.HearthstoneLink hl =
-                                    new CharacterSaveState.HearthstoneLink();
-                            hl.id = h.getId();
-                            hl.sourceId = h.getSourceId();
-                            hl.instanceId = h.getInstanceId();
-                            hl.equipped = h.isEquipped();
-                            state.hearthstones.add(hl);
-                        });
+                .forEach(h -> {
+                    CharacterSaveState.HearthstoneLink hl =
+                            new CharacterSaveState.HearthstoneLink();
+                    hl.id = h.getId();
+                    hl.sourceId = h.getSourceId();
+                    hl.instanceId = h.getInstanceId();
+                    hl.equipped = h.isEquipped();
+                    state.hearthstones.add(hl);
+                });
 
         state.otherEquipment = new ArrayList<>();
         getOtherEquipment()
-                .forEach(
-                        o -> {
-                            CharacterSaveState.OtherEquipmentLink ol =
-                                    new CharacterSaveState.OtherEquipmentLink();
-                            ol.id = o.getId();
-                            ol.sourceId = o.getSourceId();
-                            ol.instanceId = o.getInstanceId();
-                            ol.equipped = o.isEquipped();
-                            state.otherEquipment.add(ol);
-                        });
+                .forEach(o -> {
+                    CharacterSaveState.OtherEquipmentLink ol =
+                            new CharacterSaveState.OtherEquipmentLink();
+                    ol.id = o.getId();
+                    ol.sourceId = o.getSourceId();
+                    ol.instanceId = o.getInstanceId();
+                    ol.equipped = o.isEquipped();
+                    state.otherEquipment.add(ol);
+                });
 
         state.intimacies = new ArrayList<>();
         getIntimacies()
-                .forEach(
-                        i -> {
-                            CharacterSaveState.IntimacyData idata =
-                                    new CharacterSaveState.IntimacyData();
-                            idata.id = i.getId();
-                            idata.name = i.getName();
-                            idata.type = i.getType();
-                            idata.intensity = i.getIntensity();
-                            idata.description = i.getDescription();
-                            state.intimacies.add(idata);
-                        });
+                .forEach(i -> {
+                    CharacterSaveState.IntimacyData idata = new CharacterSaveState.IntimacyData();
+                    idata.id = i.getId();
+                    idata.name = i.getName();
+                    idata.type = i.getType();
+                    idata.intensity = i.getIntensity();
+                    idata.description = i.getDescription();
+                    state.intimacies.add(idata);
+                });
 
         state.shapingRituals = new ArrayList<>();
         getShapingRituals()
-                .forEach(
-                        r ->
-                                state.shapingRituals.add(
-                                        new CharacterSaveState.ShapingRitualData(
-                                                r.getId(), r.getName(), r.getDescription())));
+                .forEach(r ->
+                        state.shapingRituals.add(
+                                new CharacterSaveState.ShapingRitualData(
+                                        r.getId(), r.getName(), r.getDescription())));
 
         state.spells = new ArrayList<>();
         getSpells()
-                .forEach(
-                        s ->
-                            state.spells.add(
-                                        new CharacterSaveState.SpellData(
-                                                s.getId(),
-                                                s.getName(),
-                                                s.getCircle(),
-                                                s.getCost(),
-                                                s.getKeywords(),
-                                                s.getDuration(),
-                                                s.getDescription(),
-                                                s.getSourceId())));
+                .forEach(s ->
+                        state.spells.add(
+                                new CharacterSaveState.SpellData(
+                                        s.getId(),
+                                        s.getName(),
+                                        s.getCircle(),
+                                        s.getCost(),
+                                        s.getKeywords(),
+                                        s.getDuration(),
+                                        s.getDescription(),
+                                        s.getSourceId())));
 
         state.xpAwards = new ArrayList<>();
         getXpAwards()
-                .forEach(
-                        x ->
-                                state.xpAwards.add(
-                                        new CharacterSaveState.XpAwardData(
-                                                x.getId(),
-                                                x.getDescription(),
-                                                x.getAmount(),
-                                                x.isSolar())));
+                .forEach(x ->
+                        state.xpAwards.add(
+                                new CharacterSaveState.XpAwardData(
+                                        x.getId(),
+                                        x.getDescription(),
+                                        x.getAmount(),
+                                        x.isSolar())));
 
         state.creationSnapshot = getCreationSnapshot();
         return state;
@@ -834,14 +812,10 @@ public class CharacterData {
             if (state.attributePriorities != null) {
                 traitModel
                         .getAttributePriorities()
-                        .forEach(
-                                (cat, prop) -> {
-                                    String pName = state.attributePriorities.get(cat.name());
-                                    prop.set(
-                                            pName != null
-                                                    ? AttributePriority.valueOf(pName)
-                                                    : null);
-                                });
+                        .forEach((cat, prop) -> {
+                            String pName = state.attributePriorities.get(cat.name());
+                            prop.set(pName != null ? AttributePriority.valueOf(pName) : null);
+                        });
             }
 
             if (state.abilities != null) {
@@ -874,18 +848,17 @@ public class CharacterData {
 
             getMerits().clear();
             if (state.merits != null && !state.merits.isEmpty()) {
-                state.merits.forEach(
-                        md -> {
-                            Merit merit =
-                                    new Merit(
-                                            md.id,
-                                            md.definitionId,
-                                            md.name,
-                                            md.rating,
-                                            md.description != null ? md.description : "");
-                            merit.setSourceId(md.sourceId);
-                            getMerits().add(merit);
-                        });
+                state.merits.forEach(md -> {
+                    Merit merit =
+                            new Merit(
+                                    md.id,
+                                    md.definitionId,
+                                    md.name,
+                                    md.rating,
+                                    md.description != null ? md.description : "");
+                    merit.setSourceId(md.sourceId);
+                    getMerits().add(merit);
+                });
             }
             if (getMerits().isEmpty())
                 getMerits().add(new Merit(java.util.UUID.randomUUID().toString(), "", 1));
@@ -898,136 +871,118 @@ public class CharacterData {
 
             getCrafts().clear();
             if (state.crafts != null)
-                state.crafts.forEach(
-                        cd -> {
-                            java.util.UUID craftId =
-                                    (cd.id != null)
-                                            ? java.util.UUID.fromString(cd.id)
-                                            : java.util.UUID.randomUUID();
-                            CraftAbility ca = new CraftAbility(craftId, cd.expertise, cd.rating);
-                            getCrafts().add(ca);
-                        });
+                state.crafts.forEach(cd -> {
+                    java.util.UUID craftId =
+                            (cd.id != null)
+                                    ? java.util.UUID.fromString(cd.id)
+                                    : java.util.UUID.randomUUID();
+                    CraftAbility ca = new CraftAbility(craftId, cd.expertise, cd.rating);
+                    getCrafts().add(ca);
+                });
 
             getMartialArtsStyles().clear();
             if (state.martialArts != null)
-                state.martialArts.forEach(
-                        md -> {
-                            MartialArtsStyle mas =
-                                    new MartialArtsStyle(md.id, md.styleName, md.rating);
-                            mas.setCaste(md.isCaste);
-                            mas.setFavored(md.isFavored);
-                            getMartialArtsStyles().add(mas);
-                        });
+                state.martialArts.forEach(md -> {
+                    MartialArtsStyle mas = new MartialArtsStyle(md.id, md.styleName, md.rating);
+                    mas.setCaste(md.isCaste);
+                    mas.setFavored(md.isFavored);
+                    getMartialArtsStyles().add(mas);
+                });
 
             getWeapons().clear();
             if (state.weapons != null)
-                state.weapons.forEach(
-                        wl -> {
-                            Weapon w = equipmentService.loadWeapon(wl.id);
-                            if (w != null) {
-                                w.setInstanceId(
-                                        wl.instanceId != null
-                                                ? wl.instanceId
-                                                : java.util.UUID.randomUUID().toString());
-                                w.setSourceId(wl.sourceId);
-                                w.setSpecialtyId(wl.specialtyId);
-                                w.setEquipped(wl.equipped);
-                                getWeapons().add(w);
-                            }
-                        });
+                state.weapons.forEach(wl -> {
+                    Weapon w = equipmentService.loadWeapon(wl.id);
+                    if (w != null) {
+                        w.setInstanceId(
+                                wl.instanceId != null
+                                        ? wl.instanceId
+                                        : java.util.UUID.randomUUID().toString());
+                        w.setSourceId(wl.sourceId);
+                        w.setSpecialtyId(wl.specialtyId);
+                        w.setEquipped(wl.equipped);
+                        getWeapons().add(w);
+                    }
+                });
 
             getArmors().clear();
             if (state.armors != null)
-                state.armors.forEach(
-                        al -> {
-                            Armor a = equipmentService.loadArmor(al.id);
-                            if (a != null) {
-                                a.setInstanceId(
-                                        al.instanceId != null
-                                                ? al.instanceId
-                                                : java.util.UUID.randomUUID().toString());
-                                a.setSourceId(al.sourceId);
-                                a.setEquipped(al.equipped);
-                                getArmors().add(a);
-                            }
-                        });
+                state.armors.forEach(al -> {
+                    Armor a = equipmentService.loadArmor(al.id);
+                    if (a != null) {
+                        a.setInstanceId(
+                                al.instanceId != null
+                                        ? al.instanceId
+                                        : java.util.UUID.randomUUID().toString());
+                        a.setSourceId(al.sourceId);
+                        a.setEquipped(al.equipped);
+                        getArmors().add(a);
+                    }
+                });
 
             getHearthstones().clear();
             if (state.hearthstones != null)
-                state.hearthstones.forEach(
-                        hl -> {
-                            Hearthstone h = equipmentService.loadHearthstone(hl.id);
-                            if (h != null) {
-                                h.setInstanceId(
-                                        hl.instanceId != null
-                                                ? hl.instanceId
-                                                : java.util.UUID.randomUUID().toString());
-                                h.setSourceId(hl.sourceId);
-                                h.setEquipped(hl.equipped);
-                                getHearthstones().add(h);
-                            }
-                        });
+                state.hearthstones.forEach(hl -> {
+                    Hearthstone h = equipmentService.loadHearthstone(hl.id);
+                    if (h != null) {
+                        h.setInstanceId(
+                                hl.instanceId != null
+                                        ? hl.instanceId
+                                        : java.util.UUID.randomUUID().toString());
+                        h.setSourceId(hl.sourceId);
+                        h.setEquipped(hl.equipped);
+                        getHearthstones().add(h);
+                    }
+                });
 
             getOtherEquipment().clear();
             if (state.otherEquipment != null)
-                state.otherEquipment.forEach(
-                        ol -> {
-                            OtherEquipment oe = equipmentService.loadOtherEquipment(ol.id);
-                            if (oe != null) {
-                                oe.setInstanceId(
-                                        ol.instanceId != null
-                                                ? ol.instanceId
-                                                : java.util.UUID.randomUUID().toString());
-                                oe.setSourceId(ol.sourceId);
-                                oe.setEquipped(ol.equipped);
-                                getOtherEquipment().add(oe);
-                            }
-                        });
+                state.otherEquipment.forEach(ol -> {
+                    OtherEquipment oe = equipmentService.loadOtherEquipment(ol.id);
+                    if (oe != null) {
+                        oe.setInstanceId(
+                                ol.instanceId != null
+                                        ? ol.instanceId
+                                        : java.util.UUID.randomUUID().toString());
+                        oe.setSourceId(ol.sourceId);
+                        oe.setEquipped(ol.equipped);
+                        getOtherEquipment().add(oe);
+                    }
+                });
 
             getIntimacies().clear();
             if (state.intimacies != null)
-                state.intimacies.forEach(
-                        idata -> {
-                            Intimacy i =
-                                    new Intimacy(idata.id, idata.name, idata.type, idata.intensity);
-                            i.setDescription(idata.description);
-                            getIntimacies().add(i);
-                        });
+                state.intimacies.forEach(idata -> {
+                    Intimacy i = new Intimacy(idata.id, idata.name, idata.type, idata.intensity);
+                    i.setDescription(idata.description);
+                    getIntimacies().add(i);
+                });
 
             getShapingRituals().clear();
             if (state.shapingRituals != null)
-                state.shapingRituals.forEach(
-                        rd ->
-                                getShapingRituals()
-                                        .add(new ShapingRitual(rd.id, rd.name, rd.description)));
+                state.shapingRituals.forEach(rd ->
+                        getShapingRituals().add(new ShapingRitual(rd.id, rd.name, rd.description)));
 
             getSpells().clear();
             if (state.spells != null)
-                state.spells.forEach(
-                        sd ->
-                                getSpells()
-                                        .add(
-                                                new Spell(
-                                                        sd.id,
-                                                        sd.name,
-                                                        sd.circle,
-                                                        sd.cost,
-                                                        sd.keywords,
-                                                        sd.duration,
-                                                        sd.description,
-                                                        sd.sourceId)));
+                state.spells.forEach(sd ->
+                        getSpells()
+                                .add(
+                                        new Spell(
+                                                sd.id,
+                                                sd.name,
+                                                sd.circle,
+                                                sd.cost,
+                                                sd.keywords,
+                                                sd.duration,
+                                                sd.description,
+                                                sd.sourceId)));
 
             getXpAwards().clear();
             if (state.xpAwards != null)
-                state.xpAwards.forEach(
-                        xd ->
-                                getXpAwards()
-                                        .add(
-                                                new XpAward(
-                                                        xd.id,
-                                                        xd.description,
-                                                        xd.amount,
-                                                        xd.isSolar)));
+                state.xpAwards.forEach(xd ->
+                        getXpAwards()
+                                .add(new XpAward(xd.id, xd.description, xd.amount, xd.isSolar)));
 
             setCreationSnapshot(state.creationSnapshot);
             traitModel.updateValidSupernalAbilities();

@@ -52,52 +52,49 @@ public class DotSelector extends HBox {
             dot.getStyleClass().add("dot");
             final int dotIndex = i + 1;
 
-            dot.setOnMouseClicked(
-                    e -> {
-                        int currentMin = minDotsProperty.get();
-                        int oldVal = valueProperty.get();
-                        int newVal = -1;
-                        if (oldVal == dotIndex && dotIndex > currentMin) {
-                            newVal = dotIndex - 1;
-                        } else if (dotIndex >= currentMin) {
-                            newVal = dotIndex;
-                        }
+            dot.setOnMouseClicked(e -> {
+                int currentMin = minDotsProperty.get();
+                int oldVal = valueProperty.get();
+                int newVal = -1;
+                if (oldVal == dotIndex && dotIndex > currentMin) {
+                    newVal = dotIndex - 1;
+                } else if (dotIndex >= currentMin) {
+                    newVal = dotIndex;
+                }
 
-                        if (newVal != -1 && newVal != oldVal) {
-                            triggerCheckpoint();
-                            valueProperty.set(newVal);
-                        }
-                    });
+                if (newVal != -1 && newVal != oldVal) {
+                    triggerCheckpoint();
+                    valueProperty.set(newVal);
+                }
+            });
 
             dots[i] = dot;
             getChildren().add(dot);
         }
 
         // Keyboard navigation
-        setOnKeyPressed(
-                e -> {
-                    if (e.getCode() == KeyCode.RIGHT || e.getCode() == KeyCode.UP) {
-                        if (valueProperty.get() < maxDots) {
-                            triggerCheckpoint();
-                            valueProperty.set(valueProperty.get() + 1);
-                        }
-                        e.consume();
-                    } else if (e.getCode() == KeyCode.LEFT || e.getCode() == KeyCode.DOWN) {
-                        if (valueProperty.get() > minDotsProperty.get()) {
-                            triggerCheckpoint();
-                            valueProperty.set(valueProperty.get() - 1);
-                        }
-                        e.consume();
-                    }
-                });
+        setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.RIGHT || e.getCode() == KeyCode.UP) {
+                if (valueProperty.get() < maxDots) {
+                    triggerCheckpoint();
+                    valueProperty.set(valueProperty.get() + 1);
+                }
+                e.consume();
+            } else if (e.getCode() == KeyCode.LEFT || e.getCode() == KeyCode.DOWN) {
+                if (valueProperty.get() > minDotsProperty.get()) {
+                    triggerCheckpoint();
+                    valueProperty.set(valueProperty.get() - 1);
+                }
+                e.consume();
+            }
+        });
 
-        minDotsProperty.addListener(
-                (obs, oldVal, newVal) -> {
-                    if (valueProperty.get() < newVal.intValue()) {
-                        valueProperty.set(newVal.intValue());
-                    }
-                    updateDots();
-                });
+        minDotsProperty.addListener((obs, oldVal, newVal) -> {
+            if (valueProperty.get() < newVal.intValue()) {
+                valueProperty.set(newVal.intValue());
+            }
+            updateDots();
+        });
 
         accessibleTextProperty()
                 .bind(
@@ -105,11 +102,10 @@ public class DotSelector extends HBox {
                                 () -> (description.get() != null ? description.get() : "Dots"),
                                 description));
 
-        valueProperty.addListener(
-                (obs, oldVal, newVal) -> {
-                    updateDots();
-                    notifyAccessibleAttributeChanged(AccessibleAttribute.VALUE);
-                });
+        valueProperty.addListener((obs, oldVal, newVal) -> {
+            updateDots();
+            notifyAccessibleAttributeChanged(AccessibleAttribute.VALUE);
+        });
 
         updateDots();
     }

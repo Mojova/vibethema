@@ -9,11 +9,10 @@ import javafx.collections.ObservableList;
 
 public class ProgressionModel {
     private final ObservableList<XpAward> xpAwards =
-            FXCollections.observableArrayList(
-                    x ->
-                            new javafx.beans.Observable[] {
-                                x.descriptionProperty(), x.amountProperty(), x.isSolarProperty()
-                            });
+            FXCollections.observableArrayList(x ->
+                    new javafx.beans.Observable[] {
+                        x.descriptionProperty(), x.amountProperty(), x.isSolarProperty()
+                    });
 
     private ObjectProperty<CharacterSaveState> creationSnapshot = new SimpleObjectProperty<>(null);
     private final Consumer<Void> dirtyListener;

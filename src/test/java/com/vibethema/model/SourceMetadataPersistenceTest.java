@@ -17,8 +17,7 @@ class SourceMetadataPersistenceTest {
         data.getMerits().add(merit);
 
         Spell spell =
-                new Spell(
-                        "spell-id", "Fire", "TERRESTRIAL", "5m", List.of(), "Instant", "text");
+                new Spell("spell-id", "Fire", "TERRESTRIAL", "5m", List.of(), "Instant", "text");
         spell.setSourceId("exalted-3e-core");
         data.getSpells().add(spell);
 

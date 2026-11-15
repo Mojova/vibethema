@@ -69,27 +69,23 @@ public class Main extends Application {
                     }
                 };
 
-        loadTask.setOnSucceeded(
-                e -> {
-                    Scene mainScene = loadTask.getValue();
-                    mainStage.setTitle("Vibethema");
-                    mainStage
-                            .getIcons()
-                            .add(
-                                    new javafx.scene.image.Image(
-                                            getClass().getResourceAsStream("/icon.png")));
-                    mainStage.setScene(mainScene);
-                    mainStage.setOnCloseRequest(
-                            ev -> {
-                                if (mainScene.getRoot() instanceof MainView view) {
-                                    if (!view.confirmDiscardChanges()) ev.consume();
-                                }
-                            });
+        loadTask.setOnSucceeded(e -> {
+            Scene mainScene = loadTask.getValue();
+            mainStage.setTitle("Vibethema");
+            mainStage
+                    .getIcons()
+                    .add(new javafx.scene.image.Image(getClass().getResourceAsStream("/icon.png")));
+            mainStage.setScene(mainScene);
+            mainStage.setOnCloseRequest(ev -> {
+                if (mainScene.getRoot() instanceof MainView view) {
+                    if (!view.confirmDiscardChanges()) ev.consume();
+                }
+            });
 
-                    // Instant transition
-                    splashStage.close();
-                    mainStage.show();
-                });
+            // Instant transition
+            splashStage.close();
+            mainStage.show();
+        });
 
         new Thread(loadTask).start();
     }
@@ -121,14 +117,13 @@ public class Main extends Application {
             stage.getIcons()
                     .add(new javafx.scene.image.Image(getClass().getResourceAsStream("/icon.png")));
             stage.setScene(scene);
-            stage.setOnCloseRequest(
-                    e -> {
-                        if (view.confirmDiscardChanges()) {
-                            view.cleanup();
-                        } else {
-                            e.consume();
-                        }
-                    });
+            stage.setOnCloseRequest(e -> {
+                if (view.confirmDiscardChanges()) {
+                    view.cleanup();
+                } else {
+                    e.consume();
+                }
+            });
             stage.show();
         } catch (Exception e) {
             logger.error("Failed to load character file: {}", file.getName(), e);

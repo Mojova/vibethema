@@ -13,15 +13,14 @@ import java.util.stream.Stream;
 
 /**
  * CLI utility to run the PDF extraction process and inspect the results. Usage: mvn compile
- * exec:java -Dexec.mainClass="com.vibethema.util.PdfImportTool" -Dexec.args="<pdf-path>
- * <source-id> <output-root>"
+ * exec:java -Dexec.mainClass="com.vibethema.util.PdfImportTool" -Dexec.args="<pdf-path> <source-id>
+ * <output-root>"
  */
 public class PdfImportTool {
 
     public static void main(String[] args) {
         if (args.length < 1 || args.length == 2) {
-            System.err.println(
-                    "Usage: PdfImportTool <pdf-path> [<source-id> <output-root>]");
+            System.err.println("Usage: PdfImportTool <pdf-path> [<source-id> <output-root>]");
             System.exit(1);
         }
 
@@ -74,16 +73,14 @@ public class PdfImportTool {
         if (Files.exists(charmsPath)) {
             try (Stream<Path> files = Files.list(charmsPath)) {
                 files.filter(f -> f.toString().endsWith(".json"))
-                        .forEach(
-                                f -> {
-                                    try {
-                                        long count = countCharmsInFile(f);
-                                        System.out.printf(
-                                                "  - %-20s: %d charms\n", f.getFileName(), count);
-                                    } catch (IOException e) {
-                                        System.err.println("Error reading " + f.getFileName());
-                                    }
-                                });
+                        .forEach(f -> {
+                            try {
+                                long count = countCharmsInFile(f);
+                                System.out.printf("  - %-20s: %d charms\n", f.getFileName(), count);
+                            } catch (IOException e) {
+                                System.err.println("Error reading " + f.getFileName());
+                            }
+                        });
             } catch (IOException e) {
                 System.err.println("Could not list charms directory.");
             }

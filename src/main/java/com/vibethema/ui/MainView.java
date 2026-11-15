@@ -106,12 +106,11 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         mainTabPane
                 .getSelectionModel()
                 .selectedItemProperty()
-                .addListener(
-                        (obs, oldTab, newTab) -> {
-                            if (newTab != null) {
-                                viewModel.currentTabIdProperty().set(newTab.getText());
-                            }
-                        });
+                .addListener((obs, oldTab, newTab) -> {
+                    if (newTab != null) {
+                        viewModel.currentTabIdProperty().set(newTab.getText());
+                    }
+                });
 
         setCenter(mainTabPane);
 
@@ -167,10 +166,9 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         viewModel
                 .getData()
                 .exaltTypeProperty()
-                .addListener(
-                        (obs, oldV, newV) -> {
-                            refreshTheme();
-                        });
+                .addListener((obs, oldV, newV) -> {
+                    refreshTheme();
+                });
 
         refreshTheme();
 
@@ -431,13 +429,12 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         Tab lazyTab = new Tab(title);
         lazyTab.setClosable(false);
         lazyTab.selectedProperty()
-                .addListener(
-                        (obs, oldVal, newVal) -> {
-                            if (newVal && lazyTab.getContent() == null) {
-                                Tab loadedTab = tabSupplier.get();
-                                lazyTab.setContent(loadedTab.getContent());
-                            }
-                        });
+                .addListener((obs, oldVal, newVal) -> {
+                    if (newVal && lazyTab.getContent() == null) {
+                        Tab loadedTab = tabSupplier.get();
+                        lazyTab.setContent(loadedTab.getContent());
+                    }
+                });
         return lazyTab;
     }
 
@@ -571,16 +568,14 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
 
         Menu importMenu = new Menu("Import");
         MenuItem importCoreItem = new MenuItem("Import Core Book PDF...");
-        importCoreItem.setOnAction(
-                e ->
-                        PdfImportHelper.importCorePdf(
-                                getScene().getWindow(), viewModel::refreshImportStatus));
+        importCoreItem.setOnAction(e ->
+                PdfImportHelper.importCorePdf(
+                        getScene().getWindow(), viewModel::refreshImportStatus));
 
         MenuItem importMoseItem = new MenuItem("Import Miracles of the Solar Exalted...");
-        importMoseItem.setOnAction(
-                e ->
-                        PdfImportHelper.importMosePdf(
-                                getScene().getWindow(), viewModel::refreshImportStatus));
+        importMoseItem.setOnAction(e ->
+                PdfImportHelper.importMosePdf(
+                        getScene().getWindow(), viewModel::refreshImportStatus));
 
         importMenu.getItems().addAll(importCoreItem, importMoseItem);
         menuBar.getMenus().add(importMenu);
@@ -607,19 +602,18 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         // Also permit Shortcut+Y for redo (traditional Windows/Linux)
         // We add it to the scene once it's available
         sceneProperty()
-                .addListener(
-                        (obs, oldS, newS) -> {
-                            if (newS != null) {
-                                newS.getAccelerators()
-                                        .put(
-                                                KeyCombination.keyCombination("Shortcut+Y"),
-                                                () -> {
-                                                    if (viewModel.canRedoProperty().get()) {
-                                                        viewModel.redo();
-                                                    }
-                                                });
-                            }
-                        });
+                .addListener((obs, oldS, newS) -> {
+                    if (newS != null) {
+                        newS.getAccelerators()
+                                .put(
+                                        KeyCombination.keyCombination("Shortcut+Y"),
+                                        () -> {
+                                            if (viewModel.canRedoProperty().get()) {
+                                                viewModel.redo();
+                                            }
+                                        });
+                    }
+                });
 
         editMenu.getItems().addAll(undoItem, redoItem);
         menuBar.getMenus().add(editMenu);
@@ -661,12 +655,11 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         casteBox.setAccessibleText("Character Caste");
         casteLabel.setLabelFor(casteBox);
         casteBox.focusedProperty()
-                .addListener(
-                        (obs, oldV, newV) -> {
-                            if (!newV) { // Focus lost (blur)
-                                handleCasteChange(casteBox);
-                            }
-                        });
+                .addListener((obs, oldV, newV) -> {
+                    if (!newV) { // Focus lost (blur)
+                        handleCasteChange(casteBox);
+                    }
+                });
 
         Label casteValueLabel = new Label();
         casteValueLabel
@@ -694,12 +687,11 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         viewModel
                 .getData()
                 .casteProperty()
-                .addListener(
-                        (obs, oldV, newV) -> {
-                            if (newV != casteBox.getValue()) {
-                                casteBox.setValue(newV);
-                            }
-                        });
+                .addListener((obs, oldV, newV) -> {
+                    if (newV != casteBox.getValue()) {
+                        casteBox.setValue(newV);
+                    }
+                });
 
         ComboBox<String> supernalDropdown = new ComboBox<>();
         supernalDropdown.setId("info_supernal");
@@ -725,15 +717,14 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
 
         // Show help on focus (for keyboard navigation)
         helpBtn.focusedProperty()
-                .addListener(
-                        (obs, oldV, newV) -> {
-                            if (newV) {
-                                Bounds bounds = helpBtn.localToScreen(helpBtn.getBoundsInLocal());
-                                helpTooltip.show(helpBtn, bounds.getMinX(), bounds.getMaxY() + 5);
-                            } else {
-                                helpTooltip.hide();
-                            }
-                        });
+                .addListener((obs, oldV, newV) -> {
+                    if (newV) {
+                        Bounds bounds = helpBtn.localToScreen(helpBtn.getBoundsInLocal());
+                        helpTooltip.show(helpBtn, bounds.getMinX(), bounds.getMaxY() + 5);
+                    } else {
+                        helpTooltip.hide();
+                    }
+                });
 
         HBox supernalContainer = new HBox(5);
         supernalContainer.setAlignment(Pos.CENTER_LEFT);
@@ -902,12 +893,11 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
 
         applyDialogStyle(confirm);
         confirm.showAndWait()
-                .ifPresent(
-                        response -> {
-                            if (response == ButtonType.OK) {
-                                viewModel.proceedWithFinalization();
-                            }
-                        });
+                .ifPresent(response -> {
+                    if (response == ButtonType.OK) {
+                        viewModel.proceedWithFinalization();
+                    }
+                });
     }
 
     private boolean showPreferencesDialog() {
@@ -926,13 +916,12 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         ButtonType saveType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(saveType, ButtonType.CANCEL);
 
-        dialog.setResultConverter(
-                bt -> {
-                    if (bt == saveType) {
-                        prefViewModel.save();
-                    }
-                    return bt;
-                });
+        dialog.setResultConverter(bt -> {
+            if (bt == saveType) {
+                prefViewModel.save();
+            }
+            return bt;
+        });
 
         Optional<ButtonType> result = dialog.showAndWait();
         return result.isPresent() && result.get() == saveType;
@@ -961,18 +950,17 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         ButtonType saveType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(saveType, ButtonType.CANCEL);
 
-        dialog.setResultConverter(
-                bt -> {
-                    if (bt == saveType) {
-                        try {
-                            editViewModel.save();
-                        } catch (IOException ex) {
-                            new Alert(Alert.AlertType.ERROR, "Failed to save: " + ex.getMessage())
-                                    .showAndWait();
-                        }
-                    }
-                    return bt;
-                });
+        dialog.setResultConverter(bt -> {
+            if (bt == saveType) {
+                try {
+                    editViewModel.save();
+                } catch (IOException ex) {
+                    new Alert(Alert.AlertType.ERROR, "Failed to save: " + ex.getMessage())
+                            .showAndWait();
+                }
+            }
+            return bt;
+        });
 
         dialog.showAndWait();
     }
@@ -1041,23 +1029,21 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
     private void triggerPulseHighlight(String targetId) {
         if (targetId == null || targetId.isEmpty()) return;
 
-        javafx.application.Platform.runLater(
-                () -> {
-                    Node node = lookup("#" + targetId);
-                    if (node != null) {
-                        ensureVisible(node);
-                        node.requestFocus();
-                        node.getStyleClass().add("pulse-highlight");
+        javafx.application.Platform.runLater(() -> {
+            Node node = lookup("#" + targetId);
+            if (node != null) {
+                ensureVisible(node);
+                node.requestFocus();
+                node.getStyleClass().add("pulse-highlight");
 
-                        javafx.animation.PauseTransition pause =
-                                new javafx.animation.PauseTransition(
-                                        javafx.util.Duration.millis(800));
-                        pause.setOnFinished(e -> node.getStyleClass().remove("pulse-highlight"));
-                        pause.play();
-                    } else {
-                        logger.warn("Could not find element to highlight: #{}", targetId);
-                    }
-                });
+                javafx.animation.PauseTransition pause =
+                        new javafx.animation.PauseTransition(javafx.util.Duration.millis(800));
+                pause.setOnFinished(e -> node.getStyleClass().remove("pulse-highlight"));
+                pause.play();
+            } else {
+                logger.warn("Could not find element to highlight: #{}", targetId);
+            }
+        });
     }
 
     private void ensureVisible(Node node) {

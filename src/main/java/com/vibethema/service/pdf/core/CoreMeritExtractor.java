@@ -1,7 +1,7 @@
 package com.vibethema.service.pdf.core;
 
-import com.vibethema.service.pdf.base.BaseCharmExtractor;
 import com.vibethema.service.DefinitionId;
+import com.vibethema.service.pdf.base.BaseCharmExtractor;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;

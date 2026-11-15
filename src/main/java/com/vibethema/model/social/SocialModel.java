@@ -6,11 +6,10 @@ import javafx.collections.ObservableList;
 
 public class SocialModel {
     private final ObservableList<Intimacy> intimacies =
-            FXCollections.observableArrayList(
-                    i ->
-                            new javafx.beans.Observable[] {
-                                i.nameProperty(), i.intensityProperty(), i.descriptionProperty()
-                            });
+            FXCollections.observableArrayList(i ->
+                    new javafx.beans.Observable[] {
+                        i.nameProperty(), i.intensityProperty(), i.descriptionProperty()
+                    });
 
     private final Consumer<Void> dirtyListener;
 

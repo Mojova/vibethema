@@ -20,7 +20,6 @@ import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -220,23 +219,20 @@ public class MainViewModel implements ViewModel {
             StringProperty property, String contextId, String description, String targetId) {
         PauseTransition pause = new PauseTransition(Duration.seconds(1));
         textCheckpointTimers.add(pause);
-        pause.setOnFinished(
-                e -> {
-                    if (data.isUndoRedoInProgress()) return;
-                    undoManager.pushCheckpoint(
-                            data.exportState(), contextId, description, targetId);
-                });
+        pause.setOnFinished(e -> {
+            if (data.isUndoRedoInProgress()) return;
+            undoManager.pushCheckpoint(data.exportState(), contextId, description, targetId);
+        });
 
-        property.addListener(
-                (obs, oldV, newV) -> {
-                    // We only want to trigger if it wasn't a restored state (undo/redo)
-                    // But UndoManager handles that by checking if the state is already current.
-                    // Actually, we should probably check if the value actually changed to avoid
-                    // redundant restarts.
-                    if (!data.isUndoRedoInProgress() && oldV != null && !oldV.equals(newV)) {
-                        pause.playFromStart();
-                    }
-                });
+        property.addListener((obs, oldV, newV) -> {
+            // We only want to trigger if it wasn't a restored state (undo/redo)
+            // But UndoManager handles that by checking if the state is already current.
+            // Actually, we should probably check if the value actually changed to avoid
+            // redundant restarts.
+            if (!data.isUndoRedoInProgress() && oldV != null && !oldV.equals(newV)) {
+                pause.playFromStart();
+            }
+        });
     }
 
     private void loadTagDescriptions() {
@@ -331,11 +327,16 @@ public class MainViewModel implements ViewModel {
         try {
             CharacterSaveState state = data.exportState();
             temporary = Files.createTempFile(destination.getParent(), ".vibethema-", ".tmp");
-            try (var writer = Files.newBufferedWriter(temporary, java.nio.charset.StandardCharsets.UTF_8)) {
+            try (var writer =
+                    Files.newBufferedWriter(temporary, java.nio.charset.StandardCharsets.UTF_8)) {
                 new GsonBuilder().setPrettyPrinting().create().toJson(state, writer);
             }
             try {
-                Files.move(temporary, destination, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+                Files.move(
+                        temporary,
+                        destination,
+                        StandardCopyOption.ATOMIC_MOVE,
+                        StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException atomicMoveUnsupported) {
                 Files.move(temporary, destination, StandardCopyOption.REPLACE_EXISTING);
             }
@@ -345,7 +346,11 @@ public class MainViewModel implements ViewModel {
             logger.error("Failed to save character to {}", file.getAbsolutePath(), ex);
             Messenger.publish("show_error_alert", "Could not save character: " + ex.getMessage());
         } finally {
-            if (temporary != null) try { Files.deleteIfExists(temporary); } catch (IOException ignored) {}
+            if (temporary != null)
+                try {
+                    Files.deleteIfExists(temporary);
+                } catch (IOException ignored) {
+                }
         }
     }
 

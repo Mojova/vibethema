@@ -59,7 +59,9 @@ public class PrerequisiteRule {
     }
 
     public static PrerequisiteRule countFromAbilities(
-            List<String> abilities, int count, List<String> excludedCharmIds,
+            List<String> abilities,
+            int count,
+            List<String> excludedCharmIds,
             boolean excludeExcellencies) {
         PrerequisiteRule rule = countFromAbilities(abilities, count);
         rule.excludedCharmIds = excludedCharmIds == null ? new ArrayList<>() : excludedCharmIds;
@@ -82,36 +84,101 @@ public class PrerequisiteRule {
         return rule;
     }
 
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
-    public String getCharmId() { return charmId; }
-    public void setCharmId(String charmId) { this.charmId = charmId; }
-    public List<PrerequisiteRule> getRequirements() { return requirements; }
-    public void setRequirements(List<PrerequisiteRule> requirements) { this.requirements = requirements; }
-    public List<PrerequisiteRule> getOptions() { return options; }
-    public void setOptions(List<PrerequisiteRule> options) { this.options = options; }
-    public List<String> getCharmIds() { return charmIds; }
-    public void setCharmIds(List<String> charmIds) { this.charmIds = charmIds; }
-    public List<String> getAbilities() { return abilities; }
-    public void setAbilities(List<String> abilities) { this.abilities = abilities; }
-    public List<String> getExcludedCharmIds() { return excludedCharmIds; }
-    public void setExcludedCharmIds(List<String> excludedCharmIds) { this.excludedCharmIds = excludedCharmIds; }
-    public List<List<String>> getExcludedPrerequisitePaths() { return excludedPrerequisitePaths; }
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getCharmId() {
+        return charmId;
+    }
+
+    public void setCharmId(String charmId) {
+        this.charmId = charmId;
+    }
+
+    public List<PrerequisiteRule> getRequirements() {
+        return requirements;
+    }
+
+    public void setRequirements(List<PrerequisiteRule> requirements) {
+        this.requirements = requirements;
+    }
+
+    public List<PrerequisiteRule> getOptions() {
+        return options;
+    }
+
+    public void setOptions(List<PrerequisiteRule> options) {
+        this.options = options;
+    }
+
+    public List<String> getCharmIds() {
+        return charmIds;
+    }
+
+    public void setCharmIds(List<String> charmIds) {
+        this.charmIds = charmIds;
+    }
+
+    public List<String> getAbilities() {
+        return abilities;
+    }
+
+    public void setAbilities(List<String> abilities) {
+        this.abilities = abilities;
+    }
+
+    public List<String> getExcludedCharmIds() {
+        return excludedCharmIds;
+    }
+
+    public void setExcludedCharmIds(List<String> excludedCharmIds) {
+        this.excludedCharmIds = excludedCharmIds;
+    }
+
+    public List<List<String>> getExcludedPrerequisitePaths() {
+        return excludedPrerequisitePaths;
+    }
+
     public void setExcludedPrerequisitePaths(List<List<String>> excludedPrerequisitePaths) {
         this.excludedPrerequisitePaths = excludedPrerequisitePaths;
     }
-    public boolean isExcludeExcellencies() { return excludeExcellencies; }
-    public void setExcludeExcellencies(boolean excludeExcellencies) { this.excludeExcellencies = excludeExcellencies; }
-    public int getCount() { return count; }
-    public void setCount(int count) { this.count = count; }
-    public String getPredicate() { return predicate; }
-    public void setPredicate(String predicate) { this.predicate = predicate; }
+
+    public boolean isExcludeExcellencies() {
+        return excludeExcellencies;
+    }
+
+    public void setExcludeExcellencies(boolean excludeExcellencies) {
+        this.excludeExcellencies = excludeExcellencies;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public String getPredicate() {
+        return predicate;
+    }
+
+    public void setPredicate(String predicate) {
+        this.predicate = predicate;
+    }
 
     public boolean isSatisfied(CharacterData data) {
         if (data == null) return false;
         return switch (type == null ? "allOf" : type) {
             case "charm" -> data.hasCharm(charmId);
-            case "allOf" -> requirements == null || requirements.stream().allMatch(r -> r.isSatisfied(data));
+            case "allOf" ->
+                    requirements == null
+                            || requirements.stream().allMatch(r -> r.isSatisfied(data));
             case "anyOf" -> options != null && options.stream().anyMatch(r -> r.isSatisfied(data));
             case "countOf" -> countDistinctOwned(data, charmIds) >= count;
             case "countFromAbilities" -> countFromAbilities(data) >= count;
@@ -127,10 +194,16 @@ public class PrerequisiteRule {
         if (data == null) return false;
         return switch (type == null ? "allOf" : type) {
             case "charm" -> isDiscountableCharm(data, charmId);
-            case "allOf" -> requirements == null || requirements.stream()
-                    .allMatch(r -> r.qualifiesForCasteFavoredDiscount(data));
-            case "anyOf" -> options != null && options.stream()
-                    .anyMatch(r -> r.isSatisfied(data) && r.qualifiesForCasteFavoredDiscount(data));
+            case "allOf" ->
+                    requirements == null
+                            || requirements.stream()
+                                    .allMatch(r -> r.qualifiesForCasteFavoredDiscount(data));
+            case "anyOf" ->
+                    options != null
+                            && options.stream()
+                                    .anyMatch(r ->
+                                            r.isSatisfied(data)
+                                                    && r.qualifiesForCasteFavoredDiscount(data));
             case "countOf" -> countOfDiscountable(data, charmIds) >= count;
             case "countFromAbilities" -> countFromAbilitiesDiscountable(data) >= count;
             case "countFromSingleAbility" -> singleAbilityDiscountable(data) >= count;
@@ -186,12 +259,13 @@ public class PrerequisiteRule {
         for (String ability : abilities) allowed.add(ability.toLowerCase());
         Set<String> excluded = getExcludedIdsFor(data);
         Set<String> owned = new HashSet<>();
-        data.getUnlockedCharms().forEach(c -> {
-            if (c.ability() != null
-                    && allowed.contains(c.ability().toLowerCase())
-                    && !excluded.contains(c.id())
-                    && !(excludeExcellencies && isExcellency(c.name()))) owned.add(c.id());
-        });
+        data.getUnlockedCharms()
+                .forEach(c -> {
+                    if (c.ability() != null
+                            && allowed.contains(c.ability().toLowerCase())
+                            && !excluded.contains(c.id())
+                            && !(excludeExcellencies && isExcellency(c.name()))) owned.add(c.id());
+                });
         return owned.size();
     }
 
@@ -200,10 +274,10 @@ public class PrerequisiteRule {
     }
 
     private Set<String> getExcludedIdsFor(CharacterData data) {
-        Set<String> excluded = excludedCharmIds == null
-                ? new HashSet<>()
-                : new HashSet<>(excludedCharmIds);
-        if (excludedPrerequisitePaths == null || excludedPrerequisitePaths.isEmpty()) return excluded;
+        Set<String> excluded =
+                excludedCharmIds == null ? new HashSet<>() : new HashSet<>(excludedCharmIds);
+        if (excludedPrerequisitePaths == null || excludedPrerequisitePaths.isEmpty())
+            return excluded;
 
         List<String> selectedPath = null;
         int bestOwnedCount = -1;
@@ -225,9 +299,11 @@ public class PrerequisiteRule {
 
     private static int maxDistinctOwnedInOneAbility(CharacterData data) {
         java.util.Map<String, Set<String>> byAbility = new java.util.HashMap<>();
-        data.getUnlockedCharms().forEach(c -> {
-            if (c.ability() != null) byAbility.computeIfAbsent(c.ability(), k -> new HashSet<>()).add(c.id());
-        });
+        data.getUnlockedCharms()
+                .forEach(c -> {
+                    if (c.ability() != null)
+                        byAbility.computeIfAbsent(c.ability(), k -> new HashSet<>()).add(c.id());
+                });
         return byAbility.values().stream().mapToInt(Set::size).max().orElse(0);
     }
 
@@ -246,21 +322,24 @@ public class PrerequisiteRule {
         for (String ability : abilities) allowed.add(ability.toLowerCase());
         Set<String> excluded = getExcludedIdsFor(data);
         Set<String> owned = new HashSet<>();
-        data.getUnlockedCharms().forEach(c -> {
-            if (c.ability() != null && allowed.contains(c.ability().toLowerCase())
-                    && !excluded.contains(c.id())
-                    && !(excludeExcellencies && isExcellency(c.name()))
-                    && isDiscountableAbility(data, c.ability())) owned.add(c.id());
-        });
+        data.getUnlockedCharms()
+                .forEach(c -> {
+                    if (c.ability() != null
+                            && allowed.contains(c.ability().toLowerCase())
+                            && !excluded.contains(c.id())
+                            && !(excludeExcellencies && isExcellency(c.name()))
+                            && isDiscountableAbility(data, c.ability())) owned.add(c.id());
+                });
         return owned.size();
     }
 
     private static int singleAbilityDiscountable(CharacterData data) {
         java.util.Map<String, Set<String>> byAbility = new java.util.HashMap<>();
-        data.getUnlockedCharms().forEach(c -> {
-            if (c.ability() != null && isDiscountableAbility(data, c.ability()))
-                byAbility.computeIfAbsent(c.ability(), k -> new HashSet<>()).add(c.id());
-        });
+        data.getUnlockedCharms()
+                .forEach(c -> {
+                    if (c.ability() != null && isDiscountableAbility(data, c.ability()))
+                        byAbility.computeIfAbsent(c.ability(), k -> new HashSet<>()).add(c.id());
+                });
         return byAbility.values().stream().mapToInt(Set::size).max().orElse(0);
     }
 
@@ -273,7 +352,8 @@ public class PrerequisiteRule {
     }
 
     private static boolean isDiscountableAbility(CharacterData data, String abilityName) {
-        com.vibethema.model.traits.Ability ability = com.vibethema.model.traits.Ability.fromString(abilityName);
+        com.vibethema.model.traits.Ability ability =
+                com.vibethema.model.traits.Ability.fromString(abilityName);
         if (ability == null && data.isMartialArtsStyle(abilityName)) {
             ability = com.vibethema.model.traits.Ability.MARTIAL_ARTS;
         }
