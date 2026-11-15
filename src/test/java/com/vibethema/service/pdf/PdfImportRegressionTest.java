@@ -100,6 +100,25 @@ public class PdfImportRegressionTest {
         assertFalse(whirlingBrush.contains("WRITTEN VS. SPOKEN EFFECTS"));
         assertTrue(whirlingBrush.contains("perfectly transcribe a rapid conversation"));
 
+        assertTrue(
+                charmDescription(importedSource, "stealth", "Perfect Shadow Stillness")
+                        .contains("Stealth-based action"));
+        assertTrue(
+                charmDescription(importedSource, "performance", "Impassioned Orator Technique")
+                        .contains("Performance-based speech"));
+        assertTrue(
+                charmDescription(importedSource, "survival", "Eye-Deceiving Camouflage")
+                        .contains("Awareness-based attempts"));
+        assertTrue(
+                charmDescription(importedSource, "socialize", "Face-Charming Prana")
+                        .contains("Socialize-based persuade action"));
+        assertTrue(
+                charmDescription(importedSource, "presence", "Blazing Glorious Icon")
+                        .contains("Presence-based attempts"));
+        assertTrue(
+                charmDescription(importedSource, "larceny", "Perfect Mirror")
+                        .contains("Essence-based visual dynamics"));
+
         String flowingHand =
                 charmDescription(importedSource, "linguistics", "Flowing Elegant Hand");
         assertFalse(flowingHand.contains("ARTISTIC TALENT: LINGUISTICS OR CRAFT"));
@@ -157,6 +176,11 @@ public class PdfImportRegressionTest {
         String stalkingWolf = charmDescription(importedSource, "stealth", "Stalking Wolf Attitude");
         assertFalse(stalkingWolf.contains("PERSONAS: RULES AND LIMITATIONS"));
 
+        String shadowReplacement =
+                charmDescription(importedSource, "stealth", "Shadow Replacement Technique");
+        assertFalse(shadowReplacement.contains("crown by vanishing from the minds of her subjects"));
+        assertTrue(shadowReplacement.contains("requires the Lawgiver be in control of a grapple"));
+
         String camouflage =
                 charmDescription(importedSource, "survival", "Eye-Deceiving Camouflage");
         assertFalse(camouflage.contains("A FAMILIAR INVESTMENT"));
@@ -201,6 +225,28 @@ public class PdfImportRegressionTest {
         assertFalse(rampage.contains("Brawlbased"));
 
         assertFalse(whirlingBrush.contains("\u0007"));
+        assertAbilityBasedTermsAreHyphenated(importedSource);
+    }
+
+    private void assertAbilityBasedTermsAreHyphenated(Path importedSource) throws IOException {
+        java.util.regex.Pattern unhyphenatedAbilityBased =
+                java.util.regex.Pattern.compile(
+                        "(?i)\\b(?:Archery|Athletics|Awareness|Brawl|Bureaucracy|Craft|Dodge|"
+                                + "Integrity|Investigation|Larceny|Linguistics|Lore|Medicine|"
+                                + "Melee|Occult|Performance|Presence|Resistance|Ride|Sail|"
+                                + "Socialize|Stealth|Survival|Thrown|War|Essence)based\\b");
+        try (Stream<Path> charmFiles = Files.walk(importedSource.resolve("charms"))) {
+            for (Path charmFile : charmFiles.filter(p -> p.toString().endsWith(".json")).toList()) {
+                JsonElement file = JsonParser.parseString(Files.readString(charmFile));
+                if (!file.isJsonObject() || !file.getAsJsonObject().has("charms")) continue;
+                for (JsonElement charm : file.getAsJsonObject().getAsJsonArray("charms")) {
+                    String description = charm.getAsJsonObject().get("fullText").getAsString();
+                    assertFalse(
+                            unhyphenatedAbilityBased.matcher(description).find(),
+                            () -> "Found an unhyphenated Ability-based term in " + charmFile);
+                }
+            }
+        }
     }
 
     private String charmDescription(Path importedSource, String ability, String charmName)

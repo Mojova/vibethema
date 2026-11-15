@@ -847,6 +847,14 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
         // its mixed-case body. Apply source-specific block rules to the cleaned result as well.
         text = removeKnownSidebarInterleaving(text);
         text = text.replace("Brawlbased", "Brawl-based");
+        text = text.replace("control  of a grapple", "control of a grapple");
+        text =
+                text.replaceAll(
+                        "(?i)\\b(Archery|Athletics|Awareness|Brawl|Bureaucracy|Craft|Dodge|"
+                                + "Integrity|Investigation|Larceny|Linguistics|Lore|Medicine|"
+                                + "Melee|Occult|Performance|Presence|Resistance|Ride|Sail|"
+                                + "Socialize|Stealth|Survival|Thrown|War|Essence)-?based\\b",
+                        "$1-based");
         return text.replace("\u0007", "");
     }
 
@@ -864,6 +872,12 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                                 + " 5\\+)",
                         "");
         text = text.replaceAll("(?is)THAT BURNING QUESTION\\s*Q:.*?A:\\s*You tell me\\.\\s*", "");
+        text =
+                text.replaceAll(
+                        "(?is)crown by vanishing from the minds of her subjects\\. This Charm is"
+                                + " not selective\\. Until the Solar voluntarily terminates the"
+                                + " Charm, everyone forgets her\\.",
+                        "");
         text =
                 text.replaceAll(
                         "(?is)\\s+but those powers aren’t necessarily called out in the text\\..*$",
