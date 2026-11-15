@@ -262,7 +262,8 @@ public class PdfExtractor {
 
         Map<String, String> kw = new HashMap<>();
         kw.put("name", name);
-        kw.put("description", cleaned.replaceAll("\\s+", " ").trim());
+        kw.put("description", cleaned.replaceAll("[-\\u00AD]\\s*\\R\\s*(?=[a-z])", "")
+                        .replaceAll("\\s+", " ").trim());
         list.add(kw);
     }
 }

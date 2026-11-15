@@ -59,6 +59,23 @@ public class PdfImportRegressionTest {
 
         assertEyeOfTheUnconqueredSunPrerequisite(tempDir.resolve(SOURCE_ID));
         assertCharmDescriptionCleanup(tempDir.resolve(SOURCE_ID));
+        Path source = tempDir.resolve(SOURCE_ID);
+        assertTrue(charmDescription(source, "martial_arts/snake-style", "Essence Venom Strike")
+                .startsWith("Distilling her killing intent"));
+        assertFalse(charmDescription(source, "martial_arts/snake-style", "Essence Venom Strike")
+                .contains("Armor:"));
+        assertNotNull(charmDescription(source, "martial_arts/silver-voiced-nightingale-style",
+                "Shattering Discord Cacophony"));
+        assertNotNull(charmDescription(source, "martial_arts/dreaming-pearl-courtesan-style",
+                "Invoking the Chimera’s Coils"));
+        assertTrue(charmDescription(source, "resistance", "Diamond-Body Prana")
+                .contains("(Stamina + Resistance)"));
+        assertTrue(charmDescription(source, "resistance", "Spirit Strengthens the Skin")
+                .contains("withering-only magic"));
+        String keywordText = Files.readString(source.resolve("charms/keywords.json"));
+        assertFalse(keywordText.contains("pre- requisites"));
+        assertFalse(keywordText.contains("non-Integri- ty"));
+
 
         // Verify all files in reference directory
         try (Stream<Path> stream = Files.walk(REFERENCE_DIR)) {

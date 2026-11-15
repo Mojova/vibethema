@@ -47,20 +47,28 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
             }
         }
 
-        for (String part : parts) {
-            String[] lines = part.trim().split("\n");
+        // Match only source section titles, including hyphenated and wrapped names.
+        Pattern stylePattern = Pattern.compile(
+                "(?m)^(Snake|Tiger|Single Point Shining Into the Void|White Reaper|"
+                        + "Ebon Shadow|Crane|Silver-Voiced Nightingale|Righteous Devil|"
+                        + "Black Claw|Dreaming Pearl Courtesan|Steel Devil)\\s+Style[ \\t]*$");
+        for (String originalPart : parts) {
+            String part = originalPart;
+            String charmStyle = currentMartialArtsStyle;
+            Matcher styleMatcher = stylePattern.matcher(part);
+            int firstStyleHeader = -1;
+            while (styleMatcher.find()) {
+                if (firstStyleHeader < 0) firstStyleHeader = styleMatcher.start();
+                currentMartialArtsStyle = styleMatcher.group(1).replaceAll("\\s+", " ") + " Style";
+            }
+            // A title after this Charm belongs to the next section, not this definition.
+            if (firstStyleHeader >= 0) part = part.substring(0, firstStyleHeader);
+            String[] lines = part.trim().split("\\n");
             if (lines.length < 3) continue;
 
             String name = "";
             String costLine = "";
             int descStartIdx = 0;
-
-            // Detect style headers
-            Pattern stylePattern = Pattern.compile("^([A-Z][\\w\\s]+ Style)$", Pattern.MULTILINE);
-            Matcher styleMatcher = stylePattern.matcher(part);
-            while (styleMatcher.find()) {
-                currentMartialArtsStyle = styleMatcher.group(1).trim();
-            }
 
             for (int i = 0; i < lines.length - 1; i++) {
                 if (lines[i + 1].trim().startsWith("Cost:")) {
@@ -90,8 +98,8 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
             int minEssenceValue = Integer.parseInt(minsMatcher.group(3));
 
             if (!ABILITIES.contains(ability)) continue;
-            if (ability.equalsIgnoreCase("Martial Arts") && currentMartialArtsStyle != null) {
-                ability = currentMartialArtsStyle;
+            if (ability.equalsIgnoreCase("Martial Arts") && charmStyle != null) {
+                ability = charmStyle;
             }
 
             String type = "";
@@ -855,7 +863,9 @@ public class CoreCharmExtractor extends BaseCharmExtractor {
                                 + "Melee|Occult|Performance|Presence|Resistance|Ride|Sail|"
                                 + "Socialize|Stealth|Survival|Thrown|War|Essence)-?based\\b",
                         "$1-based");
-        return text.replace("\u0007", "");
+        return text.replace("\u0007", "")
+                .replace("witheringonly", "withering-only")
+                .replaceAll("\\(Stamina\\s+\\+ Resistance\\)", "(Stamina + Resistance)");
     }
 
     private String removeKnownSidebarInterleaving(String text) {
