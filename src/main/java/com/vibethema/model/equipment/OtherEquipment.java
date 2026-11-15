@@ -134,6 +134,25 @@ public class OtherEquipment {
         public String description;
         public boolean artifact;
         public int attunement;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof OtherEquipmentData that)) return false;
+            return java.util.Objects.equals(id, that.id)
+                    && java.util.Objects.equals(sourceId, that.sourceId)
+                    && java.util.Objects.equals(instanceId, that.instanceId)
+                    && java.util.Objects.equals(name, that.name)
+                    && java.util.Objects.equals(description, that.description)
+                    && artifact == that.artifact
+                    && attunement == that.attunement;
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(
+                    id, sourceId, instanceId, name, description, artifact, attunement);
+        }
     }
 
     public OtherEquipmentData toData() {

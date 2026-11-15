@@ -7,7 +7,6 @@ import com.vibethema.service.EquipmentDataService;
 import com.vibethema.viewmodel.MainViewModel.CheckpointRequest;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;
-import java.io.IOException;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
@@ -218,25 +217,14 @@ public class EquipmentViewModel implements ViewModel {
 
     // Actions
     public void saveWeapon(Weapon weapon, boolean isNew) {
-        try {
-            Messenger.publish(
-                    "RECORD_UNDO_CHECKPOINT",
-                    new CheckpointRequest(
-                            "Equipment",
-                            (isNew ? "Add" : "Edit") + " Weapon: " + weapon.getName(),
-                            "equipment.weapons"));
-            equipmentService.saveWeapon(weapon);
-            if (isNew) {
-                data.getWeapons().add(weapon);
-            } else {
-                if (weapon.getType() == Weapon.WeaponType.ARTIFACT) {
-                    dataService.updateEvocationCollectionName(weapon.getId(), weapon.getName());
-                }
-            }
-            data.setDirty(true);
-        } catch (IOException e) {
-            logger.error("Failed to save global weapon: {}", weapon.getName(), e);
-        }
+        Messenger.publish(
+                "RECORD_UNDO_CHECKPOINT",
+                new CheckpointRequest(
+                        "Equipment",
+                        (isNew ? "Add" : "Edit") + " Weapon: " + weapon.getName(),
+                        "equipment.weapons"));
+        if (isNew) data.getWeapons().add(weapon);
+        data.setDirty(true);
     }
 
     public void removeWeapon(Weapon weapon) {
@@ -249,15 +237,8 @@ public class EquipmentViewModel implements ViewModel {
     }
 
     public void saveArmor(Armor armor, boolean isNew) {
-        try {
-            equipmentService.saveArmor(armor);
-            if (isNew) {
-                data.getArmors().add(armor);
-            }
-            data.setDirty(true);
-        } catch (IOException e) {
-            logger.error("Failed to save global armor: {}", armor.getName(), e);
-        }
+        if (isNew) data.getArmors().add(armor);
+        data.setDirty(true);
     }
 
     public void removeArmor(Armor armor) {
@@ -270,15 +251,8 @@ public class EquipmentViewModel implements ViewModel {
     }
 
     public void saveHearthstone(Hearthstone hearthstone, boolean isNew) {
-        try {
-            equipmentService.saveHearthstone(hearthstone);
-            if (isNew) {
-                data.getHearthstones().add(hearthstone);
-            }
-            data.setDirty(true);
-        } catch (IOException e) {
-            logger.error("Failed to save global hearthstone: {}", hearthstone.getName(), e);
-        }
+        if (isNew) data.getHearthstones().add(hearthstone);
+        data.setDirty(true);
     }
 
     public void removeHearthstone(Hearthstone hearthstone) {
@@ -293,15 +267,8 @@ public class EquipmentViewModel implements ViewModel {
     }
 
     public void saveOtherEquipment(OtherEquipment equipment, boolean isNew) {
-        try {
-            equipmentService.saveOtherEquipment(equipment);
-            if (isNew) {
-                data.getOtherEquipment().add(equipment);
-            }
-            data.setDirty(true);
-        } catch (IOException e) {
-            logger.error("Failed to save global other equipment: {}", equipment.getName(), e);
-        }
+        if (isNew) data.getOtherEquipment().add(equipment);
+        data.setDirty(true);
     }
 
     public void removeOtherEquipment(OtherEquipment equipment) {

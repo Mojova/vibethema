@@ -492,6 +492,26 @@ public class Weapon {
         public WeaponType type;
         public WeaponCategory category;
         public java.util.List<String> tags;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof WeaponData that)) return false;
+            return java.util.Objects.equals(id, that.id)
+                    && java.util.Objects.equals(sourceId, that.sourceId)
+                    && java.util.Objects.equals(instanceId, that.instanceId)
+                    && java.util.Objects.equals(name, that.name)
+                    && java.util.Objects.equals(range, that.range)
+                    && java.util.Objects.equals(type, that.type)
+                    && java.util.Objects.equals(category, that.category)
+                    && java.util.Objects.equals(tags, that.tags);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(
+                    id, sourceId, instanceId, name, range, type, category, tags);
+        }
     }
 
     public WeaponData toData() {

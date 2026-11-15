@@ -695,6 +695,7 @@ public class CharacterData {
         getWeapons()
                 .forEach(w -> {
                     CharacterSaveState.WeaponLink wl = new CharacterSaveState.WeaponLink();
+                    wl.item = w.toData();
                     wl.id = w.getId();
                     wl.sourceId = w.getSourceId();
                     wl.instanceId = w.getInstanceId();
@@ -707,6 +708,7 @@ public class CharacterData {
         getArmors()
                 .forEach(a -> {
                     CharacterSaveState.ArmorLink al = new CharacterSaveState.ArmorLink();
+                    al.item = a.toData();
                     al.id = a.getId();
                     al.sourceId = a.getSourceId();
                     al.instanceId = a.getInstanceId();
@@ -719,6 +721,7 @@ public class CharacterData {
                 .forEach(h -> {
                     CharacterSaveState.HearthstoneLink hl =
                             new CharacterSaveState.HearthstoneLink();
+                    hl.item = h.toData();
                     hl.id = h.getId();
                     hl.sourceId = h.getSourceId();
                     hl.instanceId = h.getInstanceId();
@@ -731,6 +734,7 @@ public class CharacterData {
                 .forEach(o -> {
                     CharacterSaveState.OtherEquipmentLink ol =
                             new CharacterSaveState.OtherEquipmentLink();
+                    ol.item = o.toData();
                     ol.id = o.getId();
                     ol.sourceId = o.getSourceId();
                     ol.instanceId = o.getInstanceId();
@@ -892,7 +896,11 @@ public class CharacterData {
             getWeapons().clear();
             if (state.weapons != null)
                 state.weapons.forEach(wl -> {
-                    Weapon w = equipmentService.loadWeapon(wl.id);
+                    Weapon w =
+                            Weapon.fromData(
+                                    java.util.Objects.requireNonNull(
+                                            wl.item,
+                                            "Saved equipment must contain its full item data"));
                     if (w != null) {
                         w.setInstanceId(
                                 wl.instanceId != null
@@ -908,7 +916,11 @@ public class CharacterData {
             getArmors().clear();
             if (state.armors != null)
                 state.armors.forEach(al -> {
-                    Armor a = equipmentService.loadArmor(al.id);
+                    Armor a =
+                            Armor.fromData(
+                                    java.util.Objects.requireNonNull(
+                                            al.item,
+                                            "Saved equipment must contain its full item data"));
                     if (a != null) {
                         a.setInstanceId(
                                 al.instanceId != null
@@ -923,7 +935,11 @@ public class CharacterData {
             getHearthstones().clear();
             if (state.hearthstones != null)
                 state.hearthstones.forEach(hl -> {
-                    Hearthstone h = equipmentService.loadHearthstone(hl.id);
+                    Hearthstone h =
+                            Hearthstone.fromData(
+                                    java.util.Objects.requireNonNull(
+                                            hl.item,
+                                            "Saved equipment must contain its full item data"));
                     if (h != null) {
                         h.setInstanceId(
                                 hl.instanceId != null
@@ -938,7 +954,11 @@ public class CharacterData {
             getOtherEquipment().clear();
             if (state.otherEquipment != null)
                 state.otherEquipment.forEach(ol -> {
-                    OtherEquipment oe = equipmentService.loadOtherEquipment(ol.id);
+                    OtherEquipment oe =
+                            OtherEquipment.fromData(
+                                    java.util.Objects.requireNonNull(
+                                            ol.item,
+                                            "Saved equipment must contain its full item data"));
                     if (oe != null) {
                         oe.setInstanceId(
                                 ol.instanceId != null

@@ -251,6 +251,24 @@ public class Armor {
         public ArmorType type;
         public ArmorWeight weight;
         public java.util.List<String> tags;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof ArmorData that)) return false;
+            return java.util.Objects.equals(id, that.id)
+                    && java.util.Objects.equals(sourceId, that.sourceId)
+                    && java.util.Objects.equals(instanceId, that.instanceId)
+                    && java.util.Objects.equals(name, that.name)
+                    && java.util.Objects.equals(type, that.type)
+                    && java.util.Objects.equals(weight, that.weight)
+                    && java.util.Objects.equals(tags, that.tags);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(id, sourceId, instanceId, name, type, weight, tags);
+        }
     }
 
     public ArmorData toData() {

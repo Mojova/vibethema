@@ -1,5 +1,6 @@
 package com.vibethema.model;
 
+import com.vibethema.model.equipment.*;
 import com.vibethema.model.mystic.*;
 import com.vibethema.model.social.*;
 import java.util.ArrayList;
@@ -109,6 +110,7 @@ public class CharacterSaveState {
     }
 
     public static class WeaponLink {
+        public Weapon.WeaponData item;
         public String id;
         public String sourceId;
         public String instanceId;
@@ -123,17 +125,19 @@ public class CharacterSaveState {
             return equipped == that.equipped
                     && Objects.equals(id, that.id)
                     && Objects.equals(sourceId, that.sourceId)
+                    && Objects.equals(item, that.item)
                     && Objects.equals(instanceId, that.instanceId)
                     && Objects.equals(specialtyId, that.specialtyId);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(id, sourceId, instanceId, specialtyId, equipped);
+            return Objects.hash(item, id, sourceId, instanceId, specialtyId, equipped);
         }
     }
 
     public static class ArmorLink {
+        public Armor.ArmorData item;
         public String id;
         public String sourceId;
         public String instanceId;
@@ -147,16 +151,18 @@ public class CharacterSaveState {
             return equipped == armorLink.equipped
                     && Objects.equals(id, armorLink.id)
                     && Objects.equals(sourceId, armorLink.sourceId)
+                    && Objects.equals(item, armorLink.item)
                     && Objects.equals(instanceId, armorLink.instanceId);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(id, sourceId, instanceId, equipped);
+            return Objects.hash(item, id, sourceId, instanceId, equipped);
         }
     }
 
     public static class HearthstoneLink {
+        public Hearthstone.HearthstoneData item;
         public String id;
         public String sourceId;
         public String instanceId;
@@ -170,16 +176,18 @@ public class CharacterSaveState {
             return equipped == that.equipped
                     && Objects.equals(id, that.id)
                     && Objects.equals(sourceId, that.sourceId)
+                    && Objects.equals(item, that.item)
                     && Objects.equals(instanceId, that.instanceId);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(id, sourceId, instanceId, equipped);
+            return Objects.hash(item, id, sourceId, instanceId, equipped);
         }
     }
 
     public static class OtherEquipmentLink {
+        public OtherEquipment.OtherEquipmentData item;
         public String id;
         public String sourceId;
         public String instanceId;
@@ -193,12 +201,13 @@ public class CharacterSaveState {
             return equipped == that.equipped
                     && Objects.equals(id, that.id)
                     && Objects.equals(sourceId, that.sourceId)
+                    && Objects.equals(item, that.item)
                     && Objects.equals(instanceId, that.instanceId);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(id, sourceId, instanceId, equipped);
+            return Objects.hash(item, id, sourceId, instanceId, equipped);
         }
     }
 

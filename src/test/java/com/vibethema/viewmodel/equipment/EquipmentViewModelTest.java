@@ -59,7 +59,7 @@ public class EquipmentViewModelTest {
     }
 
     @Test
-    void testUpdateArtifactWeaponTriggersSideEffect() throws IOException {
+    void testEditingArtifactDoesNotChangeTemplate() throws IOException {
         Weapon artifact = new Weapon("Soul Mirror");
         artifact.setType(Weapon.WeaponType.ARTIFACT);
         data.getWeapons().add(artifact);
@@ -68,8 +68,7 @@ public class EquipmentViewModelTest {
         viewModel.saveWeapon(artifact, false);
 
         assertTrue(data.isDirty());
-        verify(dataService, times(1))
-                .updateEvocationCollectionName(artifact.getId(), "Soul Mirror (Awakened)");
+        verify(dataService, never()).updateEvocationCollectionName(anyString(), anyString());
     }
 
     @Test

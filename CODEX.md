@@ -93,11 +93,12 @@ The DTO stores:
 - attributes, attribute priorities, abilities, caste abilities, and favored abilities;
 - purchased charms;
 - merits, specialties, Craft abilities, Martial Arts styles, intimacies;
-- equipment links containing definition ID, instance ID, equipped state, and weapon specialty where applicable;
+- equipment entries containing full item data, definition/source IDs, instance ID, equipped state, and weapon specialty where applicable;
 - shaping rituals, spells, XP awards, and the creation snapshot.
 
-`CharacterData.exportState()` builds the DTO. `importState(...)` reconstructs model objects and resolves equipment
-definitions through `EquipmentDataService`. `restoreState(...)` is used for undo/redo restoration. `clear()` resets
+`CharacterData.exportState()` builds the DTO. `importState(...)` reconstructs equipment directly from embedded item data.
+Equipment copies are independent of their source templates; editing character equipment does not update the database.
+Older character files containing only equipment links are not supported. `restoreState(...)` is used for undo/redo restoration. `clear()` resets
 the model to a new-character state while preserving the model object identity.
 
 Save/load is orchestrated by `MainViewModel`; saving clears `dirty`, sets the current file, and updates the window

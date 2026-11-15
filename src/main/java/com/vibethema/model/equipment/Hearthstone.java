@@ -104,6 +104,22 @@ public class Hearthstone {
         public String instanceId;
         public String name;
         public String description;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof HearthstoneData that)) return false;
+            return java.util.Objects.equals(id, that.id)
+                    && java.util.Objects.equals(sourceId, that.sourceId)
+                    && java.util.Objects.equals(instanceId, that.instanceId)
+                    && java.util.Objects.equals(name, that.name)
+                    && java.util.Objects.equals(description, that.description);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(id, sourceId, instanceId, name, description);
+        }
     }
 
     public HearthstoneData toData() {

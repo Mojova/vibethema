@@ -153,7 +153,7 @@ The application must be fully accessible to screen readers (VoiceOver, NVDA).
 1. **MVVM Integrity**: No business logic (math, validation) should be in the View. Properties in the View should be bound to the ViewModel.
 2. **Craft & Martial Arts**: These are dynamic `ObservableList` collections. Use `data.getAbilityRating(Name)` for highest rating.
 3. **Charm ID Generation**: **CRITICAL**. Never hardcode charm IDs. Use `UUID.nameUUIDFromBytes((name + "|" + ability).getBytes())` to match the import system's stable identifiers.
-4. **Save/Load**: Always update `CharacterSaveState` AND `CharacterData` when adding new persistent fields.
+4. **Save/Load**: Equipment instances embed their complete item data in character saves and undo snapshots; never resolve them from templates on load or write character edits back to templates. Link-only equipment saves are unsupported. Always update `CharacterSaveState` AND `CharacterData` when adding new persistent fields.
 5. **GSON Compatibility**: Redundant fields (like `ability` in charms) are no longer serialized. They are transient or inferred from parents.
 6. **Dialog Handling**: Equipment dialogs are refactored to MVVM. Use `FluentViewLoader` to create them via `DefaultEquipmentDialogService`.
 7. **Logging**: Standardized on **SLF4J + Logback**. Avoid `System.out`.
