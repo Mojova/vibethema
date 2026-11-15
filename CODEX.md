@@ -53,13 +53,14 @@ actions. `MainView` is the composition root and creates tabs through `FluentView
 Main tabs currently include:
 
 1. Stats
-2. Merits
-3. Intimacies
-4. Solar Charms (lazy)
-5. Martial Arts (lazy)
-6. Sorcery (lazy)
-7. Equipment (lazy)
-8. Experience (shown when the character is in experienced mode)
+2. Anima Effects (lazy; general and selected caste effects)
+3. Merits
+4. Intimacies
+5. Solar Charms (lazy)
+6. Martial Arts (lazy)
+7. Sorcery (lazy)
+8. Equipment (lazy)
+9. Experience (shown when the character is in experienced mode)
 
 The first tab is eagerly created; most expensive tabs are lazy-loaded. `ViewCache` warms selected views during the
 splash-screen load to reduce first-use latency.

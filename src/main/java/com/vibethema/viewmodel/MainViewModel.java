@@ -70,6 +70,7 @@ public class MainViewModel implements ViewModel {
     private final Map<String, String> keywordDefs = new java.util.concurrent.ConcurrentHashMap<>();
 
     private StatsViewModel statsViewModel;
+    private AnimaEffectsViewModel animaEffectsViewModel;
     private MeritsViewModel meritsViewModel;
     private IntimaciesViewModel intimaciesViewModel;
     private SorceryViewModel sorceryViewModel;
@@ -589,6 +590,13 @@ public class MainViewModel implements ViewModel {
         return statsViewModel;
     }
 
+    public AnimaEffectsViewModel getAnimaEffectsViewModel() {
+        if (animaEffectsViewModel == null) {
+            animaEffectsViewModel = new AnimaEffectsViewModel(data);
+        }
+        return animaEffectsViewModel;
+    }
+
     public MeritsViewModel getMeritsViewModel() {
         if (meritsViewModel == null) {
             meritsViewModel = new MeritsViewModel(data);
@@ -766,6 +774,7 @@ public class MainViewModel implements ViewModel {
 
     public void refreshImportStatus() {
         coreDataImported.set(systemDataService.isCoreDataImported());
+        if (animaEffectsViewModel != null) animaEffectsViewModel.refresh();
         Messenger.publish("refresh_all_ui");
     }
 

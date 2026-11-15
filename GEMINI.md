@@ -36,6 +36,7 @@ The project strictly follows the **Model-View-ViewModel (MVVM)** pattern using t
 | :--- | :--- | :--- |
 | **Main Window** | `MainView` | `MainViewModel` |
 | **Stats** | `StatsTab` | `StatsViewModel` |
+| **Anima Effects** (after Stats) | `AnimaEffectsTab` | `AnimaEffectsViewModel` |
 | **Merits** | `MeritsTab` | `MeritsViewModel` |
 | **Intimacies** | `IntimaciesTab` | `IntimaciesViewModel` |
 | **Solar Charms** | `CharmsTab` | `CharmsViewModel` |
@@ -93,6 +94,19 @@ The PDF extraction system is designed for high-fidelity parsing of official Exal
 ### Extraction Pipeline
 1.  **Input**: PDF file and `PdfSource` (e.g., `CORE`, `MOSE`).
 2.  **Coordination**: `PdfExtractor` selects the correct book-specific parser.
+    Core imports also use `CoreAnimaExtractor` for printed pages 175-177 (PDF pages 176-178),
+    writing `anima/anima.json` beneath the source directory. Its `animaAbilities` array contains
+    one universal Solar group, an Anima Levels group, and five caste groups, with stable source-aware IDs, `exaltTypes`,
+    `castes`, introductory `description`, and individual `effects` as text. An empty `castes` array
+    means all castes of the listed Exalt types. Costs and conditions remain descriptive text;
+    importing this data does not apply game rules. The Anima Levels group includes four named
+    `levels` (Dim, Glowing, Burning, Bonfire/Iconic) with descriptions, intensification text in
+    `description`, and fading text in `effects`. Older imported groups without `levels` still load.
+    `AnimaDataService` loads this reference text for the selected Exalt type and caste. The
+    Anima Effects tab shows universal effects, anima levels, then caste effects in a column
+    capped at 640 pixels. It updates when caste/type
+    changes, and reloads after PDF imports. Until a caste is selected it shows
+    “Select caste to see anima effects”. No game rules are applied by this tab.
 3.  **Resolution**: `BaseCharmExtractor` handles:
     - **Cleaning**: Removal of page headers, footers, "EX3" markers, and sidebars.
     - **ID Stability**: All charm IDs are generated as **v3 UUIDs** using the format `name|ability` (e.g., `Excelled Strike|Melee`). This ensures persistent prerequisite links across multiple imports.

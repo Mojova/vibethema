@@ -2,6 +2,7 @@ package com.vibethema.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.vibethema.service.pdf.core.CoreAnimaExtractor;
 import com.vibethema.service.pdf.core.CoreCharmExtractor;
 import com.vibethema.service.pdf.core.CoreEquipmentExtractor;
 import com.vibethema.service.pdf.core.CoreMeritExtractor;
@@ -91,7 +92,17 @@ public class PdfExtractor {
                     meritExtractor.setOverrideOutputPath(context.sourceDirectory());
                 meritExtractor.extractAndSave(meritText, "");
 
-                // 5. Keywords (Page range overlap with charms + martial arts section)
+                // 5. Anima abilities (printed pages 175-177, PDF pages 176-178)
+                if (progressCallback != null) progressCallback.accept(0.95);
+                stripper.setStartPage(176);
+                stripper.setEndPage(178);
+                CoreAnimaExtractor animaExtractor = new CoreAnimaExtractor();
+                animaExtractor.setSourceId(sourceId);
+                if (context != null)
+                    animaExtractor.setOverrideOutputPath(context.sourceDirectory());
+                animaExtractor.extractAndSave(stripper.getText(document), "");
+
+                // 6. Keywords (Page range overlap with charms + martial arts section)
                 if (extractKeywords) {
                     StringBuilder combinedKeywords = new StringBuilder();
 
@@ -262,8 +273,11 @@ public class PdfExtractor {
 
         Map<String, String> kw = new HashMap<>();
         kw.put("name", name);
-        kw.put("description", cleaned.replaceAll("[-\\u00AD]\\s*\\R\\s*(?=[a-z])", "")
-                        .replaceAll("\\s+", " ").trim());
+        kw.put(
+                "description",
+                cleaned.replaceAll("[-\\u00AD]\\s*\\R\\s*(?=[a-z])", "")
+                        .replaceAll("\\s+", " ")
+                        .trim());
         list.add(kw);
     }
 }

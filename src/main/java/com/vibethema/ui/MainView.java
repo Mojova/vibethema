@@ -72,6 +72,13 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                                 StatsTab.class,
                                 viewModel.getStatsViewModel()), // Eagerly load the first tab
                         createLazyTab(
+                                "Anima Effects",
+                                () ->
+                                        createTab(
+                                                "Anima Effects",
+                                                AnimaEffectsTab.class,
+                                                viewModel.getAnimaEffectsViewModel())),
+                        createLazyTab(
                                 "Merits",
                                 () ->
                                         createTab(

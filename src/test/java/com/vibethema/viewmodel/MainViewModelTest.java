@@ -311,9 +311,10 @@ public class MainViewModelTest {
         Messenger.subscribe("show_info_alert", observer);
 
         try {
-            when(charmDataService.getGlobalCharmCount()).thenReturn(50);
-            when(charmDataService.getGlobalSpellCount()).thenReturn(10);
-            when(equipmentService.getTotalEquipmentCount()).thenReturn(20);
+            // The constructor's background loader may still be using these mocks.
+            doReturn(50).when(charmDataService).getGlobalCharmCount();
+            doReturn(10).when(charmDataService).getGlobalSpellCount();
+            doReturn(20).when(equipmentService).getTotalEquipmentCount();
 
             viewModel.showDatabaseStats();
 

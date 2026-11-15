@@ -35,6 +35,141 @@ public class MainViewTest {
     }
 
     @Test
+    void animaEffectsRendersGeneralAndCasteTextAndUpdatesWhenCasteChanges() throws Exception {
+        var task =
+                new java.util.concurrent.FutureTask<Void>(() -> {
+                    var data = new CharacterData();
+                    var service = Mockito.mock(com.vibethema.service.AnimaDataService.class);
+                    var general =
+                            new com.vibethema.model.mystic.AnimaAbility(
+                                    "general",
+                                    "source",
+                                    java.util.List.of("SOLAR"),
+                                    java.util.List.of(),
+                                    "General effects",
+                                    "Shared cost and conditions",
+                                    java.util.List.of("Shared effect"));
+                    var dawn =
+                            new com.vibethema.model.mystic.AnimaAbility(
+                                    "dawn",
+                                    "source",
+                                    java.util.List.of("SOLAR"),
+                                    java.util.List.of("DAWN"),
+                                    "Dawn effects",
+                                    "",
+                                    java.util.List.of("Dawn effect"));
+                    var levels =
+                            new com.vibethema.model.mystic.AnimaAbility(
+                                    "levels",
+                                    "source",
+                                    java.util.List.of("SOLAR"),
+                                    java.util.List.of(),
+                                    "Anima Levels",
+                                    "Intensifying",
+                                    java.util.List.of("Fading"),
+                                    java.util.List.of(
+                                            new com.vibethema.model.mystic.AnimaLevel(
+                                                    "Dim", "Hidden"),
+                                            new com.vibethema.model.mystic.AnimaLevel(
+                                                    "Glowing", "Visible")));
+                    when(service.loadAbilities(ExaltType.SOLAR, Caste.DAWN))
+                            .thenReturn(java.util.List.of(general, levels, dawn));
+                    when(service.loadAbilities(ExaltType.SOLAR, Caste.NIGHT))
+                            .thenReturn(java.util.List.of(general, levels));
+                    data.casteProperty().set(Caste.DAWN);
+                    var vm = new com.vibethema.viewmodel.AnimaEffectsViewModel(data, service);
+                    var view =
+                            de.saxsys.mvvmfx.FluentViewLoader.javaView(AnimaEffectsTab.class)
+                                    .viewModel(vm)
+                                    .load()
+                                    .getView();
+                    VBox content = (VBox) ((ScrollPane) view).getContent();
+                    var message = (javafx.scene.control.Label) content.getChildren().get(0);
+                    assertFalse(message.isVisible());
+                    assertFalse(message.isManaged());
+                    VBox groups = (VBox) content.getChildren().get(1);
+                    assertEquals(3, groups.getChildren().size());
+                    VBox generalSection = (VBox) groups.getChildren().get(0);
+                    assertEquals(
+                            java.util.List.of(
+                                    "General effects",
+                                    "Shared cost and conditions",
+                                    "• Shared effect"),
+                            generalSection.getChildren().stream()
+                                    .map(node -> ((javafx.scene.control.Label) node).getText())
+                                    .toList());
+                    VBox levelSection = (VBox) groups.getChildren().get(1);
+                    assertEquals(
+                            java.util.List.of(
+                                    "Anima Levels",
+                                    "Intensifying",
+                                    "Dim",
+                                    "Hidden",
+                                    "Glowing",
+                                    "Visible",
+                                    "• Fading"),
+                            levelSection.getChildren().stream()
+                                    .map(node -> ((javafx.scene.control.Label) node).getText())
+                                    .toList());
+                    VBox casteSection = (VBox) groups.getChildren().get(2);
+                    assertEquals(
+                            "Dawn effects",
+                            ((javafx.scene.control.Label) casteSection.getChildren().get(0))
+                                    .getText());
+                    assertEquals(
+                            "• Dawn effect",
+                            ((javafx.scene.control.Label) casteSection.getChildren().get(1))
+                                    .getText());
+                    data.casteProperty().set(Caste.NIGHT);
+                    assertEquals(2, groups.getChildren().size());
+                    data.casteProperty().set(Caste.NONE);
+                    assertTrue(groups.getChildren().isEmpty());
+                    assertTrue(message.isVisible());
+                    return null;
+                });
+        Platform.runLater(task);
+        task.get(10, TimeUnit.SECONDS);
+    }
+
+    @Test
+    void animaEffectsTabFollowsStatsAndShowsCastePrompt() throws Exception {
+        var task =
+                new java.util.concurrent.FutureTask<Void>(() -> {
+                    var data = new CharacterData();
+                    var vm =
+                            new MainViewModel(
+                                    data,
+                                    Mockito.mock(SystemDataService.class),
+                                    Mockito.mock(EquipmentDataService.class),
+                                    Mockito.mock(CharmDataService.class),
+                                    Mockito.mock(PdfExportService.class));
+                    MainView view =
+                            (MainView)
+                                    de.saxsys.mvvmfx.FluentViewLoader.javaView(MainView.class)
+                                            .viewModel(vm)
+                                            .load()
+                                            .getView();
+                    TabPane tabs = (TabPane) view.getCenter();
+                    assertEquals("Stats", tabs.getTabs().get(0).getText());
+                    Tab anima = tabs.getTabs().get(1);
+                    assertEquals("Anima Effects", anima.getText());
+                    assertNull(anima.getContent());
+                    tabs.getSelectionModel().select(anima);
+                    assertInstanceOf(AnimaEffectsTab.class, anima.getContent());
+                    VBox content = (VBox) ((ScrollPane) anima.getContent()).getContent();
+                    var message = (javafx.scene.control.Label) content.getChildren().getFirst();
+                    assertEquals("Select caste to see anima effects", message.getText());
+                    data.casteProperty().set(Caste.DAWN);
+                    assertNotEquals("Select caste to see anima effects", message.getText());
+                    data.casteProperty().set(Caste.NONE);
+                    assertEquals("Select caste to see anima effects", message.getText());
+                    return null;
+                });
+        Platform.runLater(task);
+        task.get(10, TimeUnit.SECONDS);
+    }
+
+    @Test
     void testLazyLoadingTabs() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
 
