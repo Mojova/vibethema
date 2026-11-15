@@ -21,6 +21,10 @@ import de.saxsys.mvvmfx.ViewModel;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -59,6 +63,7 @@ public class MainViewModel implements ViewModel {
     private final PdfExportService pdfExportService;
     private final SystemDataService systemDataService;
     private final UndoManager undoManager = new UndoManager();
+    private final List<PauseTransition> textCheckpointTimers = new ArrayList<>();
     private final StringProperty currentTabId = new SimpleStringProperty("Stats");
 
     private final Map<String, String> tagDescriptions =
@@ -214,8 +219,10 @@ public class MainViewModel implements ViewModel {
     private void setupDebouncedCheckpoint(
             StringProperty property, String contextId, String description, String targetId) {
         PauseTransition pause = new PauseTransition(Duration.seconds(1));
+        textCheckpointTimers.add(pause);
         pause.setOnFinished(
                 e -> {
+                    if (data.isUndoRedoInProgress()) return;
                     undoManager.pushCheckpoint(
                             data.exportState(), contextId, description, targetId);
                 });
@@ -226,7 +233,7 @@ public class MainViewModel implements ViewModel {
                     // But UndoManager handles that by checking if the state is already current.
                     // Actually, we should probably check if the value actually changed to avoid
                     // redundant restarts.
-                    if (oldV != null && !oldV.equals(newV)) {
+                    if (!data.isUndoRedoInProgress() && oldV != null && !oldV.equals(newV)) {
                         pause.playFromStart();
                     }
                 });
@@ -319,13 +326,26 @@ public class MainViewModel implements ViewModel {
     // Actions
     public void saveCharacter(File file) {
         if (file == null) return;
-        try (FileWriter writer = new FileWriter(file)) {
+        Path destination = file.toPath().toAbsolutePath();
+        Path temporary = null;
+        try {
             CharacterSaveState state = data.exportState();
-            new GsonBuilder().setPrettyPrinting().create().toJson(state, writer);
+            temporary = Files.createTempFile(destination.getParent(), ".vibethema-", ".tmp");
+            try (var writer = Files.newBufferedWriter(temporary, java.nio.charset.StandardCharsets.UTF_8)) {
+                new GsonBuilder().setPrettyPrinting().create().toJson(state, writer);
+            }
+            try {
+                Files.move(temporary, destination, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException atomicMoveUnsupported) {
+                Files.move(temporary, destination, StandardCopyOption.REPLACE_EXISTING);
+            }
             data.setDirty(false);
             currentFile.set(file);
         } catch (Exception ex) {
             logger.error("Failed to save character to {}", file.getAbsolutePath(), ex);
+            Messenger.publish("show_error_alert", "Could not save character: " + ex.getMessage());
+        } finally {
+            if (temporary != null) try { Files.deleteIfExists(temporary); } catch (IOException ignored) {}
         }
     }
 
@@ -345,6 +365,7 @@ public class MainViewModel implements ViewModel {
     }
 
     public void undo() {
+        cancelTextCheckpointTimers();
         if (undoManager.canUndoProperty().get()) {
             UndoManager.UndoEntry entry = undoManager.undo(currentTabId.get(), data.exportState());
             if (entry != null) {
@@ -358,6 +379,7 @@ public class MainViewModel implements ViewModel {
     }
 
     public void redo() {
+        cancelTextCheckpointTimers();
         if (undoManager.canRedoProperty().get()) {
             UndoManager.UndoEntry entry = undoManager.redo(currentTabId.get(), data.exportState());
             if (entry != null) {
@@ -721,6 +743,8 @@ public class MainViewModel implements ViewModel {
     }
 
     public void resetToNew() {
+        cancelTextCheckpointTimers();
+        undoManager.clear();
         this.data.clear();
         Weapon unarmed = equipmentService.loadWeapon(Weapon.UNARMED_ID);
         if (unarmed != null) {
@@ -729,6 +753,10 @@ public class MainViewModel implements ViewModel {
         this.currentFile.set(null);
         this.data.setDirty(false);
         Messenger.publish("refresh_all_ui");
+    }
+
+    private void cancelTextCheckpointTimers() {
+        textCheckpointTimers.forEach(PauseTransition::stop);
     }
 
     public void refreshImportStatus() {

@@ -557,7 +557,7 @@ public class CharacterData {
             updateAttackPools();
         } finally {
             isImporting = false;
-            dirty.set(false);
+            if (!isUndoRedoInProgress) dirty.set(false);
         }
     }
 
