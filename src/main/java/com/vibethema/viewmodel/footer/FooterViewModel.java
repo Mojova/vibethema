@@ -21,6 +21,10 @@ public class FooterViewModel implements ViewModel {
     private final StringProperty attrText = new SimpleStringProperty();
     private final StringProperty abilitiesText = new SimpleStringProperty();
     private final StringProperty specialtiesText = new SimpleStringProperty();
+    private final StringProperty meritsText = new SimpleStringProperty();
+    private final StringProperty validationText = new SimpleStringProperty();
+    private final StringProperty validationTitle = new SimpleStringProperty();
+    private final java.util.function.Supplier<CreationValidator.Result> validator;
     private final StringProperty charmsText = new SimpleStringProperty();
     private final BooleanProperty creationModeVisible = new SimpleBooleanProperty();
 
@@ -38,8 +42,16 @@ public class FooterViewModel implements ViewModel {
     private final Runnable finalizeAction;
 
     public FooterViewModel(CharacterData data, Runnable finalizeAction) {
+        this(data, finalizeAction, () -> CreationValidator.validate(data));
+    }
+
+    public FooterViewModel(
+            CharacterData data,
+            Runnable finalizeAction,
+            java.util.function.Supplier<CreationValidator.Result> validator) {
         this.data = data;
         this.finalizeAction = finalizeAction;
+        this.validator = validator;
 
         setupListeners();
         update();
@@ -50,6 +62,8 @@ public class FooterViewModel implements ViewModel {
         ListChangeListener<Object> listUpdater = c -> update();
 
         data.modeProperty().addListener(updater);
+        data.exaltTypeProperty().addListener(updater);
+        data.limitTriggerProperty().addListener(updater);
         data.casteProperty().addListener(updater);
         data.supernalAbilityProperty().addListener(updater);
         data.essenceProperty().addListener(updater);
@@ -62,11 +76,65 @@ public class FooterViewModel implements ViewModel {
         data.getAttributePriorities().values().forEach(p -> p.addListener(updater));
 
         data.getUnlockedCharms().addListener(listUpdater);
-        data.getMerits().addListener(listUpdater);
+        observeItems(
+                data.getMerits(), m -> java.util.List.of(m.ratingProperty(), m.nameProperty()));
         data.getSpecialties().addListener(listUpdater);
-        data.getCrafts().addListener(listUpdater);
-        data.getMartialArtsStyles().addListener(listUpdater);
+        observeItems(
+                data.getCrafts(),
+                c ->
+                        java.util.List.of(
+                                c.ratingProperty(),
+                                c.expertiseProperty(),
+                                c.casteProperty(),
+                                c.favoredProperty()));
+        observeItems(
+                data.getMartialArtsStyles(),
+                m ->
+                        java.util.List.of(
+                                m.ratingProperty(),
+                                m.styleNameProperty(),
+                                m.casteProperty(),
+                                m.favoredProperty()));
         data.getXpAwards().addListener(listUpdater);
+        data.getSpells().addListener(listUpdater);
+        data.getIntimacies().addListener(listUpdater);
+        data.getWeapons().addListener(listUpdater);
+        data.getArmors().addListener(listUpdater);
+        data.getOtherEquipment().addListener(listUpdater);
+    }
+
+    /** Attach to item edits and detach when items leave the character (including undo/load). */
+    private <T> void observeItems(
+            javafx.collections.ObservableList<T> items,
+            java.util.function.Function<T, java.util.List<javafx.beans.Observable>> properties) {
+        java.util.Map<T, java.util.List<javafx.beans.Observable>> observed =
+                new java.util.IdentityHashMap<>();
+        javafx.beans.InvalidationListener listener = ignored -> update();
+        Runnable sync =
+                () -> {
+                    var iterator = observed.entrySet().iterator();
+                    while (iterator.hasNext()) {
+                        var entry = iterator.next();
+                        if (!items.contains(entry.getKey())) {
+                            entry.getValue().forEach(p -> p.removeListener(listener));
+                            iterator.remove();
+                        }
+                    }
+                    for (T item : items) {
+                        if (!observed.containsKey(item)) {
+                            var itemProperties = properties.apply(item);
+                            itemProperties.forEach(p -> p.addListener(listener));
+                            observed.put(item, itemProperties);
+                        }
+                    }
+                };
+        sync.run();
+        items.addListener(
+                (ListChangeListener<T>)
+                        change -> {
+                            sync.run();
+                            update();
+                        });
     }
 
     public void update() {
@@ -95,14 +163,22 @@ public class FooterViewModel implements ViewModel {
         specialtiesText.set("Specialties: " + status.specialtiesSpent + "/4");
         charmsText.set("Charms: " + status.charmsSpent + "/15");
 
-        finalizeDisabled.set(!status.isReadyToFinalize);
-        if (status.isReadyToFinalize) {
-            finalizeTooltip.set("All creation points spent. Click to finalize.");
-        } else {
-            finalizeTooltip.set(
-                    "Check creation pools: Attributes (18), Abilities (28), Merits (10),"
-                            + " Specialties (4), Charms (15), and 15 BP.");
-        }
+        meritsText.set("Merits: " + status.meritsSpent + "/10");
+        CreationValidator.Result result = validator.get();
+        finalizeDisabled.set(!result.isReady());
+        validationTitle.set(
+                result.isReady()
+                        ? "Creation checklist: ready"
+                        : "Creation checklist: " + result.issues().size() + " remaining");
+        validationText.set(
+                (result.isReady() ? "All automatic creation checks passed." : result.describe())
+                        + "\n"
+                        + "Review your Intimacies with your Storyteller: include at least one"
+                        + " positive and one negative Intimacy.");
+        finalizeTooltip.set(
+                result.isReady()
+                        ? "All automatic checks passed. Click to finalize."
+                        : result.describe());
     }
 
     private void updateExperiencedStatus() {
@@ -182,8 +258,23 @@ public class FooterViewModel implements ViewModel {
         return experiencedModeVisible;
     }
 
+    public StringProperty meritsTextProperty() {
+        return meritsText;
+    }
+
+    public StringProperty validationTextProperty() {
+        return validationText;
+    }
+
+    public StringProperty validationTitleProperty() {
+        return validationTitle;
+    }
+
     public void finalizeCharacter() {
-        if (finalizeAction != null) {
+        update();
+        if (data.getMode() == CharacterMode.CREATION
+                && !finalizeDisabled.get()
+                && finalizeAction != null) {
             finalizeAction.run();
         }
     }

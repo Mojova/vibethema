@@ -576,4 +576,35 @@ public class MainViewModelTest {
         assertNotNull(exp1);
         assertSame(exp1, viewModel.getExperienceViewModel(() -> {}));
     }
+
+    @Test
+    void finalizationRejectsIncompleteCharacterWithoutChangingState() {
+        CharacterSaveState before = data.exportState();
+        viewModel.proceedWithFinalization();
+        assertEquals(CharacterMode.CREATION, data.getMode());
+        assertNull(data.getCreationSnapshot());
+        assertEquals(before, data.exportState());
+    }
+
+    @Test
+    void finalizationRechecksStateAfterConfirmationWasOpened() {
+        var ready = com.vibethema.model.logic.CreationTestCharacters.ready();
+        data.importState(ready.exportState(), equipmentService);
+        for (Charm charm : com.vibethema.model.logic.CreationTestCharacters.definitions()) {
+            when(charmDataService.findCharmById(charm.getId())).thenReturn(charm);
+        }
+        viewModel.getFooterViewModel().update();
+        assertFalse(viewModel.getFooterViewModel().finalizeDisabledProperty().get());
+        data.supernalAbilityProperty().set("");
+        viewModel.proceedWithFinalization();
+        assertEquals(CharacterMode.CREATION, data.getMode());
+        assertNull(data.getCreationSnapshot());
+        data.supernalAbilityProperty().set("Melee");
+        viewModel.proceedWithFinalization();
+        assertEquals(CharacterMode.EXPERIENCED, data.getMode());
+        assertNotNull(data.getCreationSnapshot());
+        var snapshot = data.getCreationSnapshot();
+        viewModel.proceedWithFinalization();
+        assertSame(snapshot, data.getCreationSnapshot());
+    }
 }

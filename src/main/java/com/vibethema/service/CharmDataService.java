@@ -25,6 +25,9 @@ public class CharmDataService {
             new java.util.concurrent.ConcurrentHashMap<>();
     private final java.util.concurrent.ConcurrentHashMap<String, String> charmIdToAbilityMap =
             new java.util.concurrent.ConcurrentHashMap<>();
+    private final java.util.concurrent.ConcurrentHashMap<String, Charm> charmDefinitions =
+            new java.util.concurrent.ConcurrentHashMap<>();
+
     private final java.util.concurrent.atomic.AtomicBoolean indexBuilt =
             new java.util.concurrent.atomic.AtomicBoolean(false);
 
@@ -268,10 +271,25 @@ public class CharmDataService {
         return count;
     }
 
-    private void ensureIndexBuilt() {
-        if (indexBuilt.compareAndSet(false, true)) {
+    private synchronized void ensureIndexBuilt() {
+        if (!indexBuilt.get()) {
             buildGlobalIndex();
+            indexBuilt.set(true);
         }
+    }
+
+    /** Resolves purchases without rereading the catalog for each trait change. */
+    public Charm findCharmById(String id) {
+        if (id == null) return null;
+        ensureIndexBuilt();
+        return charmDefinitions.get(id);
+    }
+
+    public synchronized void invalidateIndex() {
+        indexBuilt.set(false);
+        charmDefinitions.clear();
+        charmIdToNameMap.clear();
+        charmIdToAbilityMap.clear();
     }
 
     private void buildGlobalIndex() {
@@ -293,6 +311,11 @@ public class CharmDataService {
 
         for (Charm c : all) {
             if (c.getId() != null) {
+                Charm previous = charmDefinitions.get(c.getId());
+                if (previous != null
+                        && previous.getPrerequisites() != null
+                        && c.getPrerequisites() == null) continue;
+                charmDefinitions.put(c.getId(), c);
                 charmIdToNameMap.put(c.getId(), c.getName());
                 if (c.getAbility() != null) charmIdToAbilityMap.put(c.getId(), c.getAbility());
             }
@@ -308,16 +331,39 @@ public class CharmDataService {
                                     && !path.getFileName().toString().equals("charm-schema.json"))
                     .forEach(path -> {
                         if (evocations) {
-                            EvocationCollection coll =
-                                    loadEvocations(
-                                            path.getFileName().toString().replace(".json", ""));
-                            if (coll != null) all.addAll(coll.evocations);
+                            loadEvocationsForIndex(path, all);
                         } else {
                             loadFromFileForIndex(path, all);
                         }
                     });
         } catch (IOException e) {
             logger.error("Error building global charm index from {}", directory, e);
+        }
+    }
+
+    private void loadEvocationsForIndex(Path path, List<Charm> all) {
+        try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+            com.google.gson.JsonObject json =
+                    gson.fromJson(reader, com.google.gson.JsonObject.class);
+            if (json == null) return;
+            String artifactId = path.getFileName().toString().replace(".json", "");
+            List<Charm> charms;
+            if (json.has("evocations")) {
+                EvocationCollection collection = gson.fromJson(json, EvocationCollection.class);
+                if (collection.artifactId != null) artifactId = collection.artifactId;
+                charms = collection.evocations;
+            } else {
+                CharmListWrapper wrapper = gson.fromJson(json, CharmListWrapper.class);
+                charms = wrapper.charms;
+            }
+            if (charms != null) {
+                for (Charm charm : charms) {
+                    charm.setAbility(artifactId);
+                    all.add(charm);
+                }
+            }
+        } catch (Exception e) {
+            logger.warn("Could not index evocations from {}", path, e);
         }
     }
 
@@ -413,13 +459,7 @@ public class CharmDataService {
             prettyGson.toJson(new CharmListWrapper(styleId, ability, typeAttr, charms), writer);
         }
 
-        // Update index cache
-        if (charm.getId() != null) {
-            charmIdToNameMap.put(charm.getId(), charm.getName());
-            if (charm.getAbility() != null)
-                charmIdToAbilityMap.put(charm.getId(), charm.getAbility());
-        }
-
+        invalidateIndex();
         exportSchema(); // Ensure schema is present for the user
     }
 
@@ -455,6 +495,7 @@ public class CharmDataService {
                 prettyGson.toJson(new CharmListWrapper(null, ability, typeAttr, existing), writer);
             }
         }
+        invalidateIndex();
     }
 
     public EvocationCollection loadEvocations(String artifactId) {
@@ -519,12 +560,7 @@ public class CharmDataService {
         try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
             prettyGson.toJson(collection, writer);
         }
-
-        // Update index cache
-        if (charm.getId() != null) {
-            charmIdToNameMap.put(charm.getId(), charm.getName());
-            if (artifactName != null) charmIdToAbilityMap.put(charm.getId(), artifactName);
-        }
+        invalidateIndex();
     }
 
     public void updateEvocationCollectionName(String artifactId, String artifactName)
@@ -551,6 +587,7 @@ public class CharmDataService {
         try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
             prettyGson.toJson(collection, writer);
         }
+        invalidateIndex();
     }
 
     public List<Keyword> loadKeywords() {

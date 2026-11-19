@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.vibethema.model.*;
 import com.vibethema.model.equipment.*;
+import com.vibethema.model.logic.CreationValidator;
 import com.vibethema.model.traits.*;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
@@ -145,7 +146,8 @@ public class MainViewModel implements ViewModel {
 
     public void init(CharacterData data) {
         this.data = data;
-        this.footerViewModel = new FooterViewModel(data, this::handleFinalization);
+        this.footerViewModel =
+                new FooterViewModel(data, this::handleFinalization, this::validateCreation);
         this.dirty.unbind();
         this.dirty.bind(data.dirtyProperty());
 
@@ -424,11 +426,27 @@ public class MainViewModel implements ViewModel {
         }
     }
 
+    private CreationValidator.Result validateCreation() {
+        return CreationValidator.validate(data, charmDataService::findCharmById);
+    }
+
+    private boolean checkCreationReady() {
+        var result = validateCreation();
+        footerViewModel.update();
+        if (!result.isReady()) {
+            Messenger.publish(
+                    "show_error_alert", "Character creation is incomplete:\n" + result.describe());
+            return false;
+        }
+        return true;
+    }
+
     private void handleFinalization() {
-        Messenger.publish("show_finalization_dialog");
+        if (checkCreationReady()) Messenger.publish("show_finalization_dialog");
     }
 
     public void proceedWithFinalization() {
+        if (!checkCreationReady()) return;
         data.setCreationSnapshot(data.exportState());
         data.setMode(CharacterMode.EXPERIENCED);
         if (currentFile.get() != null) {
@@ -773,6 +791,8 @@ public class MainViewModel implements ViewModel {
     }
 
     public void refreshImportStatus() {
+        charmDataService.invalidateIndex();
+        footerViewModel.update();
         coreDataImported.set(systemDataService.isCoreDataImported());
         if (animaEffectsViewModel != null) animaEffectsViewModel.refresh();
         Messenger.publish("refresh_all_ui");

@@ -156,6 +156,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         addObserver(
                 "refresh_all_ui",
                 (name, payload) -> {
+                    viewModel.getFooterViewModel().update();
                     charmTabs.values().forEach(CharmsTab::refresh);
                     if (martialArtsTab != null) martialArtsTab.refresh();
                 });

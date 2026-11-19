@@ -12,10 +12,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 
 public class FooterView extends VBox implements JavaView<FooterViewModel>, Initializable {
@@ -31,7 +31,7 @@ public class FooterView extends VBox implements JavaView<FooterViewModel>, Initi
         setPadding(new Insets(10));
         setSpacing(5);
 
-        HBox row1 = new HBox(20);
+        FlowPane row1 = new FlowPane(20, 5);
         row1.setAlignment(Pos.CENTER_LEFT);
 
         // Labels
@@ -42,11 +42,9 @@ public class FooterView extends VBox implements JavaView<FooterViewModel>, Initi
         Label abilitiesLabel = createLabel("Abilities");
         Label specialtiesLabel = createLabel("Specialties");
         Label charmsLabel = createLabel("Charms");
+        Label meritsLabel = createLabel("Merits");
         Label regularXpLabel = createLabel("RegularXP");
         Label solarXpLabel = createLabel("SolarXP");
-
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
 
         finalizeBtn = new Button("Finalize Character");
         finalizeBtn.getStyleClass().add("action-btn");
@@ -58,11 +56,11 @@ public class FooterView extends VBox implements JavaView<FooterViewModel>, Initi
                         attrLabel,
                         abilitiesLabel,
                         specialtiesLabel,
+                        meritsLabel,
                         charmsLabel,
                         bpLabel,
                         regularXpLabel,
                         solarXpLabel,
-                        spacer,
                         finalizeBtn);
 
         getChildren().add(row1);
@@ -87,6 +85,7 @@ public class FooterView extends VBox implements JavaView<FooterViewModel>, Initi
         abilitiesLabel.textProperty().bind(vm.abilitiesTextProperty());
         specialtiesLabel.textProperty().bind(vm.specialtiesTextProperty());
         charmsLabel.textProperty().bind(vm.charmsTextProperty());
+        meritsLabel.textProperty().bind(vm.meritsTextProperty());
 
         for (Label l :
                 new Label[] {
@@ -96,11 +95,27 @@ public class FooterView extends VBox implements JavaView<FooterViewModel>, Initi
                     attrLabel,
                     abilitiesLabel,
                     specialtiesLabel,
+                    meritsLabel,
                     charmsLabel
                 }) {
             l.visibleProperty().bind(vm.creationModeVisibleProperty());
             l.managedProperty().bind(l.visibleProperty());
         }
+
+        Label checklist = new Label();
+        checklist.textProperty().bind(vm.validationTextProperty());
+        checklist.setWrapText(true);
+        checklist.setPadding(new Insets(8));
+        ScrollPane checklistScroll = new ScrollPane(checklist);
+        checklistScroll.setFitToWidth(true);
+        checklistScroll.setPrefViewportHeight(130);
+        TitledPane checklistPane = new TitledPane();
+        checklistPane.textProperty().bind(vm.validationTitleProperty());
+        checklistPane.setContent(checklistScroll);
+        checklistPane.setExpanded(false);
+        checklistPane.visibleProperty().bind(vm.creationModeVisibleProperty());
+        checklistPane.managedProperty().bind(checklistPane.visibleProperty());
+        getChildren().add(checklistPane);
 
         // Finalize Button bindings
         finalizeBtn.visibleProperty().bind(vm.creationModeVisibleProperty());
@@ -150,6 +165,7 @@ public class FooterView extends VBox implements JavaView<FooterViewModel>, Initi
                     "Abilities", 115.0,
                     "Specialties", 115.0,
                     "Charms", 105.0,
+                    "Merits", 100.0,
                     "RegularXP", 160.0,
                     "SolarXP", 160.0);
 
