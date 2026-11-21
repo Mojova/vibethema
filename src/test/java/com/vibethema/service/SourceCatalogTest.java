@@ -57,24 +57,32 @@ class SourceCatalogTest {
 
     @Test
     void filtersCharmAndMeritLoadingByExaltType() throws Exception {
-        Path coreCharms = PathService.getOfficialSourcePath("exalted-3e-core").resolve("charms");
+        Path coreCharms =
+                PathService.getOfficialSourcePath("exalted-3e-core").resolve("charms/solar");
         Files.createDirectories(coreCharms);
         Files.writeString(
                 coreCharms.resolve("athletics.json"),
-                "{\"ability\":\"Athletics\",\"charms\":[{\"id\":\"solar\",\"name\":\"Solar"
-                        + " Charm\",\"category\":\"solar\"}]}");
+                CharmFixtures.solar(
+                        "exalted-3e-core",
+                        "Athletics",
+                        "[{\"id\":\"solar\",\"name\":\"Solar Charm\"}]"));
         Path lunarsCharms =
-                PathService.getOfficialSourcePath("exalted-3e-lunars").resolve("charms");
+                PathService.getOfficialSourcePath("exalted-3e-lunars").resolve("charms/lunar");
         Files.createDirectories(lunarsCharms);
         Files.writeString(
                 lunarsCharms.resolve("athletics.json"),
-                "{\"ability\":\"Athletics\",\"charms\":[{\"id\":\"lunar\",\"name\":\"Lunar"
-                        + " Charm\",\"category\":\"solar\"}]}");
+                CharmFixtures.nativeCharms(
+                        "exalted-3e-lunars",
+                        "LUNAR",
+                        "Athletics",
+                        "[{\"id\":\"lunar\",\"name\":\"Lunar Charm\"}]"));
 
         CharmDataService service = new CharmDataService();
 
         assertEquals(1, service.loadCharmsForAbility("Athletics", ExaltType.SOLAR).size());
-        assertEquals(2, service.loadCharmsForAbility("Athletics", ExaltType.LUNAR).size());
+        org.junit.jupiter.api.Assertions.assertThrows(
+                com.google.gson.JsonParseException.class,
+                () -> service.loadCharmsForAbility("Athletics", ExaltType.LUNAR));
     }
 
     private void writeManifest(String sourceId, String json) throws Exception {

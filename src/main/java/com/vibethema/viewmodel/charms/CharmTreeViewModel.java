@@ -84,7 +84,7 @@ public class CharmTreeViewModel implements ViewModel {
             CharmDataService.EvocationCollection collection = dataService.loadEvocations(selection);
             loaded = (collection != null) ? collection.evocations : new ArrayList<>();
         } else {
-            loaded = dataService.loadCharmsForAbility(selection);
+            loaded = dataService.loadCharmsForAbility(selection, data.exaltTypeProperty().get());
         }
 
         if (loaded != null && showEligibleOnly.get()) {

@@ -31,7 +31,7 @@ class OfficialSourceLoadingTest {
         Path source = PathService.getOfficialSourcePath("exalted-3e-core");
         Files.createDirectories(source.resolve("merits"));
         Files.createDirectories(source.resolve("spells"));
-        Files.createDirectories(source.resolve("charms"));
+        Files.createDirectories(source.resolve("charms/solar"));
         Files.createDirectories(source.resolve("equipment"));
 
         Files.writeString(
@@ -43,8 +43,9 @@ class OfficialSourceLoadingTest {
                 "{\"spells\":[{\"id\":\"spell-1\",\"name\":\"Fire\",\"circle\":\"Terrestrial\"}]}",
                 StandardCharsets.UTF_8);
         Files.writeString(
-                source.resolve("charms/athletics.json"),
-                "{\"ability\":\"Athletics\",\"charms\":[{\"id\":\"charm-1\",\"name\":\"Run\",\"category\":\"solar\"}]}",
+                source.resolve("charms/solar/athletics.json"),
+                CharmFixtures.solar(
+                        "exalted-3e-core", "Athletics", "[{\"id\":\"charm-1\",\"name\":\"Run\"}]"),
                 StandardCharsets.UTF_8);
         Files.writeString(
                 source.resolve("equipment/equipment_tags.json"),
@@ -63,47 +64,45 @@ class OfficialSourceLoadingTest {
     @Test
     void customDataIsKeptSeparateFromOfficialData() throws Exception {
         Path source = PathService.getOfficialSourcePath("exalted-3e-core");
-        Files.createDirectories(source.resolve("charms"));
-        Files.createDirectories(PathService.getCustomDataPath().resolve("charms"));
+        Files.createDirectories(source.resolve("charms/solar"));
+        Files.createDirectories(PathService.getCustomDataPath().resolve("charms/solar"));
         Files.writeString(
-                source.resolve("charms/athletics.json"),
-                "{\"ability\":\"Athletics\",\"charms\":[{\"id\":\"official\",\"name\":\"Official\",\"category\":\"solar\"}]}",
+                source.resolve("charms/solar/athletics.json"),
+                CharmFixtures.solar(
+                        "exalted-3e-core",
+                        "Athletics",
+                        "[{\"id\":\"official\",\"name\":\"Official\"}]"),
                 StandardCharsets.UTF_8);
         Files.writeString(
-                PathService.getCustomDataPath().resolve("charms/athletics.json"),
-                "{\"ability\":\"Athletics\",\"charms\":[{\"id\":\"custom\",\"name\":\"Custom\",\"category\":\"solar\"}]}",
+                PathService.getCustomDataPath().resolve("charms/solar/athletics.json"),
+                CharmFixtures.solar(
+                        "custom", "Athletics", "[{\"id\":\"custom\",\"name\":\"Custom\"}]"),
                 StandardCharsets.UTF_8);
 
         assertEquals(2, new CharmDataService().loadCharmsForAbility("Athletics").size());
         assertEquals(
-                PathService.getCustomDataPath().resolve("charms"),
-                CharmDataService.getUserCharmsPath());
+                PathService.getCustomDataPath().resolve("charms/solar"),
+                CharmDataService.getUserExaltedCharmsPath(com.vibethema.model.ExaltType.SOLAR));
     }
 
     @Test
     void charmLookupRetainsPrerequisitesAndRefreshesAfterCatalogChanges() throws Exception {
-        Path charms = PathService.getOfficialSourcePath("exalted-3e-core").resolve("charms");
+        Path charms = PathService.getOfficialSourcePath("exalted-3e-core").resolve("charms/solar");
         Files.createDirectories(charms);
         Path file = charms.resolve("melee.json");
         Files.writeString(
                 file,
-                """
-                {"ability":"Melee","charms":[{"id":"test","name":"Test","category":"solar",
-                "prerequisites":{"type":"charm","charmId":"parent"}}]}
-                """);
-        Path custom = CharmDataService.getUserCharmsPath();
-        Files.createDirectories(custom);
-        Files.writeString(
-                custom.resolve("melee-custom.json"),
-                """
-                {"ability":"Melee","charms":[{"id":"test","name":"Legacy","category":"solar"}]}
-                """);
+                CharmFixtures.solar(
+                        "exalted-3e-core",
+                        "Melee",
+                        """
+                        [{"id":"test","name":"Test","prerequisites":{"type":"charm","charmId":"parent"}}]
+                        """));
         CharmDataService service = new CharmDataService();
         assertEquals("Test", service.findCharmById("test").getName());
         assertEquals("Melee", service.findCharmById("test").getAbility());
         assertEquals("parent", service.findCharmById("test").getPrerequisites().getCharmId());
         Files.delete(file);
-        Files.delete(custom.resolve("melee-custom.json"));
         service.invalidateIndex();
         org.junit.jupiter.api.Assertions.assertNull(service.findCharmById("test"));
     }
@@ -115,10 +114,12 @@ class OfficialSourceLoadingTest {
         Files.createDirectories(evocations);
         Files.writeString(
                 evocations.resolve("artifact.json"),
-                """
-                {"artifactId":"artifact","artifactName":"Test Artifact","evocations":[
-                {"id":"evocation","name":"Test Power","category":"evocation"}]}
-                """);
+                CharmFixtures.evocations(
+                        "exalted-3e-core",
+                        "artifact",
+                        """
+                        [{"id":"evocation","name":"Test Power"}]
+                        """));
         CharmDataService service = new CharmDataService();
         var evocation = service.findCharmById("evocation");
         assertTrue(evocation instanceof com.vibethema.model.mystic.Evocation);

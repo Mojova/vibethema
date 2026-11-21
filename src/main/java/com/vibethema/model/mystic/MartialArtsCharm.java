@@ -8,7 +8,7 @@ public class MartialArtsCharm extends Charm {
 
     public MartialArtsCharm() {
         super();
-        setCategory("martialArts");
+        setFamily(CharmKind.MARTIAL_ARTS, null);
     }
 
     @Override

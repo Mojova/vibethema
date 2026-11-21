@@ -7,7 +7,7 @@ public class Evocation extends Charm {
 
     public Evocation() {
         super();
-        setCategory("evocation");
+        setFamily(CharmKind.EVOCATION, null);
     }
 
     public void setArtifactId(String artifactId) {

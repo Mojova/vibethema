@@ -44,18 +44,21 @@ public class CharmTreeViewModelTest {
         CountDownLatch latch = new CountDownLatch(1);
 
         // Mock return for Melee charms
-        when(dataService.loadCharmsForAbility("Melee")).thenReturn(new java.util.ArrayList<>());
+        when(dataService.loadCharmsForAbility("Melee", com.vibethema.model.ExaltType.SOLAR))
+                .thenReturn(new java.util.ArrayList<>());
 
         Platform.runLater(() -> {
             // 1. Initial refresh should have happened in initialize()
-            verify(dataService, atLeastOnce()).loadCharmsForAbility("Melee");
+            verify(dataService, atLeastOnce())
+                    .loadCharmsForAbility("Melee", com.vibethema.model.ExaltType.SOLAR);
             reset(dataService); // Clear counts
 
             // 2. Change search text
             viewModel.searchTextProperty().set("Fire");
 
             // 3. Verify it hasn't refreshed immediately
-            verify(dataService, never()).loadCharmsForAbility(anyString());
+            verify(dataService, never())
+                    .loadCharmsForAbility(anyString(), eq(com.vibethema.model.ExaltType.SOLAR));
 
             // 4. Wait for debounce (250ms + margin)
             new Thread(
@@ -64,7 +67,9 @@ public class CharmTreeViewModelTest {
                                     Thread.sleep(400); // 250ms debounce
                                     Platform.runLater(() -> {
                                         verify(dataService, atLeastOnce())
-                                                .loadCharmsForAbility("Melee");
+                                                .loadCharmsForAbility(
+                                                        "Melee",
+                                                        com.vibethema.model.ExaltType.SOLAR);
                                         latch.countDown();
                                     });
                                 } catch (InterruptedException e) {
@@ -91,7 +96,8 @@ public class CharmTreeViewModelTest {
                     character.addCharm(
                             new com.vibethema.model.mystic.PurchasedCharm(
                                     charm.getId(), charm.getName(), charm.getAbility()));
-                    when(service.loadCharmsForAbility("Melee")).thenReturn(List.of(charm));
+                    when(service.loadCharmsForAbility("Melee", com.vibethema.model.ExaltType.SOLAR))
+                            .thenReturn(List.of(charm));
                     var vm = new CharmTreeViewModel(character, service, new HashMap<>());
                     vm.initialize("Ability", "Melee", "Melee", "", "");
                     vm.searchTextProperty().set("does not match");

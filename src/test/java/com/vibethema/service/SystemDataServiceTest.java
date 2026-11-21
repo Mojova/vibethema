@@ -40,6 +40,10 @@ class SystemDataServiceTest {
         Files.createDirectories(keywords.getParent());
         Files.writeString(keywords, "[]", StandardCharsets.UTF_8);
 
+        assertFalse(new SystemDataService().isCoreDataImported());
+        Path source = PathService.getOfficialSourcePath("exalted-3e-core");
+        SourceManifest.coreBook().writeTo(source);
+        Files.createDirectories(source.resolve("charms/solar"));
         assertTrue(new SystemDataService().isCoreDataImported());
     }
 }

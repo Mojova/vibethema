@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.vibethema.service.ImportContext;
 import com.vibethema.service.PdfExtractor;
@@ -15,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -26,7 +28,11 @@ public class PdfImportRegressionTest {
     private static final Path DATA_SOURCE = Paths.get("data_source");
     private static final Path CORE_PDF = DATA_SOURCE.resolve("core_book.pdf");
     private static final String SOURCE_ID = "exalted-3e-core";
-    private static final Path REFERENCE_DIR = DATA_SOURCE.resolve("reference").resolve(SOURCE_ID);
+    private static final Path REFERENCE_DIR =
+            DATA_SOURCE
+                    .resolve("reference")
+                    .resolve(SOURCE_ID)
+                    .resolve(com.vibethema.service.CharmCollection.VERSION);
 
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -34,13 +40,6 @@ public class PdfImportRegressionTest {
     public void testCoreImportRegression(@TempDir Path tempDir) throws IOException {
         if (!Files.exists(CORE_PDF)) {
             logger.info("Skipping PDF regression test: {} not found.", CORE_PDF);
-            return;
-        }
-
-        if (!Files.exists(REFERENCE_DIR)) {
-            logger.info(
-                    "Skipping PDF regression test: Reference directory {} not found.",
-                    REFERENCE_DIR);
             return;
         }
 
@@ -60,6 +59,7 @@ public class PdfImportRegressionTest {
         assertEyeOfTheUnconqueredSunPrerequisite(tempDir.resolve(SOURCE_ID));
         assertCharmDescriptionCleanup(tempDir.resolve(SOURCE_ID));
         Path source = tempDir.resolve(SOURCE_ID);
+        assertEquipmentTags(source);
         var anima =
                 JsonParser.parseString(Files.readString(source.resolve("anima/anima.json")))
                         .getAsJsonObject();
@@ -98,6 +98,16 @@ public class PdfImportRegressionTest {
         assertFalse(keywordText.contains("pre- requisites"));
         assertFalse(keywordText.contains("non-Integri- ty"));
 
+        // Exact snapshots are versioned independently of earlier, incompatible output layouts.
+        // Always run the semantic extraction checks above, even without current-format snapshots.
+        if (!Files.isDirectory(REFERENCE_DIR)) {
+            logger.warn(
+                    "Current-format reference snapshots are unavailable at {}; semantic import"
+                            + " checks passed, exact snapshot comparison was not run.",
+                    REFERENCE_DIR);
+            return;
+        }
+
         // Verify all files in reference directory
         try (Stream<Path> stream = Files.walk(REFERENCE_DIR)) {
             stream.filter(Files::isRegularFile)
@@ -130,6 +140,46 @@ public class PdfImportRegressionTest {
                         }
                     });
         }
+    }
+
+    private void assertEquipmentTags(Path source) throws IOException {
+        var tags =
+                JsonParser.parseString(
+                                Files.readString(source.resolve("equipment/equipment_tags.json")))
+                        .getAsJsonObject();
+        assertTagNames(
+                tags,
+                "melee",
+                "Balanced, Bashing, Brawl, Chopping, Disarming, Flexible, Improvised, Grappling,"
+                        + " Lethal, Martial Arts, Melee, Natural, Piercing, Reaching, Shield,"
+                        + " Smashing, Thrown, Two-Handed, Worn");
+        assertTagNames(
+                tags,
+                "thrown",
+                "Bashing, Concealable, Cutting, Lethal, Mounted, Poisonable, Special, Subtle,"
+                        + " Thrown");
+        assertTagNames(
+                tags,
+                "archery",
+                "Archery, Bashing, Concealable, Crossbow, Flame, Lethal, Mounted, One-Handed,"
+                        + " Piercing, Powerful, Slow, Special");
+        assertTagNames(tags, "armor", "Buoyant, Concealable, Silent");
+
+        var melee = tags.getAsJsonArray("melee");
+        String chopping = melee.get(3).getAsJsonObject().get("description").getAsString();
+        assertTrue(chopping.contains("Defense until the attacker’s next turn"));
+        assertTrue(chopping.endsWith("such as axes and chopping swords."));
+        String worn = melee.get(18).getAsJsonObject().get("description").getAsString();
+        assertTrue(worn.endsWith("weapon with the worn tag takes an action."));
+    }
+
+    private void assertTagNames(JsonObject tags, String category, String expectedNames) {
+        assertEquals(
+                List.of(expectedNames.split(", ")),
+                tags.getAsJsonArray(category).asList().stream()
+                        .map(tag -> tag.getAsJsonObject().get("name").getAsString())
+                        .toList(),
+                category);
     }
 
     private void assertCharmDescriptionCleanup(Path importedSource) throws IOException {
@@ -290,7 +340,13 @@ public class PdfImportRegressionTest {
 
     private String charmDescription(Path importedSource, String ability, String charmName)
             throws IOException {
-        Path charmFile = importedSource.resolve("charms").resolve(ability + ".json");
+        Path charmFile =
+                importedSource
+                        .resolve("charms")
+                        .resolve(
+                                ability.startsWith("martial_arts/")
+                                        ? ability + ".json"
+                                        : "solar/" + ability + ".json");
         JsonElement charms = JsonParser.parseString(Files.readString(charmFile));
         return charms.getAsJsonObject().getAsJsonArray("charms").asList().stream()
                 .filter(charm ->
@@ -311,7 +367,7 @@ public class PdfImportRegressionTest {
     }
 
     private void assertEyeOfTheUnconqueredSunPrerequisite(Path importedSource) throws IOException {
-        Path awarenessFile = importedSource.resolve("charms/awareness.json");
+        Path awarenessFile = importedSource.resolve("charms/solar/awareness.json");
         JsonElement awareness = JsonParser.parseString(Files.readString(awarenessFile));
         JsonElement eye =
                 awareness.getAsJsonObject().getAsJsonArray("charms").asList().stream()
@@ -366,7 +422,12 @@ public class PdfImportRegressionTest {
     }
 
     private String charmId(String name) {
-        return com.vibethema.service.DefinitionId.forCharm(SOURCE_ID, name, "Awareness");
+        return com.vibethema.service.DefinitionId.forCharm(
+                SOURCE_ID,
+                com.vibethema.model.mystic.CharmKind.EXALTED,
+                com.vibethema.model.ExaltType.SOLAR,
+                name,
+                "Awareness");
     }
 
     private boolean hasCharmPrerequisite(JsonElement rule, String charmName) {
@@ -377,7 +438,11 @@ public class PdfImportRegressionTest {
                 && charmId.getAsString()
                         .equals(
                                 com.vibethema.service.DefinitionId.forCharm(
-                                        SOURCE_ID, charmName, "Awareness"))) return true;
+                                        SOURCE_ID,
+                                        com.vibethema.model.mystic.CharmKind.EXALTED,
+                                        com.vibethema.model.ExaltType.SOLAR,
+                                        charmName,
+                                        "Awareness"))) return true;
         return hasRuleInChildren(rule, "requirements", charmName)
                 || hasRuleInChildren(rule, "options", charmName);
     }

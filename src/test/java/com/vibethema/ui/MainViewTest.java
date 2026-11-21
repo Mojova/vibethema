@@ -21,6 +21,20 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class MainViewTest {
+    @org.junit.jupiter.api.io.TempDir java.nio.file.Path dataDirectory;
+    private String previousDataDirectory;
+
+    @org.junit.jupiter.api.BeforeEach
+    void isolateInstalledData() {
+        previousDataDirectory = System.getProperty("vibethema.data.dir");
+        System.setProperty("vibethema.data.dir", dataDirectory.toString());
+    }
+
+    @org.junit.jupiter.api.AfterEach
+    void restoreDataDirectory() {
+        if (previousDataDirectory == null) System.clearProperty("vibethema.data.dir");
+        else System.setProperty("vibethema.data.dir", previousDataDirectory);
+    }
 
     @BeforeAll
     static void initToolkit() throws InterruptedException {
@@ -423,7 +437,7 @@ public class MainViewTest {
                                     charm.getId(), charm.getName(), charm.getAbility()));
                     var service = Mockito.mock(CharmDataService.class);
                     when(service.findCharmById(charm.getId())).thenReturn(charm);
-                    when(service.loadCharmsForAbility("Melee"))
+                    when(service.loadCharmsForAbility("Melee", ExaltType.SOLAR))
                             .thenReturn(java.util.List.of(charm));
                     when(service.loadEvocations("missing-artifact"))
                             .thenReturn(

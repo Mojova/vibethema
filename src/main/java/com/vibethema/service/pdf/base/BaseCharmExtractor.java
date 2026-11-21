@@ -2,6 +2,8 @@ package com.vibethema.service.pdf.base;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.vibethema.model.ExaltType;
+import com.vibethema.service.CharmCollection;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.DefinitionId;
 import java.io.IOException;
@@ -46,9 +48,24 @@ public abstract class BaseCharmExtractor {
     protected final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     protected Path overrideOutputPath;
     protected String sourceId = "exalted-3e-core";
+    protected ExaltType exaltType;
 
     public void setOverrideOutputPath(Path path) {
         this.overrideOutputPath = path;
+    }
+
+    protected com.vibethema.model.mystic.CharmKind kindForAbility(String ability) {
+        return com.vibethema.model.mystic.CharmKind.EXALTED;
+    }
+
+    protected String charmId(String name, String ability) {
+        var kind = kindForAbility(ability);
+        return DefinitionId.forCharm(
+                sourceId,
+                kind,
+                kind == com.vibethema.model.mystic.CharmKind.EXALTED ? exaltType : null,
+                name,
+                ability);
     }
 
     public void setSourceId(String sourceId) {
@@ -671,9 +688,7 @@ public abstract class BaseCharmExtractor {
                 } else {
                     List<String> ids = new ArrayList<>();
                     for (String name : names) {
-                        String id =
-                                DefinitionId.forCharm(
-                                        sourceId, name.replaceAll("\\s+", " ").trim(), ability);
+                        String id = charmId(name.replaceAll("\\s+", " ").trim(), ability);
                         id =
                                 resolveCharmId(
                                         name,
@@ -848,7 +863,7 @@ public abstract class BaseCharmExtractor {
             Map<String, String> idsByCompactAbilityAndName,
             Map<String, String> idsByCompactName,
             List<String> warnings) {
-        String id = DefinitionId.forCharm(sourceId, name.replaceAll("\\s+", " ").trim(), ability);
+        String id = charmId(name.replaceAll("\\s+", " ").trim(), ability);
         id =
                 resolveCharmId(
                         name, ability, id, allIds, idsByCompactAbilityAndName, idsByCompactName);
@@ -902,14 +917,17 @@ public abstract class BaseCharmExtractor {
             String suffix,
             boolean isMartialArts)
             throws IOException {
-        Path outDir =
+        if (!isMartialArts && exaltType == null)
+            throw new IOException("Native Charm imports require an explicit Exalt type.");
+        Path charmsRoot =
                 overrideOutputPath != null
                         ? overrideOutputPath.resolve("charms")
-                        : (isMartialArts
-                                ? CharmDataService.getUserMartialArtsPath()
-                                : CharmDataService.getUserCharmsPath());
-        if (isMartialArts && overrideOutputPath != null) outDir = outDir.resolve("martial_arts");
-        if (!Files.exists(outDir)) Files.createDirectories(outDir);
+                        : CharmDataService.getUserCharmsPath();
+        Path outDir =
+                charmsRoot.resolve(
+                        isMartialArts ? "martial_arts" : exaltType.name().toLowerCase(Locale.ROOT));
+        Files.createDirectories(outDir);
+        CharmDataService.exportSchema(charmsRoot);
 
         for (Map.Entry<String, List<Map<String, Object>>> entry : charmsByAbility.entrySet()) {
             if (entry.getValue().isEmpty()) continue;
@@ -917,16 +935,24 @@ public abstract class BaseCharmExtractor {
             Path filePath = outDir.resolve(filename);
             try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
                 Map<String, Object> wrapper = new LinkedHashMap<>();
-                wrapper.put("$schema", "./charm-schema.json");
-                wrapper.put("version", "0.2.0");
+                wrapper.put("$schema", "../charm-schema.json");
+                wrapper.put("version", CharmCollection.VERSION);
                 wrapper.put("sourceId", sourceId);
                 if (isMartialArts) {
                     wrapper.put("id", DefinitionId.forMartialArtsStyle(sourceId, entry.getKey()));
                 }
                 wrapper.put("ability", entry.getKey());
-                wrapper.put("type", isMartialArts ? "martialArts" : "solarAbility");
-                wrapper.put("exalt", "solar");
-                wrapper.put("charms", entry.getValue());
+                wrapper.put("kind", isMartialArts ? "martialArts" : "exalted");
+                if (!isMartialArts) wrapper.put("exaltType", exaltType.name());
+                List<Map<String, Object>> entries =
+                        entry.getValue().stream()
+                                .map(charm -> {
+                                    Map<String, Object> copy = new LinkedHashMap<>(charm);
+                                    copy.remove("ability");
+                                    return copy;
+                                })
+                                .toList();
+                wrapper.put("charms", entries);
                 gson.toJson(wrapper, writer);
             }
         }
@@ -941,7 +967,7 @@ public abstract class BaseCharmExtractor {
     private TransitiveMetadata calculateTransitiveMetadata(
             String targetName, String ability, Collection<Map<String, Object>> charms) {
         TransitiveMetadata meta = new TransitiveMetadata();
-        String rootId = DefinitionId.forCharm(sourceId, targetName, ability);
+        String rootId = charmId(targetName, ability);
 
         Set<String> visited = new HashSet<>();
         Queue<String> queue = new LinkedList<>();
@@ -971,7 +997,7 @@ public abstract class BaseCharmExtractor {
                 if (rawPrereqs.get(0) instanceof String) {
                     // Mandatory simple list
                     for (Object p : rawPrereqs) {
-                        String pId = DefinitionId.forCharm(sourceId, (String) p, ability);
+                        String pId = charmId((String) p, ability);
                         meta.mandatoryExcludedIds.add(pId);
                         queue.add(pId);
                     }
@@ -985,7 +1011,7 @@ public abstract class BaseCharmExtractor {
                         boolean isMandatory = (minCount == 0 || minCount >= names.size());
 
                         for (String pName : names) {
-                            String pId = DefinitionId.forCharm(sourceId, pName, ability);
+                            String pId = charmId(pName, ability);
                             if (isMandatory) {
                                 meta.mandatoryExcludedIds.add(pId);
                                 queue.add(pId);

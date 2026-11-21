@@ -1,7 +1,6 @@
 package com.vibethema.service;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.vibethema.model.*;
 import com.vibethema.model.mystic.*;
@@ -9,8 +8,7 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,49 +18,24 @@ public class CharmDataService {
     private static final String MA_DIR = "martial_arts";
     private static final String EVOCATIONS_DIR = "evocations";
     private static final String SPELLS_DIR = "spells";
-
-    private final java.util.concurrent.ConcurrentHashMap<String, String> charmIdToNameMap =
-            new java.util.concurrent.ConcurrentHashMap<>();
-    private final java.util.concurrent.ConcurrentHashMap<String, String> charmIdToAbilityMap =
-            new java.util.concurrent.ConcurrentHashMap<>();
-    private final java.util.concurrent.ConcurrentHashMap<String, Charm> charmDefinitions =
-            new java.util.concurrent.ConcurrentHashMap<>();
-
-    private final java.util.concurrent.atomic.AtomicBoolean indexBuilt =
-            new java.util.concurrent.atomic.AtomicBoolean(false);
-
-    private final Gson gson =
-            new GsonBuilder()
-                    .registerTypeAdapter(
-                            Charm.class,
-                            (com.google.gson.JsonDeserializer<Charm>)
-                                    (json, typeOfT, context) -> {
-                                        com.google.gson.JsonObject obj = json.getAsJsonObject();
-                                        String category =
-                                                obj.has("category")
-                                                        ? obj.get("category").getAsString()
-                                                        : "solar";
-                                        if ("evocation".equals(category)) {
-                                            return context.deserialize(json, Evocation.class);
-                                        } else if ("martialArts".equals(category)) {
-                                            return context.deserialize(
-                                                    json, MartialArtsCharm.class);
-                                        } else {
-                                            return context.deserialize(json, SolarCharm.class);
-                                        }
-                                    })
-                    .create();
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private final CharmJson charmJson = new CharmJson();
+    private Map<String, Charm> charmIndex;
 
     public static Path getUserCharmsPath() {
         return PathService.getCustomDataPath().resolve(CHARMS_DIR);
     }
 
+    public static Path getUserExaltedCharmsPath(ExaltType type) {
+        return getUserCharmsPath().resolve(type.name().toLowerCase(Locale.ROOT));
+    }
+
     public static Path getUserMartialArtsPath() {
-        return PathService.getCustomDataPath().resolve(CHARMS_DIR).resolve(MA_DIR);
+        return getUserCharmsPath().resolve(MA_DIR);
     }
 
     public static Path getUserEvocationsPath() {
-        return PathService.getCustomDataPath().resolve(CHARMS_DIR).resolve(EVOCATIONS_DIR);
+        return getUserCharmsPath().resolve(EVOCATIONS_DIR);
     }
 
     public static Path getUserSpellsPath() {
@@ -75,106 +48,219 @@ public class CharmDataService {
 
     private static List<Path> officialPaths(ExaltType exaltType, String... components) {
         List<Path> paths = new ArrayList<>();
-        List<Path> sourcePaths =
+        List<Path> sources =
                 exaltType == null
                         ? PathService.getOfficialSourcePaths()
                         : new SourceCatalog()
                                 .getSourcesFor(exaltType).stream()
-                                        .map(source ->
-                                                PathService.getOfficialSourcePath(source.sourceId))
+                                        .map(s -> PathService.getOfficialSourcePath(s.sourceId))
                                         .toList();
-        for (Path source : sourcePaths) {
+        for (Path source : sources) {
             Path path = source;
-            for (String component : components) {
-                path = path.resolve(component);
-            }
+            for (String component : components) path = path.resolve(component);
             paths.add(path);
         }
         return paths;
     }
 
-    public List<Charm> loadCharmsForAbility(String ability) {
-        return loadCharmsForAbility(ability, null);
+    private static List<Path> collectionFiles(Path root) {
+        if (!Files.isDirectory(root)) return List.of();
+        try (var files = Files.walk(root)) {
+            return files.filter(Files::isRegularFile)
+                    .filter(p -> p.toString().endsWith(".json"))
+                    .filter(p ->
+                            !Set.of("keywords.json", "charm-schema.json")
+                                    .contains(p.getFileName().toString()))
+                    .sorted()
+                    .toList();
+        } catch (IOException ex) {
+            throw new UncheckedIOException("Could not list Charm collections in " + root, ex);
+        }
     }
 
-    /** Loads charms from sources supporting the selected Exalt type plus custom definitions. */
+    private List<Path> allCollectionFiles() {
+        List<Path> files = new ArrayList<>();
+        for (Path path : officialPaths(CHARMS_DIR))
+            files.addAll(
+                    collectionFiles(path).stream()
+                            .filter(f -> !f.getParent().equals(path))
+                            .toList());
+        Path customRoot = getUserCharmsPath();
+        files.addAll(
+                collectionFiles(customRoot).stream()
+                        .filter(f -> !f.getParent().equals(customRoot))
+                        .toList());
+        return files;
+    }
+
+    private JsonObject header(Path file) {
+        try {
+            return JsonParser.parseString(Files.readString(file)).getAsJsonObject();
+        } catch (IOException | RuntimeException ex) {
+            throw new JsonParseException("Could not read Charm collection " + file, ex);
+        }
+    }
+
+    private CharmCollection readCollection(Path file) {
+        try {
+            CharmCollection collection = charmJson.read(file);
+            boolean custom = file.startsWith(getUserCharmsPath());
+            collection.charms.forEach(c -> c.setCustom(custom));
+            return collection;
+        } catch (IOException ex) {
+            throw new UncheckedIOException("Could not read Charm collection " + file, ex);
+        }
+    }
+
+    public List<Charm> loadCharmsForAbility(String ability) {
+        return loadCharmsForAbility(ability, ExaltType.SOLAR);
+    }
+
+    /** Native-family filtering uses collection metadata; shared disciplines have no Exalt owner. */
     public List<Charm> loadCharmsForAbility(String ability, ExaltType exaltType) {
-        List<Charm> allCharms = new ArrayList<>();
-        String baseName = ability.toLowerCase().replace(" ", "-");
-
-        // Official sources are read first; custom data is layered on top.
-        for (Path path : officialPaths(exaltType, CHARMS_DIR)) {
-            scanAndLoadMatchingFiles(path, baseName, allCharms);
-        }
-        for (Path path : officialPaths(exaltType, CHARMS_DIR, MA_DIR)) {
-            scanAndLoadMatchingFiles(path, baseName, allCharms);
-        }
-        scanAndLoadMatchingFiles(getUserCharmsPath(), baseName, allCharms);
-        scanAndLoadMatchingFiles(getUserMartialArtsPath(), baseName, allCharms);
-
-        java.util.LinkedHashMap<String, Charm> merged = new java.util.LinkedHashMap<>();
-        for (Charm charm : allCharms) {
-            if (charm.getId() == null || charm.getId().isBlank()) continue;
-
-            Charm existing = merged.get(charm.getId());
-            // Older imported custom copies can have the same official IDs while only carrying
-            // prerequisiteGroups. Gson intentionally no longer maps that legacy field, so such
-            // a copy would erase the structured prerequisites from the current official source.
-            // Keep the current definition in that narrow case; ordinary custom overrides remain
-            // supported.
-            if (existing != null
-                    && existing.getPrerequisites() != null
-                    && charm.getPrerequisites() == null) {
-                continue;
+        Map<String, Charm> merged = new LinkedHashMap<>();
+        for (Path file : allCollectionFiles()) {
+            JsonObject json = header(file);
+            if (!json.has("ability")
+                    || !ability.equalsIgnoreCase(json.get("ability").getAsString())) continue;
+            if (json.has("kind")
+                    && "exalted".equals(json.get("kind").getAsString())
+                    && json.has("exaltType")) {
+                ExaltType owner;
+                try {
+                    owner = ExaltType.valueOf(json.get("exaltType").getAsString());
+                } catch (RuntimeException ex) {
+                    throw new JsonParseException("Unsupported Charm Exalt type in " + file, ex);
+                }
+                if (exaltType != null && owner != exaltType) continue;
             }
-            merged.put(charm.getId(), charm);
+            CharmCollection collection = readCollection(file);
+            if (collection.kind == CharmKind.EVOCATION) continue;
+            collection.charms.forEach(c -> merged.put(c.getId(), c));
         }
         return new ArrayList<>(merged.values());
     }
 
-    private void scanAndLoadMatchingFiles(Path dir, String baseName, List<Charm> allCharms) {
-        if (!Files.exists(dir)) return;
-        try (java.util.stream.Stream<Path> stream = Files.list(dir)) {
-            stream.filter(
-                            p -> {
-                                String fileName = p.getFileName().toString();
-                                // Match baseName.json or baseName-something.json
-                                return fileName.equals(baseName + ".json")
-                                        || (fileName.startsWith(baseName + "-")
-                                                && fileName.endsWith(".json"));
-                            })
-                    .forEach(p -> loadFromFile(p, allCharms));
-        } catch (IOException e) {
-            logger.error("Error scanning directory: {}", dir, e);
+    public synchronized void invalidateIndex() {
+        charmIndex = null;
+    }
+
+    private synchronized Map<String, Charm> index() {
+        if (charmIndex == null) {
+            Map<String, Charm> built = new LinkedHashMap<>();
+            for (Path file : allCollectionFiles())
+                readCollection(file).charms.forEach(c -> built.put(c.getId(), c));
+            charmIndex = Map.copyOf(built);
+        }
+        return charmIndex;
+    }
+
+    public Charm findCharmById(String id) {
+        return id == null ? null : index().get(id);
+    }
+
+    public String getCharmName(String id) {
+        Charm charm = findCharmById(id);
+        return charm == null ? id : charm.getName();
+    }
+
+    public String getCharmAbility(String id) {
+        Charm charm = findCharmById(id);
+        return charm == null ? null : charm.getAbility();
+    }
+
+    public int getGlobalCharmCount() {
+        return index().size();
+    }
+
+    public static void exportSchema(Path charmsRoot) throws IOException {
+        Files.createDirectories(charmsRoot);
+        try (InputStream schema =
+                CharmDataService.class.getResourceAsStream("/charms/charm-schema.json")) {
+            if (schema == null) throw new IOException("Bundled Charm schema is missing.");
+            Files.copy(
+                    schema,
+                    charmsRoot.resolve("charm-schema.json"),
+                    StandardCopyOption.REPLACE_EXISTING);
         }
     }
 
-    @SuppressWarnings("unused")
-    private static class CharmListWrapper {
-        private String $schema = "./charm-schema.json";
-        private String version = "0.1.0";
-        private String id;
-        private String ability;
-        private String type;
-        private String exalt = "solar";
-        private List<Charm> charms = new ArrayList<>();
+    public void exportSchema() throws IOException {
+        exportSchema(getUserCharmsPath());
+    }
 
-        public CharmListWrapper() {}
+    private CharmCollection collectionFor(Charm charm) {
+        CharmCollection collection = new CharmCollection();
+        collection.sourceId = charm.getSourceId() == null ? "custom" : charm.getSourceId();
+        collection.kind = charm.getKind();
+        collection.exaltType = charm.getExaltType();
+        collection.ability = charm.getAbility();
+        return collection;
+    }
 
-        public CharmListWrapper(String id, String ability, String type, List<Charm> charms) {
-            this.id = id;
-            this.ability = ability;
-            this.type = type;
-            this.charms = charms;
+    private Path customPath(Charm charm) {
+        if (charm.getKind() == CharmKind.MARTIAL_ARTS) {
+            Path existing =
+                    findMartialArtsFileByAbility(
+                            charm.getAbility(),
+                            charm.getSourceId() == null ? "custom" : charm.getSourceId());
+            return existing != null
+                    ? existing
+                    : getUserMartialArtsPath()
+                            .resolve(
+                                    DefinitionId.forMartialArtsStyle(
+                                                    charm.getSourceId() == null
+                                                            ? "custom"
+                                                            : charm.getSourceId(),
+                                                    charm.getAbility())
+                                            + ".json");
         }
+        if (charm.getKind() != CharmKind.EXALTED || charm.getExaltType() == null)
+            throw new IllegalArgumentException(
+                    "Use saveEvocation for Evocations; native Charms require an Exalt type.");
+        return getUserExaltedCharmsPath(charm.getExaltType())
+                .resolve(
+                        charm.getAbility().toLowerCase(Locale.ROOT).replace(" ", "-")
+                                + sourceSuffix(charm)
+                                + "-custom.json");
+    }
+
+    private String sourceSuffix(Charm charm) {
+        return charm.getSourceId() == null || "custom".equals(charm.getSourceId())
+                ? ""
+                : "-" + DefinitionId.from(charm.getSourceId(), "custom-charms");
+    }
+
+    private Path evocationPath(String artifactId, Charm charm) {
+        return getUserEvocationsPath().resolve(artifactId + sourceSuffix(charm) + ".json");
+    }
+
+    public void saveCharm(Charm charm) throws IOException {
+        Path path = customPath(charm);
+        CharmCollection collection =
+                Files.exists(path) ? readCollection(path) : collectionFor(charm);
+        if (collection.kind == CharmKind.MARTIAL_ARTS && collection.id == null)
+            collection.id = path.getFileName().toString().replace(".json", "");
+        collection.charms.removeIf(c -> c.getId().equals(charm.getId()));
+        collection.charms.add(charm);
+        charmJson.write(path, collection);
+        invalidateIndex();
+        exportSchema();
+    }
+
+    public void deleteCustomCharm(Charm charm) throws IOException {
+        Path path = customPath(charm);
+        if (!Files.exists(path)) return;
+        CharmCollection collection = readCollection(path);
+        collection.charms.removeIf(c -> c.getId().equals(charm.getId()));
+        charmJson.write(path, collection);
+        invalidateIndex();
     }
 
     public static class EvocationCollection {
         public String artifactId;
         public String artifactName;
-        public List<Charm> evocations = new ArrayList<>();
-
-        public EvocationCollection() {}
+        public List<Charm> evocations;
 
         public EvocationCollection(String artifactId, String artifactName, List<Charm> charms) {
             this.artifactId = artifactId;
@@ -183,54 +269,110 @@ public class CharmDataService {
         }
     }
 
+    public EvocationCollection loadEvocations(String artifactId) {
+        Map<String, Charm> merged = new LinkedHashMap<>();
+        String name = "Artifact";
+        for (Path file : allCollectionFiles()) {
+            JsonObject json = header(file);
+            if (!json.has("artifactId") || !artifactId.equals(json.get("artifactId").getAsString()))
+                continue;
+            CharmCollection collection = readCollection(file);
+            if (collection.kind != CharmKind.EVOCATION)
+                throw new JsonParseException("Expected Evocations in " + file);
+            if (collection.artifactName != null) name = collection.artifactName;
+            collection.charms.forEach(c -> merged.put(c.getId(), c));
+        }
+        return new EvocationCollection(artifactId, name, new ArrayList<>(merged.values()));
+    }
+
+    public void saveEvocation(String artifactId, String artifactName, Charm charm)
+            throws IOException {
+        if (charm.getKind() != CharmKind.EVOCATION)
+            throw new IllegalArgumentException(
+                    "Only Evocations can be saved in an artifact collection.");
+        Path path = evocationPath(artifactId, charm);
+        CharmCollection collection =
+                Files.exists(path) ? readCollection(path) : collectionFor(charm);
+        collection.artifactId = artifactId;
+        collection.artifactName = artifactName;
+        collection.ability = null;
+        collection.charms.removeIf(c -> c.getId().equals(charm.getId()));
+        collection.charms.add(charm);
+        charmJson.write(path, collection);
+        invalidateIndex();
+        exportSchema();
+    }
+
+    public void updateEvocationCollectionName(String artifactId, String artifactName)
+            throws IOException {
+        for (Path path : collectionFiles(getUserEvocationsPath())) {
+            CharmCollection collection = readCollection(path);
+            if (!artifactId.equals(collection.artifactId)) continue;
+            collection.artifactName = artifactName;
+            charmJson.write(path, collection);
+        }
+        invalidateIndex();
+    }
+
+    public void deleteEvocation(String artifactId, Charm charm) throws IOException {
+        Path path = evocationPath(artifactId, charm);
+        if (!Files.exists(path)) return;
+        CharmCollection collection = readCollection(path);
+        collection.charms.removeIf(c -> c.getId().equals(charm.getId()));
+        charmJson.write(path, collection);
+        invalidateIndex();
+    }
+
+    public List<String> getAvailableMartialArtsStyles() {
+        Set<String> styles = new TreeSet<>();
+        for (Path file : allCollectionFiles()) {
+            JsonObject json = header(file);
+            if (json.has("kind") && "martialArts".equals(json.get("kind").getAsString()))
+                styles.add(readCollection(file).ability);
+        }
+        return new ArrayList<>(styles);
+    }
+
+    public void createNewMartialArtsStyle(String id, String name) throws IOException {
+        Path path = getUserMartialArtsPath().resolve(id + ".json");
+        if (Files.exists(path)) {
+            updateMartialArtsStyleName(id, name);
+            return;
+        }
+        CharmCollection collection = new CharmCollection();
+        collection.kind = CharmKind.MARTIAL_ARTS;
+        collection.sourceId = "custom";
+        collection.id = id;
+        collection.ability = name;
+        charmJson.write(path, collection);
+        invalidateIndex();
+        exportSchema();
+    }
+
+    public void updateMartialArtsStyleName(String id, String newName) throws IOException {
+        Path path = getUserMartialArtsPath().resolve(id + ".json");
+        if (!Files.exists(path)) return;
+        CharmCollection collection = readCollection(path);
+        collection.ability = newName;
+        collection.charms.forEach(c -> c.setAbility(newName));
+        charmJson.write(path, collection);
+        invalidateIndex();
+    }
+
+    private Path findMartialArtsFileByAbility(String ability, String sourceId) {
+        for (Path file : collectionFiles(getUserMartialArtsPath())) {
+            CharmCollection collection = readCollection(file);
+            if (collection.kind == CharmKind.MARTIAL_ARTS
+                    && sourceId.equals(collection.sourceId)
+                    && ability.equalsIgnoreCase(collection.ability)) return file;
+        }
+        return null;
+    }
+
     private static class SpellListWrapper {
-        @SuppressWarnings("unused")
         public String version;
-
-        @SuppressWarnings("unused")
         public String circle;
-
         public List<CharacterSaveState.SpellData> spells;
-    }
-
-    public void exportSchema() throws IOException {
-        Path charmsDir = getUserCharmsPath();
-        if (!Files.exists(charmsDir)) Files.createDirectories(charmsDir);
-
-        try (InputStream is = getClass().getResourceAsStream("/charms/charm-schema.json")) {
-            if (is != null) {
-                Files.copy(
-                        is,
-                        charmsDir.resolve("charm-schema.json"),
-                        StandardCopyOption.REPLACE_EXISTING);
-            }
-        }
-
-        Path maDir = getUserMartialArtsPath();
-        if (!Files.exists(maDir)) Files.createDirectories(maDir);
-        try (InputStream is = getClass().getResourceAsStream("/charms/charm-schema.json")) {
-            if (is != null) {
-                Files.copy(
-                        is,
-                        maDir.resolve("charm-schema.json"),
-                        StandardCopyOption.REPLACE_EXISTING);
-            }
-        }
-    }
-
-    public String getCharmName(String id) {
-        ensureIndexBuilt();
-        return charmIdToNameMap.getOrDefault(id, id);
-    }
-
-    public String getCharmAbility(String id) {
-        ensureIndexBuilt();
-        return charmIdToAbilityMap.get(id);
-    }
-
-    public int getGlobalCharmCount() {
-        ensureIndexBuilt();
-        return charmIdToNameMap.size();
     }
 
     public int getGlobalSpellCount() {
@@ -271,325 +413,6 @@ public class CharmDataService {
         return count;
     }
 
-    private synchronized void ensureIndexBuilt() {
-        if (!indexBuilt.get()) {
-            buildGlobalIndex();
-            indexBuilt.set(true);
-        }
-    }
-
-    /** Resolves purchases without rereading the catalog for each trait change. */
-    public Charm findCharmById(String id) {
-        if (id == null) return null;
-        ensureIndexBuilt();
-        return charmDefinitions.get(id);
-    }
-
-    public synchronized void invalidateIndex() {
-        indexBuilt.set(false);
-        charmDefinitions.clear();
-        charmIdToNameMap.clear();
-        charmIdToAbilityMap.clear();
-    }
-
-    private void buildGlobalIndex() {
-        logger.info("Building global charm index...");
-        List<Charm> all = new ArrayList<>();
-
-        for (Path path : officialPaths(CHARMS_DIR)) {
-            loadIndexDirectory(path, all, false);
-        }
-        for (Path path : officialPaths(CHARMS_DIR, MA_DIR)) {
-            loadIndexDirectory(path, all, false);
-        }
-        for (Path path : officialPaths(CHARMS_DIR, EVOCATIONS_DIR)) {
-            loadIndexDirectory(path, all, true);
-        }
-        loadIndexDirectory(getUserCharmsPath(), all, false);
-        loadIndexDirectory(getUserMartialArtsPath(), all, false);
-        loadIndexDirectory(getUserEvocationsPath(), all, true);
-
-        for (Charm c : all) {
-            if (c.getId() != null) {
-                Charm previous = charmDefinitions.get(c.getId());
-                if (previous != null
-                        && previous.getPrerequisites() != null
-                        && c.getPrerequisites() == null) continue;
-                charmDefinitions.put(c.getId(), c);
-                charmIdToNameMap.put(c.getId(), c.getName());
-                if (c.getAbility() != null) charmIdToAbilityMap.put(c.getId(), c.getAbility());
-            }
-        }
-    }
-
-    private void loadIndexDirectory(Path directory, List<Charm> all, boolean evocations) {
-        if (!Files.exists(directory)) return;
-        try (java.util.stream.Stream<Path> files = Files.list(directory)) {
-            files.filter(path -> path.toString().endsWith(".json"))
-                    .filter(path ->
-                            !path.getFileName().toString().equals("keywords.json")
-                                    && !path.getFileName().toString().equals("charm-schema.json"))
-                    .forEach(path -> {
-                        if (evocations) {
-                            loadEvocationsForIndex(path, all);
-                        } else {
-                            loadFromFileForIndex(path, all);
-                        }
-                    });
-        } catch (IOException e) {
-            logger.error("Error building global charm index from {}", directory, e);
-        }
-    }
-
-    private void loadEvocationsForIndex(Path path, List<Charm> all) {
-        try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-            com.google.gson.JsonObject json =
-                    gson.fromJson(reader, com.google.gson.JsonObject.class);
-            if (json == null) return;
-            String artifactId = path.getFileName().toString().replace(".json", "");
-            List<Charm> charms;
-            if (json.has("evocations")) {
-                EvocationCollection collection = gson.fromJson(json, EvocationCollection.class);
-                if (collection.artifactId != null) artifactId = collection.artifactId;
-                charms = collection.evocations;
-            } else {
-                CharmListWrapper wrapper = gson.fromJson(json, CharmListWrapper.class);
-                charms = wrapper.charms;
-            }
-            if (charms != null) {
-                for (Charm charm : charms) {
-                    charm.setAbility(artifactId);
-                    all.add(charm);
-                }
-            }
-        } catch (Exception e) {
-            logger.warn("Could not index evocations from {}", path, e);
-        }
-    }
-
-    private void loadFromFileForIndex(Path path, List<Charm> allCharms) {
-        try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-            CharmListWrapper wrapper = gson.fromJson(reader, CharmListWrapper.class);
-            if (wrapper != null && wrapper.charms != null) {
-                // Determine ability name from wrapper if possible
-                String abilityName = wrapper.ability;
-                if (abilityName == null) {
-                    // Fallback to filename if missing in content (legacy)
-                    abilityName = path.getFileName().toString().replace(".json", "");
-                }
-
-                for (Charm c : wrapper.charms) {
-                    c.setAbility(abilityName);
-                    allCharms.add(c);
-                }
-            }
-        } catch (Exception e) {
-            // Ignore corrupted or non-charm files
-        }
-    }
-
-    public void saveCharm(Charm charm) throws IOException {
-        String ability = charm.getAbility();
-        String filename = ability.toLowerCase().replace(" ", "-") + ".json";
-        String customFilename = ability.toLowerCase().replace(" ", "-") + "-custom.json";
-
-        Path targetPath = null;
-        if (charm.isCustom()) {
-            targetPath = getUserCharmsPath().resolve(customFilename);
-        } else if ("martialArts".equals(charm.getCategory())) {
-            // For Martial Arts, we need to find the correct UUID-named file by checking content
-            targetPath = findMartialArtsFileByAbility(ability);
-            if (targetPath == null) {
-                // Fallback to legacy/name-based path if not found in UUID files
-                Path maPath = getUserMartialArtsPath().resolve(filename);
-                if (Files.exists(maPath)) {
-                    targetPath = maPath;
-                } else {
-                    targetPath = getUserCharmsPath().resolve(filename);
-                }
-            }
-        } else {
-            Path standardAbPath = getUserCharmsPath().resolve(filename);
-            Path maPath = getUserMartialArtsPath().resolve(filename);
-            if (Files.exists(maPath)) targetPath = maPath;
-            else targetPath = standardAbPath;
-        }
-
-        // Ensure directory exists
-        if (!Files.exists(targetPath.getParent())) {
-            Files.createDirectories(targetPath.getParent());
-        }
-
-        // Load existing
-        List<Charm> charms = new ArrayList<>();
-        if (Files.exists(targetPath)) {
-            try (Reader reader = Files.newBufferedReader(targetPath, StandardCharsets.UTF_8)) {
-                CharmListWrapper wrapper = gson.fromJson(reader, CharmListWrapper.class);
-                if (wrapper != null && wrapper.charms != null) {
-                    charms = wrapper.charms;
-                }
-            }
-        }
-
-        // Replace or add
-        boolean found = false;
-        for (int i = 0; i < charms.size(); i++) {
-            if (charms.get(i).getId().equals(charm.getId())) {
-                charms.set(i, charm);
-                found = true;
-                break;
-            }
-        }
-        if (!found) charms.add(charm);
-
-        // Determine the type for the wrapper
-        String typeAttr = "solarAbility";
-        if (targetPath.startsWith(getUserMartialArtsPath())
-                || ability.equalsIgnoreCase("Martial Arts")) {
-            typeAttr = "martialArts";
-        }
-
-        // Save back pretty-printed with wrapper
-        Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
-        try (Writer writer = Files.newBufferedWriter(targetPath, StandardCharsets.UTF_8)) {
-            String styleId = null;
-            if (targetPath.getParent().equals(getUserMartialArtsPath())) {
-                styleId = targetPath.getFileName().toString().replace(".json", "");
-            }
-            prettyGson.toJson(new CharmListWrapper(styleId, ability, typeAttr, charms), writer);
-        }
-
-        invalidateIndex();
-        exportSchema(); // Ensure schema is present for the user
-    }
-
-    public void deleteCustomCharm(Charm charm) throws IOException {
-        String ability = charm.getAbility();
-        if (charm.getId() == null || charm.getId().isEmpty()) return;
-
-        String filename = ability.toLowerCase().replace(" ", "-") + "-custom.json";
-        Path filePath = getUserCharmsPath().resolve(filename);
-
-        if (!Files.exists(filePath)) return;
-
-        List<Charm> existing = new ArrayList<>();
-        try (Reader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
-            CharmListWrapper wrapper = gson.fromJson(reader, CharmListWrapper.class);
-            if (wrapper != null && wrapper.charms != null) {
-                existing = wrapper.charms;
-            }
-        }
-
-        if (existing != null) {
-            existing.removeIf(c -> c.getId().equals(charm.getId()));
-
-            // Determine the type for the wrapper
-            String typeAttr = "solarAbility";
-            if (filePath.startsWith(getUserMartialArtsPath())
-                    || ability.equalsIgnoreCase("Martial Arts")) {
-                typeAttr = "martialArts";
-            }
-
-            Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
-            try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
-                prettyGson.toJson(new CharmListWrapper(null, ability, typeAttr, existing), writer);
-            }
-        }
-        invalidateIndex();
-    }
-
-    public EvocationCollection loadEvocations(String artifactId) {
-        Path filePath = getUserEvocationsPath().resolve(artifactId + ".json");
-        if (Files.exists(filePath)) {
-            try (Reader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
-                // Try reading as new EvocationCollection format
-                EvocationCollection collection = gson.fromJson(reader, EvocationCollection.class);
-                // If it has artifactName, it's the new format
-                if (collection != null
-                        && collection.evocations != null
-                        && collection.artifactName != null) {
-                    for (Charm c : collection.evocations) {
-                        if (c instanceof Evocation e) e.setArtifactId(collection.artifactId);
-                    }
-                    return collection;
-                }
-            } catch (IOException e) {
-                logger.error("Error loading evocations (new format) from: {}", filePath, e);
-            }
-
-            // Fallback: Try reading as old CharmListWrapper format
-            try (Reader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
-                CharmListWrapper wrapper = gson.fromJson(reader, CharmListWrapper.class);
-                if (wrapper != null && wrapper.charms != null) {
-                    return new EvocationCollection(artifactId, wrapper.ability, wrapper.charms);
-                }
-            } catch (IOException e) {
-                logger.error("Error loading evocations (old format) from: {}", filePath, e);
-            }
-        }
-        return new EvocationCollection(
-                artifactId,
-                "Artifact ("
-                        + (artifactId.length() > 8 ? artifactId.substring(0, 8) : artifactId)
-                        + ")",
-                new ArrayList<>());
-    }
-
-    public void saveEvocation(String artifactId, String artifactName, Charm charm)
-            throws IOException {
-        Path filePath = getUserEvocationsPath().resolve(artifactId + ".json");
-        if (!Files.exists(filePath.getParent())) {
-            Files.createDirectories(filePath.getParent());
-        }
-
-        EvocationCollection collection = loadEvocations(artifactId);
-        collection.artifactName = artifactName; // Ensure name is current
-
-        List<Charm> charms = collection.evocations;
-        boolean found = false;
-        for (int i = 0; i < charms.size(); i++) {
-            if (charms.get(i).getId().equals(charm.getId())) {
-                charms.set(i, charm);
-                found = true;
-                break;
-            }
-        }
-        if (!found) charms.add(charm);
-
-        Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
-        try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
-            prettyGson.toJson(collection, writer);
-        }
-        invalidateIndex();
-    }
-
-    public void updateEvocationCollectionName(String artifactId, String artifactName)
-            throws IOException {
-        Path filePath = getUserEvocationsPath().resolve(artifactId + ".json");
-        if (Files.exists(filePath)) {
-            EvocationCollection collection = loadEvocations(artifactId);
-            collection.artifactName = artifactName;
-            Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
-            try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
-                prettyGson.toJson(collection, writer);
-            }
-        }
-    }
-
-    public void deleteEvocation(String artifactId, Charm charm) throws IOException {
-        Path filePath = getUserEvocationsPath().resolve(artifactId + ".json");
-        if (!Files.exists(filePath)) return;
-
-        EvocationCollection collection = loadEvocations(artifactId);
-        collection.evocations.removeIf(c -> c.getId().equals(charm.getId()));
-
-        Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
-        try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
-            prettyGson.toJson(collection, writer);
-        }
-        invalidateIndex();
-    }
-
     public List<Keyword> loadKeywords() {
         String filename = "keywords.json";
         List<Keyword> result = new ArrayList<>();
@@ -622,120 +445,6 @@ public class CharmDataService {
             if (keywords != null) target.addAll(keywords);
         } catch (IOException e) {
             logger.error("Error loading keyword file: {}", path, e);
-        }
-    }
-
-    private boolean loadFromFile(Path path, List<Charm> allCharms) {
-        if (!Files.exists(path)) return false;
-        try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-            CharmListWrapper wrapper = gson.fromJson(reader, CharmListWrapper.class);
-            if (wrapper != null && wrapper.charms != null) {
-                String abilityName = wrapper.ability;
-                if (abilityName == null) {
-                    abilityName = path.getFileName().toString().replace(".json", "");
-                }
-                for (Charm c : wrapper.charms) {
-                    c.setAbility(abilityName);
-                }
-                allCharms.addAll(wrapper.charms);
-                return true;
-            }
-        } catch (IOException e) {
-            logger.error("Error loading charm file: {}", path, e);
-        }
-        return false;
-    }
-
-    public List<String> getAvailableMartialArtsStyles() {
-        java.util.Set<String> styles = new java.util.TreeSet<>();
-
-        // Scan User Directories
-        scanDirectoryForStyles(getUserCharmsPath(), styles);
-        scanDirectoryForStyles(getUserMartialArtsPath(), styles);
-
-        return new ArrayList<>(styles);
-    }
-
-    private void scanDirectoryForStyles(Path dir, java.util.Set<String> styles) {
-        if (!Files.exists(dir)) return;
-        try (java.util.stream.Stream<Path> stream = Files.list(dir)) {
-            stream.filter(p ->
-                            p.toString().endsWith(".json")
-                                    && !p.toString().endsWith("-custom.json")
-                                    && !p.toString().endsWith("keywords.json")
-                                    && !p.toString().endsWith("charm-schema.json"))
-                    .forEach(p -> {
-                        try (Reader reader = Files.newBufferedReader(p, StandardCharsets.UTF_8)) {
-                            CharmListWrapper wrapper =
-                                    gson.fromJson(reader, CharmListWrapper.class);
-                            if (wrapper != null && "martialArts".equals(wrapper.type)) {
-                                styles.add(wrapper.ability);
-                            }
-                        } catch (Exception e) {
-                            // Skip invalid/unreadable JSON or missing type fields
-                            logger.warn("Skipping non-martialArts style file: {}", p, e);
-                        }
-                    });
-        } catch (IOException e) {
-            logger.error("Failed to list files in directory: {}", dir, e);
-        }
-    }
-
-    public void createNewMartialArtsStyle(String id, String name) throws IOException {
-        String filename = id + ".json";
-        Path outDir = getUserMartialArtsPath();
-        if (!Files.exists(outDir)) {
-            Files.createDirectories(outDir);
-        }
-        Path filePath = outDir.resolve(filename);
-        if (!Files.exists(filePath)) {
-            Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
-            try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
-                prettyGson.toJson(
-                        new CharmListWrapper(id, name, "martialArts", new ArrayList<>()), writer);
-            }
-        } else {
-            // Update existing if already exists (rename)
-            updateMartialArtsStyleName(id, name);
-        }
-    }
-
-    public void updateMartialArtsStyleName(String id, String newName) throws IOException {
-        Path filePath = getUserMartialArtsPath().resolve(id + ".json");
-        if (Files.exists(filePath)) {
-            CharmListWrapper wrapper;
-            try (Reader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
-                wrapper = gson.fromJson(reader, CharmListWrapper.class);
-            }
-            if (wrapper != null) {
-                wrapper.ability = newName;
-                Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
-                try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
-                    prettyGson.toJson(wrapper, writer);
-                }
-            }
-        }
-    }
-
-    private Path findMartialArtsFileByAbility(String ability) {
-        Path dir = getUserMartialArtsPath();
-        if (!Files.exists(dir)) return null;
-        try (java.util.stream.Stream<Path> stream = Files.list(dir)) {
-            return stream.filter(p -> p.toString().endsWith(".json"))
-                    .filter(p -> {
-                        try (Reader reader = Files.newBufferedReader(p, StandardCharsets.UTF_8)) {
-                            CharmListWrapper wrapper =
-                                    gson.fromJson(reader, CharmListWrapper.class);
-                            return wrapper != null && ability.equalsIgnoreCase(wrapper.ability);
-                        } catch (Exception e) {
-                            return false;
-                        }
-                    })
-                    .findFirst()
-                    .orElse(null);
-        } catch (IOException e) {
-            logger.error("Error searching martial arts style files", e);
-            return null;
         }
     }
 

@@ -563,14 +563,21 @@ public class MainViewModel implements ViewModel {
     public com.vibethema.model.mystic.Charm prepareNewCustomCharm(
             String abilityId, String filterType) {
         com.vibethema.model.mystic.Charm charm =
-                "Martial Arts Style".equals(filterType)
-                        ? new com.vibethema.model.mystic.MartialArtsCharm()
-                        : new com.vibethema.model.mystic.SolarCharm();
+                switch (filterType) {
+                    case "Martial Arts Style" -> new com.vibethema.model.mystic.MartialArtsCharm();
+                    case "Evocation" -> new com.vibethema.model.mystic.Evocation();
+                    default -> {
+                        if (data.exaltTypeProperty().get() != ExaltType.SOLAR)
+                            throw new IllegalArgumentException(
+                                    "Native Charm rules are not implemented for "
+                                            + data.exaltTypeProperty().get());
+                        yield new com.vibethema.model.mystic.SolarCharm();
+                    }
+                };
 
         charm.setId(java.util.UUID.randomUUID().toString());
         charm.setName("New " + ("Evocation".equals(filterType) ? "Evocation" : "Charm"));
         charm.setAbility(abilityId);
-        charm.setCategory("Evocation".equals(filterType) ? "evocation" : "charm");
         charm.setCustom(true);
 
         return charm;
@@ -845,7 +852,8 @@ public class MainViewModel implements ViewModel {
         }
 
         // Basic check for some common solar files
-        java.nio.file.Path charmsDir = PathService.getDataPath().resolve("charms");
+        java.nio.file.Path charmsDir =
+                PathService.getOfficialSourcePath("exalted-3e-core").resolve("charms/solar");
         String[] required = {"archery.json", "melee.json", "brawl.json", "integrity.json"};
         for (String file : required) {
             if (!java.nio.file.Files.exists(charmsDir.resolve(file))) {

@@ -8,7 +8,7 @@ public class SolarCharm extends Charm {
 
     public SolarCharm() {
         super();
-        setCategory("solar");
+        setFamily(CharmKind.EXALTED, ExaltType.SOLAR);
     }
 
     @Override

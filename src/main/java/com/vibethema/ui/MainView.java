@@ -958,7 +958,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
 
         Dialog<ButtonType> dialog = new Dialog<>();
         String term =
-                "Evocation".equals(filterType) || "evocation".equals(charm.getCategory())
+                "Evocation".equals(filterType) || charm.getKind() == CharmKind.EVOCATION
                         ? "Evocation"
                         : "Charm";
         dialog.setTitle("Edit " + term + ": " + editViewModel.getCharmName());

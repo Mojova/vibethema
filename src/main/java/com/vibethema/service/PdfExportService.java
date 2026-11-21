@@ -124,21 +124,13 @@ public class PdfExportService {
         ExportContext ctx = new ExportContext(doc);
 
         // 1. Resolve and Sort Charms
-        Map<String, List<Charm>> abilityCache = new HashMap<>();
-
         Map<String, Integer> charmCounts = new HashMap<>();
         Map<String, Charm> distinctCharms = new HashMap<>();
         for (PurchasedCharm pc : data.getUnlockedCharms()) {
             charmCounts.merge(pc.id(), 1, Integer::sum);
             if (!distinctCharms.containsKey(pc.id())) {
-                String ability = pc.ability();
-                List<Charm> charms =
-                        abilityCache.computeIfAbsent(
-                                ability, k -> charmService.loadCharmsForAbility(ability));
-                charms.stream()
-                        .filter(c -> c.getId().equals(pc.id()))
-                        .findFirst()
-                        .ifPresent(c -> distinctCharms.put(c.getId(), c));
+                Charm charm = charmService.findCharmById(pc.id());
+                if (charm != null) distinctCharms.put(charm.getId(), charm);
             }
         }
         List<Charm> allPurchased = new ArrayList<>(distinctCharms.values());
@@ -148,9 +140,9 @@ public class PdfExportService {
         List<Charm> martialArtsCharms = new ArrayList<>();
         List<Charm> evocations = new ArrayList<>();
         for (Charm c : allPurchased) {
-            if ("martialArts".equalsIgnoreCase(c.getCategory())) {
+            if (c.getKind() == com.vibethema.model.mystic.CharmKind.MARTIAL_ARTS) {
                 martialArtsCharms.add(c);
-            } else if ("evocation".equalsIgnoreCase(c.getCategory())) {
+            } else if (c.getKind() == com.vibethema.model.mystic.CharmKind.EVOCATION) {
                 evocations.add(c);
             } else {
                 normalCharms.add(c);

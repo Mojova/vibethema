@@ -56,7 +56,7 @@ public class MainViewModelTest {
     private PdfExportService pdfExportService;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws InterruptedException {
         data = new CharacterData();
         systemDataService = Mockito.mock(SystemDataService.class);
         equipmentService = Mockito.mock(EquipmentDataService.class);
@@ -68,7 +68,12 @@ public class MainViewModelTest {
         // Important: loadWeapon should be stubbed to return null (or a mock) to avoid race
         // conditions
         // with the background thread during mock setup for other methods.
-        when(equipmentService.loadWeapon(anyString())).thenReturn(null);
+        CountDownLatch initialLoadFinished = new CountDownLatch(1);
+        when(equipmentService.loadWeapon(anyString()))
+                .thenAnswer(invocation -> {
+                    initialLoadFinished.countDown();
+                    return null;
+                });
         when(equipmentService.loadEquipmentTags()).thenReturn(new HashMap<>());
         when(charmDataService.loadKeywords()).thenReturn(Collections.emptyList());
 
@@ -79,6 +84,9 @@ public class MainViewModelTest {
                         equipmentService,
                         charmDataService,
                         pdfExportService);
+        assertTrue(
+                initialLoadFinished.await(5, TimeUnit.SECONDS),
+                "Initial data loading should finish before mocks are reconfigured");
     }
 
     @Test
@@ -496,7 +504,7 @@ public class MainViewModelTest {
         assertNotNull(charm);
         assertTrue(charm instanceof SolarCharm);
         assertEquals("Athletics", charm.getAbility());
-        assertEquals("charm", charm.getCategory());
+        assertEquals(com.vibethema.model.mystic.CharmKind.EXALTED, charm.getKind());
         assertTrue(charm.isCustom());
         assertTrue(charm.getName().startsWith("New Charm"));
     }
@@ -507,7 +515,7 @@ public class MainViewModelTest {
         assertNotNull(charm);
         assertTrue(charm instanceof MartialArtsCharm);
         assertEquals("Single Point", charm.getAbility());
-        assertEquals("charm", charm.getCategory());
+        assertEquals(com.vibethema.model.mystic.CharmKind.MARTIAL_ARTS, charm.getKind());
         assertTrue(charm.isCustom());
     }
 
@@ -515,9 +523,9 @@ public class MainViewModelTest {
     void testPrepareNewCustomCharmEvocation() {
         Charm charm = viewModel.prepareNewCustomCharm("Volcano Cutter", "Evocation");
         assertNotNull(charm);
-        assertTrue(charm instanceof SolarCharm);
+        assertTrue(charm instanceof Evocation);
         assertEquals("Volcano Cutter", charm.getAbility());
-        assertEquals("evocation", charm.getCategory());
+        assertEquals(com.vibethema.model.mystic.CharmKind.EVOCATION, charm.getKind());
         assertTrue(charm.getName().startsWith("New Evocation"));
     }
 

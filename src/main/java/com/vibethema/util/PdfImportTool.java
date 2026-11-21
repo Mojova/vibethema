@@ -71,12 +71,14 @@ public class PdfImportTool {
         System.out.println("\n[Charms]");
         Path charmsPath = dataPath.resolve("charms");
         if (Files.exists(charmsPath)) {
-            try (Stream<Path> files = Files.list(charmsPath)) {
-                files.filter(f -> f.toString().endsWith(".json"))
+            try (Stream<Path> files = Files.walk(charmsPath)) {
+                files.filter(Files::isRegularFile)
+                        .filter(f -> f.toString().endsWith(".json"))
                         .forEach(f -> {
                             try {
                                 long count = countCharmsInFile(f);
-                                System.out.printf("  - %-20s: %d charms\n", f.getFileName(), count);
+                                System.out.printf(
+                                        "  - %-20s: %d charms\n", charmsPath.relativize(f), count);
                             } catch (IOException e) {
                                 System.err.println("Error reading " + f.getFileName());
                             }
@@ -118,17 +120,9 @@ public class PdfImportTool {
     }
 
     private static long countCharmsInFile(Path file) throws IOException {
-        String content = Files.readString(file);
-        // Simple heuristic: count occurrences of "\"id\":"
-        long count = 0;
-        int lastIndex = 0;
-        while ((lastIndex = content.indexOf("\"id\":", lastIndex)) != -1) {
-            count++;
-            lastIndex += 5;
-        }
-        // Subtract 1 if the file itself has an ID (like a wrapper object),
-        // but our JSON schema has "id" for each charm.
-        // Actually, checking for 'name' might be safer for charm count.
-        return count;
+        var json = com.google.gson.JsonParser.parseString(Files.readString(file));
+        return json.isJsonObject() && json.getAsJsonObject().has("charms")
+                ? json.getAsJsonObject().getAsJsonArray("charms").size()
+                : 0;
     }
 }

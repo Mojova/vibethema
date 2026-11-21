@@ -135,13 +135,19 @@ overrides. It uses the vendor segment `Mojova`:
 - Linux/XDG data/config: `$XDG_DATA_HOME/mojova/vibethema` and `$XDG_CONFIG_HOME/mojova/vibethema`, or
   `~/.local/share/mojova/vibethema` and `~/.config/mojova/vibethema`.
 
-Global imported/custom data is organized below the data path, notably:
+Imported definitions live under `official/<source-id>/`; user definitions live under `custom/`.
+Charm format 0.3.0 uses explicit `kind` and native-only `exaltType` metadata. `CharmJson` inherits
+collection metadata into entries and rejects unsupported families and legacy fields. Only Solar native
+rules are currently implemented. Current source manifests use schema version 2; older imports require
+re-import. See `docs/DATA_SOURCES.md` for the complete format. Data is organized as follows:
 
 ```text
-charms/
-  <ability>.json
-  martial_arts/
-  evocations/
+official/<source-id>/charms/ (and custom/charms/)
+  solar/<ability>.json
+  martial_arts/<style>.json
+  evocations/<artifact-id>.json
+  keywords.json
+  charm-schema.json
 spells/
 equipment/
   weapons/
@@ -161,7 +167,7 @@ size is A4 and the default base theme is Dark.
 sorcery, equipment, merits, and keywords, then delegates to the specialized extractors under `service/pdf/core`.
 
 `BaseCharmExtractor` normalizes text and resolves prerequisite groups. Charm IDs are stable UUID v3-style values
-derived from `name + "|" + ability`; spells and equipment also use deterministic UUID-based identities. Never invent
+derived from source, kind, native owner, name, and Ability; spells and equipment also use deterministic UUID-based identities. Never invent
 or hardcode imported charm IDs.
 
 `PdfImportRegressionTest` uses local, Git-ignored source/reference data when available. Copyrighted PDFs and extracted

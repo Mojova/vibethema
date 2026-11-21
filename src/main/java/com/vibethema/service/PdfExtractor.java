@@ -70,10 +70,10 @@ public class PdfExtractor {
                     spellExtractor.setOverrideOutputPath(context.sourceDirectory());
                 spellExtractor.extractAndSave(spellText, "");
 
-                // 3. Equipment Tags & Gear (Pages 585 - 610)
+                // 3. Equipment tags (printed pages 585-593, with weapon section context)
                 if (progressCallback != null) progressCallback.accept(0.8);
                 stripper.setStartPage(585);
-                stripper.setEndPage(610);
+                stripper.setEndPage(594);
                 String equipText = stripper.getText(document);
                 CoreEquipmentExtractor equipExtractor = new CoreEquipmentExtractor();
                 equipExtractor.setSourceId(sourceId);

@@ -1,5 +1,7 @@
 package com.vibethema.service;
 
+import com.vibethema.model.ExaltType;
+import com.vibethema.model.mystic.CharmKind;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
@@ -7,8 +9,13 @@ import java.util.UUID;
 public final class DefinitionId {
     private DefinitionId() {}
 
-    public static String forCharm(String sourceId, String name, String ability) {
-        return from(sourceId, "charm", name, ability);
+    public static String forCharm(
+            String sourceId, CharmKind kind, ExaltType owner, String name, String ability) {
+        if (kind == null || (kind == CharmKind.EXALTED) != (owner != null))
+            throw new IllegalArgumentException(
+                    "Only native Exalted Charms require an owning Exalt type.");
+        return from(
+                sourceId, "charm", kind.name(), owner == null ? "" : owner.name(), name, ability);
     }
 
     public static String forSpell(String sourceId, String name, String circle) {

@@ -146,7 +146,7 @@ public class EditCharmViewModel implements ViewModel {
         }
 
         // Persist
-        if ("evocation".equals(charm.getCategory())) {
+        if (charm.getKind() == CharmKind.EVOCATION) {
             dataService.saveEvocation(charm.getAbility(), contextName, charm);
         } else {
             dataService.saveCharm(charm);
@@ -212,10 +212,6 @@ public class EditCharmViewModel implements ViewModel {
 
     public String getCharmName() {
         return charm.getName();
-    }
-
-    public String getCharmCategory() {
-        return charm.getCategory();
     }
 
     public String getFilterType() {

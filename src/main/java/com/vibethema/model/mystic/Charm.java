@@ -7,7 +7,8 @@ import java.util.UUID;
 public abstract class Charm {
     private String id;
     private String sourceId;
-    private List<String> exaltTypes;
+    private CharmKind kind;
+    private ExaltType exaltType;
     private String name;
     private int minEssence;
     private PrerequisiteRule prerequisites;
@@ -19,7 +20,6 @@ public abstract class Charm {
     private String fullText;
     private String rawData;
     private List<String> importWarnings;
-    private String category; // "solar", "martialArts", "evocation"
     private transient boolean isCustom;
 
     public String getId() {
@@ -38,8 +38,17 @@ public abstract class Charm {
         this.sourceId = sourceId;
     }
 
-    public List<String> getExaltTypes() {
-        return exaltTypes;
+    public CharmKind getKind() {
+        return kind;
+    }
+
+    public ExaltType getExaltType() {
+        return exaltType;
+    }
+
+    protected void setFamily(CharmKind kind, ExaltType exaltType) {
+        this.kind = kind;
+        this.exaltType = exaltType;
     }
 
     public Charm() {
@@ -80,14 +89,6 @@ public abstract class Charm {
 
     public String getRawData() {
         return rawData;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
     }
 
     public void setName(String name) {

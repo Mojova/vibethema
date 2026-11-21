@@ -13,12 +13,13 @@ import java.util.List;
 
 /** Metadata describing one imported book or official data collection. */
 public class SourceManifest {
+    public static final int CURRENT_SCHEMA_VERSION = 2;
     public String sourceId;
     public String displayName;
     public String edition;
     public String version;
-    public int schemaVersion = 1;
-    public String extractorVersion = "1";
+    public int schemaVersion = CURRENT_SCHEMA_VERSION;
+    public String extractorVersion = "2";
     public String importedAt;
     public String sourceSha256;
     public List<String> exaltTypes = new ArrayList<>();
