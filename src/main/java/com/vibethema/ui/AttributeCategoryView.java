@@ -27,6 +27,10 @@ public class AttributeCategoryView extends VBox {
         titleLabel.getStyleClass().add("subsection-title");
 
         ComboBox<AttributePriority> priorityBox = new ComboBox<>();
+        priorityBox.setId(
+                "priority_" + viewModel.getCategory().name().toLowerCase(java.util.Locale.ROOT));
+        priorityBox.setAccessibleText(viewModel.titleProperty().get() + " Attribute priority");
+        titleLabel.setLabelFor(priorityBox);
         priorityBox.getItems().setAll(AttributePriority.values());
         priorityBox.valueProperty().bindBidirectional(viewModel.priorityProperty());
         priorityBox

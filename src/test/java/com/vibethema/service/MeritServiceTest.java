@@ -55,4 +55,27 @@ public class MeritServiceTest {
         assertNotNull(artifact.getRatings());
         assertFalse(artifact.getRatings().isEmpty());
     }
+
+    @Test
+    void lookupResolvesSourceAndLegacyIdsAndRefreshesAfterImport() throws Exception {
+        Path file = dataDirectory.resolve("official/exalted-3e-core/merits/merits.json");
+        String id = DefinitionId.forMerit("exalted-3e-core", "Martial Artist");
+        Files.writeString(
+                file,
+                "{\"merits\":[{\"id\":\""
+                        + id
+                        + "\",\"name\":\"Martial Artist\",\"ratings\":[4]}]}");
+        MeritService service = new MeritService();
+        assertEquals(List.of(4), service.findMeritById(id).getRatings());
+        String legacy =
+                java.util
+                        .UUID
+                        .nameUUIDFromBytes("Martial Artist".getBytes(StandardCharsets.UTF_8))
+                        .toString();
+        assertEquals(id, service.findMeritById(legacy).getId());
+        assertEquals(service.getAvailableMerits(), service.getAvailableMerits());
+        Files.writeString(file, "{\"merits\":[]}");
+        service.invalidateCache();
+        assertNull(service.findMeritById(id));
+    }
 }

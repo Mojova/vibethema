@@ -15,6 +15,7 @@ public class CharmsViewModel implements ViewModel {
     private final CharmDataService charmDataService;
     private final Map<String, String> keywordDefs;
 
+    private final Map<String, String> artifactSelections = new java.util.HashMap<>();
     private final StringProperty filterType = new SimpleStringProperty("Ability");
     private final StringProperty selectedFilterValue = new SimpleStringProperty("");
     private final ObservableList<String> filterOptions = FXCollections.observableArrayList();
@@ -42,6 +43,35 @@ public class CharmsViewModel implements ViewModel {
             }
             if (!filterOptions.isEmpty()) selectedFilterValue.set(filterOptions.get(0));
         }
+    }
+
+    public record TreeSelection(String type, String id, String name) {}
+
+    public TreeSelection getTreeSelection() {
+        String selected = selectedFilterValue.get();
+        String artifactId = artifactSelections.get(selected);
+        return artifactId == null
+                ? new TreeSelection(filterType.get(), selected, selected)
+                : new TreeSelection("Evocation", artifactId, selected);
+    }
+
+    /** Adds a named artifact destination without exposing definition IDs in the filter. */
+    public String selectArtifact(String artifactId, String name) {
+        String label = "Evocations: " + name;
+        int suffix = 2;
+        while (artifactSelections.containsKey(label)
+                && !java.util.Objects.equals(artifactSelections.get(label), artifactId)) {
+            label = "Evocations: " + name + " (" + suffix++ + ")";
+        }
+        artifactSelections.put(label, artifactId);
+        if (!filterOptions.contains(label)) filterOptions.add(label);
+        selectedFilterValue.set(label);
+        return label;
+    }
+
+    public void selectAbility(String ability) {
+        if (!filterOptions.contains(ability)) filterOptions.add(ability);
+        selectedFilterValue.set(ability);
     }
 
     // Accessors

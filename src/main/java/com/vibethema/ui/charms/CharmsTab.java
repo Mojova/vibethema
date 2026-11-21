@@ -60,14 +60,10 @@ public class CharmsTab extends BorderPane implements JavaView<CharmsViewModel>, 
 
         charmDetails = vtDetails.getCodeBehind();
 
-        // Synchronize the child VM with the parent VM state
-        charmTreeViewModel.filterTypeProperty().bind(viewModel.filterTypeProperty());
-        charmTreeViewModel.selectionIdProperty().bind(viewModel.selectedFilterValueProperty());
-
-        // Redraw when selection changed
         viewModel
                 .selectedFilterValueProperty()
-                .addListener((obs, oldV, newV) -> charmTreeViewModel.refresh());
+                .addListener((obs, oldV, newV) -> updateTreeSelection());
+        updateTreeSelection();
 
         // Header for the filter
         HBox topBar = new HBox(15);
@@ -76,6 +72,7 @@ public class CharmsTab extends BorderPane implements JavaView<CharmsViewModel>, 
 
         Label filterLabel = new Label(viewModel.filterTypeProperty().get() + ":");
         filterLabel.setLabelFor(filterCombo);
+        filterCombo.setId("charms_filter");
         filterCombo.setAccessibleText(viewModel.filterTypeProperty().get() + " filter");
 
         topBar.getChildren().addAll(filterLabel, filterCombo);
@@ -102,5 +99,19 @@ public class CharmsTab extends BorderPane implements JavaView<CharmsViewModel>, 
         if (charmTreeViewModel != null) {
             charmTreeViewModel.refresh();
         }
+    }
+
+    public void focusCharm(String id) {
+        charmTree.focusCharm(id);
+    }
+
+    private void updateTreeSelection() {
+        var selection = viewModel.getTreeSelection();
+        charmTreeViewModel.initialize(
+                selection.type(),
+                selection.id(),
+                selection.name(),
+                "Evocation".equals(selection.type()) ? selection.id() : "",
+                selection.name());
     }
 }

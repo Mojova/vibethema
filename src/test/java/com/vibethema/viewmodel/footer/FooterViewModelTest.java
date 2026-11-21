@@ -94,4 +94,60 @@ public class FooterViewModelTest {
         viewModel.finalizeCharacter();
         assertEquals(1, calls.get());
     }
+
+    @Test
+    void checklistNavigationPublishesTheFieldTarget() {
+        var issue =
+                viewModel.getValidationIssues().stream()
+                        .filter(i -> i.code().equals("supernal"))
+                        .findFirst()
+                        .orElseThrow();
+        java.util.concurrent.atomic.AtomicReference<Object> received =
+                new java.util.concurrent.atomic.AtomicReference<>();
+        de.saxsys.mvvmfx.utils.notifications.NotificationObserver observer =
+                (name, payload) -> received.set(payload[0]);
+        com.vibethema.viewmodel.util.Messenger.subscribe("navigate_creation_issue", observer);
+        try {
+            viewModel.navigateToIssue(issue);
+            assertEquals(
+                    new com.vibethema.model.logic.CreationValidator.Location(
+                            "Stats", "info_supernal"),
+                    received.get());
+        } finally {
+            com.vibethema.viewmodel.util.Messenger.unsubscribe("navigate_creation_issue", observer);
+        }
+    }
+
+    @Test
+    void meritRatingEditsAndLoadedStylesRevalidateMartialArtsAccess() {
+        data = com.vibethema.model.logic.CreationTestCharacters.ready();
+        data.getMartialArtsStyles()
+                .add(new com.vibethema.model.traits.MartialArtsStyle("style", "Test", 1));
+        viewModel = new FooterViewModel(data, () -> {});
+        var martialArts =
+                new com.vibethema.viewmodel.martialarts.MartialArtsViewModel(
+                        data,
+                        org.mockito.Mockito.mock(com.vibethema.service.CharmDataService.class),
+                        new java.util.HashMap<>());
+        assertFalse(martialArts.martialArtsEnabledProperty().get());
+        var merit =
+                new com.vibethema.model.traits.Merit(
+                        "artist",
+                        com.vibethema.model.logic.MeritRules.MARTIAL_ARTIST_ID,
+                        "Martial Artist",
+                        4);
+        assertTrue(
+                viewModel.getValidationIssues().stream()
+                        .anyMatch(i -> i.code().equals("martial_artist")));
+        data.getMerits().add(merit);
+        assertTrue(martialArts.martialArtsEnabledProperty().get());
+        assertFalse(
+                viewModel.getValidationIssues().stream()
+                        .anyMatch(i -> i.code().equals("martial_artist")));
+        merit.setRating(3);
+        assertFalse(martialArts.martialArtsEnabledProperty().get());
+        assertTrue(
+                viewModel.getValidationIssues().stream()
+                        .anyMatch(i -> i.code().equals("martial_artist")));
+    }
 }

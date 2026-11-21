@@ -21,6 +21,17 @@ The model is organized into logical, functional sub-packages. `CharacterData` se
 **Key Concepts:**
 - **`CharacterData`**: The "Source of Truth". Uses composition to delegate to sub-models.
 - **`CharacterMode`**: Distinguishes between `CREATION` (BP-based) and `EXPERIENCED` (XP-based) states. This affects UI constraints and field locking.
+- **Creation validation**: `CreationValidator` returns immutable, coded issues. It validates free pools,
+  per-category Attribute allocations, identity choices, Favored minimums, rating bounds, starting Intimacies,
+  Limit Trigger, and sorcery access. The catalog-aware overload also resolves and rechecks purchased Charms and Merit ratings. Blank or
+  invalid Merits do not fill the free pool. `MeritRules` accepts current and legacy Martial Artist definition
+  IDs at four dots; access is rechecked after rating edits, loading, and refunds. `CharmPurchaseRules`
+  supplies eligibility and repeat limits to the validator, sidebar actions, and keyboard purchase actions.
+  `MainViewModel` uses it before opening and accepting finalization; the footer uses the same result for its
+  expandable checklist and button state. Each issue carries a navigation location; checklist links load
+  the destination tab and pulse its control. Charm links select the tree, clear search/eligibility filters,
+  and reveal the purchased Charm; artifact selections resolve to an Evocation tree by definition ID. Positive/negative Intimacy intent remains a manual review reminder.
+  `CreationRuleEngine.CreationStatus.isReadyToFinalize` uses the character-state checks without catalog access.
 - **Reactive Properties**: Uses JavaFX Properties (`IntegerProperty`, etc.) for real-time UI synchronization.
 - **`CharacterSaveState`**: Central DTO for GSON serialization. Use `exportState()` and `importState()` in `CharacterData`.
 - **`CharacterFactory`**: Responsible for initializing new character data with default values.

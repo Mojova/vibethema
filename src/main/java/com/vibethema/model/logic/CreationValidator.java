@@ -11,7 +11,38 @@ import java.util.function.Function;
 public final class CreationValidator {
     private CreationValidator() {}
 
-    public record Issue(String code, String message) {}
+    /** Optional ability selects the appropriate Charm tree before highlighting its node. */
+    public record Location(String tab, String elementId, String ability) {
+        public Location(String tab, String elementId) {
+            this(tab, elementId, null);
+        }
+    }
+
+    public record Issue(String code, String message, Location location) {
+        public Issue(String code, String message) {
+            this(code, message, defaultLocation(code));
+        }
+    }
+
+    private static Location defaultLocation(String code) {
+        return switch (code) {
+            case "merit_pool", "martial_artist" -> new Location("Merits", "merits_add");
+            case "intimacies", "defining_intimacy", "major_intimacy" ->
+                    new Location("Intimacies", "intimacies_add");
+            case "caste" -> new Location("Stats", "info_caste");
+            case "supernal" -> new Location("Stats", "info_supernal");
+            case "limit_trigger" -> new Location("Stats", "stats_limit_trigger");
+            case "essence" -> new Location("Stats", "stats_essence");
+            case "attribute_priorities" -> new Location("Stats", "priority_physical");
+            case "specialty_pool" -> new Location("Stats", "stats_specialties");
+            case "sorcery" -> new Location("Solar Charms", "charms_filter", "Occult");
+            case "spell_circle" -> new Location("Sorcery", "sorcery_content");
+            case "charm_pool", "charm_definition" -> new Location("Solar Charms", "charms_filter");
+            case "ability_pool", "caste_abilities", "favored_abilities" ->
+                    new Location("Stats", "stats_abilities");
+            default -> new Location("Stats", "stats_content");
+        };
+    }
 
     public record Result(List<Issue> issues) {
         public Result {
@@ -36,7 +67,19 @@ public final class CreationValidator {
 
     /** Also rechecks every purchase against the current catalog, including missing definitions. */
     public static Result validate(CharacterData data, Function<String, Charm> charmLookup) {
+        return validate(data, charmLookup, null);
+    }
+
+    /** Catalog-aware validation used by both the checklist and finalization guard. */
+    public static Result validate(
+            CharacterData data,
+            Function<String, Charm> charmLookup,
+            Function<String, MeritReference> meritLookup) {
         List<Issue> issues = new ArrayList<>(validate(data).issues());
+        if (meritLookup != null) {
+            issues.removeIf(i -> i.code().startsWith("merit_"));
+            validateMerits(data, meritLookup, issues);
+        }
         Set<String> checked = new HashSet<>();
         for (PurchasedCharm purchase : data.getUnlockedCharms()) {
             if (!checked.add(purchase.id())) continue;
@@ -45,32 +88,26 @@ public final class CreationValidator {
                 issues.add(
                         new Issue(
                                 "charm_definition",
-                                "Restore the definition for "
-                                        + purchase.name()
-                                        + " or refund it."));
+                                "Restore the definition for " + purchase.name() + " or refund it.",
+                                new Location("Solar Charms", "charms_filter")));
             } else {
-                if (!charm.isEligible(data)) {
+                if (!CharmPurchaseRules.meetsRequirements(charm, data)) {
                     issues.add(
                             new Issue(
                                     "charm_requirements",
                                     "Meet the requirements for "
                                             + purchase.name()
-                                            + " or refund it."));
+                                            + " or refund it.",
+                                    charmLocation(charm, data)));
                 }
                 int count = data.getCharmCount(purchase.id());
-                boolean stackable =
-                        charm.getKeywords() != null && charm.getKeywords().contains("Stackable");
-                int limit =
-                        !stackable
-                                ? 1
-                                : "Ox-Body Technique".equals(charm.getName())
-                                        ? data.getAbility(Ability.RESISTANCE).get()
-                                        : 10;
+                int limit = CharmPurchaseRules.purchaseLimit(charm, data);
                 if (count > limit) {
                     issues.add(
                             new Issue(
                                     "charm_limit",
-                                    "Reduce " + purchase.name() + " purchases to " + limit + "."));
+                                    "Reduce " + purchase.name() + " purchases to " + limit + ".",
+                                    charmLocation(charm, data)));
                 }
             }
         }
@@ -111,17 +148,35 @@ public final class CreationValidator {
                                             + (required - spent)
                                             + " more free dots in "
                                             + category.name().toLowerCase(Locale.ROOT)
-                                            + " Attributes."));
+                                            + " Attributes.",
+                                    new Location(
+                                            "Stats",
+                                            "priority_"
+                                                    + category.name().toLowerCase(Locale.ROOT))));
                 }
             }
         }
         for (Attribute attribute : SystemData.ATTRIBUTES) {
             checkRating(
-                    issues, attribute.getDisplayName(), data.getAttribute(attribute).get(), 1, 5);
+                    issues,
+                    attribute.getDisplayName(),
+                    data.getAttribute(attribute).get(),
+                    1,
+                    5,
+                    new Location(
+                            "Stats", "attribute_" + attribute.name().toLowerCase(Locale.ROOT)));
         }
         // Only dots at ratings 1-3 may use the free Ability pool.
         requirePool(issues, "ability_pool", "free Ability dots", status.abilityDots, 28);
-        requirePool(issues, "merit_pool", "Merit dots", status.meritsSpent, 10);
+        validateMerits(data, null, issues);
+        if (data.getMartialArtsStyles().stream().anyMatch(style -> style.getRating() > 0)
+                && !MeritRules.hasMartialArtist(data)) {
+            issues.add(
+                    new Issue(
+                            "martial_artist",
+                            "Purchase the four-dot Martial Artist Merit or remove your Martial Arts"
+                                    + " ratings."));
+        }
         requirePool(issues, "specialty_pool", "Specialties", status.specialtiesSpent, 4);
         requirePool(issues, "charm_pool", "Charms or spells", status.charmsSpent, 15);
         if (status.bonusPointsSpent != 15) {
@@ -155,13 +210,15 @@ public final class CreationValidator {
                         new Issue(
                                 "caste_ability",
                                 ability.getDisplayName()
-                                        + " is not available to the selected Caste."));
+                                        + " is not available to the selected Caste.",
+                                abilityLocation(ability)));
             }
             if (data.getCasteAbility(ability).get() && data.getFavoredAbility(ability).get()) {
                 issues.add(
                         new Issue(
                                 "ability_selection",
-                                ability.getDisplayName() + " cannot be both Caste and Favored."));
+                                ability.getDisplayName() + " cannot be both Caste and Favored.",
+                                abilityLocation(ability)));
             }
             int rating =
                     ability == Ability.CRAFT
@@ -184,17 +241,36 @@ public final class CreationValidator {
                                 "favored_rating",
                                 "Assign at least one dot to Favored "
                                         + ability.getDisplayName()
-                                        + "."));
+                                        + ".",
+                                abilityLocation(ability)));
             }
             if (ability != Ability.CRAFT)
-                checkRating(issues, ability.getDisplayName(), data.getAbility(ability).get(), 0, 5);
+                checkRating(
+                        issues,
+                        ability.getDisplayName(),
+                        data.getAbility(ability).get(),
+                        0,
+                        5,
+                        abilityLocation(ability));
         }
         data.getCrafts()
                 .forEach(craft ->
-                        checkRating(issues, craft.getExpertise(), craft.getRating(), 0, 5));
+                        checkRating(
+                                issues,
+                                craft.getExpertise(),
+                                craft.getRating(),
+                                0,
+                                5,
+                                new Location("Stats", "craft_" + craft.getId())));
         data.getMartialArtsStyles()
                 .forEach(style ->
-                        checkRating(issues, style.getStyleName(), style.getRating(), 0, 5));
+                        checkRating(
+                                issues,
+                                style.getStyleName(),
+                                style.getRating(),
+                                0,
+                                5,
+                                new Location("Martial Arts", "martial_style_" + style.getId())));
         Ability supernal = Ability.fromString(data.supernalAbilityProperty().get());
         if (supernal == null || !data.getCasteAbility(supernal).get()) {
             issues.add(
@@ -202,7 +278,13 @@ public final class CreationValidator {
         }
         if (data.essenceProperty().get() != 1)
             issues.add(new Issue("essence", "Starting Essence must be 1."));
-        checkRating(issues, "Willpower", data.willpowerProperty().get(), 5, 10);
+        checkRating(
+                issues,
+                "Willpower",
+                data.willpowerProperty().get(),
+                5,
+                10,
+                new Location("Stats", "stats_willpower"));
         if (blank(data.limitTriggerProperty().get()))
             issues.add(new Issue("limit_trigger", "Choose a Limit Trigger."));
         List<Intimacy> intimacies =
@@ -234,15 +316,77 @@ public final class CreationValidator {
         return new Result(issues);
     }
 
+    private static Location charmLocation(Charm charm, CharacterData data) {
+        if (charm instanceof MartialArtsCharm && !MeritRules.hasMartialArtist(data))
+            return defaultLocation("martial_artist");
+        return new Location("Solar Charms", "charm_" + charm.getId(), charm.getAbility());
+    }
+
+    private static Location abilityLocation(Ability ability) {
+        return new Location("Stats", "ability_" + ability.name().toLowerCase(Locale.ROOT));
+    }
+
+    private static void validateMerits(
+            CharacterData data, Function<String, MeritReference> lookup, List<Issue> issues) {
+        int validDots = 0;
+        for (Merit merit : data.getMerits()) {
+            Location location = new Location("Merits", "merit_" + merit.getId());
+            boolean valid = true;
+            if (blank(merit.getName())) {
+                issues.add(
+                        new Issue("merit_name", "Give this Merit a name or remove it.", location));
+                valid = false;
+            }
+            boolean custom = blank(merit.getDefinitionId());
+            MeritReference definition =
+                    custom || lookup == null ? null : lookup.apply(merit.getDefinitionId());
+            if (!custom && lookup != null && definition == null) {
+                issues.add(
+                        new Issue(
+                                "merit_definition",
+                                "Restore the definition for " + merit.getName() + " or remove it.",
+                                location));
+                valid = false;
+            }
+            if (definition != null
+                    && definition.getRatings() != null
+                    && !definition.getRatings().isEmpty()) {
+                if (!definition.getRatings().contains(merit.getRating())) {
+                    issues.add(
+                            new Issue(
+                                    "merit_rating",
+                                    merit.getName()
+                                            + " must use one of these ratings: "
+                                            + definition.getRatings()
+                                            + ".",
+                                    location));
+                    valid = false;
+                }
+            } else if (merit.getRating() < (custom ? 1 : 0) || merit.getRating() > 5) {
+                issues.add(
+                        new Issue(
+                                "merit_rating",
+                                merit.getName() + " must be rated " + (custom ? "1" : "0") + "-5.",
+                                location));
+                valid = false;
+            }
+            if (valid) validDots += merit.getRating();
+        }
+        requirePool(issues, "merit_pool", "valid Merit dots", validDots, 10);
+    }
+
     private static void requirePool(
             List<Issue> issues, String code, String name, int spent, int required) {
         if (spent < required)
             issues.add(new Issue(code, "Choose " + (required - spent) + " more " + name + "."));
     }
 
-    private static void checkRating(List<Issue> issues, String name, int rating, int min, int max) {
+    private static void checkRating(
+            List<Issue> issues, String name, int rating, int min, int max, Location location) {
         if (rating < min || rating > max)
-            issues.add(new Issue("rating", name + " must be rated " + min + "-" + max + "."));
+            issues.add(
+                    new Issue(
+                            "rating", name + " must be rated " + min + "-" + max + ".", location));
     }
 
     private static boolean blank(String value) {

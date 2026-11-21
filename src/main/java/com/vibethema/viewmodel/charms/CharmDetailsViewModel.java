@@ -1,6 +1,7 @@
 package com.vibethema.viewmodel.charms;
 
 import com.vibethema.model.*;
+import com.vibethema.model.logic.CharmPurchaseRules;
 import com.vibethema.model.mystic.*;
 import com.vibethema.model.traits.*;
 import com.vibethema.service.CharmDataService;
@@ -179,16 +180,15 @@ public class CharmDetailsViewModel implements ViewModel {
     private void updateButtonStates(Charm c) {
         int count = data.getCharmCount(c.getId());
         boolean bought = data.hasCharm(c.getId());
-        boolean eligible = c.isEligible(data);
-        boolean stackable = c.getKeywords() != null && c.getKeywords().contains("Stackable");
-        boolean isOxBody = c.getName().equals("Ox-Body Technique");
+        boolean eligible = CharmPurchaseRules.meetsRequirements(c, data);
+        boolean stackable = CharmPurchaseRules.isStackable(c);
 
         String term = "Evocation".equals(filterType.get()) ? "Evocation" : "Charm";
         deleteCustomBtnVisible.set(c.isCustom());
         deleteCustomBtnText.set("Delete Custom " + term);
 
         if (stackable) {
-            int limit = isOxBody ? data.getAbility(Ability.RESISTANCE).get() : 10;
+            int limit = CharmPurchaseRules.purchaseLimit(c, data);
             purchaseBtnText.set("Purchase (" + count + "/" + limit + ")");
             purchaseBtnDisabled.set(count >= limit || !eligible);
             purchaseBtnStyle.set("-fx-base: #d4af37;");
@@ -213,12 +213,12 @@ public class CharmDetailsViewModel implements ViewModel {
     public void togglePurchase() {
         Charm c = selectedCharm.get();
         if (c == null) return;
-        boolean stackable = c.getKeywords() != null && c.getKeywords().contains("Stackable");
+        boolean stackable = CharmPurchaseRules.isStackable(c);
         boolean owned = data.hasCharm(c.getId());
 
-        if (stackable || (!owned && c.isEligible(data))) {
+        if ((!owned || stackable) && CharmPurchaseRules.canPurchase(c, data)) {
             data.addCharm(new PurchasedCharm(c.getId(), c.getName(), c.getAbility()));
-        } else if (owned) {
+        } else if (owned && !stackable) {
             data.removeCharm(c.getId());
         }
         updateButtonStates(c);

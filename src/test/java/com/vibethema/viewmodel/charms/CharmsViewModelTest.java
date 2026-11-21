@@ -44,4 +44,17 @@ public class CharmsViewModelTest {
         viewModel.selectedFilterValueProperty().set("Melee");
         assertEquals("Melee", viewModel.selectedFilterValueProperty().get());
     }
+
+    @Test
+    void artifactNavigationUsesItsDefinitionIdAndCanReturnToAbilities() {
+        String label = viewModel.selectArtifact("artifact-id", "Test Artifact");
+        assertEquals("Evocations: Test Artifact", label);
+        assertEquals(
+                new CharmsViewModel.TreeSelection("Evocation", "artifact-id", label),
+                viewModel.getTreeSelection());
+        viewModel.selectAbility("Melee");
+        assertEquals(
+                new CharmsViewModel.TreeSelection("Ability", "Melee", "Melee"),
+                viewModel.getTreeSelection());
+    }
 }

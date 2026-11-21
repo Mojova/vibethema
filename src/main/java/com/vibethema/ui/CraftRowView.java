@@ -16,6 +16,8 @@ public class CraftRowView extends HBox {
     private final DotSelector selector;
 
     public CraftRowView(CraftRowViewModel viewModel) {
+        setId("craft_" + viewModel.getModel().getId());
+        setFocusTraversable(true);
         setSpacing(12);
         setAlignment(Pos.CENTER_LEFT);
 

@@ -1,6 +1,7 @@
 package com.vibethema.viewmodel.martialarts;
 
 import com.vibethema.model.*;
+import com.vibethema.model.logic.MeritRules;
 import com.vibethema.model.traits.*;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.viewmodel.util.Messenger;
@@ -46,8 +47,7 @@ public class MartialArtsViewModel implements ViewModel {
 
         this.martialArtsEnabled.bind(
                 Bindings.createBooleanBinding(
-                        () -> data.hasMeritByDefinitionId("3dd46a27-92bf-3295-9a1b-dba09c281581"),
-                        data.getMerits()));
+                        () -> MeritRules.hasMartialArtist(data), data.getMerits()));
 
         updateRows();
 

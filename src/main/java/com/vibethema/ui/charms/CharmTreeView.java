@@ -92,6 +92,11 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
                 });
     }
 
+    public void focusCharm(String id) {
+        viewModel.revealCharm(id);
+        javafx.application.Platform.runLater(() -> scrollToNode(id));
+    }
+
     private void scrollToNode(String charmId) {
         Pane node = charmNodeMap.get(charmId);
         if (node == null) return;
@@ -393,7 +398,9 @@ public class CharmTreeView extends VBox implements JavaView<CharmTreeViewModel>,
         Charm selected = viewModel.selectedCharmProperty().get();
         boolean isSelected = selected != null && selected.getId().equals(c.getId());
         boolean hasCharm = viewModel.getData().hasCharm(c.getId());
-        boolean eligible = c.isEligible(viewModel.getData());
+        boolean eligible =
+                com.vibethema.model.logic.CharmPurchaseRules.meetsRequirements(
+                        c, viewModel.getData());
 
         if (isSelected) {
             container.getStyleClass().add("charm-node-selected");

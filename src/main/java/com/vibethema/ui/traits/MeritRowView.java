@@ -17,6 +17,8 @@ public class MeritRowView extends HBox {
     private final DotSelector selector;
 
     public MeritRowView(MeritRowViewModel viewModel) {
+        setId("merit_" + viewModel.getModel().getId());
+        setFocusTraversable(true);
         setSpacing(15);
         setAlignment(Pos.CENTER_LEFT);
         getStyleClass().add("merit-row");

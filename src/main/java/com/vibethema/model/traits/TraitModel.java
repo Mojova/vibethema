@@ -30,7 +30,9 @@ public class TraitModel {
     private final ObservableList<Specialty> specialties =
             FXCollections.observableArrayList(
                     s -> new javafx.beans.Observable[] {s.nameProperty(), s.abilityProperty()});
-    private final ObservableList<Merit> merits = FXCollections.observableArrayList();
+    private final ObservableList<Merit> merits =
+            FXCollections.observableArrayList(
+                    m -> new javafx.beans.Observable[] {m.nameProperty(), m.ratingProperty()});
     private final ObservableList<CraftAbility> crafts = FXCollections.observableArrayList();
     private final ObservableList<MartialArtsStyle> martialArtsStyles =
             FXCollections.observableArrayList();

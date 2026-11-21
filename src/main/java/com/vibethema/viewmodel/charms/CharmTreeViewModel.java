@@ -1,6 +1,7 @@
 package com.vibethema.viewmodel.charms;
 
 import com.vibethema.model.*;
+import com.vibethema.model.logic.CharmPurchaseRules;
 import com.vibethema.model.mystic.*;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.viewmodel.MainViewModel.CheckpointRequest;
@@ -89,7 +90,9 @@ public class CharmTreeViewModel implements ViewModel {
         if (loaded != null && showEligibleOnly.get()) {
             loaded =
                     loaded.stream()
-                            .filter(c -> data.hasCharm(c.getId()) || c.isEligible(data))
+                            .filter(c ->
+                                    data.hasCharm(c.getId())
+                                            || CharmPurchaseRules.meetsRequirements(c, data))
                             .collect(java.util.stream.Collectors.toList());
         }
 
@@ -269,23 +272,35 @@ public class CharmTreeViewModel implements ViewModel {
         }
     }
 
+    public void revealCharm(String id) {
+        searchDebounce.stop();
+        searchText.set("");
+        showEligibleOnly.set(false);
+        searchDebounce.stop();
+        refresh();
+        currentCharms.stream()
+                .filter(c -> id.equals(c.getId()))
+                .findFirst()
+                .ifPresent(selectedCharm::set);
+    }
+
     public void togglePurchase() {
         Charm c = selectedCharm.get();
         if (c == null) return;
-        boolean stackable = c.getKeywords() != null && c.getKeywords().contains("Stackable");
+        boolean stackable = CharmPurchaseRules.isStackable(c);
         boolean owned = data.hasCharm(c.getId());
 
-        if (stackable || (!owned && c.isEligible(data))) {
+        if ((!owned || stackable) && CharmPurchaseRules.canPurchase(c, data)) {
             Messenger.publish(
                     "RECORD_UNDO_CHECKPOINT",
                     new CheckpointRequest(
-                            "Charms", "Purchase Charm: " + c.getName(), "charm." + c.getId()));
+                            "Charms", "Purchase Charm: " + c.getName(), "charm_" + c.getId()));
             data.addCharm(new PurchasedCharm(c.getId(), c.getName(), c.getAbility()));
-        } else if (owned) {
+        } else if (owned && !stackable) {
             Messenger.publish(
                     "RECORD_UNDO_CHECKPOINT",
                     new CheckpointRequest(
-                            "Charms", "Refund Charm: " + c.getName(), "charm." + c.getId()));
+                            "Charms", "Refund Charm: " + c.getName(), "charm_" + c.getId()));
             data.removeCharm(c.getId());
         }
         Messenger.publish("refresh_all_ui");
@@ -314,7 +329,7 @@ public class CharmTreeViewModel implements ViewModel {
             Messenger.publish(
                     "RECORD_UNDO_CHECKPOINT",
                     new CheckpointRequest(
-                            "Charms", "Refund Stack: " + c.getName(), "charm." + c.getId()));
+                            "Charms", "Refund Stack: " + c.getName(), "charm_" + c.getId()));
             data.removeOneCharm(c.getId());
             Messenger.publish("refresh_all_ui");
         }

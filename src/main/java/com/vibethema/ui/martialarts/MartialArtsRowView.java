@@ -18,6 +18,8 @@ public class MartialArtsRowView extends HBox {
     private final DotSelector selector;
 
     public MartialArtsRowView(MartialArtsRowViewModel viewModel) {
+        setId("martial_style_" + viewModel.getModel().getId());
+        setFocusTraversable(true);
         setSpacing(15);
         setAlignment(Pos.CENTER_LEFT);
         getStyleClass().add("merit-row"); // Reuse styling or use martial-arts-row

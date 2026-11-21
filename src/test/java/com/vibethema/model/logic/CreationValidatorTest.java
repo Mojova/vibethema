@@ -153,4 +153,105 @@ class CreationValidatorTest {
                 CreationValidator.validate(data, catalog::get).issues().stream()
                         .anyMatch(i -> i.code().equals("charm_limit")));
     }
+
+    @Test
+    void blankAndOutOfRangeCustomMeritsCannotFillThePool() {
+        CharacterData data = CreationTestCharacters.ready();
+        data.getMerits().clear();
+        data.getMerits().add(new Merit("blank", " ", 10));
+        var result = CreationValidator.validate(data);
+        assertTrue(result.issues().stream().anyMatch(i -> i.code().equals("merit_name")));
+        assertTrue(result.issues().stream().anyMatch(i -> i.code().equals("merit_rating")));
+        assertTrue(result.issues().stream().anyMatch(i -> i.code().equals("merit_pool")));
+        var issue =
+                result.issues().stream()
+                        .filter(i -> i.code().equals("merit_name"))
+                        .findFirst()
+                        .orElseThrow();
+        assertEquals(new CreationValidator.Location("Merits", "merit_blank"), issue.location());
+    }
+
+    @Test
+    void catalogRatingsIncludeZeroAndRejectUnsupportedValuesAndMissingDefinitions() {
+        CharacterData data = CreationTestCharacters.ready();
+        MeritReference definition = new MeritReference();
+        definition.setId("defined");
+        definition.setName("Test defined Merit");
+        definition.setRatings(List.of(0, 2, 4));
+        Merit merit = new Merit("test", definition.getId(), definition.getName(), 3);
+        data.getMerits().add(merit);
+        var result =
+                CreationValidator.validate(
+                        data,
+                        id ->
+                                CreationTestCharacters.definitions().stream()
+                                        .filter(c -> c.getId().equals(id))
+                                        .findFirst()
+                                        .orElse(null),
+                        id -> definition);
+        assertTrue(result.issues().stream().anyMatch(i -> i.code().equals("merit_rating")));
+        merit.setRating(0);
+        assertTrue(
+                CreationValidator.validate(
+                                data,
+                                id ->
+                                        CreationTestCharacters.definitions().stream()
+                                                .filter(c -> c.getId().equals(id))
+                                                .findFirst()
+                                                .orElse(null),
+                                id -> definition)
+                        .isReady());
+        assertTrue(
+                CreationValidator.validate(data, id -> null, id -> null).issues().stream()
+                        .anyMatch(i -> i.code().equals("merit_definition")));
+    }
+
+    @Test
+    void refundingMartialArtistInvalidatesExistingStylesAndCharms() {
+        CharacterData data = CreationTestCharacters.ready();
+        data.getMartialArtsStyles().add(new MartialArtsStyle("test", "Test Style", 1));
+        assertTrue(has(data, "martial_artist"));
+        Merit merit =
+                new Merit("artist", MeritRules.MARTIAL_ARTIST_ID, "Renamed Martial Artist", 4);
+        data.getMerits().add(merit);
+        assertFalse(has(data, "martial_artist"));
+        MartialArtsCharm charm = new MartialArtsCharm();
+        charm.setName("Test Martial Charm");
+        charm.setAbility("Test Style");
+        charm.setMinAbility(1);
+        assertTrue(CharmPurchaseRules.canPurchase(charm, data));
+        data.getMerits().remove(merit);
+        assertTrue(has(data, "martial_artist"));
+        assertFalse(CharmPurchaseRules.canPurchase(charm, data));
+        data.addCharm(new PurchasedCharm(charm.getId(), charm.getName(), charm.getAbility()));
+        assertTrue(
+                CreationValidator.validate(data, id -> id.equals(charm.getId()) ? charm : null)
+                        .issues()
+                        .stream()
+                        .anyMatch(i -> i.code().equals("charm_requirements")));
+    }
+
+    @Test
+    void acceptsLegacyMartialArtistIdentityButNotItsNameAlone() {
+        CharacterData data = new CharacterData();
+        data.getMerits().add(new Merit("custom", "Martial Artist", 4));
+        assertFalse(MeritRules.hasMartialArtist(data));
+        data.getMerits()
+                .add(
+                        new Merit(
+                                "legacy",
+                                java.util
+                                        .UUID
+                                        .nameUUIDFromBytes(
+                                                "Martial Artist"
+                                                        .getBytes(
+                                                                java.nio.charset.StandardCharsets
+                                                                        .UTF_8))
+                                        .toString(),
+                                "Martial Artist",
+                                4));
+        assertTrue(MeritRules.hasMartialArtist(data));
+        data.getMerits().getLast().setRating(3);
+        assertFalse(MeritRules.hasMartialArtist(data));
+    }
 }

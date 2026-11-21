@@ -313,4 +313,179 @@ public class MainViewTest {
 
         assertTrue(latch.await(10, TimeUnit.SECONDS), "Staggered load test timed out");
     }
+
+    @Test
+    void checklistLinksLoadTheTargetTabAndHighlightTheMeritRow() throws Exception {
+        java.util.concurrent.atomic.AtomicReference<MainView> viewRef =
+                new java.util.concurrent.atomic.AtomicReference<>();
+        var setup =
+                new java.util.concurrent.FutureTask<Void>(() -> {
+                    var data = new CharacterData();
+                    data.getMerits()
+                            .add(new com.vibethema.model.traits.Merit("navigate-test", "", 5));
+                    var vm =
+                            new MainViewModel(
+                                    data,
+                                    Mockito.mock(SystemDataService.class),
+                                    Mockito.mock(EquipmentDataService.class),
+                                    Mockito.mock(CharmDataService.class),
+                                    Mockito.mock(PdfExportService.class));
+                    MainView view =
+                            (MainView)
+                                    de.saxsys.mvvmfx.FluentViewLoader.javaView(MainView.class)
+                                            .viewModel(vm)
+                                            .load()
+                                            .getView();
+                    viewRef.set(view);
+                    new javafx.scene.Scene(view, 1200, 850);
+                    view.applyCss();
+                    view.layout();
+                    view.lookupAll(".titled-pane").stream()
+                            .filter(n ->
+                                    n instanceof javafx.scene.control.TitledPane pane
+                                            && pane.getText().startsWith("Creation checklist"))
+                            .forEach(n -> ((javafx.scene.control.TitledPane) n).setExpanded(true));
+                    view.applyCss();
+                    view.layout();
+                    var issue =
+                            vm.getFooterViewModel().getValidationIssues().stream()
+                                    .filter(i -> i.code().equals("merit_name"))
+                                    .findFirst()
+                                    .orElseThrow();
+                    var link =
+                            view.lookupAll(".hyperlink").stream()
+                                    .filter(n ->
+                                            n instanceof javafx.scene.control.Hyperlink h
+                                                    && h.getText().equals(issue.message()))
+                                    .map(n -> (javafx.scene.control.Hyperlink) n)
+                                    .findFirst()
+                                    .orElseThrow();
+                    link.fire();
+                    return null;
+                });
+        Platform.runLater(setup);
+        try {
+            setup.get(10, TimeUnit.SECONDS);
+            // Drain the queued lazy layout and highlight operations before asserting the result.
+            for (int i = 0; i < 3; i++) {
+                var pulse = new java.util.concurrent.FutureTask<Void>(() -> null);
+                Platform.runLater(pulse);
+                pulse.get(10, TimeUnit.SECONDS);
+            }
+            var verify =
+                    new java.util.concurrent.FutureTask<Void>(() -> {
+                        var view = viewRef.get();
+                        var tabs = (javafx.scene.control.TabPane) view.getCenter();
+                        assertEquals(
+                                "Merits", tabs.getSelectionModel().getSelectedItem().getText());
+                        var row = view.lookup("#merit_navigate-test");
+                        assertNotNull(row);
+                        assertTrue(row.getStyleClass().contains("pulse-highlight"));
+                        return null;
+                    });
+            Platform.runLater(verify);
+            verify.get(10, TimeUnit.SECONDS);
+        } finally {
+            var cleanup =
+                    new java.util.concurrent.FutureTask<Void>(() -> {
+                        if (viewRef.get() != null) viewRef.get().cleanup();
+                        return null;
+                    });
+            Platform.runLater(cleanup);
+            cleanup.get(10, TimeUnit.SECONDS);
+        }
+    }
+
+    @Test
+    void charmChecklistLinksSelectAndHighlightAbilityAndEvocationTrees() throws Exception {
+        var solar = new com.vibethema.model.mystic.SolarCharm();
+        solar.setName("Test Navigation Charm");
+        solar.setId("navigate-charm");
+        solar.setAbility("Melee");
+        solar.setMinAbility(5);
+        assertCharmIssueNavigates(solar);
+        var evocation = new com.vibethema.model.mystic.Evocation();
+        evocation.setName("Test Navigation Evocation");
+        evocation.setId("navigate-evocation");
+        evocation.setArtifactId("missing-artifact");
+        assertCharmIssueNavigates(evocation);
+    }
+
+    private void assertCharmIssueNavigates(com.vibethema.model.mystic.Charm charm)
+            throws Exception {
+        java.util.concurrent.atomic.AtomicReference<MainView> viewRef =
+                new java.util.concurrent.atomic.AtomicReference<>();
+        var setup =
+                new java.util.concurrent.FutureTask<Void>(() -> {
+                    var data = new CharacterData();
+                    data.addCharm(
+                            new com.vibethema.model.mystic.PurchasedCharm(
+                                    charm.getId(), charm.getName(), charm.getAbility()));
+                    var service = Mockito.mock(CharmDataService.class);
+                    when(service.findCharmById(charm.getId())).thenReturn(charm);
+                    when(service.loadCharmsForAbility("Melee"))
+                            .thenReturn(java.util.List.of(charm));
+                    when(service.loadEvocations("missing-artifact"))
+                            .thenReturn(
+                                    new CharmDataService.EvocationCollection(
+                                            "missing-artifact",
+                                            "Test Artifact",
+                                            java.util.List.of(charm)));
+                    var vm =
+                            new MainViewModel(
+                                    data,
+                                    Mockito.mock(SystemDataService.class),
+                                    Mockito.mock(EquipmentDataService.class),
+                                    service,
+                                    Mockito.mock(PdfExportService.class));
+                    var view =
+                            (MainView)
+                                    de.saxsys.mvvmfx.FluentViewLoader.javaView(MainView.class)
+                                            .viewModel(vm)
+                                            .load()
+                                            .getView();
+                    viewRef.set(view);
+                    new javafx.scene.Scene(view, 1200, 850);
+                    view.applyCss();
+                    view.layout();
+                    var issue =
+                            vm.getFooterViewModel().getValidationIssues().stream()
+                                    .filter(i -> i.code().equals("charm_requirements"))
+                                    .findFirst()
+                                    .orElseThrow();
+                    vm.getFooterViewModel().navigateToIssue(issue);
+                    return null;
+                });
+        Platform.runLater(setup);
+        try {
+            setup.get(10, TimeUnit.SECONDS);
+            for (int i = 0; i < 3; i++) {
+                var pulse = new java.util.concurrent.FutureTask<Void>(() -> null);
+                Platform.runLater(pulse);
+                pulse.get(10, TimeUnit.SECONDS);
+            }
+            var verify =
+                    new java.util.concurrent.FutureTask<Void>(() -> {
+                        var view = viewRef.get();
+                        var tabs = (javafx.scene.control.TabPane) view.getCenter();
+                        assertEquals(
+                                "Solar Charms",
+                                tabs.getSelectionModel().getSelectedItem().getText());
+                        var node = view.lookup("#charm_" + charm.getId());
+                        assertNotNull(node);
+                        assertTrue(node.getStyleClass().contains("pulse-highlight"));
+                        return null;
+                    });
+            Platform.runLater(verify);
+            verify.get(10, TimeUnit.SECONDS);
+        } finally {
+            var cleanup =
+                    new java.util.concurrent.FutureTask<Void>(() -> {
+                        if (viewRef.get() != null) viewRef.get().cleanup();
+                        return null;
+                    });
+            Platform.runLater(cleanup);
+            cleanup.get(10, TimeUnit.SECONDS);
+        }
+    }
 }

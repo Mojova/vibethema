@@ -32,6 +32,8 @@ public class SorceryTab extends ScrollPane implements JavaView<SorceryViewModel>
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        setId("sorcery_content");
+        setFocusTraversable(true);
         setFitToWidth(true);
         getStyleClass().add("scroll-pane-custom");
 

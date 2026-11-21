@@ -43,6 +43,7 @@ public class IntimaciesTab extends ScrollPane
                 .addListener((ListChangeListener<IntimacyRowViewModel>) c -> refreshIntimacies());
 
         Button addBtn = new Button("+ Add Intimacy");
+        addBtn.setId("intimacies_add");
         addBtn.getStyleClass().add("action-btn");
         addBtn.setOnAction(e -> viewModel.addIntimacy());
 

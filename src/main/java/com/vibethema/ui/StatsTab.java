@@ -49,6 +49,8 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
                 if (contentLoaded) return;
 
                 VBox content = new VBox(20);
+                content.setId("stats_content");
+                content.setFocusTraversable(true);
                 content.getStyleClass().add("content-area");
                 content.setPadding(new Insets(20));
                 CharacterData data = viewModel.getData();
@@ -148,6 +150,8 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
 
     private HBox createAbilitiesAndSideStuff(CharacterData data) {
         VBox abilitiesSection = new VBox(10);
+        abilitiesSection.setId("stats_abilities");
+        abilitiesSection.setFocusTraversable(true);
         Label abilTitle = new Label("Abilities");
         abilTitle.getStyleClass().add("section-title");
         abilitiesSection.getChildren().add(abilTitle);
@@ -211,6 +215,8 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
     private HBox createCraftsHeader(CharacterData data) {
         AbilityRowViewModel craftVm = viewModel.getCraftAbilityRow();
         HBox header = new HBox(6);
+        header.setId("ability_craft");
+        header.setFocusTraversable(true);
         header.setAlignment(Pos.CENTER_LEFT);
 
         // 1. Caste Indicator/Checkbox
@@ -351,6 +357,8 @@ public class StatsTab extends ScrollPane implements JavaView<StatsViewModel>, In
 
     private VBox createSpecialtiesSection(CharacterData data) {
         VBox section = new VBox(10);
+        section.setId("stats_specialties");
+        section.setFocusTraversable(true);
         Label title = new Label("Specialties");
         title.getStyleClass().add("section-title");
         specList = new VBox(8);

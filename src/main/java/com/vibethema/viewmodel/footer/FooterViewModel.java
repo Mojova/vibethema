@@ -2,6 +2,7 @@ package com.vibethema.viewmodel.footer;
 
 import com.vibethema.model.*;
 import com.vibethema.model.logic.*;
+import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -23,6 +24,11 @@ public class FooterViewModel implements ViewModel {
     private final StringProperty specialtiesText = new SimpleStringProperty();
     private final StringProperty meritsText = new SimpleStringProperty();
     private final StringProperty validationText = new SimpleStringProperty();
+    private final javafx.collections.ObservableList<CreationValidator.Issue> validationIssues =
+            javafx.collections.FXCollections.observableArrayList();
+    private final javafx.collections.ObservableList<CreationValidator.Issue>
+            readOnlyValidationIssues =
+                    javafx.collections.FXCollections.unmodifiableObservableList(validationIssues);
     private final StringProperty validationTitle = new SimpleStringProperty();
     private final java.util.function.Supplier<CreationValidator.Result> validator;
     private final StringProperty charmsText = new SimpleStringProperty();
@@ -165,6 +171,7 @@ public class FooterViewModel implements ViewModel {
 
         meritsText.set("Merits: " + status.meritsSpent + "/10");
         CreationValidator.Result result = validator.get();
+        if (!validationIssues.equals(result.issues())) validationIssues.setAll(result.issues());
         finalizeDisabled.set(!result.isReady());
         validationTitle.set(
                 result.isReady()
@@ -268,6 +275,15 @@ public class FooterViewModel implements ViewModel {
 
     public StringProperty validationTitleProperty() {
         return validationTitle;
+    }
+
+    public javafx.collections.ObservableList<CreationValidator.Issue> getValidationIssues() {
+        return readOnlyValidationIssues;
+    }
+
+    public void navigateToIssue(CreationValidator.Issue issue) {
+        if (validationIssues.contains(issue))
+            Messenger.publish("navigate_creation_issue", issue.location());
     }
 
     public void finalizeCharacter() {

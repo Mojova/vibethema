@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 import com.vibethema.model.CharacterData;
 import com.vibethema.service.CharmDataService;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
@@ -74,5 +75,34 @@ public class CharmTreeViewModelTest {
         });
 
         assertTrue(latch.await(5, TimeUnit.SECONDS), "Debounce refresh did not happen in time");
+    }
+
+    @Test
+    void revealingAnInvalidPurchasedCharmClearsSearchAndSelectsIt() throws Exception {
+        var task =
+                new java.util.concurrent.FutureTask<Void>(() -> {
+                    CharacterData character = new CharacterData();
+                    var service = mock(CharmDataService.class);
+                    var charm = new com.vibethema.model.mystic.SolarCharm();
+                    charm.setId("test-reveal");
+                    charm.setName("Test Reveal");
+                    charm.setAbility("Melee");
+                    charm.setMinAbility(5);
+                    character.addCharm(
+                            new com.vibethema.model.mystic.PurchasedCharm(
+                                    charm.getId(), charm.getName(), charm.getAbility()));
+                    when(service.loadCharmsForAbility("Melee")).thenReturn(List.of(charm));
+                    var vm = new CharmTreeViewModel(character, service, new HashMap<>());
+                    vm.initialize("Ability", "Melee", "Melee", "", "");
+                    vm.searchTextProperty().set("does not match");
+                    vm.showEligibleOnlyProperty().set(true);
+                    vm.revealCharm(charm.getId());
+                    assertEquals("", vm.searchTextProperty().get());
+                    assertFalse(vm.showEligibleOnlyProperty().get());
+                    assertEquals(charm, vm.selectedCharmProperty().get());
+                    return null;
+                });
+        Platform.runLater(task);
+        task.get(10, TimeUnit.SECONDS);
     }
 }

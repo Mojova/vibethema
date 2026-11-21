@@ -33,6 +33,10 @@ public class AttributeCategoryViewModel {
                         .collect(Collectors.toList()));
     }
 
+    public Attribute.Category getCategory() {
+        return category;
+    }
+
     public StringProperty titleProperty() {
         return title;
     }

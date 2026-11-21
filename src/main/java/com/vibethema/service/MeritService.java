@@ -51,9 +51,6 @@ public class MeritService {
         loadMeritsFromFile(
                 PathService.getCustomDataPath().resolve("merits").resolve(MERITS_FILE), merits);
 
-        if (exaltType == null) {
-            cachedMerits = merits;
-        }
         java.util.LinkedHashMap<String, MeritReference> merged = new java.util.LinkedHashMap<>();
         List<MeritReference> withoutIds = new ArrayList<>();
         for (MeritReference merit : merits) {
@@ -66,7 +63,33 @@ public class MeritService {
         }
         List<MeritReference> result = new ArrayList<>(merged.values());
         result.addAll(withoutIds);
+        if (exaltType == null) cachedMerits = List.copyOf(result);
         return result;
+    }
+
+    public MeritReference findMeritById(String id) {
+        if (id == null) return null;
+        return getAvailableMerits().stream()
+                .filter(m ->
+                        id.equals(m.getId())
+                                || ((m.getSourceId() == null
+                                                || "exalted-3e-core".equals(m.getSourceId()))
+                                        && m.getName() != null
+                                        && id.equals(
+                                                java.util
+                                                        .UUID
+                                                        .nameUUIDFromBytes(
+                                                                m.getName()
+                                                                        .getBytes(
+                                                                                StandardCharsets
+                                                                                        .UTF_8))
+                                                        .toString())))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void invalidateCache() {
+        cachedMerits = null;
     }
 
     private void loadMeritsFromFile(Path path, List<MeritReference> target) {

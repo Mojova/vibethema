@@ -1,6 +1,7 @@
 package com.vibethema.ui;
 
 import com.vibethema.model.*;
+import com.vibethema.model.logic.CreationValidator;
 import com.vibethema.model.mystic.*;
 import com.vibethema.service.UserPreferencesService;
 import com.vibethema.ui.charms.CharmsTab;
@@ -148,6 +149,16 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                             && payload[0] instanceof String
                             && payload[1] instanceof String) {
                         handleJumpToEvocations((String) payload[0], (String) payload[1]);
+                    }
+                });
+
+        addObserver(
+                "navigate_creation_issue",
+                (name, payload) -> {
+                    if (payload != null
+                            && payload.length > 0
+                            && payload[0] instanceof CreationValidator.Location destination) {
+                        navigateToCreationIssue(destination);
                     }
                 });
 
@@ -973,14 +984,83 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
         dialog.showAndWait();
     }
 
+    private void navigateToCreationIssue(CreationValidator.Location location) {
+        if (location.ability() != null) {
+            String ability = location.ability();
+            var definition =
+                    location.elementId().startsWith("charm_")
+                            ? viewModel
+                                    .getCharmDataService()
+                                    .findCharmById(
+                                            location.elementId().substring("charm_".length()))
+                            : null;
+            if (definition instanceof Evocation evocation) {
+                String name =
+                        viewModel.getData().isArtifactPossessed(evocation.getArtifactId())
+                                ? viewModel.getData().getArtifactName(evocation.getArtifactId())
+                                : "Missing artifact";
+                String label =
+                        viewModel
+                                .getCharmsViewModel("Ability")
+                                .selectArtifact(evocation.getArtifactId(), name);
+                performNavigation(
+                        new MainViewModel.NavigationTarget("Solar Charms", "Ability", label));
+            } else {
+                if (!viewModel.getData().isMartialArtsStyle(ability))
+                    viewModel.getCharmsViewModel("Ability").selectAbility(ability);
+                performNavigation(viewModel.resolveNavigationTarget(ability));
+            }
+        } else {
+            for (Tab tab : mainTabPane.getTabs()) {
+                if (location.tab().equals(tab.getText())) {
+                    mainTabPane.getSelectionModel().select(tab);
+                    break;
+                }
+            }
+        }
+        if (location.elementId().startsWith("charm_")) {
+            String id = location.elementId().substring("charm_".length());
+            Tab selected = mainTabPane.getSelectionModel().getSelectedItem();
+            if (selected != null
+                    && "Martial Arts".equals(selected.getText())
+                    && martialArtsTab != null) martialArtsTab.focusCharm(id);
+            else if (selected != null && charmTabs.containsKey(selected.getText()))
+                charmTabs.get(selected.getText()).focusCharm(id);
+        }
+        highlightCreationIssue(location.elementId(), 5);
+    }
+
+    // Lazy Stats sections and Charm trees may require several JavaFX layout pulses to appear.
+    private void highlightCreationIssue(String elementId, int attempts) {
+        javafx.application.Platform.runLater(() -> {
+            applyCss();
+            layout();
+            Node node = lookup("#" + elementId);
+            if (node != null) {
+                triggerPulseHighlight(elementId);
+            } else if (attempts > 0) {
+                highlightCreationIssue(elementId, attempts - 1);
+            } else {
+                // A missing catalog definition has no Charm node; keep its filter reachable.
+                Tab selected = mainTabPane.getSelectionModel().getSelectedItem();
+                if (selected != null && selected.getContent() != null) {
+                    Node content = selected.getContent();
+                    content.setFocusTraversable(true);
+                    content.requestFocus();
+                }
+            }
+        });
+    }
+
     private void handleJumpToCharms(String abilityName) {
         MainViewModel.NavigationTarget target = viewModel.resolveNavigationTarget(abilityName);
         performNavigation(target);
     }
 
     private void handleJumpToEvocations(String artifactId, String artifactName) {
-        MainViewModel.NavigationTarget target = viewModel.resolveEvocationTarget(artifactName);
-        performNavigation(target);
+        String label =
+                viewModel.getCharmsViewModel("Ability").selectArtifact(artifactId, artifactName);
+        performNavigation(new MainViewModel.NavigationTarget("Solar Charms", "Ability", label));
     }
 
     private void performNavigation(MainViewModel.NavigationTarget target) {

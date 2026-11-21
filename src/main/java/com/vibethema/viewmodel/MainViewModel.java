@@ -8,6 +8,7 @@ import com.vibethema.model.logic.CreationValidator;
 import com.vibethema.model.traits.*;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
+import com.vibethema.service.MeritService;
 import com.vibethema.service.PathService;
 import com.vibethema.service.PdfExportService;
 import com.vibethema.service.SystemDataService;
@@ -60,6 +61,7 @@ public class MainViewModel implements ViewModel {
     private FooterViewModel footerViewModel;
     private final EquipmentDataService equipmentService;
     private final CharmDataService charmDataService;
+    private final MeritService meritService = new MeritService();
     private final PdfExportService pdfExportService;
     private final SystemDataService systemDataService;
     private final UndoManager undoManager = new UndoManager();
@@ -427,7 +429,8 @@ public class MainViewModel implements ViewModel {
     }
 
     private CreationValidator.Result validateCreation() {
-        return CreationValidator.validate(data, charmDataService::findCharmById);
+        return CreationValidator.validate(
+                data, charmDataService::findCharmById, meritService::findMeritById);
     }
 
     private boolean checkCreationReady() {
@@ -792,6 +795,7 @@ public class MainViewModel implements ViewModel {
 
     public void refreshImportStatus() {
         charmDataService.invalidateIndex();
+        meritService.invalidateCache();
         footerViewModel.update();
         coreDataImported.set(systemDataService.isCoreDataImported());
         if (animaEffectsViewModel != null) animaEffectsViewModel.refresh();

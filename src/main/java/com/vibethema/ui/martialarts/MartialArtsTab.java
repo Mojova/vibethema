@@ -210,4 +210,8 @@ public class MartialArtsTab extends VBox implements JavaView<MartialArtsViewMode
             charmTreeViewModel.refresh();
         }
     }
+
+    public void focusCharm(String id) {
+        charmTree.focusCharm(id);
+    }
 }

@@ -33,6 +33,8 @@ public class CharmDetailsViewModelTest {
         dataService = Mockito.mock(CharmDataService.class);
 
         when(data.essenceProperty()).thenReturn(new SimpleIntegerProperty(1));
+        when(data.getAbility(com.vibethema.model.traits.Ability.RESISTANCE))
+                .thenReturn(new SimpleIntegerProperty(1));
         when(data.supernalAbilityProperty()).thenReturn(new SimpleStringProperty(""));
         when(dataService.getCharmName(anyString()))
                 .thenAnswer(invocation -> invocation.getArgument(0));
@@ -159,5 +161,65 @@ public class CharmDetailsViewModelTest {
         SolarCharm c = createBasicCharm("C1", "Message Test");
         Messenger.publish("charm_selected", new Object[] {c});
         assertEquals(c, viewModel.selectedCharmProperty().get());
+    }
+
+    @Test
+    void directActionsEnforceEligibilityAndRepeatLimitsInSidebarAndTree() {
+        CharacterData character = new CharacterData();
+        character.getAbility(com.vibethema.model.traits.Ability.RESISTANCE).set(1);
+        character.getAbility(com.vibethema.model.traits.Ability.ARCHERY).set(3);
+        SolarCharm charm = createBasicCharm("stack", "Ox-Body Technique");
+        charm.setKeywords(List.of("Stackable"));
+        var sidebar = new CharmDetailsViewModel(character, dataService, new HashMap<>());
+        var tree = new CharmTreeViewModel(character, dataService, new HashMap<>());
+        sidebar.selectedCharmProperty().set(charm);
+        tree.selectedCharmProperty().set(charm);
+        sidebar.selectedCharmProperty().set(charm);
+        sidebar.togglePurchase();
+        tree.selectedCharmProperty().set(charm);
+        tree.togglePurchase();
+        sidebar.selectedCharmProperty().set(charm);
+        sidebar.togglePurchase();
+        assertEquals(1, character.getCharmCount(charm.getId()));
+        sidebar.selectedCharmProperty().set(charm);
+        sidebar.refundOne();
+        assertEquals(0, character.getCharmCount(charm.getId()));
+        // The selected Charm has become ineligible since its sidebar was rendered.
+        character.getAbility(com.vibethema.model.traits.Ability.ARCHERY).set(0);
+        sidebar.selectedCharmProperty().set(charm);
+        sidebar.togglePurchase();
+        tree.selectedCharmProperty().set(charm);
+        tree.togglePurchase();
+        assertEquals(0, character.getCharmCount(charm.getId()));
+        character.getAbility(com.vibethema.model.traits.Ability.ARCHERY).set(3);
+        tree.selectedCharmProperty().set(charm);
+        tree.togglePurchase();
+        assertEquals(1, character.getCharmCount(charm.getId()));
+        character.getAbility(com.vibethema.model.traits.Ability.ARCHERY).set(0);
+        sidebar.selectedCharmProperty().set(charm);
+        sidebar.refundOne();
+        assertEquals(0, character.getCharmCount(charm.getId()));
+    }
+
+    @Test
+    void genericStackLimitAndSinglePurchaseRefundArePreserved() {
+        CharacterData character = new CharacterData();
+        character.getAbility(com.vibethema.model.traits.Ability.ARCHERY).set(3);
+        SolarCharm charm = createBasicCharm("stack-ten", "Repeatable Test");
+        charm.setKeywords(List.of("Stackable"));
+        var sidebar = new CharmDetailsViewModel(character, dataService, new HashMap<>());
+        sidebar.selectedCharmProperty().set(charm);
+        for (int i = 0; i < 12; i++) {
+            sidebar.selectedCharmProperty().set(charm);
+            sidebar.togglePurchase();
+        }
+        assertEquals(10, character.getCharmCount(charm.getId()));
+        SolarCharm single = createBasicCharm("single", "Single Test");
+        sidebar.selectedCharmProperty().set(single);
+        sidebar.togglePurchase();
+        character.getAbility(com.vibethema.model.traits.Ability.ARCHERY).set(0);
+        sidebar.selectedCharmProperty().set(single);
+        sidebar.togglePurchase();
+        assertFalse(character.hasCharm(single.getId()));
     }
 }

@@ -11,6 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
@@ -102,10 +103,38 @@ public class FooterView extends VBox implements JavaView<FooterViewModel>, Initi
             l.managedProperty().bind(l.visibleProperty());
         }
 
-        Label checklist = new Label();
-        checklist.textProperty().bind(vm.validationTextProperty());
-        checklist.setWrapText(true);
+        VBox checklist = new VBox(4);
         checklist.setPadding(new Insets(8));
+        Runnable refreshChecklist =
+                () -> {
+                    checklist.getChildren().clear();
+                    if (vm.getValidationIssues().isEmpty()) {
+                        checklist
+                                .getChildren()
+                                .add(new Label("All automatic creation checks passed."));
+                    } else {
+                        for (var issue : vm.getValidationIssues()) {
+                            Hyperlink link = new Hyperlink(issue.message());
+                            link.setWrapText(true);
+                            link.setMaxWidth(Double.MAX_VALUE);
+                            link.setAccessibleText(issue.message() + " Open the relevant field.");
+                            link.setOnAction(event -> vm.navigateToIssue(issue));
+                            checklist.getChildren().add(link);
+                        }
+                    }
+                    Label reminder =
+                            new Label(
+                                    "Review your Intimacies with your Storyteller: include at least"
+                                            + " one positive and one negative Intimacy.");
+                    reminder.setWrapText(true);
+                    checklist.getChildren().add(reminder);
+                };
+        vm.getValidationIssues()
+                .addListener(
+                        (javafx.collections.ListChangeListener<
+                                        com.vibethema.model.logic.CreationValidator.Issue>)
+                                change -> refreshChecklist.run());
+        refreshChecklist.run();
         ScrollPane checklistScroll = new ScrollPane(checklist);
         checklistScroll.setFitToWidth(true);
         checklistScroll.setPrefViewportHeight(130);
