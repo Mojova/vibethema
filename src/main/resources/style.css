@@ -110,6 +110,28 @@
     -fx-padding: 0 0 5px 0;
 }
 
+.equipment-template-cell {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+}
+
+.equipment-template-heading {
+    -fx-padding: 10px 8px 4px 8px;
+}
+
+.equipment-template-item {
+    -fx-padding: 4px 8px;
+}
+
+.equipment-template-cell:selected .equipment-template-item {
+    -fx-background-color: -fx-selection-bar-non-focused;
+    -fx-text-fill: -fx-selection-bar-text;
+}
+
+.list-view-custom:focused .equipment-template-cell:selected .equipment-template-item {
+    -fx-background-color: -fx-selection-bar;
+}
+
 .text-field, .combo-box {
     -fx-background-color: -vbtm-bg-input;
     -fx-text-fill: -vbtm-text-bright;

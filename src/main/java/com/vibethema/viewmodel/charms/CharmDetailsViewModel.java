@@ -5,6 +5,7 @@ import com.vibethema.model.logic.CharmPurchaseRules;
 import com.vibethema.model.mystic.*;
 import com.vibethema.model.traits.*;
 import com.vibethema.service.CharmDataService;
+import com.vibethema.viewmodel.MainViewModel.CheckpointRequest;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;
 import java.util.ArrayList;
@@ -134,7 +135,7 @@ public class CharmDetailsViewModel implements ViewModel {
     private String describePrerequisites(PrerequisiteRule rule) {
         if (rule == null) return "None";
         return switch (rule.getType()) {
-            case "charm" -> dataService.getCharmName(rule.getCharmId());
+            case "charm" -> resolveCharmName(rule.getCharmId());
             case "allOf" -> joinRules(rule.getRequirements(), " and ");
             case "anyOf" -> joinRules(rule.getOptions(), " or ");
             case "countOf" ->
@@ -142,7 +143,7 @@ public class CharmDetailsViewModel implements ViewModel {
                             + rule.getCount()
                             + " of: "
                             + rule.getCharmIds().stream()
-                                    .map(dataService::getCharmName)
+                                    .map(this::resolveCharmName)
                                     .collect(java.util.stream.Collectors.joining(", "));
             case "countFromAbilities" -> {
                 String from =
@@ -168,6 +169,15 @@ public class CharmDetailsViewModel implements ViewModel {
             }
             default -> "Unrecognized prerequisite";
         };
+    }
+
+    private String resolveCharmName(String id) {
+        if (selectedCharm.get() instanceof Evocation artifactNode) {
+            for (Evocation node : data.getEvocations(artifactNode.getArtifactId())) {
+                if (node.getId().equals(id)) return node.getName();
+            }
+        }
+        return dataService.getCharmName(id);
     }
 
     private String joinRules(List<PrerequisiteRule> rules, String separator) {
@@ -217,7 +227,8 @@ public class CharmDetailsViewModel implements ViewModel {
         boolean owned = data.hasCharm(c.getId());
 
         if ((!owned || stackable) && CharmPurchaseRules.canPurchase(c, data)) {
-            data.addCharm(new PurchasedCharm(c.getId(), c.getName(), c.getAbility()));
+            data.addCharm(
+                    new PurchasedCharm(c.getId(), c.getName(), c.getAbility(), c.getSourceId()));
         } else if (owned && !stackable) {
             data.removeCharm(c.getId());
         }
@@ -238,9 +249,23 @@ public class CharmDetailsViewModel implements ViewModel {
         Charm c = selectedCharm.get();
         if (c != null && c.isCustom()) {
             try {
-                dataService.deleteCustomCharm(c);
+                if (c instanceof Evocation evocation) {
+                    Messenger.publish(
+                            "RECORD_UNDO_CHECKPOINT",
+                            new CheckpointRequest(
+                                    "Charms",
+                                    "Delete Evocation: " + c.getName(),
+                                    "charm_" + c.getId()));
+                    data.deleteEvocation(evocation);
+                } else {
+                    dataService.deleteCustomCharm(c);
+                }
                 Messenger.publish("refresh_all_ui");
                 selectedCharm.set(null);
+            } catch (IllegalArgumentException ex) {
+                Messenger.publish(
+                        "show_info_alert",
+                        new Object[] {"Cannot Delete Evocation", ex.getMessage()});
             } catch (Exception ex) {
                 logger.error("Failed to delete custom charm: {}", c.getName(), ex);
             }

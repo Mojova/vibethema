@@ -129,7 +129,7 @@ public class PdfExportService {
         for (PurchasedCharm pc : data.getUnlockedCharms()) {
             charmCounts.merge(pc.id(), 1, Integer::sum);
             if (!distinctCharms.containsKey(pc.id())) {
-                Charm charm = charmService.findCharmById(pc.id());
+                Charm charm = data.resolveCharm(pc.id(), charmService::findCharmById);
                 if (charm != null) distinctCharms.put(charm.getId(), charm);
             }
         }
@@ -169,6 +169,8 @@ public class PdfExportService {
                     String a2 = data.getArtifactName(((Evocation) c2).getArtifactId());
                     int artComp = a1.compareToIgnoreCase(a2);
                     if (artComp != 0) return artComp;
+                    int instanceComp = c1.getAbility().compareTo(c2.getAbility());
+                    if (instanceComp != 0) return instanceComp;
                     int essenceComp = Integer.compare(c1.getMinEssence(), c2.getMinEssence());
                     if (essenceComp != 0) return essenceComp;
                     return c1.getName().compareTo(c2.getName());
@@ -237,10 +239,11 @@ public class PdfExportService {
             ctx.drawSectionHeader("Evocations", ctx.getCharmHeaderHeight(evocations.get(0)));
             String currentArtifact = "";
             for (Charm c : evocations) {
-                String artifactName = data.getArtifactName(((Evocation) c).getArtifactId());
-                if (!artifactName.equals(currentArtifact)) {
-                    currentArtifact = artifactName;
-                    ctx.drawSubsectionHeader(currentArtifact, ctx.getCharmHeaderHeight(c));
+                String instanceId = ((Evocation) c).getArtifactId();
+                if (!instanceId.equals(currentArtifact)) {
+                    currentArtifact = instanceId;
+                    ctx.drawSubsectionHeader(
+                            data.getArtifactName(instanceId), ctx.getCharmHeaderHeight(c));
                 }
                 ctx.drawCharm(c, charmCounts.getOrDefault(c.getId(), 1));
             }

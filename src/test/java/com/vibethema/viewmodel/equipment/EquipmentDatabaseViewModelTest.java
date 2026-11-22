@@ -2,8 +2,10 @@ package com.vibethema.viewmodel.equipment;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.vibethema.model.equipment.Weapon;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 public class EquipmentDatabaseViewModelTest {
@@ -52,6 +54,27 @@ public class EquipmentDatabaseViewModelTest {
         assertEquals(2, vm.getFilteredItems().size());
         assertEquals("Steel Shield", vm.getFilteredItems().get(0).toString());
         assertEquals("Steel Sword", vm.getFilteredItems().get(1).toString());
+    }
+
+    @Test
+    void searchKeepsTheHeadingOnTheFirstMatchingTemplateInEachSection() {
+        var vm = new EquipmentDatabaseViewModel();
+        var mundane = new Weapon("Steel Sword");
+        var blade = new Weapon("Blade");
+        blade.setType(Weapon.WeaponType.ARTIFACT);
+        var sword = new Weapon("Jade Sword");
+        sword.setType(Weapon.WeaponType.ARTIFACT);
+        var unique = new Weapon("Ancestral Sword");
+        unique.setType(Weapon.WeaponType.ARTIFACT);
+        vm.setItems(List.of(sword, mundane, unique, blade), Set.of(unique.getId()));
+
+        assertEquals(List.of(mundane, blade, sword, unique), vm.getFilteredItems());
+        assertNull(vm.getSectionHeading(2));
+        vm.searchQueryProperty().set("sword");
+        assertEquals(List.of(mundane, sword, unique), vm.getFilteredItems());
+        assertEquals("Mundane Equipment", vm.getSectionHeading(0));
+        assertEquals("Artifact Equipment", vm.getSectionHeading(1));
+        assertEquals("Unique Artifacts", vm.getSectionHeading(2));
     }
 
     @Test

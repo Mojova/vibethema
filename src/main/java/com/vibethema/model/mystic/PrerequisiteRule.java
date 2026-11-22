@@ -5,6 +5,7 @@ import com.vibethema.model.traits.Ability;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /** Structured prerequisite expression used by imported and custom Charms. */
@@ -20,6 +21,23 @@ public class PrerequisiteRule {
     private boolean excludeExcellencies;
     private int count;
     private String predicate;
+
+    /** Rebinds copied tree nodes while retaining references to external Charm definitions. */
+    public void remapCharmIds(Map<String, String> ids) {
+        if (charmId != null) charmId = ids.getOrDefault(charmId, charmId);
+        if (charmIds != null) charmIds = remap(charmIds, ids);
+        if (excludedCharmIds != null) excludedCharmIds = remap(excludedCharmIds, ids);
+        if (excludedPrerequisitePaths != null) {
+            excludedPrerequisitePaths =
+                    excludedPrerequisitePaths.stream().map(path -> remap(path, ids)).toList();
+        }
+        if (requirements != null) requirements.forEach(rule -> rule.remapCharmIds(ids));
+        if (options != null) options.forEach(rule -> rule.remapCharmIds(ids));
+    }
+
+    private static List<String> remap(List<String> source, Map<String, String> ids) {
+        return source.stream().map(id -> ids.getOrDefault(id, id)).toList();
+    }
 
     public static PrerequisiteRule allOf(List<PrerequisiteRule> requirements) {
         PrerequisiteRule rule = new PrerequisiteRule();

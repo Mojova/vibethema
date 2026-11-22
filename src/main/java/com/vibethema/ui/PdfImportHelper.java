@@ -117,7 +117,10 @@ public class PdfImportHelper {
             Alert alert =
                     new Alert(
                             Alert.AlertType.INFORMATION,
-                            "Import complete! Charms, spells, and keywords have been" + " updated.",
+                            source == PdfExtractor.PdfSource.CORE
+                                    ? "Import complete. Core data, named artifacts, and Evocations"
+                                            + " are available."
+                                    : "Import complete. Charms have been updated.",
                             ButtonType.OK);
             alert.showAndWait();
             if (onComplete != null) {

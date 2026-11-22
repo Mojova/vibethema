@@ -24,7 +24,7 @@ class PdfExtractorValidationTest {
     @Test
     void rejectsLongPdfWithoutCoreSectionMarkers() throws Exception {
         try (PDDocument document = new PDDocument()) {
-            addPages(document, 610);
+            addPages(document, 630);
 
             assertThrows(IOException.class, () -> PdfExtractor.validateCorePdf(document));
         }
@@ -33,7 +33,7 @@ class PdfExtractorValidationTest {
     @Test
     void acceptsLongPdfWithMarkersAcrossExpectedSections() throws Exception {
         try (PDDocument document = new PDDocument()) {
-            addPages(document, 610);
+            addPages(document, 630);
             addText(document, 249, "Charms");
             addText(document, 469, "Sorcery");
             addText(document, 584, "weapons");

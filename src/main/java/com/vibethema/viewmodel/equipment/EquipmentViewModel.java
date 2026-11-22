@@ -8,6 +8,7 @@ import com.vibethema.viewmodel.MainViewModel.CheckpointRequest;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -173,6 +174,10 @@ public class EquipmentViewModel implements ViewModel {
         return FXCollections.observableArrayList(equipmentService.getGlobalArmors());
     }
 
+    public Set<String> getArtifactIdsWithEvocationCollections() {
+        return dataService.getArtifactIdsWithEvocationCollections();
+    }
+
     public ObservableList<Hearthstone> getGlobalHearthstones() {
         return FXCollections.observableArrayList(equipmentService.getGlobalHearthstones());
     }
@@ -186,7 +191,10 @@ public class EquipmentViewModel implements ViewModel {
                 "RECORD_UNDO_CHECKPOINT",
                 new CheckpointRequest(
                         "Equipment", "Add Weapon: " + w.getName(), "equipment.weapons"));
-        data.getWeapons().add(w.copy());
+        var item = w.copy();
+        if (item.getType() == Weapon.WeaponType.ARTIFACT)
+            seedEvocations(item.getId(), item.getInstanceId());
+        data.getWeapons().add(item);
         data.setDirty(true);
     }
 
@@ -194,7 +202,10 @@ public class EquipmentViewModel implements ViewModel {
         Messenger.publish(
                 "RECORD_UNDO_CHECKPOINT",
                 new CheckpointRequest("Equipment", "Add Armor: " + a.getName(), "equipment.armor"));
-        data.getArmors().add(a.copy());
+        var item = a.copy();
+        if (item.getType() == Armor.ArmorType.ARTIFACT)
+            seedEvocations(item.getId(), item.getInstanceId());
+        data.getArmors().add(item);
         data.setDirty(true);
     }
 
@@ -211,20 +222,26 @@ public class EquipmentViewModel implements ViewModel {
         Messenger.publish(
                 "RECORD_UNDO_CHECKPOINT",
                 new CheckpointRequest("Equipment", "Add Item: " + oe.getName(), "equipment.other"));
-        data.getOtherEquipment().add(oe.copy());
+        var item = oe.copy();
+        if (item.isArtifact()) seedEvocations(item.getId(), item.getInstanceId());
+        data.getOtherEquipment().add(item);
         data.setDirty(true);
+    }
+
+    private void seedEvocations(String definitionId, String instanceId) {
+        var collection = dataService.loadEvocations(definitionId);
+        if (collection != null) data.copyEvocationTree(instanceId, collection.evocations);
     }
 
     // Actions
     public void saveWeapon(Weapon weapon, boolean isNew) {
-        Messenger.publish(
-                "RECORD_UNDO_CHECKPOINT",
-                new CheckpointRequest(
-                        "Equipment",
-                        (isNew ? "Add" : "Edit") + " Weapon: " + weapon.getName(),
-                        "equipment.weapons"));
-        if (isNew) data.getWeapons().add(weapon);
-        data.setDirty(true);
+        saveItem(
+                data.getWeapons(),
+                weapon,
+                Weapon::getInstanceId,
+                isNew,
+                "Weapon: " + weapon.getName(),
+                "equipment.weapons");
     }
 
     public void removeWeapon(Weapon weapon) {
@@ -234,11 +251,17 @@ public class EquipmentViewModel implements ViewModel {
                         "Equipment", "Remove Weapon: " + weapon.getName(), "equipment.weapons"));
         data.getWeapons().remove(weapon);
         data.setDirty(true);
+        Messenger.publish("refresh_all_ui");
     }
 
     public void saveArmor(Armor armor, boolean isNew) {
-        if (isNew) data.getArmors().add(armor);
-        data.setDirty(true);
+        saveItem(
+                data.getArmors(),
+                armor,
+                Armor::getInstanceId,
+                isNew,
+                "Armor: " + armor.getName(),
+                "equipment.armor");
     }
 
     public void removeArmor(Armor armor) {
@@ -248,11 +271,17 @@ public class EquipmentViewModel implements ViewModel {
                         "Equipment", "Remove Armor: " + armor.getName(), "equipment.armor"));
         data.getArmors().remove(armor);
         data.setDirty(true);
+        Messenger.publish("refresh_all_ui");
     }
 
     public void saveHearthstone(Hearthstone hearthstone, boolean isNew) {
-        if (isNew) data.getHearthstones().add(hearthstone);
-        data.setDirty(true);
+        saveItem(
+                data.getHearthstones(),
+                hearthstone,
+                Hearthstone::getInstanceId,
+                isNew,
+                "Hearthstone: " + hearthstone.getName(),
+                "equipment.hearthstones");
     }
 
     public void removeHearthstone(Hearthstone hearthstone) {
@@ -267,8 +296,13 @@ public class EquipmentViewModel implements ViewModel {
     }
 
     public void saveOtherEquipment(OtherEquipment equipment, boolean isNew) {
-        if (isNew) data.getOtherEquipment().add(equipment);
-        data.setDirty(true);
+        saveItem(
+                data.getOtherEquipment(),
+                equipment,
+                OtherEquipment::getInstanceId,
+                isNew,
+                "Item: " + equipment.getName(),
+                "equipment.other");
     }
 
     public void removeOtherEquipment(OtherEquipment equipment) {
@@ -278,6 +312,31 @@ public class EquipmentViewModel implements ViewModel {
                         "Equipment", "Remove Item: " + equipment.getName(), "equipment.other"));
         data.getOtherEquipment().remove(equipment);
         data.setDirty(true);
+        Messenger.publish("refresh_all_ui");
+    }
+
+    private <T> void saveItem(
+            ObservableList<T> inventory,
+            T item,
+            java.util.function.Function<T, String> identity,
+            boolean isNew,
+            String label,
+            String target) {
+        Messenger.publish(
+                "RECORD_UNDO_CHECKPOINT",
+                new CheckpointRequest("Equipment", (isNew ? "Add " : "Edit ") + label, target));
+        if (isNew) inventory.add(item);
+        else {
+            String instanceId = identity.apply(item);
+            for (int i = 0; i < inventory.size(); i++) {
+                if (instanceId.equals(identity.apply(inventory.get(i)))) {
+                    inventory.set(i, item);
+                    break;
+                }
+            }
+        }
+        data.setDirty(true);
+        Messenger.publish("refresh_all_ui");
     }
 
     // Specialized Logic

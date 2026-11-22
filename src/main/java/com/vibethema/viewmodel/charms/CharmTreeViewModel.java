@@ -81,8 +81,7 @@ public class CharmTreeViewModel implements ViewModel {
 
         List<Charm> loaded;
         if ("Evocation".equals(filterType.get())) {
-            CharmDataService.EvocationCollection collection = dataService.loadEvocations(selection);
-            loaded = (collection != null) ? collection.evocations : new ArrayList<>();
+            loaded = new ArrayList<>(data.getEvocations(selection));
         } else {
             loaded = dataService.loadCharmsForAbility(selection, data.exaltTypeProperty().get());
         }
@@ -148,7 +147,7 @@ public class CharmTreeViewModel implements ViewModel {
 
         Map<String, Integer> charmDepth = new HashMap<>();
         boolean changed = true;
-        while (changed) {
+        for (int pass = 0; changed && pass < charms.size(); pass++) {
             changed = false;
             for (Charm c : charms) {
                 int currentDepth = charmDepth.getOrDefault(c.getId(), 0);
@@ -295,7 +294,8 @@ public class CharmTreeViewModel implements ViewModel {
                     "RECORD_UNDO_CHECKPOINT",
                     new CheckpointRequest(
                             "Charms", "Purchase Charm: " + c.getName(), "charm_" + c.getId()));
-            data.addCharm(new PurchasedCharm(c.getId(), c.getName(), c.getAbility()));
+            data.addCharm(
+                    new PurchasedCharm(c.getId(), c.getName(), c.getAbility(), c.getSourceId()));
         } else if (owned && !stackable) {
             Messenger.publish(
                     "RECORD_UNDO_CHECKPOINT",

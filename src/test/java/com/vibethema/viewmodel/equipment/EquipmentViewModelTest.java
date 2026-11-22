@@ -3,14 +3,22 @@ package com.vibethema.viewmodel.equipment;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import com.google.gson.Gson;
 import com.vibethema.model.*;
 import com.vibethema.model.equipment.*;
+import com.vibethema.model.logic.CharmPurchaseRules;
+import com.vibethema.model.mystic.Evocation;
+import com.vibethema.model.mystic.PrerequisiteRule;
+import com.vibethema.model.mystic.PurchasedCharm;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
+import com.vibethema.viewmodel.charms.EditCharmViewModel;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.utils.notifications.NotificationObserver;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,6 +77,86 @@ public class EquipmentViewModelTest {
 
         assertTrue(data.isDirty());
         verify(dataService, never()).updateEvocationCollectionName(anyString(), anyString());
+    }
+
+    @Test
+    void twoArtifactCopiesKeepSeparateTreesAndProgressAfterReopening() throws IOException {
+        var template = new Weapon("Published daiklave");
+        template.setType(Weapon.WeaponType.ARTIFACT);
+        var root = new Evocation();
+        root.setName("Opening");
+        root.setArtifactId(template.getId());
+        var branch = new Evocation();
+        branch.setName("Follow-up");
+        branch.setArtifactId(template.getId());
+        branch.setPrerequisites(
+                PrerequisiteRule.allOf(List.of(PrerequisiteRule.charm(root.getId()))));
+        when(dataService.loadEvocations(template.getId()))
+                .thenReturn(
+                        new CharmDataService.EvocationCollection(
+                                template.getId(), template.getName(), List.of(root, branch)));
+
+        viewModel.addWeaponFromDatabase(template);
+        viewModel.addWeaponFromDatabase(template);
+        Weapon first = data.getWeapons().get(1);
+        Weapon second = data.getWeapons().get(2);
+        String firstId = first.getInstanceId();
+        String secondId = second.getInstanceId();
+        Evocation firstRoot = data.getEvocations(firstId).getFirst();
+        Evocation firstBranch = data.getEvocations(firstId).getLast();
+        Evocation secondBranch = data.getEvocations(secondId).getLast();
+        assertNotEquals(firstRoot.getId(), data.getEvocations(secondId).getFirst().getId());
+        assertNotEquals(root.getId(), firstRoot.getId());
+        assertFalse(CharmPurchaseRules.canPurchase(firstBranch, data));
+        data.addCharm(new PurchasedCharm(firstRoot.getId(), firstRoot.getName(), firstId));
+        assertTrue(CharmPurchaseRules.canPurchase(firstBranch, data));
+        assertFalse(CharmPurchaseRules.canPurchase(secondBranch, data));
+
+        var editedWeapon = Weapon.fromData(first.toData());
+        editedWeapon.setName("Personal daiklave");
+        editedWeapon.setStatOverrides(Map.of(Weapon.Stat.DAMAGE, 17));
+        viewModel.saveWeapon(editedWeapon, false);
+        var editor =
+                new EditCharmViewModel(
+                        firstRoot, dataService, editedWeapon.getName(), "Evocation", null, data);
+        editor.nameProperty().set("Personal awakening");
+        editor.save();
+
+        Gson gson = new Gson();
+        var state = data.exportState();
+        assertTrue(state.unlockedCharms.isEmpty());
+        assertEquals(1, state.artifactEvocations.get(firstId).unlocked().size());
+        assertTrue(state.artifactEvocations.get(secondId).unlocked().isEmpty());
+        CharacterData reopened = new CharacterData();
+        reopened.importState(gson.fromJson(gson.toJson(state), CharacterSaveState.class), null);
+        assertEquals(state.artifactEvocations, reopened.exportState().artifactEvocations);
+        assertEquals(state.weapons, reopened.exportState().weapons);
+        assertEquals(
+                0,
+                com.vibethema.model.logic.ExperienceRuleEngine.calculateStatus(reopened, state)
+                        .regularXpSpent);
+        assertEquals("Personal daiklave", reopened.getArtifactName(firstId));
+        assertEquals("Published daiklave", reopened.getArtifactName(secondId));
+        assertEquals(17, reopened.getWeapons().get(1).getDamage());
+        assertEquals(template.getDamage(), reopened.getWeapons().get(2).getDamage());
+        assertEquals("Personal awakening", reopened.getEvocations(firstId).getFirst().getName());
+        assertEquals("Opening", reopened.getEvocations(secondId).getFirst().getName());
+        assertTrue(reopened.hasCharm(firstRoot.getId()));
+        assertTrue(
+                CharmPurchaseRules.canPurchase(
+                        reopened.getEvocations(firstId).getLast(), reopened));
+        assertFalse(
+                CharmPurchaseRules.canPurchase(
+                        reopened.getEvocations(secondId).getLast(), reopened));
+        assertEquals("Published daiklave", template.getName());
+        assertEquals("Opening", root.getName());
+        assertEquals(
+                root.getId(), branch.getPrerequisites().getRequirements().getFirst().getCharmId());
+
+        var cycle = reopened.getEvocations(firstId).getFirst().copyForArtifact(firstId);
+        cycle.setPrerequisites(PrerequisiteRule.charm(firstBranch.getId()));
+        assertThrows(IllegalArgumentException.class, () -> reopened.saveEvocation(cycle));
+        assertThrows(IllegalArgumentException.class, () -> reopened.deleteEvocation(cycle));
     }
 
     @Test

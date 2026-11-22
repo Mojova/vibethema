@@ -11,7 +11,11 @@ import com.vibethema.viewmodel.equipment.WeaponRowViewModel;
 import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
+import de.saxsys.mvvmfx.utils.notifications.NotificationObserver;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -25,6 +29,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
     @InjectViewModel private EquipmentViewModel viewModel;
 
     private final EquipmentDialogService dialogService;
+    private final List<NotificationObserver> observers = new ArrayList<>();
 
     private VBox weaponsListContainer;
     private VBox armorListContainer;
@@ -40,7 +45,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
     public void initialize() {
         setContent(createContent());
 
-        Messenger.subscribe(
+        addObserver(
                 "show_weapon_dialog",
                 (name, payload) ->
                         showWeaponDialog(
@@ -48,7 +53,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
                                         (payload != null && payload.length > 0
                                                 ? payload[0]
                                                 : null)));
-        Messenger.subscribe(
+        addObserver(
                 "show_armor_dialog",
                 (name, payload) ->
                         showArmorDialog(
@@ -56,7 +61,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
                                         (payload != null && payload.length > 0
                                                 ? payload[0]
                                                 : null)));
-        Messenger.subscribe(
+        addObserver(
                 "show_hearthstone_dialog",
                 (name, payload) ->
                         showHearthstoneDialog(
@@ -64,7 +69,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
                                         (payload != null && payload.length > 0
                                                 ? payload[0]
                                                 : null)));
-        Messenger.subscribe(
+        addObserver(
                 "show_other_equipment_dialog",
                 (name, payload) ->
                         showOtherEquipmentDialog(
@@ -73,13 +78,23 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
                                                 ? payload[0]
                                                 : null)));
 
-        Messenger.subscribe("show_weapon_database", (name, payload) -> showWeaponDatabaseDialog());
-        Messenger.subscribe("show_armor_database", (name, payload) -> showArmorDatabaseDialog());
-        Messenger.subscribe(
+        addObserver("show_weapon_database", (name, payload) -> showWeaponDatabaseDialog());
+        addObserver("show_armor_database", (name, payload) -> showArmorDatabaseDialog());
+        addObserver(
                 "show_hearthstone_database", (name, payload) -> showHearthstoneDatabaseDialog());
-        Messenger.subscribe(
+        addObserver(
                 "show_other_equipment_database",
                 (name, payload) -> showOtherEquipmentDatabaseDialog());
+    }
+
+    private void addObserver(String name, NotificationObserver observer) {
+        Messenger.subscribe(name, observer);
+        observers.add(observer);
+    }
+
+    public void cleanup() {
+        observers.forEach(observer -> Messenger.unsubscribe(null, observer));
+        observers.clear();
     }
 
     private VBox createContent() {
@@ -231,7 +246,8 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
             evBtn.setVisible(wvm.isArtifact());
             evBtn.setManaged(wvm.isArtifact());
             evBtn.setOnAction(e ->
-                    viewModel.callEvocations(wvm.idProperty().get(), wvm.nameProperty().get()));
+                    viewModel.callEvocations(
+                            wvm.getWeapon().getInstanceId(), wvm.nameProperty().get()));
 
             Button delBtn = new Button("🗑");
             delBtn.getStyleClass().add("remove-btn");
@@ -309,7 +325,8 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
             evBtn.setVisible(avm.isArtifact());
             evBtn.setManaged(avm.isArtifact());
             evBtn.setOnAction(e ->
-                    viewModel.callEvocations(avm.idProperty().get(), avm.nameProperty().get()));
+                    viewModel.callEvocations(
+                            avm.getArmor().getInstanceId(), avm.nameProperty().get()));
 
             Button delBtn = new Button("🗑");
             delBtn.getStyleClass().add("remove-btn");
@@ -401,7 +418,8 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
             evBtn.setVisible(ovm.artifactProperty().get());
             evBtn.setManaged(ovm.artifactProperty().get());
             evBtn.setOnAction(e ->
-                    viewModel.callEvocations(ovm.idProperty().get(), ovm.nameProperty().get()));
+                    viewModel.callEvocations(
+                            ovm.getOtherEquipment().getInstanceId(), ovm.nameProperty().get()));
 
             Button delBtn = new Button("🗑");
             delBtn.getStyleClass().add("remove-btn");
@@ -423,6 +441,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         showGenericDatabaseDialog(
                 "Weapon",
                 viewModel.getGlobalWeapons(),
+                viewModel.getArtifactIdsWithEvocationCollections(),
                 () -> showWeaponDialog(null),
                 item -> viewModel.addWeaponFromDatabase((Weapon) item));
     }
@@ -431,6 +450,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         showGenericDatabaseDialog(
                 "Armor",
                 viewModel.getGlobalArmors(),
+                viewModel.getArtifactIdsWithEvocationCollections(),
                 () -> showArmorDialog(null),
                 item -> viewModel.addArmorFromDatabase((Armor) item));
     }
@@ -439,6 +459,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         showGenericDatabaseDialog(
                 "Hearthstone",
                 viewModel.getGlobalHearthstones(),
+                Set.of(),
                 () -> showHearthstoneDialog(null),
                 item -> viewModel.addHearthstoneFromDatabase((Hearthstone) item));
     }
@@ -447,6 +468,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         showGenericDatabaseDialog(
                 "Equipment",
                 viewModel.getGlobalOtherEquipment(),
+                Set.of(),
                 () -> showOtherEquipmentDialog(null),
                 item -> viewModel.addOtherEquipmentFromDatabase((OtherEquipment) item));
     }
@@ -454,6 +476,7 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
     private void showGenericDatabaseDialog(
             String type,
             java.util.Collection<?> items,
+            Set<String> uniqueArtifactIds,
             java.util.function.BooleanSupplier onCreateNew,
             java.util.function.Consumer<Object> onSelect) {
         de.saxsys.mvvmfx.ViewTuple<
@@ -466,9 +489,9 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
         EquipmentDatabaseView view = (EquipmentDatabaseView) tuple.getView();
         com.vibethema.viewmodel.equipment.EquipmentDatabaseViewModel dbVm = tuple.getViewModel();
 
-        dbVm.titleProperty().set("Equipment Database: " + type + "s");
+        dbVm.titleProperty().set(type + " Templates");
         dbVm.createNewTextProperty().set("+ Create New " + type);
-        dbVm.setItems(items);
+        dbVm.setItems(items, uniqueArtifactIds);
 
         dbVm.setDeleteAction(item -> {
             try {
@@ -497,30 +520,16 @@ public class EquipmentTab extends ScrollPane implements JavaView<EquipmentViewMo
             dialog.getDialogPane().getStylesheets().addAll(getScene().getStylesheets());
         }
 
-        // Handle "Create New" - it will open the creation dialog
         dbVm.setCreateNewAction(() -> {
-            boolean success = onCreateNew.getAsBoolean();
-            if (success) {
-                dialog.setResult(Boolean.TRUE);
-                dialog.close();
-            }
+            if (onCreateNew.getAsBoolean()) dialog.close();
         });
 
-        // Handle "Add Selected"
-        view.getAddSelectedBtn()
-                .setOnAction(e -> {
-                    Object selected = dbVm.getSelectedItem();
-                    if (selected != null) {
-                        dialog.setResult(selected);
-                        dialog.close();
-                        javafx.application.Platform.runLater(() -> onSelect.accept(selected));
-                    }
-                });
-
-        // Add standard Cancel button to the dialog pane
-        // This also enables the ESC key dismissal automatically in JavaFX dialogs
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
-
-        dialog.showAndWait();
+        ButtonType add = new ButtonType("Add to Character", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(add, ButtonType.CANCEL);
+        Button addButton = (Button) dialog.getDialogPane().lookupButton(add);
+        addButton.disableProperty().bind(dbVm.selectedItemProperty().isNull());
+        addButton.getStyleClass().add("action-btn");
+        dialog.setResultConverter(button -> button == add ? dbVm.getSelectedItem() : null);
+        dialog.showAndWait().ifPresent(onSelect);
     }
 }

@@ -15,7 +15,10 @@ public class CharmsViewModel implements ViewModel {
     private final CharmDataService charmDataService;
     private final Map<String, String> keywordDefs;
 
-    private final Map<String, String> artifactSelections = new java.util.HashMap<>();
+    private record ArtifactSelection(String id, String name) {}
+
+    private final Map<String, ArtifactSelection> artifactSelections =
+            new java.util.LinkedHashMap<>();
     private final StringProperty filterType = new SimpleStringProperty("Ability");
     private final StringProperty selectedFilterValue = new SimpleStringProperty("");
     private final ObservableList<String> filterOptions = FXCollections.observableArrayList();
@@ -49,24 +52,58 @@ public class CharmsViewModel implements ViewModel {
 
     public TreeSelection getTreeSelection() {
         String selected = selectedFilterValue.get();
-        String artifactId = artifactSelections.get(selected);
-        return artifactId == null
+        ArtifactSelection artifact = artifactSelections.get(selected);
+        return artifact == null
                 ? new TreeSelection(filterType.get(), selected, selected)
-                : new TreeSelection("Evocation", artifactId, selected);
+                : new TreeSelection("Evocation", artifact.id(), artifact.name());
     }
 
-    /** Adds a named artifact destination without exposing definition IDs in the filter. */
-    public String selectArtifact(String artifactId, String name) {
-        String label = "Evocations: " + name;
-        int suffix = 2;
-        while (artifactSelections.containsKey(label)
-                && !java.util.Objects.equals(artifactSelections.get(label), artifactId)) {
-            label = "Evocations: " + name + " (" + suffix++ + ")";
-        }
-        artifactSelections.put(label, artifactId);
-        if (!filterOptions.contains(label)) filterOptions.add(label);
+    /** Adds a named artifact destination without exposing instance IDs in the filter. */
+    public String selectArtifact(String instanceId, String name) {
+        String label = addArtifactOption(new ArtifactSelection(instanceId, name));
         selectedFilterValue.set(label);
         return label;
+    }
+
+    private String addArtifactOption(ArtifactSelection artifact) {
+        String label = "Evocations: " + artifact.name();
+        int suffix = 2;
+        while (artifactSelections.containsKey(label)) {
+            if (artifactSelections.get(label).equals(artifact)) return label;
+            label = "Evocations: " + artifact.name() + " (" + suffix++ + ")";
+        }
+        artifactSelections.put(label, artifact);
+        filterOptions.add(label);
+        return label;
+    }
+
+    public void refreshArtifactOptions() {
+        if (artifactSelections.values().stream()
+                .allMatch(artifact ->
+                        hasArtifactDestination(artifact.id())
+                                && artifact.name().equals(data.getArtifactName(artifact.id()))))
+            return;
+
+        String selection = selectedFilterValue.get();
+        ArtifactSelection selectedArtifact = artifactSelections.get(selection);
+        var existingArtifacts = java.util.List.copyOf(artifactSelections.values());
+        filterOptions.removeAll(artifactSelections.keySet());
+        artifactSelections.clear();
+        for (ArtifactSelection artifact : existingArtifacts) {
+            if (!hasArtifactDestination(artifact.id())) continue;
+            String label =
+                    addArtifactOption(
+                            new ArtifactSelection(
+                                    artifact.id(), data.getArtifactName(artifact.id())));
+            if (selectedArtifact != null && selectedArtifact.id().equals(artifact.id()))
+                selection = label;
+        }
+        selectedFilterValue.set(
+                filterOptions.contains(selection) ? selection : filterOptions.getFirst());
+    }
+
+    private boolean hasArtifactDestination(String id) {
+        return data.isArtifactPossessed(id) || !data.getEvocations(id).isEmpty();
     }
 
     public void selectAbility(String ability) {

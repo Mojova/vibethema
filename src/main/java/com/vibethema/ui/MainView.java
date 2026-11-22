@@ -53,6 +53,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
     private Tab experienceTab;
     private Map<String, CharmsTab> charmTabs = new HashMap<>();
     private MartialArtsTab martialArtsTab;
+    private EquipmentTab equipmentTab;
     private final List<NotificationObserver> observers = new ArrayList<>();
 
     @Override
@@ -407,6 +408,7 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
     public void cleanup() {
         observers.forEach(obs -> Messenger.unsubscribe(null, obs));
         observers.clear();
+        if (equipmentTab != null) equipmentTab.cleanup();
     }
 
     private Tab createCharmsLazyTab(String title, String filterType) {
@@ -467,10 +469,8 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
                                                 viewModel.getEquipmentService())))
                         .load();
 
-        EquipmentTab view = (EquipmentTab) vt.getView();
-        view.initialize();
-
-        Tab tab = new Tab("Equipment", view);
+        equipmentTab = vt.getCodeBehind();
+        Tab tab = new Tab("Equipment", equipmentTab);
         tab.setClosable(false);
         return tab;
     }
@@ -950,7 +950,12 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
             Charm charm, String contextName, String filterType, Runnable onSave) {
         EditCharmViewModel editViewModel =
                 new EditCharmViewModel(
-                        charm, viewModel.getCharmDataService(), contextName, filterType, onSave);
+                        charm,
+                        viewModel.getCharmDataService(),
+                        contextName,
+                        filterType,
+                        onSave,
+                        viewModel.getData());
         ViewTuple<EditCharmView, EditCharmViewModel> viewTuple =
                 de.saxsys.mvvmfx.FluentViewLoader.javaView(EditCharmView.class)
                         .viewModel(editViewModel)
@@ -989,10 +994,8 @@ public class MainView extends BorderPane implements JavaView<MainViewModel>, Ini
             String ability = location.ability();
             var definition =
                     location.elementId().startsWith("charm_")
-                            ? viewModel
-                                    .getCharmDataService()
-                                    .findCharmById(
-                                            location.elementId().substring("charm_".length()))
+                            ? viewModel.resolveCharacterCharm(
+                                    location.elementId().substring("charm_".length()))
                             : null;
             if (definition instanceof Evocation evocation) {
                 String name =

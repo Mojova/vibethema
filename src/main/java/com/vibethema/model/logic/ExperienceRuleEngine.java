@@ -193,12 +193,8 @@ public class ExperienceRuleEngine {
         }
 
         // 8. Charms and Evocations
-        List<String> snapCharmIds = new ArrayList<>();
-        if (snapshot.unlockedCharms != null) {
-            for (PurchasedCharm snapPc : snapshot.unlockedCharms) {
-                snapCharmIds.add(snapPc.id());
-            }
-        }
+        List<String> snapCharmIds =
+                snapshot.allUnlockedCharms().stream().map(PurchasedCharm::id).toList();
 
         for (PurchasedCharm pc : current.getUnlockedCharms()) {
             if (!snapCharmIds.contains(pc.id())) {

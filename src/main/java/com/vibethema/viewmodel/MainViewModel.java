@@ -430,7 +430,7 @@ public class MainViewModel implements ViewModel {
 
     private CreationValidator.Result validateCreation() {
         return CreationValidator.validate(
-                data, charmDataService::findCharmById, meritService::findMeritById);
+                data, this::resolveCharacterCharm, meritService::findMeritById);
     }
 
     private boolean checkCreationReady() {
@@ -603,6 +603,10 @@ public class MainViewModel implements ViewModel {
             tabName = "Martial Arts";
         }
         return new NavigationTarget(tabName, filterType, abilityName);
+    }
+
+    public com.vibethema.model.mystic.Charm resolveCharacterCharm(String id) {
+        return data.resolveCharm(id, charmDataService::findCharmById);
     }
 
     public NavigationTarget resolveEvocationTarget(String artifactName) {

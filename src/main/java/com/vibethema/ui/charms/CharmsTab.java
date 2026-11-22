@@ -97,6 +97,7 @@ public class CharmsTab extends BorderPane implements JavaView<CharmsViewModel>, 
 
     public void refresh() {
         if (charmTreeViewModel != null) {
+            viewModel.refreshArtifactOptions();
             charmTreeViewModel.refresh();
         }
     }

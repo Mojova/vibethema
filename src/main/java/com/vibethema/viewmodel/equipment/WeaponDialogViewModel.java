@@ -4,7 +4,9 @@ import com.vibethema.model.equipment.*;
 import com.vibethema.model.traits.*;
 import com.vibethema.service.EquipmentDataService;
 import de.saxsys.mvvmfx.ViewModel;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -12,6 +14,8 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
 public class WeaponDialogViewModel implements ViewModel {
+    private final StringProperty description = new SimpleStringProperty("");
+    private final Map<Weapon.Stat, Integer> statOverrides = new EnumMap<>(Weapon.Stat.class);
     private final StringProperty name = new SimpleStringProperty("");
     private final ObjectProperty<Weapon.WeaponRange> range =
             new SimpleObjectProperty<>(Weapon.WeaponRange.CLOSE);
@@ -36,6 +40,8 @@ public class WeaponDialogViewModel implements ViewModel {
 
         if (existing != null) {
             name.set(existing.getName());
+            description.set(existing.getDescription());
+            statOverrides.putAll(existing.getStatOverrides());
             range.set(existing.getRange());
             type.set(existing.getType());
             category.set(existing.getCategory());
@@ -43,8 +49,12 @@ public class WeaponDialogViewModel implements ViewModel {
         }
 
         List<String> currentTags = (existing != null) ? existing.getTags() : List.of();
+        Map<String, EquipmentDataService.Tag> tagsByName = new java.util.LinkedHashMap<>();
+        allWeaponTags.forEach(tag -> tagsByName.putIfAbsent(tag.getName(), tag));
+        currentTags.forEach(tag ->
+                tagsByName.computeIfAbsent(tag, value -> new EquipmentDataService.Tag(value, "")));
         availableTags.setAll(
-                allWeaponTags.stream()
+                tagsByName.values().stream()
                         .map(t -> new TagSelectionViewModel(t, currentTags.contains(t.getName())))
                         .collect(Collectors.toList()));
 
@@ -121,6 +131,14 @@ public class WeaponDialogViewModel implements ViewModel {
                 .anyMatch(t -> t.getName().equalsIgnoreCase(tagName) && t.isSelected());
     }
 
+    public StringProperty descriptionProperty() {
+        return description;
+    }
+
+    public Map<Weapon.Stat, Integer> getStatOverrides() {
+        return statOverrides;
+    }
+
     public StringProperty nameProperty() {
         return name;
     }
@@ -158,6 +176,7 @@ public class WeaponDialogViewModel implements ViewModel {
             weapon = new Weapon(name.get());
         }
         weapon.setName(name.get());
+        weapon.setDescription(description.get());
         weapon.setRange(range.get());
         weapon.setType(type.get());
         weapon.setCategory(category.get());
@@ -173,6 +192,7 @@ public class WeaponDialogViewModel implements ViewModel {
         weapon.setSpecialtyId(
                 selectedSpecialty.get() == null ? "" : selectedSpecialty.get().getId());
 
+        weapon.setStatOverrides(statOverrides);
         return weapon;
     }
 

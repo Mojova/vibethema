@@ -3,6 +3,7 @@ package com.vibethema.service;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.vibethema.model.ExaltType;
+import com.vibethema.model.equipment.Weapon;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
@@ -11,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -125,12 +127,14 @@ public class EquipmentDataService {
         saveGlobalItem(w.toData(), w.getId(), getWeaponsPath());
     }
 
-    public com.vibethema.model.equipment.Weapon loadWeapon(String id) {
-        return com.vibethema.model.equipment.Weapon.fromData(
-                loadGlobalItem(
-                        id,
-                        getWeaponsPath(),
-                        com.vibethema.model.equipment.Weapon.WeaponData.class));
+    public Weapon loadWeapon(String id) {
+        var custom = loadGlobalItem(id, getWeaponsPath(), Weapon.WeaponData.class);
+        if (custom != null) return Weapon.fromData(custom);
+        for (Path directory : officialEquipmentPaths("weapons").reversed()) {
+            var official = loadGlobalItem(id, directory, Weapon.WeaponData.class);
+            if (official != null) return Weapon.fromData(official);
+        }
+        return null;
     }
 
     public void deleteWeapon(String id) throws IOException {
@@ -138,21 +142,19 @@ public class EquipmentDataService {
         deleteGlobalItem(id, getWeaponsPath());
     }
 
-    public List<com.vibethema.model.equipment.Weapon> getGlobalWeapons() {
+    public List<Weapon> getGlobalWeapons() {
         return getGlobalWeapons(null);
     }
 
-    public List<com.vibethema.model.equipment.Weapon> getGlobalWeapons(ExaltType exaltType) {
-        List<com.vibethema.model.equipment.Weapon.WeaponData> data = new ArrayList<>();
+    public List<Weapon> getGlobalWeapons(ExaltType exaltType) {
+        Map<String, Weapon.WeaponData> byId = new LinkedHashMap<>();
         for (Path path : officialEquipmentPaths(exaltType, "weapons")) {
-            data.addAll(
-                    listGlobalItems(path, com.vibethema.model.equipment.Weapon.WeaponData.class));
+            listGlobalItems(path, Weapon.WeaponData.class).forEach(item -> byId.put(item.id, item));
         }
-        data.addAll(
-                listGlobalItems(
-                        getWeaponsPath(), com.vibethema.model.equipment.Weapon.WeaponData.class));
-        return data.stream()
-                .map(com.vibethema.model.equipment.Weapon::fromData)
+        listGlobalItems(getWeaponsPath(), Weapon.WeaponData.class)
+                .forEach(item -> byId.put(item.id, item));
+        return byId.values().stream()
+                .map(Weapon::fromData)
                 .collect(java.util.stream.Collectors.toList());
     }
 

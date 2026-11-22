@@ -125,6 +125,8 @@ class CharmFamilyCatalogTest {
         custom.setArtifactId("artifact");
         service.saveEvocation("artifact", "Artifact", custom);
         assertEquals(2, service.loadEvocations("artifact").evocations.size());
+        assertEquals(
+                java.util.Set.of("artifact"), service.getArtifactIdsWithEvocationCollections());
         assertEquals("core", service.findCharmById("official").getSourceId());
         assertEquals("custom", service.findCharmById(custom.getId()).getSourceId());
     }

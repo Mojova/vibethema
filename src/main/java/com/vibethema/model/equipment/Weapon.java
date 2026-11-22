@@ -1,5 +1,7 @@
 package com.vibethema.model.equipment;
 
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.UUID;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -13,6 +15,35 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class Weapon {
+    public enum Stat {
+        ACCURACY,
+        DAMAGE,
+        DEFENSE,
+        OVERWHELMING,
+        ATTUNEMENT
+    }
+
+    private String description = "";
+    private final Map<Stat, Integer> statOverrides = new EnumMap<>(Stat.class);
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description == null ? "" : description;
+    }
+
+    public Map<Stat, Integer> getStatOverrides() {
+        return Map.copyOf(statOverrides);
+    }
+
+    public void setStatOverrides(Map<Stat, Integer> overrides) {
+        statOverrides.clear();
+        if (overrides != null) statOverrides.putAll(overrides);
+        updateStats();
+    }
+
     public static final String UNARMED_ID = "63d76e46-5c6a-356c-82e7-ef437a371c6d";
 
     public enum WeaponRange {
@@ -262,6 +293,15 @@ public class Weapon {
                 extremeRangeBonus.set(-1);
             }
         }
+        statOverrides.forEach((stat, value) -> {
+            switch (stat) {
+                case ACCURACY -> accuracy.set(value);
+                case DAMAGE -> damage.set(value);
+                case DEFENSE -> defense.set(value);
+                case OVERWHELMING -> overwhelming.set(value);
+                case ATTUNEMENT -> attunement.set(value);
+            }
+        });
     }
 
     private void clearRangeBonuses() {
@@ -488,6 +528,8 @@ public class Weapon {
         public String sourceId;
         public String instanceId;
         public String name;
+        public String description;
+        public Map<Stat, Integer> statOverrides;
         public WeaponRange range;
         public WeaponType type;
         public WeaponCategory category;
@@ -501,6 +543,8 @@ public class Weapon {
                     && java.util.Objects.equals(sourceId, that.sourceId)
                     && java.util.Objects.equals(instanceId, that.instanceId)
                     && java.util.Objects.equals(name, that.name)
+                    && java.util.Objects.equals(description, that.description)
+                    && java.util.Objects.equals(statOverrides, that.statOverrides)
                     && java.util.Objects.equals(range, that.range)
                     && java.util.Objects.equals(type, that.type)
                     && java.util.Objects.equals(category, that.category)
@@ -510,7 +554,16 @@ public class Weapon {
         @Override
         public int hashCode() {
             return java.util.Objects.hash(
-                    id, sourceId, instanceId, name, range, type, category, tags);
+                    id,
+                    sourceId,
+                    instanceId,
+                    name,
+                    description,
+                    statOverrides,
+                    range,
+                    type,
+                    category,
+                    tags);
         }
     }
 
@@ -520,6 +573,8 @@ public class Weapon {
         data.sourceId = getSourceId();
         data.instanceId = getInstanceId();
         data.name = getName();
+        data.description = description.isEmpty() ? null : description;
+        data.statOverrides = statOverrides.isEmpty() ? null : getStatOverrides();
         data.range = getRange();
         data.type = getType();
         data.category = getCategory();
@@ -533,6 +588,8 @@ public class Weapon {
                 new Weapon(
                         data.id, data.instanceId, data.name, data.range, data.type, data.category);
         w.setSourceId(data.sourceId);
+        w.setDescription(data.description);
+        w.setStatOverrides(data.statOverrides);
         w.getTags().setAll(data.tags != null ? data.tags : java.util.Collections.emptyList());
         return w;
     }

@@ -2,6 +2,7 @@ package com.vibethema.model.logic;
 
 import com.vibethema.model.CharacterData;
 import com.vibethema.model.mystic.Charm;
+import com.vibethema.model.mystic.Evocation;
 import com.vibethema.model.mystic.MartialArtsCharm;
 import com.vibethema.model.traits.Ability;
 
@@ -10,7 +11,10 @@ public final class CharmPurchaseRules {
     private CharmPurchaseRules() {}
 
     public static boolean isStackable(Charm charm) {
-        return charm.getKeywords() != null && charm.getKeywords().contains("Stackable");
+        // Published Evocations use this keyword for repeated activation, not acquisition.
+        return !(charm instanceof Evocation)
+                && charm.getKeywords() != null
+                && charm.getKeywords().contains("Stackable");
     }
 
     public static int purchaseLimit(Charm charm, CharacterData data) {

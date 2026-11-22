@@ -7,6 +7,8 @@ import com.vibethema.model.equipment.EquipmentModel;
 import com.vibethema.model.equipment.Hearthstone;
 import com.vibethema.model.equipment.OtherEquipment;
 import com.vibethema.model.equipment.Weapon;
+import com.vibethema.model.mystic.Charm;
+import com.vibethema.model.mystic.Evocation;
 import com.vibethema.model.mystic.MysticModel;
 import com.vibethema.model.mystic.PurchasedCharm;
 import com.vibethema.model.mystic.ShapingRitual;
@@ -25,7 +27,13 @@ import com.vibethema.model.traits.Specialty;
 import com.vibethema.model.traits.TraitModel;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Function;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
@@ -57,6 +65,7 @@ public class CharacterData {
     private final SocialModel socialModel;
     private final ProgressionModel progressionModel;
     private final CombatStatsModel combatStatsModel;
+    private final Map<String, List<Evocation>> artifactEvocations = new LinkedHashMap<>();
 
     private final BooleanProperty overBonusPointLimit = new SimpleBooleanProperty(false);
     private final BooleanProperty dirty = new SimpleBooleanProperty(false);
@@ -534,6 +543,7 @@ public class CharacterData {
             traitModel.getAttributePriorities().values().forEach(p -> p.set(null));
 
             getUnlockedCharms().clear();
+            artifactEvocations.clear();
             getMerits().clear();
             getMerits().add(new Merit(java.util.UUID.randomUUID().toString(), "", 1));
             getSpecialties().clear();
@@ -564,23 +574,116 @@ public class CharacterData {
         if (artifactId == null || artifactId.isEmpty()) return false;
         if (getWeapons().stream()
                 .anyMatch(w ->
-                        w.getId().equals(artifactId) && w.getType() == Weapon.WeaponType.ARTIFACT))
-            return true;
+                        artifactId.equals(w.getInstanceId())
+                                && w.getType() == Weapon.WeaponType.ARTIFACT)) return true;
         if (getArmors().stream()
                 .anyMatch(a ->
-                        a.getId().equals(artifactId) && a.getType() == Armor.ArmorType.ARTIFACT))
-            return true;
+                        artifactId.equals(a.getInstanceId())
+                                && a.getType() == Armor.ArmorType.ARTIFACT)) return true;
         return getOtherEquipment().stream()
-                .anyMatch(oe -> oe.getId().equals(artifactId) && oe.isArtifact());
+                .anyMatch(oe -> artifactId.equals(oe.getInstanceId()) && oe.isArtifact());
     }
 
     public String getArtifactName(String artifactId) {
         if (artifactId == null || artifactId.isEmpty()) return "";
-        for (Weapon w : getWeapons()) if (w.getId().equals(artifactId)) return w.getName();
-        for (Armor a : getArmors()) if (a.getId().equals(artifactId)) return a.getName();
+        for (Weapon w : getWeapons()) if (artifactId.equals(w.getInstanceId())) return w.getName();
+        for (Armor a : getArmors()) if (artifactId.equals(a.getInstanceId())) return a.getName();
         for (OtherEquipment oe : getOtherEquipment())
-            if (oe.getId().equals(artifactId)) return oe.getName();
-        return artifactId;
+            if (artifactId.equals(oe.getInstanceId())) return oe.getName();
+        return "Missing artifact";
+    }
+
+    public List<Evocation> getEvocations(String instanceId) {
+        return List.copyOf(artifactEvocations.getOrDefault(instanceId, List.of()));
+    }
+
+    public Charm resolveCharm(String id, Function<String, Charm> catalogLookup) {
+        for (List<Evocation> tree : artifactEvocations.values()) {
+            for (Evocation node : tree) if (node.getId().equals(id)) return node;
+        }
+        return catalogLookup.apply(id);
+    }
+
+    public void copyEvocationTree(String instanceId, List<Charm> template) {
+        if (template.isEmpty() || artifactEvocations.containsKey(instanceId)) return;
+        Map<String, String> ids = new HashMap<>();
+        for (Charm node : template) ids.put(node.getId(), UUID.randomUUID().toString());
+        List<Evocation> tree = new ArrayList<>();
+        for (Charm node : template) {
+            Evocation copy = ((Evocation) node).copyForArtifact(instanceId);
+            copy.setId(ids.get(node.getId()));
+            if (copy.getPrerequisites() != null) copy.getPrerequisites().remapCharmIds(ids);
+            tree.add(copy);
+        }
+        artifactEvocations.put(instanceId, tree);
+        markDirty();
+    }
+
+    public void saveEvocation(Evocation node) {
+        String instanceId = node.getArtifactId();
+        if (!isArtifactPossessed(instanceId))
+            throw new IllegalArgumentException("Artifact is missing");
+        if (node.getName() == null || node.getName().isBlank()) {
+            throw new IllegalArgumentException("Enter an Evocation name");
+        }
+        validateEvocationPrerequisites(node, getEvocations(instanceId));
+        var tree = artifactEvocations.computeIfAbsent(instanceId, id -> new ArrayList<>());
+        int index = tree.indexOf(node);
+        Evocation copy = node.copyForArtifact(instanceId);
+        if (index < 0) tree.add(copy);
+        else tree.set(index, copy);
+        for (int i = 0; i < getUnlockedCharms().size(); i++) {
+            PurchasedCharm purchase = getUnlockedCharms().get(i);
+            if (copy.getId().equals(purchase.id())) {
+                getUnlockedCharms()
+                        .set(
+                                i,
+                                new PurchasedCharm(
+                                        copy.getId(),
+                                        copy.getName(),
+                                        instanceId,
+                                        copy.getSourceId()));
+            }
+        }
+        markDirty();
+    }
+
+    private static void validateEvocationPrerequisites(Evocation node, List<Evocation> tree) {
+        Map<String, Set<String>> dependencies = new HashMap<>();
+        for (Evocation existing : tree)
+            dependencies.put(existing.getId(), prerequisiteIds(existing));
+        dependencies.put(node.getId(), prerequisiteIds(node));
+
+        var pending = new java.util.ArrayDeque<>(dependencies.get(node.getId()));
+        Set<String> visited = new HashSet<>();
+        while (!pending.isEmpty()) {
+            String id = pending.removeFirst();
+            if (id.equals(node.getId())) {
+                throw new IllegalArgumentException(
+                        "An Evocation cannot require itself, directly or indirectly");
+            }
+            if (visited.add(id)) pending.addAll(dependencies.getOrDefault(id, Set.of()));
+        }
+    }
+
+    private static Set<String> prerequisiteIds(Evocation node) {
+        Set<String> ids = new HashSet<>();
+        if (node.getPrerequisites() != null) node.getPrerequisites().collectCharmIds(ids);
+        return ids;
+    }
+
+    public void deleteEvocation(Evocation node) {
+        var tree = artifactEvocations.get(node.getArtifactId());
+        if (tree == null || !tree.contains(node)) return;
+        for (Evocation other : tree) {
+            if (prerequisiteIds(other).contains(node.getId())) {
+                throw new IllegalArgumentException(
+                        "Remove this prerequisite from " + other.getName() + " first");
+            }
+        }
+        tree.remove(node);
+        getUnlockedCharms().removeIf(purchase -> node.getId().equals(purchase.id()));
+        markDirty();
     }
 
     public boolean hasExcellency(Ability ability) {
@@ -642,7 +745,23 @@ public class CharacterData {
                     if (v.get()) state.favoredAbilities.add(k.name());
                 });
 
-        state.unlockedCharms = new ArrayList<>(getUnlockedCharms());
+        state.unlockedCharms = new ArrayList<>();
+        Map<String, List<PurchasedCharm>> evocationPurchases = new HashMap<>();
+        for (PurchasedCharm purchase : getUnlockedCharms()) {
+            if (artifactEvocations.containsKey(purchase.ability())) {
+                evocationPurchases
+                        .computeIfAbsent(purchase.ability(), id -> new ArrayList<>())
+                        .add(purchase);
+            } else {
+                state.unlockedCharms.add(purchase);
+            }
+        }
+        artifactEvocations.forEach((instanceId, tree) ->
+                state.artifactEvocations.put(
+                        instanceId,
+                        new CharacterSaveState.ArtifactEvocationState(
+                                tree.stream().map(Evocation::toCharacterData).toList(),
+                                evocationPurchases.getOrDefault(instanceId, List.of()))));
 
         getMerits()
                 .forEach(m -> {
@@ -847,8 +966,14 @@ public class CharacterData {
                 }
             }
 
-            if (state.unlockedCharms != null) getUnlockedCharms().setAll(state.unlockedCharms);
-            else getUnlockedCharms().clear();
+            artifactEvocations.clear();
+            state.artifactEvocations.forEach((instanceId, saved) -> {
+                List<Evocation> tree = new ArrayList<>();
+                saved.tree()
+                        .forEach(node -> tree.add(Evocation.fromCharacterData(node, instanceId)));
+                artifactEvocations.put(instanceId, tree);
+            });
+            getUnlockedCharms().setAll(state.allUnlockedCharms());
 
             getMerits().clear();
             if (state.merits != null && !state.merits.isEmpty()) {

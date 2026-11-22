@@ -67,6 +67,12 @@ public class ArmorDialogView extends GridPane
         tagsList.setAccessibleText("Armor Tags List");
         add(tagsLabel, 0, 3);
         add(tagsList, 1, 3);
+        EquipmentCustomizationFields.addTo(
+                this,
+                4,
+                viewModel.descriptionProperty(),
+                Armor.Stat.values(),
+                viewModel.getStatOverrides());
 
         // Tooltip for tags (optional, but premium)
         tagsList.setTooltip(new Tooltip("Check to select tags for this armor"));

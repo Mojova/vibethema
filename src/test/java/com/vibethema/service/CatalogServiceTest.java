@@ -2,7 +2,9 @@ package com.vibethema.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.google.gson.Gson;
 import com.vibethema.model.ExaltType;
+import com.vibethema.model.equipment.Weapon;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -63,6 +65,36 @@ class CatalogServiceTest {
         assertEquals(
                 "Custom Replacement",
                 catalog.getCharmsForAbility("Athletics", ExaltType.SOLAR).get(0).getName());
+    }
+
+    @Test
+    void weaponPickerMergesTheOfficialAndCustomCopiesOfUnarmed() throws Exception {
+        Path official =
+                PathService.getOfficialSourcePath("solar-book").resolve("equipment/weapons");
+        Files.createDirectories(official);
+        var unarmed =
+                new Weapon(
+                        Weapon.UNARMED_ID,
+                        "Unarmed",
+                        Weapon.WeaponRange.CLOSE,
+                        Weapon.WeaponType.MORTAL,
+                        Weapon.WeaponCategory.LIGHT);
+        unarmed.setDescription("Official description");
+        Files.writeString(
+                official.resolve(Weapon.UNARMED_ID + ".json"), new Gson().toJson(unarmed.toData()));
+
+        var equipment = new EquipmentDataService();
+        assertEquals(
+                "Official description", equipment.loadWeapon(Weapon.UNARMED_ID).getDescription());
+        unarmed.setDescription("Custom description");
+        equipment.saveWeapon(unarmed);
+
+        var templates = equipment.getGlobalWeapons();
+        assertEquals(1, templates.size());
+        assertEquals(Weapon.UNARMED_ID, templates.getFirst().getId());
+        assertEquals("Custom description", templates.getFirst().getDescription());
+        assertEquals(
+                "Custom description", equipment.loadWeapon(Weapon.UNARMED_ID).getDescription());
     }
 
     private void writeSource(String id, String type, String charmName, String charmId)

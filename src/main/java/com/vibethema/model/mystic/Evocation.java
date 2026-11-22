@@ -1,8 +1,11 @@
 package com.vibethema.model.mystic;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.vibethema.model.*;
 
 public class Evocation extends Charm {
+    private static final Gson GSON = new Gson();
     private transient String artifactId;
 
     public Evocation() {
@@ -16,6 +19,21 @@ public class Evocation extends Charm {
 
     public String getArtifactId() {
         return artifactId;
+    }
+
+    public JsonObject toCharacterData() {
+        return GSON.toJsonTree(this).getAsJsonObject();
+    }
+
+    public static Evocation fromCharacterData(JsonObject json, String instanceId) {
+        Evocation evocation = GSON.fromJson(json, Evocation.class);
+        evocation.setArtifactId(instanceId);
+        evocation.setCustom(true);
+        return evocation;
+    }
+
+    public Evocation copyForArtifact(String instanceId) {
+        return fromCharacterData(toCharacterData(), instanceId);
     }
 
     @Override

@@ -60,7 +60,8 @@ public class DefaultEquipmentDialogService implements EquipmentDialogService {
 
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == saveBtnType) {
-                return viewModel.applyTo(existing);
+                Weapon draft = existing == null ? null : Weapon.fromData(existing.toData());
+                return viewModel.applyTo(draft);
             }
             return null;
         });
@@ -87,7 +88,9 @@ public class DefaultEquipmentDialogService implements EquipmentDialogService {
 
         dialog.setResultConverter(b -> {
             if (b == saveBtn) {
-                return viewModel.applyTo(existing);
+                Armor draft = existing == null ? null : Armor.fromData(existing.toData());
+                if (draft != null) draft.setEquipped(existing.isEquipped());
+                return viewModel.applyTo(draft);
             }
             return null;
         });
@@ -121,8 +124,9 @@ public class DefaultEquipmentDialogService implements EquipmentDialogService {
             if (b == saveBtn) {
                 Hearthstone h =
                         (existing != null)
-                                ? existing
+                                ? Hearthstone.fromData(existing.toData())
                                 : new Hearthstone(name.getText(), description.getText());
+                if (existing != null) h.setEquipped(existing.isEquipped());
                 h.setName(name.getText());
                 h.setDescription(description.getText());
                 return h;
@@ -164,16 +168,15 @@ public class DefaultEquipmentDialogService implements EquipmentDialogService {
         grid.add(isArtifact, 1, 2);
         grid.add(new Label("Attunement:"), 0, 3);
         grid.add(attunement, 1, 3);
-        grid.add(new Label("Attunement:"), 0, 3);
-        grid.add(attunement, 1, 3);
 
         dialog.getDialogPane().setContent(grid);
         dialog.setResultConverter(b -> {
             if (b == saveBtn) {
                 OtherEquipment oe =
                         (existing != null)
-                                ? existing
+                                ? OtherEquipment.fromData(existing.toData())
                                 : new OtherEquipment(name.getText(), description.getText());
+                if (existing != null) oe.setEquipped(existing.isEquipped());
                 oe.setName(name.getText());
                 oe.setDescription(description.getText());
                 oe.setArtifact(isArtifact.isSelected());

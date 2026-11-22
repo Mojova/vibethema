@@ -1,12 +1,22 @@
 package com.vibethema.service.pdf;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.vibethema.model.ExaltType;
+import com.vibethema.model.equipment.Armor;
+import com.vibethema.model.equipment.Weapon;
+import com.vibethema.model.mystic.Charm;
+import com.vibethema.model.mystic.CharmKind;
+import com.vibethema.service.CharmDataService;
+import com.vibethema.service.CharmJson;
+import com.vibethema.service.DefinitionId;
+import com.vibethema.service.EquipmentDataService;
 import com.vibethema.service.ImportContext;
 import com.vibethema.service.PdfExtractor;
 import com.vibethema.service.SourceManifest;
@@ -16,7 +26,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -38,28 +50,29 @@ public class PdfImportRegressionTest {
 
     @Test
     public void testCoreImportRegression(@TempDir Path tempDir) throws IOException {
-        if (!Files.exists(CORE_PDF)) {
-            logger.info("Skipping PDF regression test: {} not found.", CORE_PDF);
-            return;
-        }
+        assumeTrue(Files.isRegularFile(CORE_PDF), () -> "Core PDF is unavailable at " + CORE_PDF);
 
         logger.info("Running PDF import regression test...");
         PdfExtractor extractor = new PdfExtractor();
+        Path source = tempDir.resolve("official").resolve(SOURCE_ID);
 
         // Run full extraction to temp directory
         extractor.extractAll(
                 CORE_PDF.toFile(),
-                new ImportContext(SourceManifest.coreBook(), tempDir.resolve(SOURCE_ID)),
+                new ImportContext(SourceManifest.coreBook(), source),
                 progress -> {
                     // Log progress occasionally
                     if (progress % 0.2 < 0.01)
                         logger.info("Extraction progress: {}%", (int) (progress * 100));
                 });
 
-        assertEyeOfTheUnconqueredSunPrerequisite(tempDir.resolve(SOURCE_ID));
-        assertCharmDescriptionCleanup(tempDir.resolve(SOURCE_ID));
-        Path source = tempDir.resolve(SOURCE_ID);
+        assertEyeOfTheUnconqueredSunPrerequisite(source);
+        assertCharmDescriptionCleanup(source);
         assertEquipmentTags(source);
+        assertWeaponTemplates(source);
+        assertArmorTemplates(source);
+        assertNamedArtifacts(source);
+        assertEquipmentCatalogLoads(tempDir);
         var anima =
                 JsonParser.parseString(Files.readString(source.resolve("anima/anima.json")))
                         .getAsJsonObject();
@@ -114,7 +127,7 @@ public class PdfImportRegressionTest {
                     .filter(p -> p.toString().endsWith(".json"))
                     .forEach(refPath -> {
                         Path relative = REFERENCE_DIR.relativize(refPath);
-                        Path actualPath = tempDir.resolve(SOURCE_ID).resolve(relative);
+                        Path actualPath = source.resolve(relative);
 
                         assertTrue(
                                 Files.exists(actualPath),
@@ -125,21 +138,226 @@ public class PdfImportRegressionTest {
                     });
         }
 
-        // Warning for unverified files in output
-        try (Stream<Path> stream = Files.walk(tempDir)) {
+        // Semantic assertions also cover data without a local exact snapshot.
+        try (Stream<Path> stream = Files.walk(source)) {
             stream.filter(Files::isRegularFile)
                     .filter(p -> p.toString().endsWith(".json"))
                     .forEach(actualPath -> {
-                        Path relative = tempDir.resolve(SOURCE_ID).relativize(actualPath);
+                        Path relative = source.relativize(actualPath);
                         Path refPath = REFERENCE_DIR.resolve(relative);
                         if (!Files.exists(refPath)) {
-                            logger.warn(
-                                    "UNVERIFIED: File present in output but missing from"
-                                            + " reference: {}",
-                                    relative);
+                            logger.warn("No local exact snapshot for {}", relative);
                         }
                     });
         }
+    }
+
+    private void assertEquipmentCatalogLoads(Path dataDirectory) {
+        String property = "vibethema.data.dir";
+        String previousDirectory = System.getProperty(property);
+        System.setProperty(property, dataDirectory.toString());
+        try {
+            var equipment = new EquipmentDataService();
+            var weapons = equipment.getGlobalWeapons();
+            var armors = equipment.getGlobalArmors();
+            assertEquals(76, weapons.size());
+            assertEquals(19, armors.size());
+            assertNotNull(equipment.loadWeapon(Weapon.UNARMED_ID));
+            assertEquals(
+                    43, equipment.loadEquipmentTags().values().stream().mapToInt(List::size).sum());
+
+            var equipmentIds = new HashSet<String>();
+            weapons.forEach(
+                    weapon -> assertTrue(equipmentIds.add(weapon.getId()), weapon.getName()));
+            armors.forEach(armor -> assertTrue(equipmentIds.add(armor.getId()), armor.getName()));
+
+            var charms = new CharmDataService();
+            var artifactIds = charms.getArtifactIdsWithEvocationCollections();
+            assertEquals(10, artifactIds.size());
+            assertTrue(equipmentIds.containsAll(artifactIds));
+            int evocationCount = 0;
+            for (String artifactId : artifactIds) {
+                var collection = charms.loadEvocations(artifactId);
+                assertFalse(collection.evocations.isEmpty(), collection.artifactName);
+                evocationCount += collection.evocations.size();
+                for (Charm evocation : collection.evocations) {
+                    var prerequisiteIds = new HashSet<String>();
+                    evocation.getPrerequisites().collectCharmIds(prerequisiteIds);
+                    for (String id : prerequisiteIds) {
+                        assertNotNull(
+                                charms.findCharmById(id),
+                                evocation.getName() + " prerequisite " + id);
+                    }
+                }
+            }
+            assertEquals(42, evocationCount);
+        } finally {
+            if (previousDirectory == null) System.clearProperty(property);
+            else System.setProperty(property, previousDirectory);
+        }
+    }
+
+    private void assertWeaponTemplates(Path source) throws IOException {
+        var weapons = new java.util.HashMap<String, Weapon.WeaponData>();
+        var counts = new java.util.HashMap<String, Integer>();
+        try (var files = Files.list(source.resolve("equipment/weapons"))) {
+            for (Path file : files.filter(path -> path.toString().endsWith(".json")).toList()) {
+                var weapon = gson.fromJson(Files.readString(file), Weapon.WeaponData.class);
+                assertNull(weapons.put(weapon.name, weapon), weapon.name);
+                assertEquals(weapon.id + ".json", file.getFileName().toString());
+                assertNull(weapon.instanceId, weapon.name);
+                if (!Weapon.UNARMED_ID.equals(weapon.id)) {
+                    assertEquals(SOURCE_ID, weapon.sourceId);
+                    assertEquals(
+                            DefinitionId.forEquipment(SOURCE_ID, "weapons", weapon.name),
+                            weapon.id);
+                    assertFalse(weapon.description.isBlank(), weapon.name);
+                }
+                counts.merge(weapon.type.name() + "/" + weapon.range.name(), 1, Integer::sum);
+            }
+        }
+        assertEquals(
+                Map.of(
+                        "MORTAL/CLOSE",
+                        28,
+                        "MORTAL/THROWN",
+                        7,
+                        "MORTAL/ARCHERY",
+                        7,
+                        "ARTIFACT/CLOSE",
+                        23,
+                        "ARTIFACT/THROWN",
+                        5,
+                        "ARTIFACT/ARCHERY",
+                        6),
+                counts);
+        assertEquals(Weapon.UNARMED_ID, weapons.get("Unarmed").id);
+        assertEquals(Weapon.WeaponCategory.HEAVY, weapons.get("Great Sword").category);
+        assertTrue(weapons.get("Great Sword").description.endsWith("Cost: ••"));
+        assertEquals(Weapon.WeaponRange.THROWN, weapons.get("Shuriken").range);
+        assertTrue(weapons.get("Shuriken").tags.contains("Poisonable"));
+        assertTrue(weapons.get("Flame Piece").tags.contains("One-Handed"));
+        assertEquals(Weapon.WeaponCategory.MEDIUM, weapons.get("Powerbow").category);
+        assertEquals(Weapon.WeaponType.ARTIFACT, weapons.get("Slayer Khatar").type);
+        assertTrue(weapons.get("Direlance").tags.contains("Two-Handed when on foot"));
+    }
+
+    private void assertArmorTemplates(Path source) throws IOException {
+        var armors = new java.util.HashMap<String, Armor.ArmorData>();
+        var counts = new java.util.HashMap<String, Integer>();
+        try (var files = Files.list(source.resolve("equipment/armors"))) {
+            for (Path file : files.filter(path -> path.toString().endsWith(".json")).toList()) {
+                var armor = gson.fromJson(Files.readString(file), Armor.ArmorData.class);
+                assertNull(armors.put(armor.type.name() + "/" + armor.name, armor), armor.name);
+                assertEquals(armor.id + ".json", file.getFileName().toString());
+                assertEquals(SOURCE_ID, armor.sourceId);
+                assertNull(armor.instanceId, armor.name);
+                assertFalse(armor.description.isBlank(), armor.name);
+                assertFalse(armor.tags.contains("None"), armor.name);
+                counts.merge(armor.type.name() + "/" + armor.weight.name(), 1, Integer::sum);
+            }
+        }
+        assertEquals(
+                Map.of(
+                        "MORTAL/LIGHT",
+                        3,
+                        "MORTAL/MEDIUM",
+                        4,
+                        "MORTAL/HEAVY",
+                        2,
+                        "ARTIFACT/LIGHT",
+                        4,
+                        "ARTIFACT/MEDIUM",
+                        3,
+                        "ARTIFACT/HEAVY",
+                        3),
+                counts);
+
+        var mundane = armors.get("MORTAL/Reinforced Breastplate");
+        var artifact = armors.get("ARTIFACT/Reinforced Breastplate");
+        assertNotEquals(mundane.id, artifact.id);
+        assertEquals(Armor.ArmorWeight.MEDIUM, mundane.weight);
+        assertEquals(Armor.ArmorWeight.HEAVY, artifact.weight);
+        assertEquals(List.of("Concealable"), armors.get("MORTAL/Chain Shirt").tags);
+        assertEquals(List.of("Silent", "Special"), armors.get("ARTIFACT/Silken Armor").tags);
+        assertTrue(armors.get("MORTAL/Buff Jacket").description.endsWith("Cost: •"));
+        assertTrue(armors.get("ARTIFACT/Articulated Plate").description.endsWith("divine patron."));
+    }
+
+    private void assertNamedArtifacts(Path source) throws IOException {
+        Map<String, Integer> counts =
+                Map.of(
+                        "Beloved Adorei",
+                        5,
+                        "Brilliant Sentinel",
+                        3,
+                        "Moonlit Huntress",
+                        1,
+                        "Shining Ice Mirror",
+                        4,
+                        "Spring Razor",
+                        5,
+                        "Freedom’s Cadence",
+                        5,
+                        "Orichalcum Hunting Hawk",
+                        5,
+                        "Dauntless",
+                        4,
+                        "Black Wind",
+                        5,
+                        "Volcano Cutter",
+                        5);
+        String monkeyLeapId =
+                DefinitionId.forCharm(
+                        SOURCE_ID,
+                        CharmKind.EXALTED,
+                        ExaltType.SOLAR,
+                        "Monkey Leap Technique",
+                        "Athletics");
+        var actual = new java.util.HashMap<String, Integer>();
+        var codec = new CharmJson();
+        try (var files = Files.list(source.resolve("charms/evocations"))) {
+            for (Path path : files.toList()) {
+                var tree = codec.read(path);
+                assertEquals(CharmKind.EVOCATION, tree.kind);
+                assertEquals(SOURCE_ID, tree.sourceId);
+                actual.put(tree.artifactName, tree.charms.size());
+                Path weapon = source.resolve("equipment/weapons").resolve(path.getFileName());
+                Path armor = source.resolve("equipment/armors").resolve(path.getFileName());
+                assertNotEquals(Files.exists(weapon), Files.exists(armor));
+                var equipment =
+                        JsonParser.parseString(
+                                        Files.readString(Files.exists(weapon) ? weapon : armor))
+                                .getAsJsonObject();
+                assertEquals(tree.artifactId, equipment.get("id").getAsString());
+                assertEquals(tree.artifactName, equipment.get("name").getAsString());
+                assertEquals("ARTIFACT", equipment.get("type").getAsString());
+                var ids = new java.util.HashSet<String>();
+                tree.charms.forEach(charm -> assertTrue(ids.add(charm.getId())));
+                for (var charm : tree.charms) {
+                    assertFalse(charm.getFullText().isBlank());
+                    assertFalse(charm.getFullText().contains("THE QUEST TO RESURRECT"));
+                    if (charm.getName().equals("Dawn of a Hundred Rebukes")) {
+                        String[] paragraphs = charm.getFullText().split("\n\n");
+                        assertEquals(4, paragraphs.length);
+                        assertTrue(paragraphs[1].startsWith("If the gambit is successful"));
+                        assertTrue(paragraphs[2].startsWith("This effect only lasts"));
+                        assertTrue(paragraphs[3].startsWith("Using this Charm"));
+                    }
+                    if (charm.getName().equals("Life-Drinking Resurgence")) {
+                        assertTrue(charm.getFullText().contains("creates two blood blades"));
+                    }
+                    var references = new java.util.HashSet<String>();
+                    charm.getPrerequisites().collectCharmIds(references);
+                    if (charm.getName().equals("Orichalcum Wings Elevation")) {
+                        assertEquals(java.util.Set.of(monkeyLeapId), references);
+                    } else {
+                        assertTrue(ids.containsAll(references), charm.getName());
+                    }
+                }
+            }
+        }
+        assertEquals(counts, actual);
     }
 
     private void assertEquipmentTags(Path source) throws IOException {

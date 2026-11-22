@@ -1,5 +1,7 @@
 package com.vibethema.model.equipment;
 
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.UUID;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -13,6 +15,34 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class Armor {
+    public enum Stat {
+        SOAK,
+        MOBILITY_PENALTY,
+        HARDNESS,
+        ATTUNEMENT
+    }
+
+    private String description = "";
+    private final Map<Stat, Integer> statOverrides = new EnumMap<>(Stat.class);
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description == null ? "" : description;
+    }
+
+    public Map<Stat, Integer> getStatOverrides() {
+        return Map.copyOf(statOverrides);
+    }
+
+    public void setStatOverrides(Map<Stat, Integer> overrides) {
+        statOverrides.clear();
+        if (overrides != null) statOverrides.putAll(overrides);
+        updateStats();
+    }
+
     public enum ArmorType {
         MORTAL,
         ARTIFACT;
@@ -127,6 +157,14 @@ public class Armor {
                     break;
             }
         }
+        statOverrides.forEach((stat, value) -> {
+            switch (stat) {
+                case SOAK -> soak.set(value);
+                case MOBILITY_PENALTY -> mobilityPenalty.set(value);
+                case HARDNESS -> hardness.set(value);
+                case ATTUNEMENT -> attunement.set(value);
+            }
+        });
     }
 
     // Accessors
@@ -248,6 +286,8 @@ public class Armor {
         public String sourceId;
         public String instanceId;
         public String name;
+        public String description;
+        public Map<Stat, Integer> statOverrides;
         public ArmorType type;
         public ArmorWeight weight;
         public java.util.List<String> tags;
@@ -260,6 +300,8 @@ public class Armor {
                     && java.util.Objects.equals(sourceId, that.sourceId)
                     && java.util.Objects.equals(instanceId, that.instanceId)
                     && java.util.Objects.equals(name, that.name)
+                    && java.util.Objects.equals(description, that.description)
+                    && java.util.Objects.equals(statOverrides, that.statOverrides)
                     && java.util.Objects.equals(type, that.type)
                     && java.util.Objects.equals(weight, that.weight)
                     && java.util.Objects.equals(tags, that.tags);
@@ -267,7 +309,8 @@ public class Armor {
 
         @Override
         public int hashCode() {
-            return java.util.Objects.hash(id, sourceId, instanceId, name, type, weight, tags);
+            return java.util.Objects.hash(
+                    id, sourceId, instanceId, name, description, statOverrides, type, weight, tags);
         }
     }
 
@@ -277,6 +320,8 @@ public class Armor {
         data.sourceId = getSourceId();
         data.instanceId = getInstanceId();
         data.name = getName();
+        data.description = description.isEmpty() ? null : description;
+        data.statOverrides = statOverrides.isEmpty() ? null : getStatOverrides();
         data.type = getType();
         data.weight = getWeight();
         data.tags = new java.util.ArrayList<>(getTags());
@@ -287,6 +332,8 @@ public class Armor {
         if (data == null) return null;
         Armor a = new Armor(data.id, data.instanceId, data.name, data.type, data.weight);
         a.setSourceId(data.sourceId);
+        a.setDescription(data.description);
+        a.setStatOverrides(data.statOverrides);
         a.getTags().setAll(data.tags != null ? data.tags : java.util.Collections.emptyList());
         return a;
     }

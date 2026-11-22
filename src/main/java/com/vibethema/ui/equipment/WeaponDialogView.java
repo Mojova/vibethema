@@ -107,6 +107,12 @@ public class WeaponDialogView extends GridPane
         add(tagsList, 1, 5);
 
         add(personalCb, 1, 6);
+        EquipmentCustomizationFields.addTo(
+                this,
+                7,
+                viewModel.descriptionProperty(),
+                Weapon.Stat.values(),
+                viewModel.getStatOverrides());
 
         tagsList.setTooltip(
                 new Tooltip(

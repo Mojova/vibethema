@@ -4,18 +4,37 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 import com.vibethema.model.*;
+import com.vibethema.model.equipment.Armor;
+import com.vibethema.model.equipment.Weapon;
 import com.vibethema.service.CharmDataService;
 import com.vibethema.service.EquipmentDataService;
 import com.vibethema.service.PdfExportService;
 import com.vibethema.service.SystemDataService;
 import com.vibethema.viewmodel.MainViewModel;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogPane;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -46,6 +65,244 @@ public class MainViewTest {
             latch.countDown();
         }
         latch.await(5, TimeUnit.SECONDS);
+        Platform.setImplicitExit(false);
+    }
+
+    @Test
+    void equipmentPickersGroupTemplatesAndAddIndependentInstances() throws Exception {
+        var task =
+                new FutureTask<Void>(() -> {
+                    var data = new CharacterData();
+                    var weaponTemplate = new Weapon("Training Sword");
+                    var secondMundaneWeapon = new Weapon("Wooden Shield");
+                    weaponTemplate.setSourceId("test-source");
+                    weaponTemplate.getTags().add("Balanced");
+                    var artifactWeapon = new Weapon("Daiklave");
+                    artifactWeapon.setType(Weapon.WeaponType.ARTIFACT);
+                    var uniqueWeapon = new Weapon("Ancestral Blade");
+                    uniqueWeapon.setType(Weapon.WeaponType.ARTIFACT);
+                    var armorTemplate = new Armor("Training Plate");
+                    var artifactArmor = new Armor("Artifact Plate");
+                    artifactArmor.setType(Armor.ArmorType.ARTIFACT);
+                    var uniqueArmor = new Armor("Ancestral Plate");
+                    uniqueArmor.setType(Armor.ArmorType.ARTIFACT);
+                    var equipment = Mockito.mock(EquipmentDataService.class);
+                    when(equipment.getGlobalWeapons())
+                            .thenReturn(
+                                    List.of(
+                                            uniqueWeapon,
+                                            weaponTemplate,
+                                            artifactWeapon,
+                                            secondMundaneWeapon));
+                    when(equipment.getGlobalArmors())
+                            .thenReturn(List.of(uniqueArmor, armorTemplate, artifactArmor));
+                    var charms = Mockito.mock(CharmDataService.class);
+                    when(charms.getArtifactIdsWithEvocationCollections())
+                            .thenReturn(Set.of(uniqueWeapon.getId(), uniqueArmor.getId()));
+                    var vm =
+                            new MainViewModel(
+                                    data,
+                                    Mockito.mock(SystemDataService.class),
+                                    equipment,
+                                    charms,
+                                    Mockito.mock(PdfExportService.class));
+                    var view =
+                            de.saxsys.mvvmfx.FluentViewLoader.javaView(MainView.class)
+                                    .viewModel(vm)
+                                    .load()
+                                    .getCodeBehind();
+                    var owner = new Stage();
+                    try {
+                        var scene = new Scene(view, 1200, 800);
+                        scene.getStylesheets()
+                                .add(MainViewTest.class.getResource("/style.css").toExternalForm());
+                        owner.setScene(scene);
+                        owner.show();
+                        var tabs = (TabPane) view.getCenter();
+                        tabs.getSelectionModel()
+                                .select(
+                                        tabs.getTabs().stream()
+                                                .filter(tab -> tab.getText().equals("Equipment"))
+                                                .findFirst()
+                                                .orElseThrow());
+                        view.applyCss();
+                        view.layout();
+                        var addWeapon = findAddButton(view, "+ Add Weapon");
+                        var addArmor = findAddButton(view, "+ Add Armor");
+                        var weaponOrder =
+                                List.of(
+                                        weaponTemplate,
+                                        secondMundaneWeapon,
+                                        artifactWeapon,
+                                        uniqueWeapon);
+                        var armorOrder = List.of(armorTemplate, artifactArmor, uniqueArmor);
+
+                        chooseEquipmentTemplate(addWeapon, weaponOrder, weaponTemplate, false);
+                        assertTrue(
+                                data.getWeapons().stream()
+                                        .noneMatch(w -> w.getId().equals(weaponTemplate.getId())));
+                        chooseEquipmentTemplate(addWeapon, weaponOrder, weaponTemplate, true);
+                        chooseEquipmentTemplate(addWeapon, weaponOrder, weaponTemplate, true);
+                        chooseEquipmentTemplate(addArmor, armorOrder, uniqueArmor, true);
+
+                        var weapons =
+                                data.getWeapons().stream()
+                                        .filter(w -> w.getId().equals(weaponTemplate.getId()))
+                                        .toList();
+                        assertEquals(2, weapons.size());
+                        var first = weapons.getFirst();
+                        var second = weapons.getLast();
+                        assertNotEquals(first.getInstanceId(), second.getInstanceId());
+                        assertNotEquals(first.getInstanceId(), weaponTemplate.getInstanceId());
+                        assertEquals(weaponTemplate.getSourceId(), first.getSourceId());
+                        first.setName("Personal Sword");
+                        first.getTags().clear();
+                        assertEquals("Training Sword", second.getName());
+                        assertEquals("Training Sword", weaponTemplate.getName());
+                        assertEquals(List.of("Balanced"), second.getTags());
+                        assertEquals(List.of("Balanced"), weaponTemplate.getTags());
+                        assertEquals(uniqueArmor.getId(), data.getArmors().getFirst().getId());
+                        assertNotEquals(
+                                uniqueArmor.getInstanceId(),
+                                data.getArmors().getFirst().getInstanceId());
+                    } finally {
+                        view.cleanup();
+                        owner.close();
+                    }
+                    return null;
+                });
+        Platform.runLater(task);
+        task.get(10, TimeUnit.SECONDS);
+    }
+
+    private static Button findAddButton(MainView view, String text) {
+        return view.lookupAll(".add-btn").stream()
+                .filter(node -> node instanceof Button button && button.getText().equals(text))
+                .map(Button.class::cast)
+                .findFirst()
+                .orElseThrow();
+    }
+
+    private static void chooseEquipmentTemplate(
+            Button addEquipment, List<?> expectedOrder, Object template, boolean confirm)
+            throws Exception {
+        var interactions = new ArrayList<FutureTask<Void>>();
+        ListChangeListener<Window> interactWithPicker =
+                change -> {
+                    while (change.next()) {
+                        for (Window window : change.getAddedSubList()) {
+                            if (!(window.getScene().getRoot() instanceof DialogPane pane)) continue;
+                            var interaction =
+                                    new FutureTask<Void>(() -> {
+                                        var cancel = (Button) pane.lookupButton(ButtonType.CANCEL);
+                                        try {
+                                            pane.applyCss();
+                                            pane.layout();
+                                            var items = (ListView<?>) pane.lookup(".list-view");
+                                            assertEquals(expectedOrder, items.getItems());
+                                            assertEquipmentSectionLayout(items);
+                                            int row = items.getItems().indexOf(template);
+                                            assertTrue(row >= 0);
+                                            items.getSelectionModel().select(row);
+                                            pane.applyCss();
+                                            var selectedCell =
+                                                    items
+                                                            .lookupAll(".equipment-template-cell")
+                                                            .stream()
+                                                            .map(node -> (ListCell<?>) node)
+                                                            .filter(ListCell::isSelected)
+                                                            .findFirst()
+                                                            .orElseThrow();
+                                            assertTrue(
+                                                    selectedCell.getBackground().getFills().stream()
+                                                            .allMatch(fill ->
+                                                                    Color.TRANSPARENT.equals(
+                                                                            fill.getFill())));
+                                            var selectedItem =
+                                                    (Label)
+                                                            selectedCell.lookup(
+                                                                    ".equipment-template-item");
+                                            assertTrue(
+                                                    selectedItem.getBackground().getFills().stream()
+                                                            .anyMatch(fill ->
+                                                                    !Color.TRANSPARENT.equals(
+                                                                            fill.getFill())));
+                                            if (confirm) {
+                                                ButtonType add =
+                                                        pane.getButtonTypes().stream()
+                                                                .filter(type ->
+                                                                        type.getButtonData()
+                                                                                .isDefaultButton())
+                                                                .findFirst()
+                                                                .orElseThrow();
+                                                var confirmButton = (Button) pane.lookupButton(add);
+                                                assertFalse(confirmButton.isDisabled());
+                                                confirmButton.fire();
+                                            } else {
+                                                cancel.fire();
+                                            }
+                                        } finally {
+                                            if (window.isShowing()) cancel.fire();
+                                        }
+                                        return null;
+                                    });
+                            interactions.add(interaction);
+                            Platform.runLater(interaction);
+                        }
+                    }
+                };
+        Window.getWindows().addListener(interactWithPicker);
+        try {
+            addEquipment.fire();
+        } finally {
+            Window.getWindows().removeListener(interactWithPicker);
+        }
+        assertEquals(1, interactions.size(), "A single click should open one template picker");
+        interactions.getFirst().get(0, TimeUnit.SECONDS);
+    }
+
+    private static void assertEquipmentSectionLayout(ListView<?> items) {
+        var headings =
+                items.lookupAll(".equipment-template-heading").stream()
+                        .map(Label.class::cast)
+                        .filter(Label::isVisible)
+                        .toList();
+        assertEquals(
+                Set.of("Mundane Equipment", "Artifact Equipment", "Unique Artifacts"),
+                headings.stream().map(Label::getText).collect(java.util.stream.Collectors.toSet()));
+        assertTrue(headings.stream().allMatch(heading -> heading.getPadding().getTop() > 0));
+        assertEquals(
+                1,
+                items.lookupAll(".equipment-template-item").stream()
+                        .map(Label.class::cast)
+                        .map(label -> label.localToScene(label.getInsets().getLeft(), 0).getX())
+                        .distinct()
+                        .count(),
+                "Headings must not shift the item text");
+
+        items.getSelectionModel().clearSelection();
+        Label heading = headings.getFirst();
+        heading.fireEvent(
+                new MouseEvent(
+                        MouseEvent.MOUSE_PRESSED,
+                        4,
+                        4,
+                        4,
+                        4,
+                        MouseButton.PRIMARY,
+                        1,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        null));
+        assertNull(items.getSelectionModel().getSelectedItem());
     }
 
     @Test
@@ -432,6 +689,16 @@ public class MainViewTest {
         var setup =
                 new java.util.concurrent.FutureTask<Void>(() -> {
                     var data = new CharacterData();
+                    if (charm instanceof com.vibethema.model.mystic.Evocation evocation) {
+                        var artifact =
+                                new com.vibethema.model.equipment.OtherEquipment(
+                                        "Test Artifact", "");
+                        artifact.setArtifact(true);
+                        artifact.setInstanceId(evocation.getArtifactId());
+                        data.getOtherEquipment().add(artifact);
+                        data.saveEvocation(evocation);
+                        data.getOtherEquipment().remove(artifact);
+                    }
                     data.addCharm(
                             new com.vibethema.model.mystic.PurchasedCharm(
                                     charm.getId(), charm.getName(), charm.getAbility()));
@@ -439,12 +706,6 @@ public class MainViewTest {
                     when(service.findCharmById(charm.getId())).thenReturn(charm);
                     when(service.loadCharmsForAbility("Melee", ExaltType.SOLAR))
                             .thenReturn(java.util.List.of(charm));
-                    when(service.loadEvocations("missing-artifact"))
-                            .thenReturn(
-                                    new CharmDataService.EvocationCollection(
-                                            "missing-artifact",
-                                            "Test Artifact",
-                                            java.util.List.of(charm)));
                     var vm =
                             new MainViewModel(
                                     data,

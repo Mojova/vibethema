@@ -269,6 +269,19 @@ public class CharmDataService {
         }
     }
 
+    public Set<String> getArtifactIdsWithEvocationCollections() {
+        Set<String> ids = new HashSet<>();
+        for (Path file : allCollectionFiles()) {
+            JsonObject collection = header(file);
+            if (collection.has("kind")
+                    && "evocation".equals(collection.get("kind").getAsString())
+                    && collection.has("artifactId")) {
+                ids.add(collection.get("artifactId").getAsString());
+            }
+        }
+        return Set.copyOf(ids);
+    }
+
     public EvocationCollection loadEvocations(String artifactId) {
         Map<String, Charm> merged = new LinkedHashMap<>();
         String name = "Artifact";

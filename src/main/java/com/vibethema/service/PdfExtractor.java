@@ -3,6 +3,7 @@ package com.vibethema.service;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.vibethema.service.pdf.core.CoreAnimaExtractor;
+import com.vibethema.service.pdf.core.CoreArtifactExtractor;
 import com.vibethema.service.pdf.core.CoreCharmExtractor;
 import com.vibethema.service.pdf.core.CoreEquipmentExtractor;
 import com.vibethema.service.pdf.core.CoreMeritExtractor;
@@ -70,16 +71,31 @@ public class PdfExtractor {
                     spellExtractor.setOverrideOutputPath(context.sourceDirectory());
                 spellExtractor.extractAndSave(spellText, "");
 
-                // 3. Equipment tags (printed pages 585-593, with weapon section context)
+                // 3. Weapon and armor templates and equipment tags (printed pages 580-601).
                 if (progressCallback != null) progressCallback.accept(0.8);
-                stripper.setStartPage(585);
-                stripper.setEndPage(594);
+                stripper.setStartPage(581);
+                stripper.setEndPage(602);
                 String equipText = stripper.getText(document);
                 CoreEquipmentExtractor equipExtractor = new CoreEquipmentExtractor();
                 equipExtractor.setSourceId(sourceId);
                 if (context != null)
                     equipExtractor.setOverrideOutputPath(context.sourceDirectory());
                 equipExtractor.extractAndSaveTags(equipText);
+                equipExtractor.extractAndSaveWeapons(equipText);
+                equipExtractor.extractAndSaveArmor(equipText);
+
+                // Named artifacts and their Evocations (printed pages 614-629).
+                PDFTextStripper artifactStripper = new PDFTextStripper();
+                artifactStripper.setStartPage(615);
+                artifactStripper.setEndPage(630);
+                artifactStripper.setParagraphStart("\n");
+                new CoreArtifactExtractor()
+                        .extractAndSave(
+                                artifactStripper.getText(document),
+                                sourceId,
+                                context == null
+                                        ? PathService.getCustomDataPath()
+                                        : context.sourceDirectory());
 
                 // 4. Merits (Pages 157 - 168)
                 if (progressCallback != null) progressCallback.accept(0.9);
@@ -139,7 +155,7 @@ public class PdfExtractor {
 
     /** Reject PDFs that do not resemble the Core book before creating any import output. */
     static void validateCorePdf(PDDocument document) throws IOException {
-        if (document.getNumberOfPages() < 610) {
+        if (document.getNumberOfPages() < 630) {
             throw new IOException(
                     "This PDF is too short to be the Exalted 3rd Edition Core book. "
                             + "Please select the complete Core PDF.");

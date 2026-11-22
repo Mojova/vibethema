@@ -3,9 +3,12 @@ package com.vibethema.ui.equipment;
 import com.vibethema.viewmodel.equipment.EquipmentDatabaseViewModel;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
+import javafx.collections.ListChangeListener;
+import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 
 /**
@@ -18,7 +21,6 @@ public class EquipmentDatabaseView extends VBox implements JavaView<EquipmentDat
 
     private TextField searchField;
     private ListView<Object> itemListView;
-    private Button addSelectedBtn;
     private Button createNewBtn;
     private Button deleteBtn;
 
@@ -34,10 +36,12 @@ public class EquipmentDatabaseView extends VBox implements JavaView<EquipmentDat
         titleLabel.getStyleClass().add("section-title");
 
         searchField = new TextField();
-        searchField.setPromptText("Search items...");
+        searchField.setPromptText("Search templates…");
+        searchField.setAccessibleText("Search equipment templates");
         searchField.getStyleClass().add("text-field-custom");
 
         itemListView = new ListView<>();
+        titleLabel.setLabelFor(itemListView);
         itemListView.getStyleClass().add("list-view-custom");
         VBox.setVgrow(itemListView, Priority.ALWAYS);
 
@@ -50,13 +54,10 @@ public class EquipmentDatabaseView extends VBox implements JavaView<EquipmentDat
         createNewBtn = new Button();
         createNewBtn.getStyleClass().add("secondary-btn");
 
-        addSelectedBtn = new Button("Add Selected");
-        addSelectedBtn.getStyleClass().add("action-btn");
-
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        footer.getChildren().addAll(deleteBtn, spacer, createNewBtn, addSelectedBtn);
+        footer.getChildren().addAll(deleteBtn, spacer, createNewBtn);
 
         getChildren().addAll(titleLabel, searchField, itemListView, footer);
 
@@ -68,6 +69,10 @@ public class EquipmentDatabaseView extends VBox implements JavaView<EquipmentDat
         // Text property bindings
         searchField.textProperty().bindBidirectional(viewModel.searchQueryProperty());
         itemListView.setItems(viewModel.getFilteredItems());
+        itemListView.setCellFactory(list -> new TemplateCell());
+        viewModel
+                .getFilteredItems()
+                .addListener((ListChangeListener<Object>) change -> itemListView.refresh());
 
         // Selection binding
         viewModel
@@ -78,10 +83,6 @@ public class EquipmentDatabaseView extends VBox implements JavaView<EquipmentDat
         createNewBtn.textProperty().bind(viewModel.createNewTextProperty());
         createNewBtn.setOnAction(e -> viewModel.onCreateNew());
 
-        // Disable "Add" and "Delete" buttons if nothing is selected
-        addSelectedBtn
-                .disableProperty()
-                .bind(itemListView.getSelectionModel().selectedItemProperty().isNull());
         deleteBtn.visibleProperty().bind(viewModel.canDeleteSelectedProperty());
         deleteBtn.managedProperty().bind(deleteBtn.visibleProperty());
 
@@ -116,7 +117,35 @@ public class EquipmentDatabaseView extends VBox implements JavaView<EquipmentDat
         }
     }
 
-    public Button getAddSelectedBtn() {
-        return addSelectedBtn;
+    private final class TemplateCell extends ListCell<Object> {
+        private final Label heading = new Label();
+        private final Label item = new Label();
+        private final VBox rows = new VBox(heading, item);
+
+        private TemplateCell() {
+            getStyleClass().add("equipment-template-cell");
+            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+            rows.prefWidthProperty().bind(widthProperty());
+
+            heading.getStyleClass().addAll("subsection-title", "equipment-template-heading");
+            heading.setMaxWidth(Double.MAX_VALUE);
+            heading.setPickOnBounds(true);
+            heading.managedProperty().bind(heading.visibleProperty());
+            heading.addEventFilter(MouseEvent.ANY, Event::consume);
+
+            item.getStyleClass().add("equipment-template-item");
+            item.setMaxWidth(Double.MAX_VALUE);
+            item.textProperty().bind(textProperty());
+        }
+
+        @Override
+        protected void updateItem(Object template, boolean empty) {
+            super.updateItem(template, empty);
+            String section = empty ? null : viewModel.getSectionHeading(getIndex());
+            heading.setText(section);
+            heading.setVisible(section != null);
+            setGraphic(empty ? null : rows);
+            setText(empty ? null : template.toString());
+        }
     }
 }

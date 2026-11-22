@@ -1,5 +1,6 @@
 package com.vibethema.model;
 
+import com.google.gson.JsonObject;
 import com.vibethema.model.equipment.*;
 import com.vibethema.model.mystic.*;
 import com.vibethema.model.social.*;
@@ -24,6 +25,7 @@ public class CharacterSaveState {
     public List<String> casteAbilities;
     public List<String> favoredAbilities;
     public List<PurchasedCharm> unlockedCharms;
+    public Map<String, ArtifactEvocationState> artifactEvocations = new java.util.LinkedHashMap<>();
     public List<MeritData> merits = new ArrayList<>();
     public List<SpecialtyData> specialties = new ArrayList<>();
     public List<CraftData> crafts = new ArrayList<>();
@@ -61,6 +63,7 @@ public class CharacterSaveState {
                 && Objects.equals(casteAbilities, that.casteAbilities)
                 && Objects.equals(favoredAbilities, that.favoredAbilities)
                 && Objects.equals(unlockedCharms, that.unlockedCharms)
+                && Objects.equals(artifactEvocations, that.artifactEvocations)
                 && Objects.equals(merits, that.merits)
                 && Objects.equals(specialties, that.specialties)
                 && Objects.equals(crafts, that.crafts)
@@ -94,6 +97,7 @@ public class CharacterSaveState {
                 casteAbilities,
                 favoredAbilities,
                 unlockedCharms,
+                artifactEvocations,
                 merits,
                 specialties,
                 crafts,
@@ -107,6 +111,15 @@ public class CharacterSaveState {
                 spells,
                 creationSnapshot,
                 xpAwards);
+    }
+
+    public record ArtifactEvocationState(List<JsonObject> tree, List<PurchasedCharm> unlocked) {}
+
+    public List<PurchasedCharm> allUnlockedCharms() {
+        var purchases = new ArrayList<PurchasedCharm>();
+        if (unlockedCharms != null) purchases.addAll(unlockedCharms);
+        artifactEvocations.values().forEach(artifact -> purchases.addAll(artifact.unlocked()));
+        return purchases;
     }
 
     public static class WeaponLink {

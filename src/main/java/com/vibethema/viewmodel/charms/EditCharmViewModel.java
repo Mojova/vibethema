@@ -4,6 +4,8 @@ import com.vibethema.model.*;
 import com.vibethema.model.mystic.*;
 import com.vibethema.model.traits.*;
 import com.vibethema.service.CharmDataService;
+import com.vibethema.viewmodel.MainViewModel.CheckpointRequest;
+import com.vibethema.viewmodel.util.Messenger;
 import de.saxsys.mvvmfx.ViewModel;
 import java.io.IOException;
 import java.util.stream.Collectors;
@@ -19,7 +21,8 @@ public class EditCharmViewModel implements ViewModel {
 
     private final Charm charm;
     private final CharmDataService dataService;
-    private final String contextName;
+    private final CharacterData character;
+    private final java.util.List<String> initialPrerequisiteIds;
     private final String filterType;
     private final Runnable onSave;
 
@@ -45,9 +48,22 @@ public class EditCharmViewModel implements ViewModel {
             String contextName,
             String filterType,
             Runnable onSave) {
-        this.charm = charm;
+        this(charm, dataService, contextName, filterType, onSave, null);
+    }
+
+    public EditCharmViewModel(
+            Charm charm,
+            CharmDataService dataService,
+            String contextName,
+            String filterType,
+            Runnable onSave,
+            CharacterData character) {
+        this.charm =
+                charm instanceof Evocation evocation
+                        ? evocation.copyForArtifact(evocation.getArtifactId())
+                        : charm;
         this.dataService = dataService;
-        this.contextName = contextName;
+        this.character = character;
         this.filterType = filterType;
         this.onSave = onSave;
 
@@ -93,6 +109,8 @@ public class EditCharmViewModel implements ViewModel {
                             .collect(Collectors.toList()));
         }
 
+        initialPrerequisiteIds = selectedPrerequisites.stream().map(Charm::getId).toList();
+
         // Listener to refresh prerequisites when ability changes
         this.ability.addListener((obs, oldV, newV) -> {
             if (newV != null && !newV.equals(oldV)) {
@@ -110,7 +128,20 @@ public class EditCharmViewModel implements ViewModel {
             return;
         }
 
-        java.util.List<Charm> allCharms = dataService.loadCharmsForAbility(currentAbility);
+        java.util.List<Charm> allCharms;
+        if (charm instanceof Evocation && character != null) {
+            allCharms = new java.util.ArrayList<>(character.getEvocations(currentAbility));
+            if (charm.getPrerequisites() != null) {
+                java.util.Set<String> referenced = new java.util.HashSet<>();
+                charm.getPrerequisites().collectCharmIds(referenced);
+                for (String id : referenced) {
+                    Charm prerequisite = dataService.findCharmById(id);
+                    if (prerequisite != null) allCharms.add(prerequisite);
+                }
+            }
+        } else {
+            allCharms = dataService.loadCharmsForAbility(currentAbility);
+        }
         availablePrerequisites.setAll(
                 allCharms.stream()
                         .filter(c -> !c.getId().equals(charm.getId()))
@@ -123,7 +154,7 @@ public class EditCharmViewModel implements ViewModel {
     public void save() throws IOException {
         // Push changes to model
         charm.setName(name.get());
-        charm.setAbility(ability.get());
+        if (!(charm instanceof Evocation)) charm.setAbility(ability.get());
         charm.setMinAbility(minAbility.get());
         charm.setMinEssence(minEssence.get());
         charm.setCost(cost.get());
@@ -135,19 +166,28 @@ public class EditCharmViewModel implements ViewModel {
         charm.setKeywords(new java.util.ArrayList<>(selectedKeywords));
 
         // Save manually selected prerequisites as a clean all-of expression.
-        if (!selectedPrerequisites.isEmpty()) {
-            java.util.List<PrerequisiteRule> rules =
-                    selectedPrerequisites.stream()
-                            .map(c -> PrerequisiteRule.charm(c.getId()))
-                            .collect(Collectors.toList());
-            charm.setPrerequisites(PrerequisiteRule.allOf(rules));
-        } else {
-            charm.setPrerequisites(PrerequisiteRule.allOf(new java.util.ArrayList<>()));
+        var selectedIds = selectedPrerequisites.stream().map(Charm::getId).toList();
+        if (!(charm instanceof Evocation) || !selectedIds.equals(initialPrerequisiteIds)) {
+            charm.setPrerequisites(
+                    PrerequisiteRule.allOf(
+                            selectedIds.stream().map(PrerequisiteRule::charm).toList()));
         }
 
         // Persist
-        if (charm.getKind() == CharmKind.EVOCATION) {
-            dataService.saveEvocation(charm.getAbility(), contextName, charm);
+        if (charm instanceof Evocation evocation) {
+            if (character == null) throw new IOException("Select an owned artifact first.");
+            Messenger.publish(
+                    "RECORD_UNDO_CHECKPOINT",
+                    new CheckpointRequest(
+                            "Charms",
+                            "Save Evocation: " + charm.getName(),
+                            "charm_" + charm.getId()));
+            try {
+                character.saveEvocation(evocation);
+            } catch (IllegalArgumentException ex) {
+                throw new IOException(ex.getMessage(), ex);
+            }
+            Messenger.publish("refresh_all_ui");
         } else {
             dataService.saveCharm(charm);
         }
