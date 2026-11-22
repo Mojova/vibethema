@@ -29,6 +29,12 @@ books cannot collide when they use the same definition name.
 Official definitions load first. Custom definitions load afterward; a custom definition with the
 same ID replaces the official definition in `CatalogService`.
 
+The Core Book importer writes mundane, generic artifact, and named artifact weapons and armor
+to `equipment/`. Each published
+Evocation collection uses the matching equipment definition ID. Adding an artifact copies its
+equipment and tree to the character. The save groups the editable tree and its unlocks by equipment
+instance ID. Renaming an item or reimporting the book preserves its existing Evocation IDs.
+
 ## Importing a book
 
 ```bash
